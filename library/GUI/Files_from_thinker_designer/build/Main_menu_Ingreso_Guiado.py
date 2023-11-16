@@ -32,15 +32,16 @@ canvas_grafico_pacientes_categorias_aux=None
 grafico_sala_espera_creado = False
 canvas_grafico_pacientes_sala_espera_aux=None
 Tablas_pacientes_atendidos=None
+Tabla_busqueda=None
 # --- cSalaEspera ---
 Sala_de_espera = cSalaEspera()
 
 # --- entry's -----
 
-# ------------------------------Metodosaccesorios----------------------------
+# ------------------------------Metodosaccesorios--------------------
 def relative_to_assets_menu_ingreso_guiado(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
-
+    ASSETS_PATH = Path(r".\assets\frame10") / path
+    return ASSETS_PATH
 
 def relative_to_assets_rojo(path: str) -> Path:
     ASSETS_PATH = Path(r".\assets\frame4") / path
@@ -74,46 +75,147 @@ def Ingresar_paciente_con_guia():
     la sala de espera
     :return:
     """
+    global Father_off_windows
+    window = Tk()
 
-    # -- Ventana de Ejecucion --
-    window = tk.Tk()
-    window.geometry("1440x900")
+    window.geometry("1280x720")
     window.configure(bg="#F0F0F0")
 
-    button_image_ventana_rojo_1 = PhotoImage(file=relative_to_assets_rojo("button_1.png"))
-    button_image_ventana_rojo_2 = PhotoImage(file=relative_to_assets_rojo("button_2.png"))
-
-    canvas = Canvas(window, bg="#F0F0F0",
-                    height=900,
-                    width=1440,
-                    bd=0,
-                    highlightthickness=0,
-                    relief="ridge"
-                    )
+    Father_off_windows = window
+    canvas = Canvas(
+        window,
+        bg="#F0F0F0",
+        height=720,
+        width=1280,
+        bd=0,
+        highlightthickness=0,
+        relief="ridge"
+    )
 
     canvas.place(x=0, y=0)
-    canvas.create_rectangle(
-        64.0,
-        815.0,
-        167.0,
-        835.0,
-        fill="#000000",
-        outline="")
-
     image_image_1 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_1.png"))
     image_1 = canvas.create_image(
-        125.0,
-        450.0,
+        444.0,
+        60.0,
         image=image_image_1
     )
 
     image_image_2 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_2.png"))
     image_2 = canvas.create_image(
+        759.0,
+        258.0,
+        image=image_image_2
+    )
+
+    canvas.create_text(
+        667.0,
+        130.0,
+        anchor="nw",
+        text="Ingreso Personificado",
+        fill="#000000",
+        font=("MontserratRoman SemiBold", 16 * -1)
+    )
+
+    entry_image_1 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("entry_1.png"))
+    entry_bg_1 = canvas.create_image(
+        479.5,
+        205.5,
+        image=entry_image_1
+    )
+    entry_1 = Entry(
+        bd=0,
+        bg="#F3F3F3",
+        fg="#000716",
+        highlightthickness=0
+    )
+    entry_1.place(
+        x=332.0,
+        y=183.0,
+        width=295.0,
+        height=43.0
+    )
+
+    canvas.create_text(
+        402.0,
+        164.0,
+        anchor="nw",
+        text="Motivo de Consulta",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    canvas.create_text(
+        889.0,
+        161.0,
+        anchor="nw",
+        text="Dolor",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    entry_image_2 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("entry_2.png"))
+    entry_bg_2 = canvas.create_image(
+        479.5,
+        333.0,
+        image=entry_image_2
+    )
+    entry_2 = Entry(
+        bd=0,
+        bg="#F3F3F3",
+        fg="#000716",
+        highlightthickness=0
+    )
+    entry_2.place(
+        x=332.0,
+        y=311.0,
+        width=295.0,
+        height=42.0
+    )
+
+    canvas.create_text(
+        399.0,
+        289.0,
+        anchor="nw",
+        text="Medicacion Habital",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    canvas.create_text(
+        606.0,
+        852.0,
+        anchor="nw",
+        text="en  sala de espera",
+        fill="#000000",
+        font=("Montserrat SemiBold", 24 * -1)
+    )
+
+    canvas.create_rectangle(
+        64.0,
+        675.0,
+        167.0,
+        694.0,
+        fill="#000000",
+        outline="")
+
+    image_image_3 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_3.png"))
+    image_3 = canvas.create_image(
+        125.0,
+        450.0,
+        image=image_image_3
+    )
+
+    image_image_4 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_4.png"))
+    image_4 = canvas.create_image(
         148.0,
         162.0,
-        image=image_image_2
+        image=image_image_4
     )
 
     button_image_1 = PhotoImage(
@@ -132,12 +234,12 @@ def Ingresar_paciente_con_guia():
         height=20.0
     )
 
-    image_image_3 = PhotoImage(
-        file=relative_to_assets_menu_ingreso_guiado("image_3.png"))
-    image_3 = canvas.create_image(
+    image_image_5 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_5.png"))
+    image_5 = canvas.create_image(
         73.0,
         341.0,
-        image=image_image_3
+        image=image_image_5
     )
 
     button_image_2 = PhotoImage(
@@ -146,7 +248,7 @@ def Ingresar_paciente_con_guia():
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_2 clicked"),
+        command=lambda: Abrir_menu_ingreso_datos_cargados(window,None,None,None,None),
         relief="flat"
     )
     button_2.place(
@@ -172,73 +274,45 @@ def Ingresar_paciente_con_guia():
         height=20.0
     )
 
-    image_image_4 = PhotoImage(
-        file=relative_to_assets_menu_ingreso_guiado("image_4.png"))
-    image_4 = canvas.create_image(
-        115.0,
-        825.0,
-        image=image_image_4
-    )
-
-    image_image_5 = PhotoImage(
-        file=relative_to_assets_menu_ingreso_guiado("image_5.png"))
-    image_5 = canvas.create_image(
-        466.0,
-        76.0,
-        image=image_image_5
-    )
-
-    entry_image_1 = PhotoImage(
-        file=relative_to_assets_menu_ingreso_guiado("entry_1.png"))
-    entry_bg_1 = canvas.create_image(
-        940.0,
-        73.0,
-        image=entry_image_1
-    )
-    entry_1 = Entry(
-        bd=0,
-        bg="#DBDBDB",
-        fg="#000716",
-        highlightthickness=0
-    )
-    entry_1.place(
-        x=715.0,
-        y=48.0,
-        width=450.0,
-        height=48.0
-    )
-
     image_image_6 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_6.png"))
     image_6 = canvas.create_image(
-        736.2000122070312,
-        72.199951171875,
+        115.0,
+        684.0,
         image=image_image_6
-    )
-
-    canvas.create_text(
-        773.0,
-        65.0,
-        anchor="nw",
-        text="Search Something",
-        fill="#9A9A9A",
-        font=("Montserrat Medium", 14 * -1)
     )
 
     image_image_7 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_7.png"))
     image_7 = canvas.create_image(
-        1253.0,
-        73.0,
+        117.0,
+        69.0,
         image=image_image_7
     )
 
     image_image_8 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_8.png"))
     image_8 = canvas.create_image(
-        456.0,
-        172.0,
+        72.81005859375,
+        397.76220703125,
         image=image_image_8
+    )
+
+    canvas.create_text(
+        108.0,
+        393.0,
+        anchor="nw",
+        text="Settings",
+        fill="#FFFFFF",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    image_image_9 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_9.png"))
+    image_9 = canvas.create_image(
+        474.0,
+        492.0,
+        image=image_image_9
     )
 
     button_image_4 = PhotoImage(
@@ -247,369 +321,236 @@ def Ingresar_paciente_con_guia():
         image=button_image_4,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: Rojo(window, button_image_ventana_rojo_1, button_image_ventana_rojo_2),
+        command=lambda: Abrir_menu_ingreso_datos_cargados(window,Numero_tiempo,Numero_dolor,entry_1,entry_2),
         relief="flat"
     )
     button_4.place(
-        x=320.0,
-        y=151.0,
-        width=275.3648681640625,
+        x=338.0,
+        y=471.0,
+        width=275.36474609375,
         height=43.0
     )
-
-    image_image_9 = PhotoImage(
-        file=relative_to_assets_menu_ingreso_guiado("image_9.png"))
-    image_9 = canvas.create_image(
-        117.0,
-        69.0,
-        image=image_image_9
-    )
-
-    image_image_10 = PhotoImage(
+    #esta foto tiene la posicion del display de dolor
+    """image_image_10 = PhotoImage(
         file=relative_to_assets_menu_ingreso_guiado("image_10.png"))
     image_10 = canvas.create_image(
-        72.81015014648438,
-        397.76214599609375,
+        913.0,
+        193.0,
         image=image_image_10
+    )"""
+    # Variable para almacenar el número seleccionado
+    Numero_dolor = tk.StringVar()
+
+    # Lista de números del 1 al 10
+    numbers = list(range(1, 11))
+
+    # Crear la lista desplegable
+    dropdown = ttk.Combobox(window, textvariable=Numero_dolor, values=numbers, state="readonly")
+    dropdown.bind("<<ComboboxSelected>>")
+    dropdown.grid(row=0, column=0, padx=10, pady=10)
+    # Establecer el valor predeterminado de la lista desplegable
+    dropdown.set("Seleccionar número")
+    dropdown.place(x=840.0,y=193.0)
+
+    canvas.create_text(
+        866.0,
+        302.0,
+        anchor="nw",
+        text="Hace cuanto",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    #esta imagen tiene la posicion del display de hace cuanto
+    """image_image_11 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_11.png"))
+    image_11 = canvas.create_image(
+        913.0,
+        334.0,
+        image=image_image_11
+    )"""
+    # Variable para almacenar el número seleccionado
+    Numero_tiempo = tk.StringVar()
+    # Lista de números de tiempo de 24 a 72 horas
+    numbers1 = []
+    numbers1.append(">72")
+    numbers1.append("24-72")
+    numbers1.append("<24")
+    numbers1.append("ahora")
+
+    # Crear la lista desplegable
+    dropdown1 = ttk.Combobox(window, textvariable=Numero_tiempo, values=numbers1, state="readonly")
+    dropdown1.bind("<<ComboboxSelected2>>")
+    dropdown1.grid(row=0, column=0, padx=10, pady=10)
+    # Establecer el valor predeterminado de la lista desplegable
+    dropdown1.set("Hace cuanto?")
+    dropdown1.place(x=840.0,y=334.0)
+
+    canvas.create_rectangle(
+        667.0,
+        450.0,
+        1179.0,
+        695.0,
+        fill="#FFFFFF",
+        outline="")
+
+    entry_image_3 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("entry_3.png"))
+    entry_bg_3 = canvas.create_image(
+        985.0,
+        505.5,
+        image=entry_image_3
+    )
+    entry_3 = Entry(
+        bd=0,
+        bg="#F3F3F3",
+        fg="#000716",
+        highlightthickness=0
+    )
+    entry_3.place(
+        x=924.5,
+        y=495.0,
+        width=121.0,
+        height=19.0
     )
 
     canvas.create_text(
-        108.00003051757812,
-        393.0,
+        919.0,
+        473.0,
         anchor="nw",
-        text="Settings",
-        fill="#FFFFFF",
+        text="Fecha Nacimiento",
+        fill="#000000",
         font=("Montserrat Medium", 16 * -1)
     )
+
+    entry_image_4 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("entry_4.png"))
+    entry_bg_4 = canvas.create_image(
+        773.0,
+        504.5,
+        image=entry_image_4
+    )
+    entry_4 = Entry(
+        bd=0,
+        bg="#F3F3F3",
+        fg="#000716",
+        highlightthickness=0
+    )
+    entry_4.place(
+        x=712.5,
+        y=494.0,
+        width=121.0,
+        height=19.0
+    )
+
+    canvas.create_text(
+        702.0,
+        472.0,
+        anchor="nw",
+        text="Nombre y Apellido",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    entry_image_5 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("entry_5.png"))
+    entry_bg_5 = canvas.create_image(
+        770.0,
+        568.5,
+        image=entry_image_5
+    )
+    entry_5 = Entry(
+        bd=0,
+        bg="#F3F3F3",
+        fg="#000716",
+        highlightthickness=0
+    )
+    entry_5.place(
+        x=709.5,
+        y=558.0,
+        width=121.0,
+        height=19.0
+    )
+
+    canvas.create_text(
+        699.0,
+        536.0,
+        anchor="nw",
+        text="Numero de caso clinico",
+        fill="#000000",
+        font=("Montserrat Medium", 16 * -1)
+    )
+
+    image_image_12 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("image_12.png"))
+    image_12 = canvas.create_image(
+        998.0,
+        652.0,
+        image=image_image_12
+    )
+
+    button_image_5 = PhotoImage(
+        file=relative_to_assets_menu_ingreso_guiado("button_5.png"))
+    button_5 = Button(
+        image=button_image_5,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Mostrar_datos_buscar_Hisotrial(entry_3,entry_4,entry_5,window),
+        relief="flat"
+    )
+    button_5.place(
+        x=914.37158203125,
+        y=639.1346435546875,
+        width=170.337890625,
+        height=26.599365234375
+    )
+
+    #Este rectangulo es donde ira la busqueda del historial del paciente
+    """canvas.create_rectangle(
+        884.0,
+        536.0,
+        1165.0,
+        619.0,
+        fill="#FFFFFF",
+        outline="")"""
 
     window.resizable(True, True)
     window.mainloop()
 
 
-def Rojo(_window, button_image_1, button_image_2):
-    global Father_off_windows
-    """
-    Para empezar a categorizar empiezo realizando preguntas,
-    Empiezo por las pregutnas que tendría un paciente que requiere de una atencion urgente
-    :param _window:
-    :return:
-    """
-    print("button_4 clicked")
-    # Creo una nueva ventana
-
-    ventana_roja = tk.Toplevel(_window)
-    Father_off_windows = _window
-    ventana_roja.title("Es rojo?")
-    ventana_roja.geometry("680x282")
-    ventana_roja.configure(bg="#FFFFFF")
-
-    canvas = Canvas(
-        ventana_roja,
-        bg="#FFFFFF",
-        height=282,
-        width=680,
-        bd=0,
-        highlightthickness=0,
-        relief="ridge"
-    )
-
-    canvas.place(x=0, y=0)
-    image_image_1 = PhotoImage(
-        file=relative_to_assets_rojo("image_1.png"))
-    image_1 = canvas.create_image(
-        485.0,
-        141.0,
-        image=image_image_1
-    )
-    button_1 = Button(
-        master=ventana_roja,
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Abrir_menu_ingreso_datos_cargados(_window, "rojo"),
-        relief="flat"
-    )
-    button_1.place(
-        x=447.576904296875,
-        y=120.0,
-        width=76.784423828125,
-        height=43.0
-    )
-
-    image_image_2 = PhotoImage(
-        file=relative_to_assets_rojo("image_2.png"))
-    image_2 = canvas.create_image(
-        245.0,
-        141.0,
-        image=image_image_2
-    )
-
-    button_2 = Button(
-        master=ventana_roja,
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Naranja(ventana_roja, button_image_1, button_image_2),
-        relief="flat"
-    )
-    button_2.place(
-        x=207.576904296875,
-        y=120.0,
-        width=75.784423828125,
-        height=43.0
-    )
-    canvas.create_text(
-        186.0,
-        16.0,
-        anchor="nw",
-        text="¿Tiene Politraumatismo?",
-        fill="#000000",
-        font=("Montserrat SemiBold", 24 * -1)
-    )
 
 
-def Naranja(_window, button_image_1, button_image_2):
-    print("button_4 clicked")
-    global Father_off_windows
-    _window.destroy()  # destruyo la ventana anterior
-    Father_off_windows.wm_state('zoomed')
-    Ventana_naranja = tk.Toplevel(Father_off_windows)  # Crea una nueva ventana con el padre de menu
-    Ventana_naranja.title("Es Naranja?")
-    Ventana_naranja.geometry("680x282")
-    Ventana_naranja.configure(bg="#FFFFFF")
 
-    canvas = Canvas(
-        Ventana_naranja,
-        bg="#FFFFFF",
-        height=282,
-        width=680,
-        bd=0,
-        highlightthickness=0,
-        relief="ridge"
-    )
+def Abrir_menu_ingreso_datos_cargados(_window,tiempo,Numero_dolor,entry1,entry2):
+    print("Boton generar paciente apretado")
+    categoria = None
 
-    canvas.place(x=0, y=0)
-    image_image_1 = PhotoImage(
-        file=relative_to_assets_naranja("image_1.png"))
-    image_1 = canvas.create_image(
-        474.0,
-        92.0,
-        image=image_image_1
-    )
+    if tiempo is None and Numero_dolor is None and entry2 is None and entry1 is None:
+        categoria=""
+    else:
+        Numero_dolor = int(Numero_dolor.get())
+        if 9 <= Numero_dolor <= 10 or tiempo == "ahora":
+            categoria = "tipo 1"
 
-    button_1 = Button(
-        master=Ventana_naranja,
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Abrir_menu_ingreso_datos_cargados(_window, "Naranja"),
-        relief="flat"
-    )
-    button_1.place(
-        x=436.0,
-        y=69.0,
-        width=76.784423828125,
-        height=43.0
-    )
+        elif 7 <= Numero_dolor <= 8 or tiempo == "<24":
+            categoria = "tipo 2"
 
-    image_image_2 = PhotoImage(
-        file=relative_to_assets_naranja("image_2.png"))
-    image_2 = canvas.create_image(
-        474.0,
-        204.0,
-        image=image_image_2
-    )
+        elif 3 <= Numero_dolor <= 6 or tiempo == "24-72":
+            categoria = "tipo 3"
 
-    button_2 = Button(
+        elif 1 <= Numero_dolor <= 3 or tiempo == ">72":
+            categoria = "tipo 5"
 
-        master=Ventana_naranja,
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Amarillo(Ventana_naranja, button_image_1, button_image_2),
-        relief="flat"
-    )
-    button_2.place(
-        x=436.576904296875,
-        y=183.0,
-        width=76.107177734375,
-        height=43.0
-    )
+        else:
+            categoria = ""
 
-    canvas.create_text(
-        64.0,
-        7.0,
-        anchor="nw",
-        text="Actualmente tiene algun sintoma de :  \nComa \n\nConvulsion \n\nHemorragia Digestiva\n Isquemia",
-        fill="#000000",
-        font=("MontserratRoman Medium", 24 * -1)
-    )
-
-
-def Amarillo(_window, button_image_1, button_image_2):
-    print("Boton No Naranja Apretado")
-    global Father_off_windows
-    _window.destroy()  # destruyo la ventana anterior
-    Father_off_windows.wm_state('zoomed')
-    Ventana_amarillo = tk.Toplevel(Father_off_windows)  # Crea una nueva ventana con el padre de menu
-    Ventana_amarillo.title("Es Amarillo? ")
-    Ventana_amarillo.geometry("680x282")
-    Ventana_amarillo.configure(bg="#FFFFFF")
-
-    canvas = Canvas(
-        Ventana_amarillo,
-        bg="#FFFFFF",
-        height=282,
-        width=680,
-        bd=0,
-        highlightthickness=0,
-        relief="ridge"
-    )
-
-    canvas.place(x=0, y=0)
-    image_image_1 = PhotoImage(
-        file=relative_to_assets_amarillo("image_1.png"))
-    image_1 = canvas.create_image(
-        599.0,
-        69.0,
-        image=image_image_1
-    )
-
-    button_1 = Button(
-        master=Ventana_amarillo,
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Abrir_menu_ingreso_datos_cargados(_window, "Amarillo"),
-        relief="flat"
-    )
-    button_1.place(
-        x=561.0,
-        y=46.0,
-        width=76.784423828125,
-        height=43.0
-    )
-
-    image_image_2 = PhotoImage(
-        file=relative_to_assets_amarillo("image_2.png"))
-    image_2 = canvas.create_image(
-        595.0,
-        204.0,
-        image=image_image_2
-    )
-
-    button_2 = Button(
-        master=Ventana_amarillo,
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Verde(Ventana_amarillo, button_image_1, button_image_2),
-        relief="flat"
-    )
-    button_2.place(
-        x=557.576904296875,
-        y=183.0,
-        width=76.107177734375,
-        height=43.0
-    )
-
-    canvas.create_text(
-        64.0,
-        7.0,
-        anchor="nw",
-        text="Cefalea brusca,  paresia, \nhipertensión arterial,  \nvértigo con afectación vegetativa \nsíncope \nurgencias psiquiátricas",
-        fill="#000000",
-        font=("MontserratRoman Medium", 24 * -1)
-    )
-
-
-def Verde(_window, button_image_1, button_image_2):
-    print("Botton No Naranja Apretado")
-    global Father_off_windows
-    _window.destroy()  # destruyo la ventana anterior
-    Father_off_windows.wm_state('zoomed')
-    Ventana_verde = tk.Toplevel(Father_off_windows)  # Crea una nueva ventana con el padre de menu
-    Ventana_verde.title("Es verde? ")
-    Ventana_verde.geometry("680x282")
-    Ventana_verde.configure(bg="#FFFFFF")
-
-    canvas = Canvas(
-        Ventana_verde,
-        bg="#FFFFFF",
-        height=282,
-        width=680,
-        bd=0,
-        highlightthickness=0,
-        relief="ridge"
-    )
-
-    canvas.place(x=0, y=0)
-    image_image_1 = PhotoImage(
-        file=relative_to_assets_Verde("image_1.png"))
-    image_1 = canvas.create_image(
-        474.0,
-        92.0,
-        image=image_image_1
-    )
-
-    button_1 = Button(
-        master=Ventana_verde,
-        image=button_image_1,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Abrir_menu_ingreso_datos_cargados(_window, "Verde"),
-        relief="flat"
-    )
-    button_1.place(
-        x=436.0,
-        y=69.0,
-        width=76.784423828125,
-        height=43.0
-    )
-
-    image_image_2 = PhotoImage(
-        file=relative_to_assets_Verde("image_2.png"))
-    image_2 = canvas.create_image(
-        474.0,
-        204.0,
-        image=image_image_2
-    )
-
-    button_2 = Button(
-        master=Ventana_verde,
-        image=button_image_2,
-        borderwidth=0,
-        highlightthickness=0,
-        command=lambda: Abrir_menu_ingreso_datos_cargados(_window, "azul"),
-        relief="flat"
-    )
-
-    button_2.place(
-        x=436.576904296875,
-        y=183.0,
-        width=76.107177734375,
-        height=43.0
-    )
-
-    canvas.create_text(
-        60.0,
-        65.0,
-        anchor="nw",
-        text="categoría normal.\n Otalgias,\n odontalgias, \ndolores inespecíficos leves, \ntraumatismos \n esguinces",
-        fill="#000000",
-        font=("MontserratRoman Medium", 24 * -1)
-    )
-
-
-def Abrir_menu_ingreso_datos_cargados(_window, color):
-    # print("Boton No de Naranja Apretado")
     global Father_off_windows
     if (_window == Father_off_windows):
         _window.destroy()  # destruyo la ventana anterior
     else:
         _window.destroy()
         Father_off_windows.destroy()
-    Ingreso_ya_clasificado(color)
+    Ingreso_ya_clasificado(categoria)
 
 
 def Abrir_menu_ingreso_guiado(_window):
@@ -813,6 +754,9 @@ def Ingreso_ya_clasificado(color):
         height=68.4775390625
     )
 
+
+    # este codigo es para el boton derivacion automatica
+    """
     image_image_8 = PhotoImage(
         file=relative_to_assets_Ingreso_ya_clasificado("image_8.png"))
     image_8 = canvas.create_image(
@@ -820,7 +764,6 @@ def Ingreso_ya_clasificado(color):
         123.0,
         image=image_image_8
     )
-
     image_image_9 = PhotoImage(
         file=relative_to_assets_Ingreso_ya_clasificado("image_9.png"))
     image_9 = canvas.create_image(
@@ -828,8 +771,8 @@ def Ingreso_ya_clasificado(color):
         123.0,
         image=image_image_9
     )
-
-    button_image_6 = PhotoImage(
+    """
+    """button_image_6 = PhotoImage(
         file=relative_to_assets_Ingreso_ya_clasificado("button_6.png"))
     button_6 = Button(
         image=button_image_6,
@@ -843,7 +786,7 @@ def Ingreso_ya_clasificado(color):
         y=88.6649169921875,
         width=184.4345703125,
         height=68.4775390625
-    )
+    )"""
 
     image_image_10 = PhotoImage(
         file=relative_to_assets_Ingreso_ya_clasificado("image_10.png"))
@@ -1308,8 +1251,6 @@ def clasificar(entry1,entry2,entry3,entry4,window):
     Agregar_Grafico_Pacientes_en_sala(window)
     Agregar_grafico_pacientes_categorias(window)
 
-
-
 def atender_manual_por_turno(window):
     print("Button_5 clicked")
 
@@ -1334,6 +1275,42 @@ def atender_manual_por_turno(window):
         Atender_paciente_clasificado(window)
 
 #para atender: usar def Atender_paciente_clasificado()
+
+def Mostrar_datos_buscar_Hisotrial(fecha_nacimiento,nombre,Num_caso_clinico,window):
+
+    #chequeo que no se haya hecho una busqueda en bano
+    if (fecha_nacimiento.get() != "" or nombre.get() != "" or Num_caso_clinico.get() != ""):
+
+        datos = Sala_de_espera.HandlerArchivos.buscar_paciente(nombre.get(),Num_caso_clinico.get())
+        global Tabla_busqueda
+        print("entry3: " + fecha_nacimiento.get())
+        print("entry4: " + nombre.get())
+        print("entry5: " + Num_caso_clinico.get())
+        print("button_5 clicked")
+
+        if (Tabla_busqueda is not None):
+            Tabla_busqueda.destroy()
+            Sala_de_espera.HandlerArchivos = cManejoArchivo()
+
+
+        tree = ttk.Treeview(window, columns=(
+            "Nombre", "Edad", "Gravedad", "Historial", "Enfermero", "Fecha", "CasoClinico", "Matricula"), show="headings")
+        tree.heading("Nombre", text="Nombre")
+        tree.heading("Edad", text="Edad")
+        tree.heading("Gravedad", text="Gravedad")
+        tree.heading("Historial", text="Historial")
+        tree.heading("Enfermero", text="Enfermero")
+        tree.heading("Fecha", text="Fecha")
+        tree.heading("CasoClinico", text="Caso Clinico")
+        tree.heading("Matricula", text="Matricula")
+        # Ajusta las coordenadas (x, y), ancho y alto
+        tree.place(x=884, y=536.0, width=285, height=80)
+        Tabla_busqueda = tree
+
+        # Insertar los últimos datos en el Treeview
+        for _, fila in datos.iterrows():
+            valores = fila.values
+            tree.insert("", "end", values=tuple(valores))
 
 if __name__ == '__main__':
     # Handler()

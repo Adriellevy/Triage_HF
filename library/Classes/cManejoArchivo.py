@@ -1,5 +1,5 @@
-#import datetime
-
+from datetime import datetime, timedelta
+import datetime as dt
 import os
 from pathlib import Path
 
@@ -12,7 +12,7 @@ class cManejoArchivo:
         # Go up three levels
         three_levels_up = current_directory.parent.parent.parent
         # Access the file in the desired location
-        file_path = three_levels_up / "2da-entrega-tp-2023-g06_levyogando" / "library" / "Classes" / "lista_pacientes.csv"
+        file_path = three_levels_up / "Triage_HF" / "lista_pacientes.csv"
         archivo_csv = file_path
 
         if archivo_csv==None or not os.path.isfile(archivo_csv):
@@ -64,31 +64,68 @@ class cManejoArchivo:
         print(f"Archivo con paciente derivado guardado en {self._archivo_csv}")
 
     def obtener_indice_paciente(self, nombre, fecha):
-        paciente = self.buscar_paciente(nombre, fecha)
+        paciente = self.busqueda_interna(nombre, fecha)
         if paciente is not None:
             return paciente.index
         else:
             return None
 
-    def busqueda_interna(self, nombre, fecha):
-        # Filtra el DataFrame en función del nombre y la fecha
-        pacientes_filtrados = self._base_de_pacientes[
-            (self._base_de_pacientes["Nombre"] == nombre) & (self._base_de_pacientes["Fecha"] == fecha)
-            ]
+    def busqueda_interna(self, nombre=None, edad=None, Caso_Clinico=None):
 
-        # Si no se encontraron pacientes, devuelve None
+        # Verifica si se proporciona al menos uno de los parámetros
+        if nombre is None and edad is None and Caso_Clinico is None:
+            return None
+
+        # Crea una serie de booleanos que indica si el valor está presente en la columna correspondiente
+        filtro_nombre = self._base_de_pacientes["Nombre"].isin([nombre]) if nombre else True
+        filtro_fecha = self._base_de_pacientes["Edad"].isin([edad]) if edad else True
+        filtro_caso_clinico = self._base_de_pacientes["Caso_Clinico"].isin([Caso_Clinico]) if Caso_Clinico else True
+
+        # Aplica los filtros
+        pacientes_filtrados = self._base_de_pacientes[filtro_nombre & filtro_fecha & filtro_caso_clinico]
+
+        # Filtra por la condición de menos de 72 horas
+        if not pacientes_filtrados.empty:
+            ahora = datetime.now()
+            pacientes_filtrados = pacientes_filtrados[pacientes_filtrados["Fecha"] > (ahora - dt.timedelta(hours=200))]
+
+        # Si no se encontraron pacientes después de aplicar todos los filtros, devuelve None
         if pacientes_filtrados.empty:
             return None
 
         # Devuelve el DataFrame correspondiente al paciente encontrado
         return pacientes_filtrados
 
+    def buscar_paciente(self, nombre="", caso_clinico=""):
+        """
+        Funcion generada por chat gpt
+        """
+        if nombre !="" and caso_clinico != "":
+            # Si ambos parámetros están presentes, busca si hay algún dato que comparte ambos
+            resultado = self._base_de_pacientes[
+                (self._base_de_pacientes['Nombre'].str.contains(nombre, case=False)) &
+                (self._base_de_pacientes['Caso Clinico'] == caso_clinico)
+                ]
+        elif nombre is not None:
+            resultado = self._base_de_pacientes[self._base_de_pacientes['Nombre'].str.contains(nombre, case=False)]
+        elif caso_clinico is not None:
+            resultado = self._base_de_pacientes[self._base_de_pacientes['Caso Clinico'] == caso_clinico]
+        else:
+            print("Se requiere al menos un nombre o un caso clínico.")
+            return None
+
+            # Filtrar por pacientes que hayan llegado hace menos de 72 horas
+        resultado = resultado[pd.to_datetime(resultado['Fecha']) > (datetime.now() - timedelta(hours=72))]
+
+        return resultado
     def BusquedaUltimo(self):
         indice_max_valor = self._base_de_pacientes['Caso Clinico'].idxmax()
         caso_clinico_mas_grande = self._base_de_pacientes.loc[indice_max_valor]['Caso Clinico']
         return caso_clinico_mas_grande
 
     def buscar_en_archivo_paciente(self, nombre,fecha):
+        """
+        Este metodo funcionaba antes, hay que revisar por los cambios de tipos"""
         # Filtra el DataFrame en función del nombre y la fecha
         pacientes_filtrados = self._base_de_pacientes[
             (self._base_de_pacientes["Nombre"] == nombre) & (self._base_de_pacientes["Fecha"] == fecha)

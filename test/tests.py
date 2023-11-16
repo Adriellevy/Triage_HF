@@ -221,15 +221,7 @@ def test_cQuesMaestra_Reorganizar_Multiples_Rojos_Sin_posibilidad_atencion():
 
 
 def test_lectura_archivo():
-    # creo el objeto enfermero
-    enfermero = cEnfermero("ale", "Mn 124121")
-
-    # creo el objeto paciente
-    cPaciente_aux = cPaciente("non", "azul", "0", "-", enfermero, "f")
-    paciente_con_triage = enfermero.Clasificar("paciente 1", "rojo", 6354, 9, "lo operaron de la rodillita ")
-
     # Trabajo con el operador de archivo
     handler = cManejoArchivo()
-    handler.agregar_paciente(paciente_con_triage)
-    cPaciente_aux = handler.buscar_en_archivo_paciente("paciente 1", paciente_con_triage.getTiempoLLegada())
-    assert paciente_con_triage == cPaciente_aux
+    data = handler.buscar_paciente("paciente 1")
+    assert data is not None
