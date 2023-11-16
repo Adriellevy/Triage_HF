@@ -1118,7 +1118,7 @@ def Agregar_Grafico_Pacientes_en_sala(window):
     # Datos para el gráfico de barras
     pacientes = ['']
 
-    pacientes_categorizados = len(Sala_de_espera.Lista_pacientes.Lista_de_pacientes)
+    pacientes_categorizados = len(Sala_de_espera.Lista_pacientes.Lista_de_colas) -4
     pacientes_sin_categorizar = len(Sala_de_espera.Sala_Espera)
     total = pacientes_categorizados +pacientes_sin_categorizar
 
@@ -1176,11 +1176,10 @@ def Agregar_grafico_pacientes_categorias(window):
     #Sala_de_espera.Lista_pacientes.Reorganizar_greedy()
     #La sigueinte porcion de cosigo es fea y bruta
 
-    Cant_rojo= Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_roja()
-    Cant_naranja = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_naranja()
-    Cant_amarillo = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_amarillo()
-    Cant_verde = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_verde()
-    Cant_azul = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_azul()
+    Cant_rojo= Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_tipo_1()
+    Cant_naranja = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_tipo_2()
+    Cant_amarillo = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_tipo_3()
+    Cant_verde = Sala_de_espera.Lista_pacientes.contar_pacientes_gravedad_tipo_4()
 
     global grafico_categorias_creado
     global canvas_grafico_pacientes_categorias_aux
@@ -1190,8 +1189,8 @@ def Agregar_grafico_pacientes_categorias(window):
         canvas_grafico_pacientes_categorias_aux.get_tk_widget().destroy()
 
     # Datos para el gráfico de barras
-    categorias = ['Rojo', 'Naranja', 'Amarillo', 'Verde', 'Azul']
-    valores1 = [Cant_rojo, Cant_naranja, Cant_amarillo, Cant_verde, Cant_azul]
+    categorias = ['Tipo_1', 'Tipo_2', 'Tipo_3', 'Tipo_4']
+    valores1 = [Cant_rojo, Cant_naranja, Cant_amarillo, Cant_verde]
 
     # Crear una figura de Matplotlib
     fig = plt.Figure(figsize=(5, 4), dpi=100)

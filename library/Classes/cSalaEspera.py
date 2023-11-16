@@ -6,7 +6,7 @@ class cSalaEspera:
     def __init__(self):
         self.algo = 1
         self.Lista_enfermeros_triage=[]
-        self.HandlerArchivos=cManejoArchivo()
+        self.HandlerArchivos = cManejoArchivo()
         self.Lista_pacientes = cQuesMaestra()
         self.Sala_Espera = []
         self.Num_ulitmo_caso_clinico=self.HandlerArchivos.BusquedaUltimo()

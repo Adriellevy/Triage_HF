@@ -68,3 +68,15 @@ class cQuesMaestra:
     def obtener_cantidad_total_pacientes(self):
         cantidad_total = sum(cola.qsize() for cola in self.Lista_de_colas)
         return cantidad_total
+
+    def contar_pacientes_gravedad_tipo_1(self):
+        return self.tipo_1.qsize()
+
+    def contar_pacientes_gravedad_tipo_2(self):
+        return self.tipo_2.qsize()
+
+    def contar_pacientes_gravedad_tipo_3(self):
+        return self.tipo_3.qsize()
+
+    def contar_pacientes_gravedad_tipo_4(self):
+        return self.tipo_4.qsize()
