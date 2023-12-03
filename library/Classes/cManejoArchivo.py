@@ -166,7 +166,7 @@ class cManejoArchivo:
         return paciente
 
     def obtener_ultimos_datos(self):
-        ultimos_datos = self._base_de_pacientes.tail(5)
+        ultimos_datos = self._base_de_pacientes
         return ultimos_datos
 
     def pacientes_buscando_cama(self):
