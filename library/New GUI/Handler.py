@@ -119,7 +119,7 @@ def Atender_paciente_clasificado(window):
     Sala_de_espera.DerivarProximo()
     Agregar_Grafico_Pacientes_en_sala(window)
     Agregar_grafico_pacientes_categorias(window)
-    mostrar_datos(window)
+    #mostrar_datos(window)
 
 def Clasificar_paciente_sin_clasificar(window):
     """
@@ -377,15 +377,22 @@ class cHandler():
             columnas = self.text_data.columns
             contador = 0
             frame = ttk.Frame(self.frame)
+            #Seteo de los nombres de la columna
             for i in columnas:
-                ttk.Label(frame, text=f'#{i}').grid(row=0, column=contador)
+                frame.columnconfigure(contador, weight=1, uniform='a')
+                ttk.Label(frame, text=f'{i}',borderwidth=5).grid(row=0, column=contador)
                 contador=contador+1
                 frame.pack(expand=True, fill='both', pady=4, padx=10)
-
+            #Mostrar pacientes
             for _, fila in self.text_data.iterrows():
-                valores = fila.values
-                text=tuple(valores)
-                self.Crear_Fila(_,fila).pack(expand = True, fill = 'both', pady =  4, padx = 10)
+                """valores = fila.values
+                text=tuple(valores)"""
+                if(_%2==0):
+                    self.Crear_Fila_azul(_,fila).pack(expand = True, fill = 'both', pady =  4, padx = 10)
+                else:
+                    self.Crear_Fila_Blanca(_,fila).pack(expand = True, fill = 'both', pady =  4, padx = 10)
+
+
             # scrollbar
             self.scrollbar = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
             self.canvas.configure(yscrollcommand=self.scrollbar.set)
@@ -416,21 +423,42 @@ class cHandler():
                 width=self.winfo_width(),
                 height=height)
 
-        def Crear_Fila(self, index, item):
+        def Crear_Fila_azul(self, index, item):
             frame = ttk.Frame(self.frame)
 
             # grid layout
             frame.rowconfigure(0, weight=1)
-            cant_columnas = 8*2 #se duplican la cantidad de columnas (para que haya una en el medio y
-                                # poder hacer de separador
-            frame.columnconfigure((0,1,2, 3,4,5,6,7,8), weight=1, uniform='a')
-
+            frame.config(style='Blue.TLabel')
             # widgets
             ttk.Label(frame, text=f'#{index}').grid(row=0, column=0)
             contador_columnas=0
+
+            # setings de cada dato y la distribucion por columnas
             for i in item:
-                #setings of
+                frame.columnconfigure(contador_columnas, weight=1, uniform='a')
+                ttk.Label(frame, text=f'{i}',background='#37B3E2',foreground="white").grid(row=0, column=contador_columnas)
+
+                contador_columnas=contador_columnas+1
+                #si el contador_columnas es par, este lo pinta de azul
+            style = ttk.Style()
+            style.configure('Blue.TLabel', background='#37B3E2', foreground='white')
+
+
+            return frame
+        def Crear_Fila_Blanca(self, index, item):
+            frame = ttk.Frame(self.frame)
+
+            # grid layout
+            frame.rowconfigure(0, weight=1)
+            # widgets
+            ttk.Label(frame, text=f'#{index}').grid(row=0, column=0)
+            contador_columnas=0
+
+            # setings de cada dato y la distribucion por columnas
+            for i in item:
+                frame.columnconfigure(contador_columnas, weight=1, uniform='a')
                 ttk.Label(frame, text=f'{i}').grid(row=0, column=contador_columnas)
+
                 contador_columnas=contador_columnas+1
             return frame
 
