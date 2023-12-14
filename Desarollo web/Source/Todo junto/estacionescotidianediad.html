@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="english">
+  <head>
+    <title>exported project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <style data-tag="reset-style-sheet">
+      html {  line-height: 1.15;}body {  margin: 0;}* {  box-sizing: border-box;  border-width: 0;  border-style: solid;}p,li,ul,pre,div,h1,h2,h3,h4,h5,h6,figure,blockquote,figcaption {  margin: 0;  padding: 0;}button {  background-color: transparent;}button,input,optgroup,select,textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0;}button,select {  text-transform: none;}button,[type="button"],[type="reset"],[type="submit"] {  -webkit-appearance: button;}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0;}button:-moz-focus,[type="button"]:-moz-focus,[type="reset"]:-moz-focus,[type="submit"]:-moz-focus {  outline: 1px dotted ButtonText;}a {  color: inherit;  text-decoration: inherit;}input {  padding: 2px 4px;}img {  display: block;}html { scroll-behavior: smooth  }
+    </style>
+    <style data-tag="default-style-sheet">
+      html {
+        font-family: Inter;
+        font-size: 16px;
+      }
+
+      body {
+        font-weight: 400;
+        font-style:normal;
+        text-decoration: none;
+        text-transform: none;
+        letter-spacing: normal;
+        line-height: 1.15;
+        color: var(--dl-color-gray-black);
+        background-color: var(--dl-color-gray-white);
+
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"
+    />
+  </head>
+  <body>
+    <link rel="stylesheet" href="./style.css" />
+    <div>
+      <link href="./estacionescotidianediad.css" rel="stylesheet" />
+
+      <div class="estacionescotidianediad-container">
+        <div class="estacionescotidianediad-estacionescotidianediad">
+          <span class="estacionescotidianediad-text">
+            <span>en sala de espera</span>
+          </span>
+          <img
+            src="public/external/vector1917-09mn.svg"
+            alt="Vector1917"
+            class="estacionescotidianediad-vector"
+          />
+          <span class="estacionescotidianediad-text02">
+            <span>Logout</span>
+          </span>
+          <img
+            src="public/external/rectangle1917-9h0d-200h.png"
+            alt="Rectangle1917"
+            class="estacionescotidianediad-rectangle"
+          />
+          <img
+            src="public/external/rectangle1917-9kkp-700h.png"
+            alt="Rectangle1917"
+            class="estacionescotidianediad-rectangle1"
+          />
+          <img
+            src="public/external/rectangle1918-5j5s-300w.png"
+            alt="Rectangle1918"
+            class="estacionescotidianediad-rectangle2"
+          />
+          <img
+            src="public/external/rectangle1918-2swt-200h.png"
+            alt="Rectangle1918"
+            class="estacionescotidianediad-rectangle3"
+          />
+          <div class="estacionescotidianediad-frame427319483">
+            <img
+              src="public/external/vector1918-x7t.svg"
+              alt="Vector1918"
+              class="estacionescotidianediad-vector1"
+            />
+            <span class="estacionescotidianediad-text04">
+              <span>Pacientes</span>
+            </span>
+          </div>
+          <div class="estacionescotidianediad-image"></div>
+          <div class="estacionescotidianediad-frame427319482">
+            <span class="estacionescotidianediad-text06">
+              <span>Estadisticas</span>
+            </span>
+            <img
+              src="public/external/graficodebarras112158-xzkw-200h.png"
+              alt="graficodebarras112158"
+              class="estacionescotidianediad-graficodebarras11"
+            />
+          </div>
+          <div class="estacionescotidianediad-frame427319481">
+            <span class="estacionescotidianediad-text08">
+              <span>Estaciones</span>
+            </span>
+            <img
+              src="public/external/carpamedica211919-gsze-200w.png"
+              alt="carpamedica211919"
+              class="estacionescotidianediad-carpamedica21"
+            />
+          </div>
+          <div class="estacionescotidianediad-frame427319480">
+            <img
+              src="public/external/vector1911-0hxw.svg"
+              alt="Vector1911"
+              class="estacionescotidianediad-vector2"
+            />
+            <span class="estacionescotidianediad-text10">
+              <span>Logout</span>
+            </span>
+          </div>
+          <span class="estacionescotidianediad-text12">
+            <span>Sistema Central</span>
+          </span>
+          <div class="estacionescotidianediad-frame427319479">
+            <img
+              src="public/external/rectangle461911-37r9-200h.png"
+              alt="Rectangle461911"
+              class="estacionescotidianediad-rectangle46"
+            />
+            <span class="estacionescotidianediad-text14">
+              <span>Ingreso Guiado</span>
+            </span>
+            <img
+              src="public/external/image1911-gclb.svg"
+              alt="Image1911"
+              class="estacionescotidianediad-image1"
+            />
+          </div>
+          <img
+            src="public/external/rectangule1911-zxq-600h.png"
+            alt="Rectangule1911"
+            class="estacionescotidianediad-rectangule"
+          />
+          <div class="estacionescotidianediad-table">
+            <div class="estacionescotidianediad-col1labels">
+              <div class="estacionescotidianediad-frame427319458">
+                <span class="estacionescotidianediad-text16 OtherDetail">
+                  <span>N° Box</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row1">
+                <span
+                  class="estacionescotidianediad-text18 ParagraphRegularParagraph"
+                >
+                  1
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row2">
+                <span
+                  class="estacionescotidianediad-text19 ParagraphRegularParagraph"
+                >
+                  2
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row3">
+                <span
+                  class="estacionescotidianediad-text20 ParagraphRegularParagraph"
+                >
+                  3
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row4">
+                <span
+                  class="estacionescotidianediad-text21 ParagraphRegularParagraph"
+                >
+                  4
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row5">
+                <span
+                  class="estacionescotidianediad-text22 ParagraphRegularParagraph"
+                >
+                  5
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row6">
+                <span
+                  class="estacionescotidianediad-text23 ParagraphRegularParagraph"
+                >
+                  6
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row7">
+                <span
+                  class="estacionescotidianediad-text24 ParagraphRegularParagraph"
+                >
+                  7
+                </span>
+              </div>
+            </div>
+            <div class="estacionescotidianediad-col2">
+              <div class="estacionescotidianediad-logo1">
+                <span class="estacionescotidianediad-text25 OtherDetail">
+                  <span>Dato 1</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row11">
+                <div class="estacionescotidianediad-check">
+                  <div class="estacionescotidianediad-check01">
+                    <img
+                      src="public/external/checki210-s2qd.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check02"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row21"></div>
+              <div class="estacionescotidianediad-row31">
+                <div class="estacionescotidianediad-check03">
+                  <div class="estacionescotidianediad-check04">
+                    <img
+                      src="public/external/checki210-y7b.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check05"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row41"></div>
+              <div class="estacionescotidianediad-row51"></div>
+              <div class="estacionescotidianediad-row61">
+                <div class="estacionescotidianediad-check06">
+                  <div class="estacionescotidianediad-check07">
+                    <img
+                      src="public/external/checki210-ecu.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check08"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row71"></div>
+            </div>
+            <div class="estacionescotidianediad-col3">
+              <div class="estacionescotidianediad-logo2">
+                <span class="estacionescotidianediad-text27 OtherDetail">
+                  <span>Dato 2</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row12">
+                <div class="estacionescotidianediad-check09">
+                  <div class="estacionescotidianediad-check10">
+                    <img
+                      src="public/external/checki210-jsmf.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check11"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row22"></div>
+              <div class="estacionescotidianediad-row32">
+                <div class="estacionescotidianediad-check12">
+                  <div class="estacionescotidianediad-check13">
+                    <img
+                      src="public/external/checki210-dpar.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check14"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row42">
+                <div class="estacionescotidianediad-check15">
+                  <div class="estacionescotidianediad-check16">
+                    <img
+                      src="public/external/checki210-2hh.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check17"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row52"></div>
+              <div class="estacionescotidianediad-row62"></div>
+              <div class="estacionescotidianediad-row72"></div>
+            </div>
+            <div class="estacionescotidianediad-col4">
+              <div class="estacionescotidianediad-logo3">
+                <span class="estacionescotidianediad-text29 OtherDetail">
+                  <span>Dato 3</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row13">
+                <div class="estacionescotidianediad-check18">
+                  <div class="estacionescotidianediad-check19">
+                    <img
+                      src="public/external/checki210-rpq.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check20"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row23">
+                <div class="estacionescotidianediad-check21">
+                  <div class="estacionescotidianediad-check22">
+                    <img
+                      src="public/external/checki210-z49l.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check23"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row33">
+                <div class="estacionescotidianediad-check24">
+                  <div class="estacionescotidianediad-check25">
+                    <img
+                      src="public/external/checki210-ic73.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check26"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row43"></div>
+              <div class="estacionescotidianediad-row53"></div>
+              <div class="estacionescotidianediad-row63">
+                <div class="estacionescotidianediad-check27">
+                  <div class="estacionescotidianediad-check28">
+                    <img
+                      src="public/external/checki210-ko3.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check29"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row73">
+                <div class="estacionescotidianediad-check30">
+                  <div class="estacionescotidianediad-check31">
+                    <img
+                      src="public/external/checki210-wfl3.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check32"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="estacionescotidianediad-col5">
+              <div class="estacionescotidianediad-logo4">
+                <span class="estacionescotidianediad-text31 OtherDetail">
+                  <span>Dato 4</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row14">
+                <div class="estacionescotidianediad-check33">
+                  <div class="estacionescotidianediad-check34">
+                    <img
+                      src="public/external/checki210-9b8t.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check35"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row24"></div>
+              <div class="estacionescotidianediad-row34">
+                <div class="estacionescotidianediad-check36">
+                  <div class="estacionescotidianediad-check37">
+                    <img
+                      src="public/external/checki210-pcp.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check38"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row44"></div>
+              <div class="estacionescotidianediad-row54">
+                <div class="estacionescotidianediad-check39">
+                  <div class="estacionescotidianediad-check40">
+                    <img
+                      src="public/external/checki210-rt9a.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check41"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row64">
+                <div class="estacionescotidianediad-check42">
+                  <div class="estacionescotidianediad-check43">
+                    <img
+                      src="public/external/checki210-4lah.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check44"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row74">
+                <div class="estacionescotidianediad-check45">
+                  <div class="estacionescotidianediad-check46">
+                    <img
+                      src="public/external/checki210-h7ks.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check47"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="estacionescotidianediad-col6highlight">
+              <div class="estacionescotidianediad-yourlogo">
+                <span class="estacionescotidianediad-text33 OtherDetail">
+                  <span>Resumen</span>
+                </span>
+              </div>
+              <div class="estacionescotidianediad-row15">
+                <div class="estacionescotidianediad-check48">
+                  <div class="estacionescotidianediad-check49">
+                    <img
+                      src="public/external/checki210-c3a9.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check50"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row25">
+                <div class="estacionescotidianediad-check51">
+                  <div class="estacionescotidianediad-check52">
+                    <img
+                      src="public/external/checki210-vmu.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check53"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row35">
+                <div class="estacionescotidianediad-check54">
+                  <div class="estacionescotidianediad-check55">
+                    <img
+                      src="public/external/checki210-c4ct.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check56"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row45">
+                <div class="estacionescotidianediad-check57">
+                  <div class="estacionescotidianediad-check58">
+                    <img
+                      src="public/external/checki210-ns1m.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check59"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row55">
+                <div class="estacionescotidianediad-check60">
+                  <div class="estacionescotidianediad-check61">
+                    <img
+                      src="public/external/checki210-xn6s.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check62"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row65">
+                <div class="estacionescotidianediad-check63">
+                  <div class="estacionescotidianediad-check64">
+                    <img
+                      src="public/external/checki210-0ach.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check65"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="estacionescotidianediad-row75">
+                <div class="estacionescotidianediad-check66">
+                  <div class="estacionescotidianediad-check67">
+                    <img
+                      src="public/external/checki210-sd3r.svg"
+                      alt="checkI210"
+                      class="estacionescotidianediad-check68"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="estacionescotidianediad-text35">
+            <span>Datos Boxes</span>
+          </span>
+          <div class="estacionescotidianediad-frame427319478">
+            <img
+              src="public/external/image2158-pby5.svg"
+              alt="Image2158"
+              class="estacionescotidianediad-image2"
+            />
+            <img
+              src="public/external/rectangle462158-qgk-200h.png"
+              alt="Rectangle462158"
+              class="estacionescotidianediad-rectangle461"
+            />
+            <img
+              src="public/external/rectangle452158-30qv-200h.png"
+              alt="Rectangle452158"
+              class="estacionescotidianediad-rectangle45"
+            />
+            <span class="estacionescotidianediad-text37">
+              <span>Settings</span>
+            </span>
+          </div>
+          <div class="estacionescotidianediad-frame427319476">
+            <img
+              src="public/external/ellipse12631-8enn-200h.png"
+              alt="Ellipse12631"
+              class="estacionescotidianediad-ellipse1"
+            />
+            <span class="estacionescotidianediad-text39">
+              <span>Buen Día, Enfermero Ian</span>
+            </span>
+            <span class="estacionescotidianediad-text41">
+              <span>Matricule id : 2015978</span>
+            </span>
+            <img
+              src="public/external/vector2631-ddvl.svg"
+              alt="Vector2631"
+              class="estacionescotidianediad-vector3"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
