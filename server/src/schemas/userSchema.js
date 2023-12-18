@@ -1,18 +1,24 @@
-import z from 'zod'
+import zod from 'zod'
 
-const userSchema = z.object({
-  user_name: z.string({
+const userSchema = zod.object({
+  user_name: zod.string({
     required_error: 'Name is required ',
   }),
-  phone_number: z.string({
-    required_error: 'Phone number is requires',
-  }),
-  email_address: z
+  user_email: zod
     .string({
       required_error: 'Email address is requires',
     })
     .email({ message: 'Invalid email address' })
     .toLowerCase(),
+  user_password: zod
+    .string({
+      required_error: 'Password is required',
+    })
+    .min(6, 'Password is too short - should be min 6 chars'),
+  user_password_confirmation: zod.string({
+    required_error: 'Password confirmation is required',
+  }),
+  user_rol: zod.enum(['DOCTOR', 'NURSE', 'HOSPITAL']),
 })
 
 export function validateUser(input) {
