@@ -1,5 +1,71 @@
 import React from 'react'
 import Head from 'next/head'
+import ScrollableList from '../components/ScrollableList/ScrollableList.js';
+
+const data = [
+  {
+    nombre: 'Paciente 1',
+    edad: 30,
+    gravedad: 'Alta',
+    historial: 'Historial del Paciente 1',
+    enfermero: 'Enfermero 1',
+    fecha: '2023-01-01',
+    casoClinico: 'Caso Clínico 1',
+    matricula: 'M12345',
+  },
+  {
+    nombre: 'Paciente 2',
+    edad: 25,
+    gravedad: 'Moderada',
+    historial: 'Historial del Paciente 2',
+    enfermero: 'Enfermero 2',
+    fecha: '2023-02-01',
+    casoClinico: 'Caso Clínico 2',
+    matricula: 'M67890',
+  },{
+    nombre: 'Paciente 3',
+    edad: 42,
+    gravedad: 'Leve',
+    historial: 'Historial del Paciente 3',
+    enfermero: 'Enfermero 1',
+    fecha: '2023-03-15',
+    casoClinico: 'Caso Clínico 3',
+    matricula: 'M12345',
+},
+{
+    nombre: 'Paciente 4',
+    edad: 30,
+    gravedad: 'Grave',
+    historial: 'Historial del Paciente 4',
+    enfermero: 'Enfermero 3',
+    fecha: '2023-04-10',
+    casoClinico: 'Caso Clínico 4',
+    matricula: 'M98765',
+},
+{
+    nombre: 'Paciente 5',
+    edad: 55,
+    gravedad: 'Moderada',
+    historial: 'Historial del Paciente 5',
+    enfermero: 'Enfermero 2',
+    fecha: '2023-05-22',
+    casoClinico: 'Caso Clínico 5',
+    matricula: 'M54321',
+}
+  // Agrega más pacientes según sea necesario
+];
+
+//estos datos ahora estan hardcodeados, pero podriasn cambiar dependiendo que es lo que se solicita en el centro
+const columnas = [
+  { label: 'Nombre', propiedad: 'nombre' },
+  { label: 'Edad', propiedad: 'edad' },
+  { label: 'Gravedad', propiedad: 'gravedad' },
+  { label: 'Historial', propiedad: 'historial' },
+  { label: 'Enfermero', propiedad: 'enfermero' },
+  { label: 'Fecha', propiedad: 'fecha' },
+  { label: 'Caso Clínico', propiedad: 'casoClinico' },
+  { label: 'Matricula', propiedad: 'matricula' },
+];
 
 const Pacientes = (props) => {
   return (
@@ -113,8 +179,11 @@ const Pacientes = (props) => {
             alt="Rectangule1964"
             className="pacientes-rectangule2"
           />
+          <span className='pacientes-rectangule2' > 
+          {data && <ScrollableList data={data} columns={columnas} />}
+          </span>
           <span className="pacientes-text18">
-            <span>Lista pacientes</span>
+            <span>Lista pacientes </span>
           </span>
           <img
             src="/external/image1964-dpc-200h.png"
@@ -440,6 +509,7 @@ const Pacientes = (props) => {
             position: absolute;
             border-radius: 30px;
           }
+          
           .pacientes-text16 {
             top: 148px;
             left: 851px;
@@ -456,14 +526,16 @@ const Pacientes = (props) => {
             font-stretch: normal;
             text-decoration: none;
           }
+
           .pacientes-rectangule2 {
-            top: 356px;
-            left: 290px;
-            width: 971px;
-            height: 233px;
+            top: 48.5%;
+            left: 22%;
+            width: 74%;
+            height: 29.12%;
+            border-radius: 3.75%;
             position: absolute;
-            border-radius: 30px;
-          }
+          } 
+
           .pacientes-text18 {
             top: 375px;
             left: 712px;
