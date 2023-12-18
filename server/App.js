@@ -1,8 +1,10 @@
 import express from 'express'
 import 'dotenv/config'
+
 import { corsMiddleware } from './src/middlewares/corsMiddleware.js'
 import { patientRouter } from './src/routes/patientRoutes.js'
 import { doctorRouter } from './src/routes/doctorRoutes.js'
+import { authRouter } from './src/routes/authRoutes.js'
 
 const PORT = process.env.PORTAPI ?? 3000
 
@@ -15,6 +17,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Triage Api</h1>')
 })
 
+app.use('/auth', authRouter)
 app.use('/patient', patientRouter)
 app.use('/doctor', doctorRouter)
 

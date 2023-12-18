@@ -12,7 +12,7 @@ CREATE TABLE Users (
   user_id INT NOT NULL AUTO_INCREMENT,
   user_name VARCHAR(50) NOT NULL,
   user_email VARCHAR(50) NOT NULL,
-  user_password VARCHAR(50) NOT NULL,
+  user_password VARCHAR(100) NOT NULL,
   user_type ENUM('DOCTOR', 'NURSE', 'HOSPITAL'),
   PRIMARY KEY(user_id)
 );
@@ -47,7 +47,7 @@ CREATE TABLE Patient (
 -- Insertar datos de ejemplo en la tabla User
 INSERT INTO Users (user_name, user_email, user_password, user_type)
 VALUES
-  ('Dr. Smith', 'dr.smith@example.com', 'password123', 'DOCTOR'),
+  ('Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
   ('Nurse Brown', 'nurse.brown@example.com', 'password456', 'NURSE'),
   ('Hospital Admin', 'admin@example.com', 'adminpassword', 'HOSPITAL');
 

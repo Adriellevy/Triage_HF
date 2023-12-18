@@ -3,12 +3,18 @@ import { connection } from '../../db.js'
 
 export class UserModel {
   static async getUserByUserName(user_name) {
-    const usersQuery = `
-    SELECT * FROM User WHERE user_name = ?;
-  `
-    const [user] = await connection.query(usersQuery, [user_name])
-    if (user.length === 0) return false
-    return user
+    try {
+      const usersQuery = `
+        SELECT * FROM Users WHERE user_name = ?;
+      `
+      const [[user]] = await connection.query(usersQuery, [user_name])
+      if (user.length === 0) return false
+      return user
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error en la consulta getUserByUserName:', error)
+      throw error
+    }
   }
 
   static async createNewUser(data) {

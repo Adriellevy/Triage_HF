@@ -1,20 +1,18 @@
-### Login
-POST http://localhost:3000/login
+POST http://localhost:3000/auth/login
 content-type: application/json
 
 {
-    "user_name": "New",
-    "user_password": "1990-01-15T02:00:00.000Z",
+    "user_name": "Dr. Smith",
+    "user_password": "password123"
 }
 
 ### Register
 POST http://localhost:3000/register
 content-type: application/json
-
 {
     "user_name": "New",
     "user_email": "dr.smith@example.com",
     "user_password": "password123",
     "user_password_confirmation": "password123",
-    "user_rol":"DOCTOR",
+    "user_rol":"DOCTOR"
 }

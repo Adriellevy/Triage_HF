@@ -10,7 +10,6 @@ export class PatientsModel {
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE';
     `
-
     const [patients] = await connection.query(patientsQuery)
     return patients
   }
