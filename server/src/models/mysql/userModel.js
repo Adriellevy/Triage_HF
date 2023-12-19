@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable camelcase */
 import { connection } from '../../db.js'
 
@@ -11,7 +12,6 @@ export class UserModel {
       if (user.length === 0) return false
       return user
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error en la consulta getUserByUserName:', error)
       throw error
     }

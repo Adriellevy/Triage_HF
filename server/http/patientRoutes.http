@@ -1,0 +1,38 @@
+### Get all patients
+GET http://localhost:3000/patient
+
+### Search Case 1: Search by name
+GET http://localhost:3000/patient/search?user_name=John%20Doe
+
+### Search Case 2: Search by date of birth
+GET http://localhost:3000/patient/search?date=1990-01-15
+
+### Search Case 3: Search by name and date of birth
+GET http://localhost:3000/patient/search?user_name=John%20Doe&date=1990-01-15
+
+### Get all patients awaiting admission
+GET http://localhost:3000/patient/search/awaiting-admission
+
+### Post a new patient (TODO)
+POST http://localhost:3000/users
+content-type: application/json
+
+{
+    "patient_name": "New",
+    "date_of_birth": "1990-01-15T02:00:00.000Z",
+    "patient_box": "Box1",
+    "patient_status": 1,
+    "doctor_id": 1,
+    "nurse_id": 1,
+}
+
+### Delete a patient (TODO)
+DELETE http://localhost:3000/patient/2
+
+### Update a patient (TODO)
+PATCH http://localhost:3000/patient/1
+Content-Type: application/json
+
+{
+  "patient_status": false
+}

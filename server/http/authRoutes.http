@@ -3,10 +3,10 @@ content-type: application/json
 
 {
     "user_name": "Dr. Smith",
-    "user_password": "shalom4all"
+    "user_password": "password123"
 }
 
-### Register
+### Register (TODO)
 POST http://localhost:3000/register
 content-type: application/json
 {

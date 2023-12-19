@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { PatientsModel } from '../models/mysql/patientModel.js'
 import {
   validatePartialPatient,
@@ -42,9 +43,40 @@ export class PatientController {
     }
   }
 
+  static async getPatientByNameOrDate(req, res) {
+    const { user_name, date } = req.query
+    try {
+      const users = await PatientsModel.getPatientByNameOrDate({
+        user_name,
+        date,
+      })
+      if (users) return res.json(users)
+      return res.status(404).json({ message: 'Patient not found' })
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
+  }
+
+  static async getPatientasdasd(req, res) {
+    // Pacientes con menos de 3 minutos de espera
+    // Tiempo de llegada - Tiempo de triage
+    // devuelve lista de pacientes
+    // estado en espera
+  }
+
+  static async getPatientsAwaitingAdmission(req, res) {
+    // TODO
+    try {
+      const users = await PatientsModel.getPatientsAwaitingAdmission()
+      if (users) return res.json(users)
+      return res.status(404).json({ message: 'Patient not found' })
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
+  }
+
   static async updatePatient(req, res) {
     // TODO
-    const data = validatePartialPatient(req.body)
   }
 
   static async deletePatient(req, res) {

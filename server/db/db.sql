@@ -25,16 +25,17 @@ CREATE TABLE Box (
 
 CREATE TABLE Patient (
   patient_id INT NOT NULL AUTO_INCREMENT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_name VARCHAR(50) NOT NULL UNIQUE,
   date_of_birth TIMESTAMP NOT NULL,
   entry_time TIMESTAMP NOT NULL,
   exit_time TIMESTAMP,
   patient_triage_time TIMESTAMP NOT NULL,
   patient_triage_level INT,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_box VARCHAR(50) DEFAULT NULL,
-  patient_status BOOLEAN,
+  patient_status ENUM('ALTA', 'EN ESPERA', 'EN ESPERA DE INTERNACION', 'INTERNADO'),
   patient_problem VARCHAR(500) NOT NULL,
+  patient_medication VARCHAR(500) NOT NULL,
   doctor_id INT,
   nurse_id INT,
   box_id INT,
@@ -44,7 +45,7 @@ CREATE TABLE Patient (
   PRIMARY KEY(patient_id)
 );
 
--- Insertar datos de ejemplo en la tabla User
+-- Insertar datos de ejemplo en la tabla Users
 INSERT INTO Users (user_name, user_email, user_password, user_type)
 VALUES
   ('Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
@@ -59,8 +60,8 @@ VALUES
   ('INTERNACION');
 
 -- Insertar datos de ejemplo en la tabla Patient
-INSERT INTO Patient (patient_name, date_of_birth, entry_time, patient_triage_time, patient_triage_level, box_id, patient_status, patient_problem, doctor_id, nurse_id)
+INSERT INTO Patient (patient_name, date_of_birth, entry_time, patient_triage_time, patient_triage_level, box_id, patient_status, patient_problem, patient_medication, doctor_id, nurse_id)
 VALUES
-  ('John Doe', '1990-01-15', '2023-01-01 08:00:00', '2023-01-01 08:30:00', 2, 1, true, 'Fever', 1, 2),
-  ('Jane Smith', '1985-05-22', '2023-01-02 10:30:00', '2023-01-02 11:00:00', 3, 2, false, 'Injury', 1, 2),
-  ('Bob Johnson', '1978-09-07', '2023-01-03 12:45:00', '2023-01-03 13:15:00', 1, 3, true, 'Headache', 2, 1);
+  ('John Doe', '1990-01-15', '2023-01-01 08:00:00', '2023-01-01 08:30:00', 2, 1, 'EN ESPERA', 'Fever', 'Medication 1', 1, 2),
+  ('Jane Smith', '1985-05-22', '2023-01-02 10:30:00', '2023-01-02 11:00:00', 3, 2, 'EN ESPERA DE INTERNACION', 'Injury', 'Medication 2', 1, 2),
+  ('Bob Johnson', '1978-09-07', '2023-01-03 12:45:00', '2023-01-03 13:15:00', 1, 3, 'INTERNADO', 'Headache', 'Medication 3', 2, 1);

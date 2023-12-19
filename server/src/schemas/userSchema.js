@@ -1,9 +1,12 @@
 import zod from 'zod'
 
 const userSchema = zod.object({
-  user_name: zod.string({
-    required_error: 'Name is required ',
-  }),
+  user_name: zod
+    .string({
+      required_error: 'Name is required ',
+    })
+    .min(1)
+    .max(50),
   user_email: zod
     .string({
       required_error: 'Email address is requires',

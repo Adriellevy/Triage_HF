@@ -1,0 +1,2 @@
+### Get all patients
+GET http://localhost:3000/box
