@@ -64,4 +64,14 @@ INSERT INTO Patient (patient_name, date_of_birth, entry_time, patient_triage_tim
 VALUES
   ('John Doe', '1990-01-15', '2023-01-01 08:00:00', '2023-01-01 08:30:00', 2, 1, 'EN ESPERA', 'Fever', 'Medication 1', 1, 2),
   ('Jane Smith', '1985-05-22', '2023-01-02 10:30:00', '2023-01-02 11:00:00', 3, 2, 'EN ESPERA DE INTERNACION', 'Injury', 'Medication 2', 1, 2),
-  ('Bob Johnson', '1978-09-07', '2023-01-03 12:45:00', '2023-01-03 13:15:00', 1, 3, 'INTERNADO', 'Headache', 'Medication 3', 2, 1);
+  ('Bob Johnson', '1978-09-07', '2023-01-03 12:45:00', '2023-01-03 13:15:00', 1, 3, 'INTERNADO', 'Headache', 'Medication 3', 2, 1),
+  ('Alice Johnson', '1980-03-12', '2023-02-05 09:15:00', '2023-02-05 09:30:00', 2, 1, 'EN ESPERA', 'Cough', 'Medication 4', 1, 2),
+  ('Bob Miller', '1995-07-18', '2023-02-10 11:45:00', '2023-02-10 12:00:00', 3, 2, 'ALTA', 'Sprained ankle', 'Medication 5', 1, 2),
+  ('Catherine Davis', '1988-11-25', '2023-02-15 14:30:00', '2023-02-15 14:45:00', 1, 3, 'EN ESPERA DE INTERNACION', 'Fever', 'Medication 6', 2, 1),
+  ('David Wilson', '1975-04-05', '2023-02-20 16:00:00', '2023-02-20 16:15:00', 2, 1, 'EN ESPERA', 'Back pain', 'Medication 7', 1, 2),
+  ('Eva Smith', '1992-09-14', '2023-02-25 18:30:00', '2023-02-25 18:45:00', 3, 2, 'INTERNADO', 'Migraine', 'Medication 8', 2, 1),
+  ('Frank Jones', '1983-01-30', '2023-03-02 21:00:00', '2023-03-02 21:15:00', 1, 3, 'EN ESPERA DE INTERNACION', 'Flu', 'Medication 9', 1, 2),
+  ('Grace Miller', '1970-06-08', '2023-03-07 23:45:00', '2023-03-08 00:00:00', 2, 1, 'EN ESPERA', 'Sore throat', 'Medication 10', 2, 1),
+  ('Henry Johnson', '1986-12-22', '2023-03-12 02:30:00', '2023-03-12 02:45:00', 3, 2, 'INTERNADO', 'Broken arm', 'Medication 11', 1, 2),
+  ('Ivy Davis', '1998-05-03', '2023-03-17 04:15:00', '2023-03-17 04:30:00', 1, 3, 'ALTA', 'Allergy', 'Medication 12', 2, 1),
+  ('Jack Wilson', '1972-10-10', '2023-03-22 06:00:00', '2023-03-22 06:15:00', 2, 1, 'EN ESPERA', 'Knee pain', 'Medication 13', 1, 2);
