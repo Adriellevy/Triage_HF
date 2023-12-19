@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import defaultButtonImage from '../../public/external/expandir.png'; // Ruta relativa desde la carpeta 'public'
+import React, { useState } from 'react'; // Ruta relativa desde la carpeta 'public'
+import { FaExpand } from "react-icons/fa6";
 
 const ScrollableList = ({ data, columns }) => {
   const [expandida, setExpandida] = useState(false);
@@ -18,7 +17,7 @@ const ScrollableList = ({ data, columns }) => {
       <div>
         {/* Botón fijo en la esquina superior derecha */}
         <button className="expandir-lista-btn" onClick={handleExpandirLista}>
-          <img src={defaultButtonImage} alt="Expandir Lista" />
+          <FaExpand color='black'/> 
         </button>
 
         <ul>

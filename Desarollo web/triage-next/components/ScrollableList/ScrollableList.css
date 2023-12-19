@@ -3,6 +3,7 @@
     margin-top: 4%;
     max-height: 25vh;
     overflow-y: auto;
+    overflow-x: auto;
     border: none;
     transition: all 0.3s ease;
     z-index: 2;
@@ -11,7 +12,7 @@
   /* Estilo para cada fila (paciente) */
   .scrollable-list li {
     display: grid;
-    grid-template-columns: repeat(8, 1fr); 
+    grid-template-columns: repeat(9, 1fr); 
     align-items: center; /* Centra verticalmente los elementos en cada fila */
     padding: 4px;
     border-bottom: 1px solid #d8d8d8;
@@ -23,12 +24,13 @@
     margin-left: 1%;
     margin-right: 1%;
     margin-bottom: 2%;
+    overflow-x: auto;
     position: sticky;
     top: 0; /* Fija la cabecera en la parte superior del contenedor */
     background-color: #FFFFFF; /* Color de fondo para la cabecera */
     z-index: 1; /* Asegura que la cabecera esté encima del contenido al desplazarse */
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     align-items: center;
     padding: 4px;
     border-bottom: 1px solid #d8d8d8;

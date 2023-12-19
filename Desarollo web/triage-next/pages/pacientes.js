@@ -1,159 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState }  from 'react'
 import Head from 'next/head'
 import ScrollableList from '../components/ScrollableList/ScrollableList.js';
+import { transformData } from '../Requests/RequestsPacientes.js';
 
-const data = [
-  {
-    nombre: 'Paciente 1',
-    edad: 30,
-    gravedad: 'Alta',
-    historial: 'Historial del Paciente 1',
-    enfermero: 'Enfermero 1',
-    fecha: '2023-01-01',
-    casoClinico: 'Caso Clínico 1',
-    matricula: 'M12345',
-  },
-  {
-    nombre: 'Paciente 2',
-    edad: 25,
-    gravedad: 'Moderada',
-    historial: 'Historial del Paciente 2',
-    enfermero: 'Enfermero 2',
-    fecha: '2023-02-01',
-    casoClinico: 'Caso Clínico 2',
-    matricula: 'M67890',
-  },{
-    nombre: 'Paciente 3',
-    edad: 42,
-    gravedad: 'Leve',
-    historial: 'Historial del Paciente 3',
-    enfermero: 'Enfermero 1',
-    fecha: '2023-03-15',
-    casoClinico: 'Caso Clínico 3',
-    matricula: 'M12345',
-},
-{
-    nombre: 'Paciente 4',
-    edad: 30,
-    gravedad: 'Grave',
-    historial: 'Historial del Paciente 4',
-    enfermero: 'Enfermero 3',
-    fecha: '2023-04-10',
-    casoClinico: 'Caso Clínico 4',
-    matricula: 'M98765',
-},
-{
-    nombre: 'Paciente 5',
-    edad: 55,
-    gravedad: 'Moderada',
-    historial: 'Historial del Paciente 5',
-    enfermero: 'Enfermero 2',
-    fecha: '2023-05-22',
-    casoClinico: 'Caso Clínico 5',
-    matricula: 'M54321',
-},{
-  nombre: 'Paciente 6',
-  edad: 28,
-  gravedad: 'Leve',
-  historial: 'Historial del Paciente 6',
-  enfermero: 'Enfermero 1',
-  fecha: '2023-06-05',
-  casoClinico: 'Caso Clínico 6',
-  matricula: 'M11223',
-},
-{
-  nombre: 'Paciente 7',
-  edad: 50,
-  gravedad: 'Grave',
-  historial: 'Historial del Paciente 7',
-  enfermero: 'Enfermero 4',
-  fecha: '2023-07-12',
-  casoClinico: 'Caso Clínico 7',
-  matricula: 'M33445',
-},
-{
-  nombre: 'Paciente 8',
-  edad: 35,
-  gravedad: 'Moderada',
-  historial: 'Historial del Paciente 8',
-  enfermero: 'Enfermero 2',
-  fecha: '2023-08-20',
-  casoClinico: 'Caso Clínico 8',
-  matricula: 'M55667',
-},
-{
-  nombre: 'Paciente 9',
-  edad: 45,
-  gravedad: 'Leve',
-  historial: 'Historial del Paciente 9',
-  enfermero: 'Enfermero 3',
-  fecha: '2023-09-04',
-  casoClinico: 'Caso Clínico 9',
-  matricula: 'M77889',
-},
-{
-  nombre: 'Paciente 10',
-  edad: 32,
-  gravedad: 'Grave',
-  historial: 'Historial del Paciente 10',
-  enfermero: 'Enfermero 1',
-  fecha: '2023-10-15',
-  casoClinico: 'Caso Clínico 10',
-  matricula: 'M99000',
-},
-{
-  nombre: 'Paciente 11',
-  edad: 60,
-  gravedad: 'Moderada',
-  historial: 'Historial del Paciente 11',
-  enfermero: 'Enfermero 4',
-  fecha: '2023-11-22',
-  casoClinico: 'Caso Clínico 11',
-  matricula: 'M11223',
-},
-{
-  nombre: 'Paciente 12',
-  edad: 29,
-  gravedad: 'Leve',
-  historial: 'Historial del Paciente 12',
-  enfermero: 'Enfermero 2',
-  fecha: '2023-12-01',
-  casoClinico: 'Caso Clínico 12',
-  matricula: 'M33445',
-},
-{
-  nombre: 'Paciente 13',
-  edad: 48,
-  gravedad: 'Grave',
-  historial: 'Historial del Paciente 13',
-  enfermero: 'Enfermero 3',
-  fecha: '2024-01-10',
-  casoClinico: 'Caso Clínico 13',
-  matricula: 'M55667',
-},
-{
-  nombre: 'Paciente 14',
-  edad: 38,
-  gravedad: 'Moderada',
-  historial: 'Historial del Paciente 14',
-  enfermero: 'Enfermero 1',
-  fecha: '2024-02-18',
-  casoClinico: 'Caso Clínico 14',
-  matricula: 'M77889',
-},
-{
-  nombre: 'Paciente 15',
-  edad: 55,
-  gravedad: 'Leve',
-  historial: 'Historial del Paciente 15',
-  enfermero: 'Enfermero 4',
-  fecha: '2024-03-25',
-  casoClinico: 'Caso Clínico 15',
-  matricula: 'M99000',
-}
-
-  // Agrega más pacientes según sea necesario
-];
 
 //estos datos ahora estan hardcodeados, pero podriasn cambiar dependiendo que es lo que se solicita en el centro
 const columnas = [
@@ -165,6 +14,7 @@ const columnas = [
   { label: 'Fecha', propiedad: 'fecha' },
   { label: 'Caso Clínico', propiedad: 'casoClinico' },
   { label: 'Matricula', propiedad: 'matricula' },
+  { label: 'Motivo de Consulta', propiedad: 'ProblemaPaciente' }
 ];
 
 const AbrirIngreso = () => {
@@ -175,6 +25,24 @@ const AbrirIngreso = () => {
 };
 
 const Pacientes = (props) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/patient');
+        const jsonData = await response.json();
+        // Assuming 'transformData' is the function from the previous example
+        const transformedData = transformData(jsonData);
+        setData(transformedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <>
       <div className="pacientes-container">
