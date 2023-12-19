@@ -1,9 +1,11 @@
 .scrollable-list {
-
+    position: relative;
     margin-top: 4%;
     max-height: 25vh;
     overflow-y: auto;
     border: none;
+    transition: all 0.3s ease;
+    z-index: 2;
   }
   
   /* Estilo para cada fila (paciente) */
@@ -20,24 +22,29 @@
     font-weight: bold;
     margin-left: 1%;
     margin-right: 1%;
+    margin-bottom: 2%;
     position: sticky;
     top: 0; /* Fija la cabecera en la parte superior del contenedor */
     background-color: #FFFFFF; /* Color de fondo para la cabecera */
     z-index: 1; /* Asegura que la cabecera esté encima del contenido al desplazarse */
-
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: center;
+    padding: 4px;
+    border-bottom: 1px solid #d8d8d8;
   }
   
 
   /* Estilo para cada celda en la fila */
-.scrollable-list .list-item-span {
-  padding: 8px; /* Ajusta el espaciado interno si es necesario */
-  border-right: 1px solid #000; /* Agrega un borde derecho entre cada columna */
-  display: block; /* Asegura que cada span ocupa todo el ancho disponible */
-}
-
-.scrollable-list .list-item-span:last-child {
-  border-right: none;
-}
+  .scrollable-list .list-item-span {
+    padding: 8px; /* Ajusta el espaciado interno si es necesario */
+    border-right: 1px solid #000; /* Agrega un borde derecho entre cada columna */
+    display: block; /* Asegura que cada span ocupa todo el ancho disponible */
+  }
+  
+  .scrollable-list .list-item-span:last-child {
+    border-right: none;
+  }
 
 /* Estilo para las filas pares */
 .scrollable-list .even-row {
@@ -53,4 +60,57 @@
   margin-right: 1%;
   background-color: #FFFFFF; /* Puedes ajustar el color según tus preferencias */
   border-radius: 8px;
+}
+
+/*----------------Expandible--------------*/
+.scrollable-list.expandida {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.fondo-opaco {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  z-index: 0; /* Coloca la capa opaca detrás de la lista */
+}
+
+.expandir-lista-btn {
+  position: absolute;
+  top: 0; /* Ajusta la distancia desde la parte superior */
+  right: 10px; /* Ajusta la distancia desde la derecha */
+  background-color: #ffffff; /* Color de fondo del botón */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.expandir-lista-btn img {
+  width: 20px; /* Ajusta el tamaño de la imagen según sea necesario */
+  height: 20px;
+}
+
+/* Ajuste para corregir la posición de la lista */
+.scrollable-list.expandida > div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Permite el desplazamiento vertical si es necesario */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
 }

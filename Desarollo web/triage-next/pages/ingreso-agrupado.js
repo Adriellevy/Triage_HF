@@ -1,5 +1,17 @@
 import React from 'react'
 import Head from 'next/head'
+import DateDropdown from '../components/DateWidget/dateDropdown';
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+const months = Array.from({ length: 12 }, (_, i) => i + 1);
+const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+const getSelectedDate = () => {
+  const selectedDay = document.getElementById('day').value;
+  const selectedMonth = document.getElementById('month').value;
+  const selectedYear = document.getElementById('year').value;
+
+  alert(`Selected Date: ${selectedMonth}/${selectedDay}/${selectedYear}`);
+  /* en vez de hacer el alert hacer que tome todos los datos y enviarlos al server*/
+};
 
 const IngresoAgrupado = (props) => {
   return (
@@ -39,7 +51,7 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text04">
             <span>Ingreso Personificado</span>
           </span>
-          <img
+          <input
             src="/external/textbox1851-x0i-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box"
@@ -50,9 +62,7 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text08">
             <span>Dolor</span>
           </span>
-          <img
-            src="/external/textbox1851-1r9h-200h.png"
-            alt="TextBox1851"
+          <input
             className="ingreso-agrupado-text-box01"
           />
           <span className="ingreso-agrupado-text10">
@@ -169,60 +179,52 @@ const IngresoAgrupado = (props) => {
             <span>Nuevo Ingreso</span>
           </span>
           <div className="ingreso-agrupado-frame427319463">
-            <img
-              src="/external/textbox1851-n3wk-200h.png"
-              alt="TextBox1851"
-              className="ingreso-agrupado-text-box02"
-            />
-            <img
-              src="/external/image1851-gx4m.svg"
-              alt="Image1851"
-              className="ingreso-agrupado-image07"
-            />
+            <select className='ingreso-agrupado-text-box02' id="frutas">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
           </div>
           <span className="ingreso-agrupado-text30">
             <span>Hace cuanto</span>
           </span>
           <div className="ingreso-agrupado-frame427319462">
-            <img
-              src="/external/textbox1851-lhph-200h.png"
-              alt="TextBox1851"
-              className="ingreso-agrupado-text-box03"
-            />
-            <img
-              src="/external/image1851-dij.svg"
-              alt="Image1851"
-              className="ingreso-agrupado-image08"
-            />
+          <select className='ingreso-agrupado-text-box03' id="frutas">
+                <option value="1">&lt; 24hrs</option>
+                <option value="2">&gt; 24hrs y &lt; 72hrs</option>
+                <option value="3">&gt; 72hrs</option>
+            </select>
           </div>
           <div className="ingreso-agrupado-frame427319461">
-            <img
-              src="/external/textbox1907-j6uk-200h.png"
-              alt="TextBox1907"
-              className="ingreso-agrupado-text-box04"
-            />
-            <img
-              src="/external/image1908-u6h.svg"
-              alt="Image1908"
-              className="ingreso-agrupado-image09"
-            />
+          <form>
+            <DateDropdown id="day" options={days} />
+            <DateDropdown id="month" options={months} />
+            <DateDropdown id="year" options={years} />
+          </form>
           </div>
           <img
             src="/external/rectangule1851-szda-200h.png"
             alt="Rectangule1851"
             className="ingreso-agrupado-rectangule"
           />
-          <img
+          <input
             src="/external/textbox1851-8ri-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box05"
           />
-          <img
+          <input
             src="/external/textbox1851-p0cc-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box06"
           />
-          <img
+          <input
             src="/external/textbox1851-414-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box07"
@@ -251,10 +253,10 @@ const IngresoAgrupado = (props) => {
           </span>
           <div className="ingreso-agrupado-frame427319460">
             <span className="ingreso-agrupado-text40">
-              <span>Triage</span>
+              <span onClick={getSelectedDate}>Triage</span>
             </span>
           </div>
-          <img
+          <input
             src="/external/textbox1861-fhjz-200h.png"
             alt="TextBox1861"
             className="ingreso-agrupado-text-box08"
@@ -265,7 +267,7 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text44">
             <span>Fecha nacimiento</span>
           </span>
-          <img
+          <input
             src="/external/textbox1861-ewaf-200h.png"
             alt="TextBox1861"
             className="ingreso-agrupado-text-box09"
@@ -273,7 +275,7 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text46">
             <span>BOX</span>
           </span>
-          <img
+          <input
             src="/external/textbox1862-85s5-200h.png"
             alt="TextBox1862"
             className="ingreso-agrupado-text-box10"
@@ -281,7 +283,7 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text48">
             <span>Triage</span>
           </span>
-          <img
+          <input
             src="/external/textbox1953-n5m7-200h.png"
             alt="TextBox1953"
             className="ingreso-agrupado-text-box11"
@@ -434,7 +436,8 @@ const IngresoAgrupado = (props) => {
             width: 323px;
             height: 45px;
             position: absolute;
-            border-radius: 14px;
+            border-radius: 15px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text06 {
             top: 163px;
@@ -475,6 +478,7 @@ const IngresoAgrupado = (props) => {
             height: 44px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text10 {
             top: 253px;
@@ -773,6 +777,7 @@ const IngresoAgrupado = (props) => {
             font-stretch: normal;
             text-decoration: none;
           }
+
           .ingreso-agrupado-frame427319463 {
             gap: 10px;
             top: 205px;
@@ -783,11 +788,15 @@ const IngresoAgrupado = (props) => {
             align-items: flex-start;
             flex-direction: column;
           }
+
           .ingreso-agrupado-text-box02 {
             width: 142px;
-            height: 21px;
+            height: 25px; 
             border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align: center;
           }
+
           .ingreso-agrupado-image07 {
             top: 16px;
             left: 133px;
@@ -826,6 +835,9 @@ const IngresoAgrupado = (props) => {
             width: 142px;
             height: 21px;
             border-radius: 14px;
+            border-color:black;
+            text-align:center;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-image08 {
             top: 16px;
@@ -849,6 +861,7 @@ const IngresoAgrupado = (props) => {
             width: 142px;
             height: 21px;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-image09 {
             top: 16px;
@@ -876,6 +889,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text-box06 {
             top: 558px;
@@ -884,6 +898,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text-box07 {
             top: 559px;
@@ -892,6 +907,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text32 {
             top: 538px;
@@ -1006,6 +1022,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text42 {
             top: 150px;
@@ -1046,6 +1063,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text46 {
             top: 261px;
@@ -1070,6 +1088,7 @@ const IngresoAgrupado = (props) => {
             height: 24px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text48 {
             top: 320px;
@@ -1094,6 +1113,7 @@ const IngresoAgrupado = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
           }
           .ingreso-agrupado-text50 {
             top: 238px;

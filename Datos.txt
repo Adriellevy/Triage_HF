@@ -1,0 +1,13 @@
+Datos
+Pasajes de Salta a Cafayate(4hrs): 
+	https://www.centraldepasajes.com.ar/cdp/pasajes-micro/salta/cafayate?FIda=12/18/2023&CntPas=2
+Taxis de cafayate a cachi(4hrs 30):
+	https://www.rome2rio.com/es/map/Cafayate/Cachi-localidad#r/Taxi/s/0
+Colectivos de Cachi a Pumamarca(9hrs):
+	https://www.rome2rio.com/es/map/Cachi-localidad/Purmamarca#r/Bus
+Colectivos de Purmamarca a Tilcara(25mins): 
+	https://www.rome2rio.com/map/Purmamarca/Tilcara#r/Bus/s/0
+Colectivos de Tilcara a Humauaca(40mins): 
+	https://www.plataforma10.com.ar/servicios/buscar-pasajes/tilcara/humahuaca/669/670/12-1-2024/_/1/0/0
+Colectivos de Humauaca a salta(5horas) (volvemos viernes 22:30): 
+	https://www.plataforma10.com.ar/servicios/buscar-pasajes/humahuaca/salta/670/321/13-1-2024/_/2/0/0
