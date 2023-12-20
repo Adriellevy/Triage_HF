@@ -1,6 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import DateDropdown from '../components/DateWidget/dateDropdown';
+//import TextBox from '../components/TextBox/TextBox.js'; no logre hacer que funcione chequear
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
 const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);

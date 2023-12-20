@@ -4,7 +4,7 @@ import ScrollableList from '../components/ScrollableList/ScrollableList.js';
 import { transformData } from '../Requests/RequestsPacientes.js';
 
 
-//estos datos ahora estan hardcodeados, pero podriasn cambiar dependiendo que es lo que se solicita en el centro
+//estos datos ahora estan hardcodeados, pero podrian cambiar dependiendo que es lo que se solicita en el centro
 const columnas = [
   { label: 'Nombre', propiedad: 'nombre' },
   { label: 'Edad', propiedad: 'edad' },
@@ -14,7 +14,7 @@ const columnas = [
   { label: 'Fecha', propiedad: 'fecha' },
   { label: 'Caso Clínico', propiedad: 'casoClinico' },
   { label: 'Matricula', propiedad: 'matricula' },
-  { label: 'Motivo de Consulta', propiedad: 'ProblemaPaciente' }
+  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
 ];
 
 const AbrirIngreso = () => {
