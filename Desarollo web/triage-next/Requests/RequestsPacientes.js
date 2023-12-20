@@ -1,4 +1,4 @@
-export function transformData(originalData) {
+export function transformDataPacientesEspera(originalData) {
     return originalData.map((patient) => {
       const age = new Date().getFullYear() - new Date(patient.date_of_birth).getFullYear();
       const severity = getSeverity(patient.patient_triage_level);
@@ -10,7 +10,6 @@ export function transformData(originalData) {
         historial: `Historial del Paciente ${patient.patient_id}`,
         enfermero: patient.nurse_name || 'No asignado',
         fecha: formatDate(patient.entry_time),
-        casoClinico: patient.patient_id,
         matricula: patient.doctor_id ? `M${patient.doctor_id}` : 'No asignado',
         problemaPaciente: patient.patient_problem || 'No especificado'
       };
@@ -38,3 +37,28 @@ export function transformData(originalData) {
     return date.toISOString().split('T')[0];
   }
 
+  export function transformDataPacientesInternacion(originalData) {
+    return originalData.map((patient) => {
+      const age = new Date().getFullYear() - new Date(patient.date_of_birth).getFullYear();
+      const severity = getSeverity(patient.patient_triage_level);
+      
+      return {
+        nombre: `Paciente ${patient.patient_name}` || 'No asignado',
+        edad: age || 'No asignado',
+        historial: `Historial del Paciente ${patient.patient_id}`,
+        enfermero: patient.nurse_name || 'No asignado',
+        fecha: formatDate(patient.entry_time),
+        matricula: patient.doctor_id ? `M${patient.doctor_id}` : 'No asignado',
+        problemaPaciente: patient.patient_problem || 'No especificado'
+      };
+    });
+  }
+  
+  export function transformDataBoxes(originalData) {
+    return originalData.map((box) => {      
+      return {
+        box_id: ` ${box.box_id}` || 'No asignado',
+        box_type: box.box_type || 'No asignado',
+      };
+    });
+  }

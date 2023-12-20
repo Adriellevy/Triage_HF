@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .contenedor {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            display: inline-block;
+        }
+
+        .texto-ajustado {
+            font-size: 2vw; /* Ajusta el valor según tus necesidades */
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var contenedores = document.querySelectorAll('.contenedor');
+
+            contenedores.forEach(function(contenedor) {
+                var contenedorWidth = contenedor.offsetWidth;
+                var textoAjustado = contenedor.querySelector('.texto-ajustado');
+                var fontSize = contenedorWidth * 0.08; // Ajusta el valor según tus necesidades
+
+                textoAjustado.style.fontSize = fontSize + 'px';
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="contenedor" style="width: 200px; height: 100px;">
+        <div class="texto-ajustado">
+            Texto.
+        </div>
+    </div>
+
+    <div class="contenedor" style="width: 400px; height: 200px;">
+        <div class="texto-ajustado">
+            Texto.
+        </div>
+    </div>
+</body>
+</html>

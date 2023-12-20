@@ -1,6 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 
+import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
+
 const Login = (props) => {
   return (
     <>
@@ -35,7 +37,7 @@ const Login = (props) => {
             <div className="login-next-icon">
               <div className="login-next">
                 <span className="login-text06">
-                  <span>Next</span>
+                  <AbrirIngreso/> {/*TODO POST*/}
                 </span>
               </div>
               <div className="login-icon">

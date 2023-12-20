@@ -1,7 +1,40 @@
-import React from 'react'
+import React, { useEffect,useState} from 'react'
 import Head from 'next/head'
 
+import ScrollableList from '../components/ScrollableList/ScrollableList.js';
+
+import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
+import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
+import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
+import AbrirSetings from '../components/Redirecionamiento/AbrirEdicionBoxes.js'; 
+import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js'; 
+
+
+import { transformDataBoxes } from '../Requests/RequestsPacientes.js';
+
+const Columnas_Boxes = [
+  { label: 'Box', propiedad: 'box_id' },
+  { label: 'Tipo', propiedad: 'box_type' }]
+/*El objetivo es obtener los pacientes en espera de ser atentidos, ahora se cargan todos los pacientes*/
+
 const Estacionescotidianediad = (props) => {
+
+  const [dataListaEnEspera, setData] = useState([]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/box');
+      const jsonData = await response.json();
+      const transformedData = transformDataBoxes(jsonData);
+      setData(transformedData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  fetchData();
+}, []);
+
   return (
     <>
       <div className="estacionescotidianediad-container">
@@ -18,7 +51,7 @@ const Estacionescotidianediad = (props) => {
             className="estacionescotidianediad-vector"
           />
           <span className="estacionescotidianediad-text02">
-            <span>Logout</span>
+            <AbrirLogin/>
           </span>
           <img
             src="/external/rectangle1917-511p-200h.png"
@@ -47,13 +80,13 @@ const Estacionescotidianediad = (props) => {
               className="estacionescotidianediad-vector1"
             />
             <span className="estacionescotidianediad-text04">
-              <span>Pacientes</span>
+              <AbrirPacientes/>
             </span>
           </div>
           <div className="estacionescotidianediad-image"></div>
           <div className="estacionescotidianediad-frame427319482">
             <span className="estacionescotidianediad-text06">
-              <span>Estadisticas</span>
+              <AbrirEstadisticas/>
             </span>
             <img
               src="/external/graficodebarras112158-vc2k-200h.png"
@@ -78,7 +111,7 @@ const Estacionescotidianediad = (props) => {
               className="estacionescotidianediad-vector2"
             />
             <span className="estacionescotidianediad-text10">
-              <span>Logout</span>
+              <AbrirLogin/> {/*TODO borrar cookies */}
             </span>
           </div>
           <span className="estacionescotidianediad-text12">
@@ -91,7 +124,7 @@ const Estacionescotidianediad = (props) => {
               className="estacionescotidianediad-rectangle46"
             />
             <span className="estacionescotidianediad-text14">
-              <span>Ingreso Guiado</span>
+              <AbrirIngreso/>
             </span>
             <img
               src="/external/image1911-63ck.svg"
@@ -104,352 +137,9 @@ const Estacionescotidianediad = (props) => {
             alt="Rectangule1911"
             className="estacionescotidianediad-rectangule"
           />
-          <div className="estacionescotidianediad-table">
-            <div className="estacionescotidianediad-col1labels">
-              <div className="estacionescotidianediad-frame427319458">
-                <span className="estacionescotidianediad-text16 OtherDetail">
-                  <span>N° Box</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row1">
-                <span className="estacionescotidianediad-text18 ParagraphRegularParagraph">
-                  1
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row2">
-                <span className="estacionescotidianediad-text19 ParagraphRegularParagraph">
-                  2
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row3">
-                <span className="estacionescotidianediad-text20 ParagraphRegularParagraph">
-                  3
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row4">
-                <span className="estacionescotidianediad-text21 ParagraphRegularParagraph">
-                  4
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row5">
-                <span className="estacionescotidianediad-text22 ParagraphRegularParagraph">
-                  5
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row6">
-                <span className="estacionescotidianediad-text23 ParagraphRegularParagraph">
-                  6
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row7">
-                <span className="estacionescotidianediad-text24 ParagraphRegularParagraph">
-                  7
-                </span>
-              </div>
-            </div>
-            <div className="estacionescotidianediad-col2">
-              <div className="estacionescotidianediad-logo1">
-                <span className="estacionescotidianediad-text25 OtherDetail">
-                  <span>Dato 1</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row11">
-                <div className="estacionescotidianediad-check">
-                  <div className="estacionescotidianediad-check01">
-                    <img
-                      src="/external/checki210-x5wh.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check02"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row21"></div>
-              <div className="estacionescotidianediad-row31">
-                <div className="estacionescotidianediad-check03">
-                  <div className="estacionescotidianediad-check04">
-                    <img
-                      src="/external/checki210-vq1f.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check05"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row41"></div>
-              <div className="estacionescotidianediad-row51"></div>
-              <div className="estacionescotidianediad-row61">
-                <div className="estacionescotidianediad-check06">
-                  <div className="estacionescotidianediad-check07">
-                    <img
-                      src="/external/checki210-tvi.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check08"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row71"></div>
-            </div>
-            <div className="estacionescotidianediad-col3">
-              <div className="estacionescotidianediad-logo2">
-                <span className="estacionescotidianediad-text27 OtherDetail">
-                  <span>Dato 2</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row12">
-                <div className="estacionescotidianediad-check09">
-                  <div className="estacionescotidianediad-check10">
-                    <img
-                      src="/external/checki210-c3f.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check11"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row22"></div>
-              <div className="estacionescotidianediad-row32">
-                <div className="estacionescotidianediad-check12">
-                  <div className="estacionescotidianediad-check13">
-                    <img
-                      src="/external/checki210-inu.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check14"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row42">
-                <div className="estacionescotidianediad-check15">
-                  <div className="estacionescotidianediad-check16">
-                    <img
-                      src="/external/checki210-xpx.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check17"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row52"></div>
-              <div className="estacionescotidianediad-row62"></div>
-              <div className="estacionescotidianediad-row72"></div>
-            </div>
-            <div className="estacionescotidianediad-col4">
-              <div className="estacionescotidianediad-logo3">
-                <span className="estacionescotidianediad-text29 OtherDetail">
-                  <span>Dato 3</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row13">
-                <div className="estacionescotidianediad-check18">
-                  <div className="estacionescotidianediad-check19">
-                    <img
-                      src="/external/checki210-0x67.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check20"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row23">
-                <div className="estacionescotidianediad-check21">
-                  <div className="estacionescotidianediad-check22">
-                    <img
-                      src="/external/checki210-rb1t.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check23"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row33">
-                <div className="estacionescotidianediad-check24">
-                  <div className="estacionescotidianediad-check25">
-                    <img
-                      src="/external/checki210-9je1j.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check26"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row43"></div>
-              <div className="estacionescotidianediad-row53"></div>
-              <div className="estacionescotidianediad-row63">
-                <div className="estacionescotidianediad-check27">
-                  <div className="estacionescotidianediad-check28">
-                    <img
-                      src="/external/checki210-cr5.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check29"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row73">
-                <div className="estacionescotidianediad-check30">
-                  <div className="estacionescotidianediad-check31">
-                    <img
-                      src="/external/checki210-8kfm.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check32"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="estacionescotidianediad-col5">
-              <div className="estacionescotidianediad-logo4">
-                <span className="estacionescotidianediad-text31 OtherDetail">
-                  <span>Dato 4</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row14">
-                <div className="estacionescotidianediad-check33">
-                  <div className="estacionescotidianediad-check34">
-                    <img
-                      src="/external/checki210-odcf.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check35"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row24"></div>
-              <div className="estacionescotidianediad-row34">
-                <div className="estacionescotidianediad-check36">
-                  <div className="estacionescotidianediad-check37">
-                    <img
-                      src="/external/checki210-2wm.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check38"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row44"></div>
-              <div className="estacionescotidianediad-row54">
-                <div className="estacionescotidianediad-check39">
-                  <div className="estacionescotidianediad-check40">
-                    <img
-                      src="/external/checki210-zvjf.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check41"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row64">
-                <div className="estacionescotidianediad-check42">
-                  <div className="estacionescotidianediad-check43">
-                    <img
-                      src="/external/checki210-fe3yk.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check44"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row74">
-                <div className="estacionescotidianediad-check45">
-                  <div className="estacionescotidianediad-check46">
-                    <img
-                      src="/external/checki210-1voa.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check47"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="estacionescotidianediad-col6highlight">
-              <div className="estacionescotidianediad-yourlogo">
-                <span className="estacionescotidianediad-text33 OtherDetail">
-                  <span>Resumen</span>
-                </span>
-              </div>
-              <div className="estacionescotidianediad-row15">
-                <div className="estacionescotidianediad-check48">
-                  <div className="estacionescotidianediad-check49">
-                    <img
-                      src="/external/checki210-65yu.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check50"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row25">
-                <div className="estacionescotidianediad-check51">
-                  <div className="estacionescotidianediad-check52">
-                    <img
-                      src="/external/checki210-gs5h.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check53"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row35">
-                <div className="estacionescotidianediad-check54">
-                  <div className="estacionescotidianediad-check55">
-                    <img
-                      src="/external/checki210-kwb4.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check56"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row45">
-                <div className="estacionescotidianediad-check57">
-                  <div className="estacionescotidianediad-check58">
-                    <img
-                      src="/external/checki210-jmqf.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check59"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row55">
-                <div className="estacionescotidianediad-check60">
-                  <div className="estacionescotidianediad-check61">
-                    <img
-                      src="/external/checki210-l0as.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check62"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row65">
-                <div className="estacionescotidianediad-check63">
-                  <div className="estacionescotidianediad-check64">
-                    <img
-                      src="/external/checki210-37z.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check65"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="estacionescotidianediad-row75">
-                <div className="estacionescotidianediad-check66">
-                  <div className="estacionescotidianediad-check67">
-                    <img
-                      src="/external/checki210-cq0e.svg"
-                      alt="checkI210"
-                      className="estacionescotidianediad-check68"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <span className="estacionescotidianediad-text35">
-            <span>Datos Boxes</span>
+          {/*TODO hacer lista despligue BOXES*/}
+          <span className="estacionescotidianediad-rectangule">
+          <ScrollableList className="" data={dataListaEnEspera} columns={Columnas_Boxes}/>
           </span>
           <div className="estacionescotidianediad-frame427319478">
             <img
@@ -468,7 +158,7 @@ const Estacionescotidianediad = (props) => {
               className="estacionescotidianediad-rectangle45"
             />
             <span className="estacionescotidianediad-text37">
-              <span>Settings</span>
+              <AbrirSetings/>
             </span>
           </div>
           <div className="estacionescotidianediad-frame427319476">

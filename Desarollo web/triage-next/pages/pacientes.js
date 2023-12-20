@@ -1,40 +1,68 @@
 import React, { useEffect, useState }  from 'react'
+import Link from 'next/link';
 import Head from 'next/head'
+
 import ScrollableList from '../components/ScrollableList/ScrollableList.js';
-import { transformData } from '../Requests/RequestsPacientes.js';
+import { transformDataPacientesEspera } from '../Requests/RequestsPacientes.js';
+import { transformDataPacientesInternacion } from '../Requests/RequestsPacientes.js';
 
-
+import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
+import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
+import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
+import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
+import AbrirSetings from '../components/Redirecionamiento/AbrirEdicionBoxes.js'; 
 //estos datos ahora estan hardcodeados, pero podrian cambiar dependiendo que es lo que se solicita en el centro
-const columnas = [
+const columnasEnEspera = [
   { label: 'Nombre', propiedad: 'nombre' },
   { label: 'Edad', propiedad: 'edad' },
   { label: 'Gravedad', propiedad: 'gravedad' },
   { label: 'Historial', propiedad: 'historial' },
   { label: 'Enfermero', propiedad: 'enfermero' },
   { label: 'Fecha', propiedad: 'fecha' },
-  { label: 'Caso Clínico', propiedad: 'casoClinico' },
-  { label: 'Matricula', propiedad: 'matricula' },
+  { label: 'Medico', propiedad: 'matricula' },
+  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
+];
+const columnasinternacion = [
+  { label: 'Nombre', propiedad: 'nombre' },
+  { label: 'Edad', propiedad: 'edad' },
+  { label: 'Historial', propiedad: 'historial' },
+  { label: 'Enfermero', propiedad: 'enfermero' },
+  { label: 'Fecha', propiedad: 'fecha' },
+  { label: 'Medico', propiedad: 'matricula' },
   { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
 ];
 
-const AbrirIngreso = () => {
-  // Abre una nueva ventana con una URL específica
-  const currentUrl = 'http://localhost:3001/ingreso-agrupado';
-  window.open(currentUrl, '_blank');
-  //No se puede cerrar (no se porque)
-};
 
 const Pacientes = (props) => {
-  const [data, setData] = useState([]);
-
+  
+  /*El objetivo es obtener los pacientes en espera de ser atentidos, ahora se cargan todos los pacientes*/
+  const [dataListaEnEspera, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:3000/patient');
         const jsonData = await response.json();
         // Assuming 'transformData' is the function from the previous example
-        const transformedData = transformData(jsonData);
+        const transformedData = transformDataPacientesEspera(jsonData);
         setData(transformedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /*El objetivo es obtener los pacientes en espera internacion*/
+  const [dataListaEsperaInternacion, FijarDatos] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');
+        const dtajson = await rta.json();
+        // Assuming 'transformData' is the function from the previous example
+        const dataListaEsperaInternacion = transformDataPacientesInternacion(dtajson);
+        FijarDatos(dataListaEsperaInternacion);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -77,7 +105,7 @@ const Pacientes = (props) => {
               className="pacientes-image"
             />
             <span className="pacientes-text">
-              <span onClick={AbrirIngreso}>Ingreso Guiado</span>
+            <AbrirIngreso />
             </span>
           </div>
           <div className="pacientes-frame427319489">
@@ -97,7 +125,7 @@ const Pacientes = (props) => {
               className="pacientes-graficodebarras11"
             />
             <span className="pacientes-text04">
-              <span>Estadisticas</span>
+              <AbrirEstadisticas/>
             </span>
           </div>
           <div className="pacientes-frame427319487">
@@ -107,7 +135,7 @@ const Pacientes = (props) => {
               className="pacientes-image1"
             />
             <span className="pacientes-text06">
-              <span>Pacientes</span>
+              <AbrirEstaciones/>
             </span>
           </div>
           <div className="pacientes-frame427319486">
@@ -117,7 +145,7 @@ const Pacientes = (props) => {
               className="pacientes-vector1"
             />
             <span className="pacientes-text08">
-              <span>Logout</span>
+              <AbrirLogin/>
             </span>
           </div>
           <span className="pacientes-text10">
@@ -130,17 +158,20 @@ const Pacientes = (props) => {
               className="pacientes-image2"
             />
             <span className="pacientes-text12">
-              <span>Settings</span>
+              <AbrirSetings/>
             </span>
           </div>
           <img
-            src="/external/rectangule1904-emmu-300h.png"
-            alt="Rectangule1904"
-            className="pacientes-rectangule"
+              src="/external/rectangule1904-emmu-300h.png"
+              alt="Rectangule1904"
+              className="pacientes-rectangule"
           />
-          <span className="pacientes-text14">
-            <span>Pacientes espera de internacion</span>
+          <span className='pacientes-rectangules'>
+            {dataListaEsperaInternacion && <ScrollableList data={dataListaEsperaInternacion} columns={columnasinternacion} />}
           </span>
+          <span className="pacientes-text14">
+             <span>Pacientes espera de internacion</span>
+           </span>
           <img
             src="/external/rectangule1919-b4cl-300h.png"
             alt="Rectangule1919"
@@ -154,8 +185,8 @@ const Pacientes = (props) => {
             alt="Rectangule1964"
             className="pacientes-rectangule2"
           />
-          <span className='pacientes-rectangule2' > 
-          {data && <ScrollableList data={data} columns={columnas} />}
+          <span className='pacientes-rectangules2' > 
+          {dataListaEnEspera && <ScrollableList data={dataListaEnEspera} columns={columnasEnEspera} />}
           </span>
           <span className="pacientes-text18">
             <span>Lista pacientes </span>
@@ -460,6 +491,14 @@ const Pacientes = (props) => {
             position: absolute;
             border-radius: 30px;
           }
+          .pacientes-rectangules {
+            top: 170px;
+            left: 305px;
+            width: 500px;
+            height: 150px;
+            position: absolute;
+            border-radius: 30px;
+          }
           .pacientes-text14 {
             top: 149px;
             left: 413px;
@@ -510,6 +549,14 @@ const Pacientes = (props) => {
             border-radius: 3.75%;
             position: absolute;
           } 
+          .pacientes-rectangules2 {
+            top: 54.5%;
+            left: 22.5%;
+            width: 74%;
+            height: 29.12%;
+            border-radius: 3.75%;
+            position: absolute;
+          }
 
           .pacientes-text18 {
             top: 375px;

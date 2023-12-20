@@ -1,6 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
 import DateDropdown from '../components/DateWidget/dateDropdown';
+
+import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
+import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
+import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
+import AbrirSetings from '../components/Redirecionamiento/AbrirEdicionBoxes.js'; 
+import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js'; 
+
 //import TextBox from '../components/TextBox/TextBox.js'; no logre hacer que funcione chequear
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -79,7 +86,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-vector"
             />
             <span className="ingreso-agrupado-text14">
-              <span>Logout</span>
+              {/*Aca estaba un login raro*/}
             </span>
           </div>
           <img
@@ -119,7 +126,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-image03"
             />
             <span className="ingreso-agrupado-text18">
-              <span>Pacientes</span>
+              <AbrirPacientes/>
             </span>
           </div>
           <div className="ingreso-agrupado-image04"></div>
@@ -135,7 +142,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-button"
             />
             <span className="ingreso-agrupado-text20">
-              <span>Estadisticas</span>
+              <AbrirEstadisticas/>
             </span>
           </div>
           <div className="ingreso-agrupado-frame427319465">
@@ -150,7 +157,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-rectangle45"
             />
             <span className="ingreso-agrupado-text22">
-              <span>Estaciones</span>
+              <AbrirEstaciones/>
             </span>
           </div>
           <div className="ingreso-agrupado-frame427319464">
@@ -160,7 +167,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-vector1"
             />
             <span className="ingreso-agrupado-text24">
-              <span>Logout</span>
+              <AbrirLogin/>
             </span>
           </div>
           <span className="ingreso-agrupado-text26">
@@ -309,7 +316,7 @@ const IngresoAgrupado = (props) => {
               className="ingreso-agrupado-button3"
             />
             <span className="ingreso-agrupado-text52">
-              <span>Settings</span>
+              <AbrirSetings/>
             </span>
           </div>
         </div>

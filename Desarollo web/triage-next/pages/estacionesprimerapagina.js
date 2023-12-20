@@ -1,6 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
 
+import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
+import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
+import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
+import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
+import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js'; 
+
 const Estacionesprimerapagina = (props) => {
   return (
     <>
@@ -34,7 +40,7 @@ const Estacionesprimerapagina = (props) => {
               className="estacionesprimerapagina-vector1"
             />
             <span className="estacionesprimerapagina-text04">
-              <span>Logout</span>
+              <AbrirLogin/>
             </span>
           </div>
           <img
@@ -68,7 +74,7 @@ const Estacionesprimerapagina = (props) => {
               </div>
             </div>
             <span className="estacionesprimerapagina-text06">
-              <span>Pacientes</span>
+              <AbrirPacientes/>
             </span>
           </div>
           <div className="estacionesprimerapagina-frame427319473">
@@ -83,7 +89,7 @@ const Estacionesprimerapagina = (props) => {
               className="estacionesprimerapagina-rectangle45"
             />
             <span className="estacionesprimerapagina-text08">
-              <span>Estadisticas</span>
+              <AbrirEstadisticas/>
             </span>
             <img
               src="/external/graficodebarras112158-rlf-200h.png"
@@ -98,7 +104,7 @@ const Estacionesprimerapagina = (props) => {
               className="estacionesprimerapagina-rectangle461"
             />
             <span className="estacionesprimerapagina-text10">
-              <span>Estaciones</span>
+              <AbrirEstaciones/>
             </span>
             <img
               src="/external/carpamedica211914-6tr2-200w.png"
@@ -113,7 +119,7 @@ const Estacionesprimerapagina = (props) => {
               className="estacionesprimerapagina-vector3"
             />
             <span className="estacionesprimerapagina-text12">
-              <span>Logout</span>
+              <AbrirLogin/>
             </span>
           </div>
           <span className="estacionesprimerapagina-text14">
@@ -126,7 +132,7 @@ const Estacionesprimerapagina = (props) => {
               className="estacionesprimerapagina-rectangle462"
             />
             <span className="estacionesprimerapagina-text16">
-              <span>Ingreso Guiado</span>
+              <AbrirIngreso/>
             </span>
             <img
               src="/external/image1916-slio.svg"

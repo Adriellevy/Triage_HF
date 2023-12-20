@@ -1,6 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
 
+
+import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
+import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
+import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
+import AbrirSetings from '../components/Redirecionamiento/AbrirEdicionBoxes.js'; 
+import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js'; 
+
 const Estadisticas = (props) => {
   return (
     <>
@@ -46,7 +53,7 @@ const Estadisticas = (props) => {
               className="estadisticas-vector"
             />
             <span className="estadisticas-text02">
-              <span>Ingreso</span>
+              <AbrirPacientes/>
             </span>
           </div>
           <div className="estadisticas-frame427319495">
@@ -56,7 +63,7 @@ const Estadisticas = (props) => {
               className="estadisticas-image"
             />
             <span className="estadisticas-text04">
-              <span>Estaciones</span>
+              <AbrirEstaciones/>
             </span>
           </div>
           <div className="estadisticas-frame427319494">
@@ -66,7 +73,7 @@ const Estadisticas = (props) => {
               className="estadisticas-image1"
             />
             <span className="estadisticas-text06">
-              <span>Ingreso Guiado</span>
+              <AbrirIngreso/>
             </span>
           </div>
           <div className="estadisticas-frame427319493">
@@ -80,7 +87,7 @@ const Estadisticas = (props) => {
               </div>
             </div>
             <span className="estadisticas-text08">
-              <span>Logout</span>
+              <AbrirLogin/>
             </span>
           </div>
           <span className="estadisticas-text10">
@@ -93,7 +100,7 @@ const Estadisticas = (props) => {
           />
           <div className="estadisticas-frame427319500">
             <span className="estadisticas-text12">
-              <span>Pacientes</span>
+              <AbrirPacientes/>
             </span>
             <div className="estadisticas-frame427319499">
               <img
@@ -242,7 +249,7 @@ const Estadisticas = (props) => {
               className="estadisticas-image2"
             />
             <span className="estadisticas-text49">
-              <span>Settings</span>
+              <AbrirSetings/>
             </span>
           </div>
           <img
