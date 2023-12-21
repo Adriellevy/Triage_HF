@@ -21,4 +21,32 @@ export class UserModel {
     // TODO
     const { user_name, user_email, hash_password } = data
   }
+
+  static async getAllDoctors() {
+    try {
+      const usersQuery = `
+        SELECT * FROM Users WHERE user_type = ?;
+      `
+      const [user] = await connection.query(usersQuery, ['DOCTOR'])
+      if (user.length === 0) return false
+      return user
+    } catch (error) {
+      console.error('Error en la consulta getUserByUserName:', error)
+      throw error
+    }
+  }
+
+  static async getAllNurse() {
+    try {
+      const usersQuery = `
+        SELECT * FROM Users WHERE user_type = ?;
+      `
+      const [user] = await connection.query(usersQuery, ['NURSE'])
+      if (user.length === 0) return false
+      return user
+    } catch (error) {
+      console.error('Error en la consulta getUserByUserName:', error)
+      throw error
+    }
+  }
 }

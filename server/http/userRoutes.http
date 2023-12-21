@@ -1,0 +1,5 @@
+### Get all doctors
+GET http://localhost:3000/users/doctor
+
+### Get all nurses
+GET http://localhost:3000/users/nurse
