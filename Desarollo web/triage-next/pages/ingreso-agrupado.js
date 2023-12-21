@@ -1,7 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 import DateDropdown from '../components/DateWidget/dateDropdown';
-import SelectDinamico from '../components/SelectDinamico/SelectDinamico.js'
+import SelectDinamicoEnfermeros from '../components/SelectDinamico/SelectDinamicoEnfermeros.js'
+import SelectDinamicoMedicos from '../components/SelectDinamico/SelectDinamicoMedicos.js';
 
 import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
 import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';

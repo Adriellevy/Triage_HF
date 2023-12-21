@@ -9,7 +9,7 @@ const SelectDinamico = () => {
     // Realizar el fetch a la IP y actualizar el estado con las opciones obtenidas
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.0.19:3000/asdlg');
+        const response = await fetch('http://192.168.0.19:3000/users/doctor');
         const data = await response.json();
         setOptions(data.opciones); // Asegúrate de ajustar la propiedad de las opciones según la respuesta de tu API
       } catch (error) {
