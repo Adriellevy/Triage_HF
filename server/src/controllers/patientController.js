@@ -16,19 +16,28 @@ export class PatientController {
   }
 
   static async createNewPatient(req, res) {
-    // TODO: validatePatient
-    const data = validatePatient(req.body)
-    if (!data.success) {
-      return res.status(400).json({ error: JSON.parse(data.error.message) })
+    const result = await validatePatient(req.body)
+    if (!result.success) {
+      return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
+    // console.log(result.data)
     try {
-      // TODO: PatientsModel.createNewPatient
-      const newPatient = await PatientsModel.createNewPatient({
-        data: data.data,
+      const newPatientId = await PatientsModel.createNewPatient({
+        data: result.data,
       })
-      return res.status(201).json(newPatient)
+      // console.log('New Patient ID:', newPatientId)
+      if (newPatientId) {
+        return res.status(201).json({
+          message: 'New patient created successfully',
+          // eslint-disable-next-line comma-dangle
+          patientId: newPatientId,
+        })
+        // eslint-disable-next-line no-else-return
+      }
+      return res.status(500).json({ message: 'Failed to create a new patient' })
     } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' })
+      console.error('Error creating a new patient:', error)
+      return res.status(500).json({ message: 'Something went wrong' })
     }
   }
 
@@ -37,6 +46,17 @@ export class PatientController {
       const { id } = req.params
       const User = await PatientsModel.getPatientById({ id })
       if (User) return res.json(User)
+      return res.status(404).json({ message: 'Patient not found' })
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
+  }
+
+  static async addBoxPatient(req, res) {
+    // TODO
+    try {
+      const users = await PatientsModel.getPatientByNameOrDate()
+      if (users) return res.json(users)
       return res.status(404).json({ message: 'Patient not found' })
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })
@@ -65,7 +85,6 @@ export class PatientController {
   }
 
   static async getPatientsAwaitingAdmission(req, res) {
-    // TODO
     try {
       const users = await PatientsModel.getPatientsAwaitingAdmission()
       if (users) return res.json(users)
@@ -75,8 +94,31 @@ export class PatientController {
     }
   }
 
+  static async getPatientsAwaitingInternation(req, res) {
+    try {
+      const users = await PatientsModel.getPatientsAwaitingInternation()
+      if (users) return res.json(users)
+      return res.status(404).json({ message: 'Patient not found' })
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
+  }
+
   static async updatePatient(req, res) {
-    // TODO
+    const result = validatePartialPatient(req.body)
+    if (!result.success) {
+      return res.status(400).json({ error: JSON.parse(result.error.message) })
+    }
+    try {
+      const { id } = req.params
+      const updatedUser = await PatientsModel.update({ id, data: result.data })
+      if (updatedUser === false) {
+        return res.status(404).json({ message: 'Patient not found' })
+      }
+      return res.json(updatedUser)
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
   }
 
   static async deletePatient(req, res) {

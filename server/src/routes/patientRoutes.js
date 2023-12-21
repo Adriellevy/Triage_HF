@@ -8,6 +8,10 @@ patientRouter.get(
   '/search/awaiting-admission',
   PatientController.getPatientsAwaitingAdmission,
 )
+patientRouter.get(
+  '/search/awaiting-internation',
+  PatientController.getPatientsAwaitingInternation,
+)
 patientRouter.get('/search', PatientController.getPatientByNameOrDate)
 patientRouter.post('/', PatientController.createNewPatient)
 patientRouter.get('/:id', PatientController.getPatientById)

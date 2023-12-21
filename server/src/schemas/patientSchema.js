@@ -8,10 +8,10 @@ const patientSchema = z.object({
     })
     .min(1)
     .max(50),
-  date_of_birth: z.date(),
-  entry_time: z.date(),
-  exit_time: z.date().nullable(),
-  patient_triage_time: z.date(),
+  date_of_birth: z.string(),
+  entry_time: z.string(),
+  exit_time: z.string().nullable(),
+  patient_triage_time: z.string(),
   patient_triage_level: z.number().int().nullable(),
   patient_status: z.enum([
     'ALTA',

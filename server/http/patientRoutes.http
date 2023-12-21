@@ -13,17 +13,27 @@ GET http://localhost:3000/patient/search?user_name=John%20Doe&date=1990-01-15
 ### Get all patients awaiting admission
 GET http://localhost:3000/patient/search/awaiting-admission
 
-### Post a new patient (TODO)
-POST http://localhost:3000/users
+### Get all patients awaiting internation
+GET http://localhost:3000/patient/search/awaiting-internation
+
+### Post a new patient
+POST http://localhost:3000/patient
 content-type: application/json
 
 {
-    "patient_name": "New",
-    "date_of_birth": "1990-01-15T02:00:00.000Z",
-    "patient_box": "Box1",
-    "patient_status": 1,
-    "doctor_id": 1,
-    "nurse_id": 1,
+  "patient_name": "Nuevo Paciente",
+  "date_of_birth": "2000-01-01",
+  "entry_time": "2023-01-01 10:00:00",
+  "exit_time": null,
+  "patient_triage_time": "2023-01-01 10:15:00",
+  "patient_triage_level": 2,
+  "patient_box": "CONSULTORIO",
+  "patient_status": "EN ESPERA",
+  "patient_problem": "Síntomas generales",
+  "patient_medication": "Paracetamol",
+  "doctor_id": 1,
+  "nurse_id": 2,
+  "box_id": 1
 }
 
 ### Delete a patient (TODO)
