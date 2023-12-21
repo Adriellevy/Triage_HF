@@ -74,7 +74,7 @@ const Pacientes = (props) => {
     const fetchData = async () => {
       try {
         {/*const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');*/}
-        const rta = await fetch('http://192.168.0.19:3000/patient/search/awaiting-admission');
+        const rta = await fetch('http://192.168.0.19:3000/patient/search/awaiting-internation');
         
         const dtajson = await rta.json();
         // Assuming 'transformData' is the function from the previous example

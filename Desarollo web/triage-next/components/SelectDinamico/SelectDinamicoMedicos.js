@@ -11,7 +11,7 @@ const SelectDinamico = () => {
       try {
         const response = await fetch('http://192.168.0.19:3000/users/doctor');
         const data = await response.json();
-        setOptions(data.opciones); // Asegúrate de ajustar la propiedad de las opciones según la respuesta de tu API
+        setOptions(data)
       } catch (error) {
         console.error('Error al obtener las opciones:', error);
       }
@@ -27,11 +27,11 @@ const SelectDinamico = () => {
   return (
     <select value={selectedValue} onChange={handleChange}>
       <option value="" disabled>
-        Selecciona una opción
+        Selecciona un usuario
       </option>
       {options.map((option) => (
-        <option key={option.id} value={option.value}>
-          {option.label}
+        <option key={option.user_id} value={option.user_id}>
+          {option.user_name} - {option.user_type}
         </option>
       ))}
     </select>

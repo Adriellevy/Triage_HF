@@ -13,7 +13,7 @@ import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js';
 //import TextBox from '../components/TextBox/TextBox.js'; no logre hacer que funcione chequear
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
-const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+const years = Array.from({ length: 120 }, (_, i) => new Date().getFullYear() - i);
 const getSelectedDate = () => {
   const selectedDay = document.getElementById('day').value;
   const selectedMonth = document.getElementById('month').value;
@@ -296,16 +296,12 @@ const IngresoAgrupado = (props) => {
           <input
             src="/external/textbox1953-n5m7-200h.png"
             alt="TextBox1953"
-            className="ingreso-agrupado-text-box11"
           />
+          <SelectDinamicoMedicos className="ingreso-agrupado-text-box11"></SelectDinamicoMedicos> 
           <span className="ingreso-agrupado-text50">
             <span>Equipo Medico</span>
           </span>
-          <input
-            src="/external/textbox1953-n5m7-200h.png"
-            alt="TextBox1953"
-            className="ingreso-agrupado-text-box12"
-          />
+          <SelectDinamicoEnfermeros className="ingreso-agrupado-text-box12" ></SelectDinamicoEnfermeros> 
           <span className="ingreso-agrupado-text51">
             <span>Equipo Enfermero</span>
           </span>
