@@ -299,6 +299,14 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text50">
             <span>Equipo Medico</span>
           </span>
+          <input
+            src="/external/textbox1953-n5m7-200h.png"
+            alt="TextBox1953"
+            className="ingreso-agrupado-text-box12"
+          />
+          <span className="ingreso-agrupado-text51">
+            <span>Equipo Enfermero</span>
+          </span>
           <div className="ingreso-agrupado-frame427319459">
             <img
               src="/external/image2158-bhfl.svg"
@@ -1115,7 +1123,7 @@ const IngresoAgrupado = (props) => {
             text-decoration: none;
           }
           .ingreso-agrupado-text-box11 {
-            top: 258px;
+            top: 280px;
             left: 1071px;
             width: 142px;
             height: 21px;
@@ -1124,7 +1132,7 @@ const IngresoAgrupado = (props) => {
             background-color: #F3F3F3;
           }
           .ingreso-agrupado-text50 {
-            top: 238px;
+            top: 260px;
             left: 1081px;
             color: rgba(0, 0, 0, 1);
             width: 127px;
@@ -1139,6 +1147,34 @@ const IngresoAgrupado = (props) => {
             font-stretch: normal;
             text-decoration: none;
           }
+          .ingreso-agrupado-text-box12 {
+            top: 33%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            left: 87%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            transform: translate(-50%, -50%); /* Centrar el elemento en función del tamaño del contenedor padre */
+            width: 10%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            height: auto; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
+            position: absolute;
+            border-radius: 2vw; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
+            background-color: #F3F3F3;
+          }
+          .ingreso-agrupado-text51 {
+            top: 30%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            left: 87%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            transform: translate(-50%, -50%); /* Centrar el elemento en función del tamaño del contenedor padre */
+            color: rgba(0, 0, 0, 1);
+            width: auto; /* Cambiado a 'auto' para que se ajuste al contenido */
+            height: auto;
+            position: absolute;
+            font-size: 1.2vw; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
+            font-style: medium; /* Cambiado a minúscula y a 'medium' */
+            text-align: left;
+            font-family: Montserrat, sans-serif; /* Añadido un respaldo de fuente genérica */
+            font-weight: 500;
+            line-height: normal;
+            font-stretch: normal;
+            text-decoration: none;
+        }
+        
           .ingreso-agrupado-frame427319459 {
             top: 393px;
             left: 64.60888671875px;

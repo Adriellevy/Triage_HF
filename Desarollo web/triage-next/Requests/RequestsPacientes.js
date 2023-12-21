@@ -7,11 +7,12 @@ export function transformDataPacientesEspera(originalData) {
         nombre: `Paciente ${patient.patient_name}` || 'No asignado',
         edad: age || 'No asignado',
         gravedad: severity,
-        historial: `Historial del Paciente ${patient.patient_id}`,
+        box: patient.box_id,
         enfermero: patient.nurse_name || 'No asignado',
         fecha: formatDate(patient.entry_time),
-        matricula: patient.doctor_id ? `M${patient.doctor_id}` : 'No asignado',
-        problemaPaciente: patient.patient_problem || 'No especificado'
+        matricula: patient.doctor_name || 'No asignado',
+        problemaPaciente: patient.patient_problem || 'No especificado',
+        estado: patient.patient_status || 'Afuera'
       };
     });
   }
@@ -45,10 +46,10 @@ export function transformDataPacientesEspera(originalData) {
       return {
         nombre: `Paciente ${patient.patient_name}` || 'No asignado',
         edad: age || 'No asignado',
-        historial: `Historial del Paciente ${patient.patient_id}`,
+        box: patient.box_id,
         enfermero: patient.nurse_name || 'No asignado',
         fecha: formatDate(patient.entry_time),
-        matricula: patient.doctor_id ? `M${patient.doctor_id}` : 'No asignado',
+        nombreMedico: patient.doctor_name || 'No asignado',
         problemaPaciente: patient.patient_problem || 'No especificado'
       };
     });

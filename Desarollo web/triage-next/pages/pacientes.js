@@ -16,31 +16,46 @@ const columnasEnEspera = [
   { label: 'Nombre', propiedad: 'nombre' },
   { label: 'Edad', propiedad: 'edad' },
   { label: 'Gravedad', propiedad: 'gravedad' },
-  { label: 'Historial', propiedad: 'historial' },
+  { label: 'BOX', propiedad: 'box' },
   { label: 'Enfermero', propiedad: 'enfermero' },
   { label: 'Fecha', propiedad: 'fecha' },
   { label: 'Medico', propiedad: 'matricula' },
-  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
+  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' },
+  { label: 'Estado',propiedad: 'estado'}
 ];
 const columnasinternacion = [
   { label: 'Nombre', propiedad: 'nombre' },
   { label: 'Edad', propiedad: 'edad' },
-  { label: 'Historial', propiedad: 'historial' },
+  { label: 'BOX', propiedad: 'box' },
   { label: 'Enfermero', propiedad: 'enfermero' },
   { label: 'Fecha', propiedad: 'fecha' },
-  { label: 'Medico', propiedad: 'matricula' },
+  { label: 'Medico', propiedad: 'nombreMedico' },
   { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
 ];
 
 
 const Pacientes = (props) => {
-  
+  const [nombreInput, setNombreInput] = useState('');
+  const [Edad, setEdad] = useState('');
+  const [Box, setBox] = useState('');
+  const [Medico, setMedico] = useState('');
+  const [Estado, setEstado] = useState('');
+
+  const handleRowClick = (rowData) => {
+    console.log('Fila seleccionada:', rowData);
+
+    setNombreInput(rowData.nombre || '');
+    setEdad(rowData.edad || '');
+    setBox(rowData.box || '');
+    setMedico(rowData.nombre || '');
+    setEstado(rowData.estado || '');
+  };
   /*El objetivo es obtener los pacientes en espera de ser atentidos, ahora se cargan todos los pacientes*/
   const [dataListaEnEspera, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/patient');
+        const response = await fetch('http://192.168.0.19:3000/patient');
         const jsonData = await response.json();
         // Assuming 'transformData' is the function from the previous example
         const transformedData = transformDataPacientesEspera(jsonData);
@@ -58,7 +73,9 @@ const Pacientes = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');
+        {/*const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');*/}
+        const rta = await fetch('http://192.168.0.19:3000/patient/search/awaiting-admission');
+        
         const dtajson = await rta.json();
         // Assuming 'transformData' is the function from the previous example
         const dataListaEsperaInternacion = transformDataPacientesInternacion(dtajson);
@@ -167,7 +184,7 @@ const Pacientes = (props) => {
               className="pacientes-rectangule"
           />
           <span className='pacientes-rectangules'>
-            {dataListaEsperaInternacion && <ScrollableList data={dataListaEsperaInternacion} columns={columnasinternacion} />}
+            {dataListaEsperaInternacion && <ScrollableList data={dataListaEsperaInternacion} columns={columnasinternacion} onRowClick={handleRowClick} />}
           </span>
           <span className="pacientes-text14">
              <span>Pacientes espera de internacion</span>
@@ -186,11 +203,12 @@ const Pacientes = (props) => {
             className="pacientes-rectangule2"
           />
           <span className='pacientes-rectangules2' > 
-          {dataListaEnEspera && <ScrollableList data={dataListaEnEspera} columns={columnasEnEspera} />}
+          {dataListaEnEspera && <ScrollableList data={dataListaEnEspera} columns={columnasEnEspera} onRowClick={handleRowClick} />}
           </span>
           <span className="pacientes-text18">
             <span>Lista pacientes </span>
           </span>
+          <div className='Contenedor modificar paciente'>
           <img
             src="/external/image1964-dpc-200h.png"
             alt="Image1964"
@@ -199,42 +217,38 @@ const Pacientes = (props) => {
           <span className="pacientes-text20">
             <span>Modificar paciente</span>
           </span>
-          <div className="pacientes-image4">
-            <img
-              src="/external/image2181-sfzb.svg"
-              alt="Image2181"
-              className="pacientes-image5"
-            />
-          </div>
-          <img
-            src="/external/textbox2181-dmvg-200h.png"
+          <input
+            id='Nombre y apellido' value={nombreInput} onChange={(e) => setNombreInput(e.target.value)}
             alt="TextBox2181"
             className="pacientes-text-box"
           />
           <span className="pacientes-text22">
             <span>Nombre y Apellido</span>
           </span>
+          <input className="pacientes-text-box4" id='Edad' value={Edad} onChange={(e) => setEdad(e.target.value)}/>
+
           <span className="pacientes-text24">
-            <span>Fecha nacimiento</span>
+            <span>Edad</span>
           </span>
-          <img
-            src="/external/textbox2181-0s34-200h.png"
+          <input
+            id='Box' value={Box} onChange={(e) => setBox(e.target.value)}
             alt="TextBox2181"
             className="pacientes-text-box1"
           />
           <span className="pacientes-text26">
             <span>BOX</span>
           </span>
-          <img
+          <input
+            id='Medico' value={Medico} onChange={(e) => setMedico(e.target.value)}
             src="/external/textbox2181-4iep-200h.png"
             alt="TextBox2181"
             className="pacientes-text-box2"
           />
           <span className="pacientes-text28">
-            <span>Equipo Medico</span>
+            <span>Medico</span>
           </span>
-          <img
-            src="/external/textbox2181-1qsn-200h.png"
+          <input
+            id='Estado' value={Estado} onChange={(e) => setEstado(e.target.value)}
             alt="TextBox2181"
             className="pacientes-text-box3"
           />
@@ -245,7 +259,14 @@ const Pacientes = (props) => {
               <span></span>
             </span>
           </span>
-          <div className="pacientes-frame427319476">
+          
+          <button className='MandarModificacion'>Actualizar</button>
+          </div>
+        </div>
+        
+      </div>
+      {/*Login de enfermero*/}
+      <div className="pacientes-frame427319476">
             <img
               src="/external/ellipse12631-lrk-200h.png"
               alt="Ellipse12631"
@@ -263,10 +284,29 @@ const Pacientes = (props) => {
               className="pacientes-vector2"
             />
           </div>
-        </div>
-      </div>
       <style jsx>
         {`
+        .MandarModificacion {
+          display: flex;
+          overflow: hidden;
+          position: absolute;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          background-color: rgba(55, 179, 226, 1);
+          z-index: 1;
+          height: auto;
+          font-size: 16px;
+          font-weight: 600;
+          text-align: center;
+          font-family: Montserrat;
+          color: white;
+          left: 58%;
+          bottom: 3%;
+          transform: translate(-50%, 0);
+        }
+        
+        
           .pacientes-container {
             width: 100%;
             display: flex;
@@ -623,6 +663,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align:center;
           }
           .pacientes-text22 {
             top: 637px;
@@ -642,14 +684,14 @@ const Pacientes = (props) => {
           }
           .pacientes-text24 {
             top: 637px;
-            left: 517px;
+            left: 497px;
             color: rgba(0, 0, 0, 1);
             width: 148px;
             height: auto;
             position: absolute;
             font-size: 16px;
             font-style: Medium;
-            text-align: left;
+            text-align: center;
             font-family: Montserrat;
             font-weight: 500;
             line-height: normal;
@@ -663,6 +705,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align:center;
           }
           .pacientes-text26 {
             top: 639px;
@@ -687,10 +731,12 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align:center;
           }
           .pacientes-text28 {
             top: 637px;
-            left: 888px;
+            left: 920px;
             color: rgba(0, 0, 0, 1);
             width: 127px;
             height: auto;
@@ -711,6 +757,18 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align:center;
+          }
+          .pacientes-text-box4 {
+            top: 662px;
+            left: 510px;
+            width: 142px;
+            height: 21px;
+            position: absolute;
+            border-radius: 14px;
+            background-color: #F3F3F3;
+            text-align:center;
           }
           .pacientes-text30 {
             top: 637px;

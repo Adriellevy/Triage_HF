@@ -142,3 +142,8 @@
   z-index: 3;
   font-size: 1.25vw;
 }
+
+/*Cuando se seleciona un item de la lista*/
+.selected-row {
+  background-color: red; /* Cambia esto al color que prefieras */
+}
