@@ -111,7 +111,11 @@ export class PatientController {
     }
     try {
       const { id } = req.params
-      const updatedUser = await PatientsModel.update({ id, data: result.data })
+      console.log(req.params)
+      const updatedUser = await PatientsModel.updatePatient({
+        id,
+        data: result.data,
+      })
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
       }

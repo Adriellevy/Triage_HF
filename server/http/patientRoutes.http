@@ -50,10 +50,16 @@ content-type: application/json
 ### Delete a patient (TODO)
 DELETE http://localhost:3000/patient/2
 
-### Update a patient (TODO)
-PATCH http://localhost:3000/patient/1
+### Get patient 
+GET http://localhost:3000/patient/3d8b8e82-a07c-11ee-a471-c305cdf56517
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
+
+
+### Update a patient
+PATCH http://localhost:3000/patient/3d8b8e82-a07c-11ee-a471-c305cdf56517
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 Content-Type: application/json
 
 {
-  "patient_status": false
+   "patient_status": "EN ESPERA"
 }

@@ -108,43 +108,42 @@ export class PatientsModel {
       data.nurse_id,
       data.box_id,
     ])
-    // Verificar el resultado de la consulta
-    // console.log(result)
-    // console.log(result.affectedRows)
     if (result.affectedRows > 0) {
-      // console.log('Nuevo paciente insertado con éxito.')
-      return { message: 'Nuevo paciente insertado con éxito.' }
+      return { message: 'New patient inserted successfully' }
     } else {
-      console.error('Error al insertar un nuevo paciente.')
-      return { error: 'Error al insertar un nuevo paciente.' }
+      return { error: 'Error inserting a new patient' }
     }
   }
 
-  /*
-  const { userName, phoneNumber, emailAddress } = data
-    const [uuidResult] = await connection.query('SELECT UUID() uuid;')
-    const [{ uuid }] = uuidResult
-
-    try {
-      await connection.query(
-        'INSERT INTO users(id, userName, email_adress, phoneNumber)VALUES(UUID_TOBIN(?),?,?,?);',
-        [uuid, userName, phoneNumber, emailAddress],
-      )
-    } catch (error) {
-      throw new Error('Error crating a new user')
-    }
-
-    const [user] = await connection.query(
-      'SELECT * FROM users WHERE user_id=?',
-      [uuid],
-    )
-    return user
-  */
   static async deletePatient({ id }) {
     // TODO
   }
 
   static async updatePatient({ id, data }) {
-    // TODO
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const updateFields = Object.entries(data)
+        .filter(([key, value]) => value !== null && value !== undefined)
+        .map(([key]) => `${key} = ?`)
+        .join(', ')
+
+      const patientsUpdateQuery = `
+        UPDATE Patient
+        SET ${updateFields}
+        WHERE patient_id = UUID_TO_BIN(?);
+      `
+      const updateValues = Object.values(data).filter(
+        (value) => value !== null && value !== undefined,
+      )
+      updateValues.push(id)
+      const [result] = await connection.query(patientsUpdateQuery, updateValues)
+      if (result.affectedRows > 0) {
+        return { message: 'Patient updated successfully' }
+      } else {
+        return { error: 'Error updating the patient' }
+      }
+    } catch (error) {
+      throw error
+    }
   }
 }
