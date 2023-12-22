@@ -1,23 +1,34 @@
-### Get all patients
+### Get all patients with Invalid Token
 GET http://localhost:3000/patient
+Authorization:Bearer ayJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwMjE4N30.vQGQFI4hPesTdwLrxKc_8XkpUyZbkwt1RN_ikFzLu4c
+
+### Get all patients with Authorization
+GET http://localhost:3000/patient
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Search Case 1: Search by name
 GET http://localhost:3000/patient/search?user_name=John%20Doe
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Search Case 2: Search by date of birth
 GET http://localhost:3000/patient/search?date=1990-01-15
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Search Case 3: Search by name and date of birth
 GET http://localhost:3000/patient/search?user_name=John%20Doe&date=1990-01-15
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Get all patients awaiting admission
 GET http://localhost:3000/patient/search/awaiting-admission
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Get all patients awaiting internation
 GET http://localhost:3000/patient/search/awaiting-internation
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNzU0OX0.5G62eIrm8PkN0RyS_6lgKzP4vSd_YUT0cJINxxF9FMo
 
 ### Post a new patient
 POST http://localhost:3000/patient
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 content-type: application/json
 
 {

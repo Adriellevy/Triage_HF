@@ -1,11 +1,11 @@
 import express from 'express'
 import 'dotenv/config'
-
 import { corsMiddleware } from './src/middlewares/corsMiddleware.js'
 import { patientRouter } from './src/routes/patientRoutes.js'
 import { boxRouter } from './src/routes/boxRoutes.js'
 import { authRouter } from './src/routes/authRoutes.js'
 import { userRouter } from './src/routes/userRoutes.js'
+import authenticateToken from './src/middlewares/authMiddleware.js'
 
 const PORT = process.env.PORTAPI ?? 3000
 
@@ -19,9 +19,10 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth', authRouter)
-app.use('/patient', patientRouter)
-app.use('/box', boxRouter)
-app.use('/users', userRouter)
+
+app.use('/patient', authenticateToken, patientRouter)
+app.use('/box', authenticateToken, boxRouter)
+app.use('/users', authenticateToken, userRouter)
 
 app.use((req, res) => {
   res.status(404).send('<h1>404</h1>')

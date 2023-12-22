@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+import 'dotenv/config'
+import jwt from 'jsonwebtoken'
 import { compare, encrypt } from '../helpers/handleBcrypt.js'
 import { UserModel } from '../models/mysql/userModel.js'
 import { validateUser, validatePartialUser } from '../schemas/userSchema.js'
@@ -11,7 +13,15 @@ export class AuthController {
       const UserData = await UserModel.getUserByUserName(user_name)
       const checkPassword = await compare(user_password, UserData.user_password)
       if (checkPassword) {
-        return res.status(500).json({ message: 'TODO: json web token' })
+        const userForToken = {
+          id: UserData.user_id,
+          name: user_name,
+        }
+        const token = jwt.sign(userForToken, process.env.JWT_SECRET)
+        return res.send({
+          name: user_name,
+          token,
+        })
       }
       return res.status(401).json({ message: 'Invalid password' })
     } catch (error) {
