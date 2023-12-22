@@ -20,12 +20,10 @@ export class PatientController {
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
-    // console.log(result.data)
     try {
       const newPatientId = await PatientsModel.createNewPatient({
         data: result.data,
       })
-      // console.log('New Patient ID:', newPatientId)
       if (newPatientId) {
         return res.status(201).json({
           message: 'New patient created successfully',
@@ -36,7 +34,6 @@ export class PatientController {
       }
       return res.status(500).json({ message: 'Failed to create a new patient' })
     } catch (error) {
-      console.error('Error creating a new patient:', error)
       return res.status(500).json({ message: 'Something went wrong' })
     }
   }
@@ -111,7 +108,6 @@ export class PatientController {
     }
     try {
       const { id } = req.params
-      console.log(req.params)
       const updatedUser = await PatientsModel.updatePatient({
         id,
         data: result.data,
