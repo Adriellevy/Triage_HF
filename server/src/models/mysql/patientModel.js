@@ -8,10 +8,12 @@ export class PatientsModel {
     const patientsQuery = `
     SELECT Patient.*, 
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name
+    Nurse.user_name AS nurse_name,
+    BIN_TO_UUID(patient_id) patient_id 
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE';
+    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+    ;
     `
     const [patients] = await connection.query(patientsQuery)
     return patients
@@ -21,11 +23,12 @@ export class PatientsModel {
     const patientsQuery = `
     SELECT Patient.*, 
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name
+    Nurse.user_name AS nurse_name,
+    BIN_TO_UUID(patient_id) patient_id 
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    WHERE Patient.patient_id = ?;
+    WHERE Patient.patient_id = UUID_TO_BIN(?);
     `
     const [patients] = await connection.query(patientsQuery, [id])
     if (patients.length === 0) return false
@@ -36,7 +39,8 @@ export class PatientsModel {
     const patientsQuery = `
     SELECT Patient.*, 
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name
+    Nurse.user_name AS nurse_name,
+    BIN_TO_UUID(patient_id) patient_id 
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
@@ -51,7 +55,8 @@ export class PatientsModel {
     const patientsQuery = `
     SELECT Patient.*, 
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name
+    Nurse.user_name AS nurse_name,
+    BIN_TO_UUID(patient_id) patient_id 
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
@@ -66,7 +71,8 @@ export class PatientsModel {
     const patientsQuery = `
     SELECT Patient.*, 
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name
+    Nurse.user_name AS nurse_name,
+    BIN_TO_UUID(patient_id) patient_id 
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
