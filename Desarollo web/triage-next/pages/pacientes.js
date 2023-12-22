@@ -1,67 +1,78 @@
-import React, { useEffect, useState }  from 'react'
-import Link from 'next/link';
-import Head from 'next/head'
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Head from "next/head";
 
-import ScrollableList from '../components/ScrollableList/ScrollableList.js';
-import { transformDataPacientesEspera } from '../Requests/RequestsPacientes.js';
-import { transformDataPacientesInternacion } from '../Requests/RequestsPacientes.js';
+import ScrollableList from "../components/ScrollableList/ScrollableList.js";
+import { transformDataPacientesEspera } from "../Requests/RequestsPacientes.js";
+import { transformDataPacientesInternacion } from "../Requests/RequestsPacientes.js";
 
-import AbrirIngreso from '../components/Redirecionamiento/AbrirIngresoGuiado.js';
-import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
-import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
-import AbrirLogin from '../components/Redirecionamiento/AbrirLoginPrimeraVez.js';
-import AbrirSetings from '../components/Redirecionamiento/AbrirEdicionBoxes.js'; 
+import AbrirIngreso from "../components/Redirecionamiento/AbrirIngresoGuiado.js";
+import AbrirEstadisticas from "../components/Redirecionamiento/AbrirEstadisticas.js";
+import AbrirEstaciones from "../components/Redirecionamiento/AbrirBoxes.js";
+import AbrirLogin from "../components/Redirecionamiento/AbrirLoginPrimeraVez.js";
+import AbrirSetings from "../components/Redirecionamiento/AbrirEdicionBoxes.js";
+import EditarPaciente from "../components/EditarPaciente/EditarPaciente.js"
 //estos datos ahora estan hardcodeados, pero podrian cambiar dependiendo que es lo que se solicita en el centro
+
 const columnasEnEspera = [
-  { label: 'Nombre', propiedad: 'nombre' },
-  { label: 'Edad', propiedad: 'edad' },
-  { label: 'Gravedad', propiedad: 'gravedad' },
-  { label: 'BOX', propiedad: 'box' },
-  { label: 'Enfermero', propiedad: 'enfermero' },
-  { label: 'Fecha', propiedad: 'fecha' },
-  { label: 'Medico', propiedad: 'matricula' },
-  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' },
-  { label: 'Estado',propiedad: 'estado'}
+  { label: "Nombre", propiedad: "nombre" },
+  { label: "Edad", propiedad: "edad" },
+  { label: "Gravedad", propiedad: "gravedad" },
+  { label: "BOX", propiedad: "box" },
+  { label: "Enfermero", propiedad: "enfermero" },
+  { label: "Fecha", propiedad: "fecha" },
+  { label: "Medico", propiedad: "matricula" },
+  { label: "Motivo de Consulta", propiedad: "problemaPaciente" },
+  { label: "Estado", propiedad: "estado" },
 ];
 const columnasinternacion = [
-  { label: 'Nombre', propiedad: 'nombre' },
-  { label: 'Edad', propiedad: 'edad' },
-  { label: 'BOX', propiedad: 'box' },
-  { label: 'Enfermero', propiedad: 'enfermero' },
-  { label: 'Fecha', propiedad: 'fecha' },
-  { label: 'Medico', propiedad: 'nombreMedico' },
-  { label: 'Motivo de Consulta', propiedad: 'problemaPaciente' }
+  { label: "Nombre", propiedad: "nombre" },
+  { label: "Edad", propiedad: "edad" },
+  { label: "BOX", propiedad: "box" },
+  { label: "Enfermero", propiedad: "enfermero" },
+  { label: "Fecha", propiedad: "fecha" },
+  { label: "Medico", propiedad: "nombreMedico" },
+  { label: "Motivo de Consulta", propiedad: "problemaPaciente" },
 ];
 
-
 const Pacientes = (props) => {
-  const [nombreInput, setNombreInput] = useState('');
-  const [Edad, setEdad] = useState('');
-  const [Box, setBox] = useState('');
-  const [Medico, setMedico] = useState('');
-  const [Estado, setEstado] = useState('');
+  const [nombreInput, setNombreInput] = useState("");
+  const [Edad, setEdad] = useState("");
+  const [Box, setBox] = useState("");
+  const [Medico, setMedico] = useState("");
+  const [Estado, setEstado] = useState("");
 
   const handleRowClick = (rowData) => {
-    console.log('Fila seleccionada:', rowData);
+    console.log("Fila seleccionada:", rowData);
 
-    setNombreInput(rowData.nombre || '');
-    setEdad(rowData.edad || '');
-    setBox(rowData.box || '');
-    setMedico(rowData.nombre || '');
-    setEstado(rowData.estado || '');
+    setNombreInput(rowData.nombre || "");
+    setEdad(rowData.edad || "");
+    setBox(rowData.box || "");
+    setMedico(rowData.nombre || "");
+    setEstado(
+      rowData.estado || "ESPERA INTERNACION"
+    ); /*medio hardcodeado pero util*/
   };
   /*El objetivo es obtener los pacientes en espera de ser atentidos, ahora se cargan todos los pacientes*/
   const [dataListaEnEspera, setData] = useState([]);
   useEffect(() => {
+    const headersList = {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw",
+      "Content-Type": "application/json",
+    };
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.0.19:3000/patient');
+        const response = await fetch("http://192.168.0.19:3000/patient", {
+          method: "GET",
+          headers: headersList,
+        });
         const jsonData = await response.json();
         // Assuming 'transformData' is the function from the previous example
         const transformedData = transformDataPacientesEspera(jsonData);
         setData(transformedData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -71,17 +82,31 @@ const Pacientes = (props) => {
   /*El objetivo es obtener los pacientes en espera internacion*/
   const [dataListaEsperaInternacion, FijarDatos] = useState([]);
   useEffect(() => {
+    const headersList = {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw",
+      "Content-Type": "application/json",
+    };
     const fetchData = async () => {
       try {
-        {/*const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');*/}
-        const rta = await fetch('http://192.168.0.19:3000/patient/search/awaiting-internation');
-        
+        {
+          /*const rta = await fetch('http://localhost:3000/patient/search/awaiting-admission');*/
+        }
+        const rta = await fetch(
+          "http://192.168.0.19:3000/patient/search/awaiting-internation",
+          {
+            method: "GET",
+            headers: headersList,
+          }
+        );
+
         const dtajson = await rta.json();
         // Assuming 'transformData' is the function from the previous example
-        const dataListaEsperaInternacion = transformDataPacientesInternacion(dtajson);
+        const dataListaEsperaInternacion =
+          transformDataPacientesInternacion(dtajson);
         FijarDatos(dataListaEsperaInternacion);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -122,7 +147,7 @@ const Pacientes = (props) => {
               className="pacientes-image"
             />
             <span className="pacientes-text">
-            <AbrirIngreso />
+              <AbrirIngreso />
             </span>
           </div>
           <div className="pacientes-frame427319489">
@@ -142,7 +167,7 @@ const Pacientes = (props) => {
               className="pacientes-graficodebarras11"
             />
             <span className="pacientes-text04">
-              <AbrirEstadisticas/>
+              <AbrirEstadisticas />
             </span>
           </div>
           <div className="pacientes-frame427319487">
@@ -152,7 +177,7 @@ const Pacientes = (props) => {
               className="pacientes-image1"
             />
             <span className="pacientes-text06">
-              <AbrirEstaciones/>
+              <AbrirEstaciones />
             </span>
           </div>
           <div className="pacientes-frame427319486">
@@ -162,7 +187,7 @@ const Pacientes = (props) => {
               className="pacientes-vector1"
             />
             <span className="pacientes-text08">
-              <AbrirLogin/>
+              <AbrirLogin />
             </span>
           </div>
           <span className="pacientes-text10">
@@ -175,20 +200,26 @@ const Pacientes = (props) => {
               className="pacientes-image2"
             />
             <span className="pacientes-text12">
-              <AbrirSetings/>
+              <AbrirSetings />
             </span>
           </div>
           <img
-              src="/external/rectangule1904-emmu-300h.png"
-              alt="Rectangule1904"
-              className="pacientes-rectangule"
+            src="/external/rectangule1904-emmu-300h.png"
+            alt="Rectangule1904"
+            className="pacientes-rectangule"
           />
-          <span className='pacientes-rectangules'>
-            {dataListaEsperaInternacion && <ScrollableList data={dataListaEsperaInternacion} columns={columnasinternacion} onRowClick={handleRowClick} />}
+          <span className="pacientes-rectangules">
+            {dataListaEsperaInternacion && (
+              <ScrollableList
+                data={dataListaEsperaInternacion}
+                columns={columnasinternacion}
+                onRowClick={handleRowClick}
+              />
+            )}
           </span>
           <span className="pacientes-text14">
-             <span>Pacientes espera de internacion</span>
-           </span>
+            <span>Pacientes espera de internacion</span>
+          </span>
           <img
             src="/external/rectangule1919-b4cl-300h.png"
             alt="Rectangule1919"
@@ -202,111 +233,130 @@ const Pacientes = (props) => {
             alt="Rectangule1964"
             className="pacientes-rectangule2"
           />
-          <span className='pacientes-rectangules2' > 
-          {dataListaEnEspera && <ScrollableList data={dataListaEnEspera} columns={columnasEnEspera} onRowClick={handleRowClick} />}
+          <span className="pacientes-rectangules2">
+            {dataListaEnEspera && (
+              <ScrollableList
+                data={dataListaEnEspera}
+                columns={columnasEnEspera}
+                onRowClick={handleRowClick}
+              />
+            )}
           </span>
           <span className="pacientes-text18">
             <span>Lista pacientes </span>
           </span>
-          <div className='Contenedor modificar paciente'>
-          <img
-            src="/external/image1964-dpc-200h.png"
-            alt="Image1964"
-            className="pacientes-image3"
-          />
-          <span className="pacientes-text20">
-            <span>Modificar paciente</span>
-          </span>
-          <input
-            id='Nombre y apellido' value={nombreInput} onChange={(e) => setNombreInput(e.target.value)}
-            alt="TextBox2181"
-            className="pacientes-text-box"
-          />
-          <span className="pacientes-text22">
-            <span>Nombre y Apellido</span>
-          </span>
-          <input className="pacientes-text-box4" id='Edad' value={Edad} onChange={(e) => setEdad(e.target.value)}/>
-
-          <span className="pacientes-text24">
-            <span>Edad</span>
-          </span>
-          <input
-            id='Box' value={Box} onChange={(e) => setBox(e.target.value)}
-            alt="TextBox2181"
-            className="pacientes-text-box1"
-          />
-          <span className="pacientes-text26">
-            <span>BOX</span>
-          </span>
-          <input
-            id='Medico' value={Medico} onChange={(e) => setMedico(e.target.value)}
-            src="/external/textbox2181-4iep-200h.png"
-            alt="TextBox2181"
-            className="pacientes-text-box2"
-          />
-          <span className="pacientes-text28">
-            <span>Medico</span>
-          </span>
-          <input
-            id='Estado' value={Estado} onChange={(e) => setEstado(e.target.value)}
-            alt="TextBox2181"
-            className="pacientes-text-box3"
-          />
-          <span className="pacientes-text30">
-            <span>
-              <span>Estado</span>
-              <br></br>
-              <span></span>
+          <div className="Contenedor modificar paciente">
+            <img
+              src="/external/image1964-dpc-200h.png"
+              alt="Image1964"
+              className="pacientes-image3"
+            />
+            <span className="pacientes-text20">
+              <span>Modificar paciente</span>
             </span>
-          </span>
-          
-          <button className='MandarModificacion'>Actualizar</button>
+            <input
+              id="Nombre y apellido"
+              value={nombreInput}
+              onChange={(e) => setNombreInput(e.target.value)}
+              alt="TextBox2181"
+              className="pacientes-text-box"
+            />
+            <span className="pacientes-text22">
+              <span>Nombre y Apellido</span>
+            </span>
+            <input
+              className="pacientes-text-box4"
+              id="Edad"
+              value={Edad}
+              onChange={(e) => setEdad(e.target.value)}
+            />
+
+            <span className="pacientes-text24">
+              <span>Edad</span>
+            </span>
+            <input
+              id="Box"
+              value={Box}
+              onChange={(e) => setBox(e.target.value)}
+              alt="TextBox2181"
+              className="pacientes-text-box1"
+            />
+            <span className="pacientes-text26">
+              <span>BOX</span>
+            </span>
+            <input
+              id="Medico"
+              value={Medico}
+              onChange={(e) => setMedico(e.target.value)}
+              src="/external/textbox2181-4iep-200h.png"
+              alt="TextBox2181"
+              className="pacientes-text-box2"
+            />
+            <span className="pacientes-text28">
+              <span>Medico</span>
+            </span>
+            <input
+              id="Estado"
+              value={Estado}
+              onChange={(e) => setEstado(e.target.value)}
+              alt="TextBox2181"
+              className="pacientes-text-box3"
+            />
+            <span className="pacientes-text30">
+              <span>
+                <span>Estado</span>
+                <br></br>
+                <span></span>
+              </span>
+            </span>
+
+            <span  className="MandarModificacion">
+              <EditarPaciente></EditarPaciente>
+            </span>
           </div>
         </div>
-        
       </div>
       {/*Login de enfermero*/}
       <div className="pacientes-frame427319476">
-            <img
-              src="/external/ellipse12631-lrk-200h.png"
-              alt="Ellipse12631"
-              className="pacientes-ellipse1"
-            />
-            <span className="pacientes-text35">
-              <span>Buen Día, Enfermero Ian</span>
-            </span>
-            <span className="pacientes-text37">
-              <span>Matricule id : 2015978</span>
-            </span>
-            <img
-              src="/external/vector2631-npi.svg"
-              alt="Vector2631"
-              className="pacientes-vector2"
-            />
-          </div>
+        <img
+          src="/external/ellipse12631-lrk-200h.png"
+          alt="Ellipse12631"
+          className="pacientes-ellipse1"
+        />
+        <span className="pacientes-text35">
+          <span>Buen Día, Enfermero Ian</span>
+        </span>
+        <span className="pacientes-text37">
+          <span>Matricule id : 2015978</span>
+        </span>
+        <img
+          src="/external/vector2631-npi.svg"
+          alt="Vector2631"
+          className="pacientes-vector2"
+        />
+      </div>
       <style jsx>
         {`
-        .MandarModificacion {
-          display: flex;
-          overflow: hidden;
-          position: absolute;
-          align-items: center;
-          justify-content: center;
-          border-radius: 8px;
-          background-color: rgba(55, 179, 226, 1);
-          z-index: 1;
-          height: auto;
-          font-size: 16px;
-          font-weight: 600;
-          text-align: center;
-          font-family: Montserrat;
-          color: white;
-          left: 58%;
-          bottom: 3%;
-          transform: translate(-50%, 0);
-        }
-        
-        
+          .MandarModificacion {
+            display: flex;
+            overflow: hidden;
+            position: absolute;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: rgba(55, 179, 226, 1);
+            z-index: 1;
+            height: auto;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            font-family: Montserrat;
+            color: white;
+            left: 58%;
+            bottom: 3%;
+            transform: translate(-50%, 0);
+          }
+
           .pacientes-container {
             width: 100%;
             display: flex;
@@ -563,7 +613,7 @@ const Pacientes = (props) => {
             position: absolute;
             border-radius: 30px;
           }
-          
+
           .pacientes-text16 {
             top: 148px;
             left: 851px;
@@ -588,7 +638,7 @@ const Pacientes = (props) => {
             height: 29.12%;
             border-radius: 3.75%;
             position: absolute;
-          } 
+          }
           .pacientes-rectangules2 {
             top: 54.5%;
             left: 22.5%;
@@ -663,8 +713,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
-            background-color: #F3F3F3;
-            text-align:center;
+            background-color: #f3f3f3;
+            text-align: center;
           }
           .pacientes-text22 {
             top: 637px;
@@ -705,8 +755,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
-            background-color: #F3F3F3;
-            text-align:center;
+            background-color: #f3f3f3;
+            text-align: center;
           }
           .pacientes-text26 {
             top: 639px;
@@ -731,8 +781,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
-            background-color: #F3F3F3;
-            text-align:center;
+            background-color: #f3f3f3;
+            text-align: center;
           }
           .pacientes-text28 {
             top: 637px;
@@ -757,8 +807,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
-            background-color: #F3F3F3;
-            text-align:center;
+            background-color: #f3f3f3;
+            text-align: center;
           }
           .pacientes-text-box4 {
             top: 662px;
@@ -767,8 +817,8 @@ const Pacientes = (props) => {
             height: 21px;
             position: absolute;
             border-radius: 14px;
-            background-color: #F3F3F3;
-            text-align:center;
+            background-color: #f3f3f3;
+            text-align: center;
           }
           .pacientes-text30 {
             top: 637px;
@@ -840,7 +890,7 @@ const Pacientes = (props) => {
         `}
       </style>
     </>
-  )
-}
+  );
+};
 
-export default Pacientes
+export default Pacientes;

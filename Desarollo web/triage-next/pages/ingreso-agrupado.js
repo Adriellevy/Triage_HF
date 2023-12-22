@@ -3,6 +3,9 @@ import Head from 'next/head'
 import DateDropdown from '../components/DateWidget/dateDropdown';
 import SelectDinamicoEnfermeros from '../components/SelectDinamico/SelectDinamicoEnfermeros.js'
 import SelectDinamicoMedicos from '../components/SelectDinamico/SelectDinamicoMedicos.js';
+import SelectDinamicoBoxes from '../components/SelectDinamico/setDinamicoBoxes.js';
+import ScrollableList from '../components/ScrollableList/ScrollableList.js'
+
 
 import AbrirEstaciones from '../components/Redirecionamiento/AbrirBoxes.js';
 import AbrirEstadisticas from '../components/Redirecionamiento/AbrirEstadisticas.js';
@@ -14,14 +17,103 @@ import AbrirPacientes from '../components/Redirecionamiento/AbrirPacientes.js';
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
 const years = Array.from({ length: 120 }, (_, i) => new Date().getFullYear() - i);
-const getSelectedDate = () => {
+const AgregarPaciente = async () => {
   const selectedDay = document.getElementById('day').value;
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
 
-  alert(`Selected Date: ${selectedMonth}/${selectedDay}/${selectedYear}`);
-  /* en vez de hacer el alert hacer que tome todos los datos y enviarlos al server*/
+  // Asegúrate de que los valores sean numéricos
+  const day = parseInt(selectedDay, 10);
+  const month = parseInt(selectedMonth, 10);
+  const year = parseInt(selectedYear, 10);
+
+  // Crea una nueva fecha con los valores seleccionados y establece la hora a las 00:00:00
+  const selectedDate = new Date(year, month - 1, day, 0, 0, 0);
+
+  // Formatea la fecha de nacimiento como "YYYY-MM-DD HH:mm:ss"
+  const Fechanacimiento = `${selectedDate.getFullYear()}-${(month < 10 ? '0' : '') + month}-${(day < 10 ? '0' : '') + day}`;
+
+  const Nombre = document.getElementsByClassName("ingreso-agrupado-text-box08")[0].value || "";
+  const Box = document.getElementsByClassName("ingreso-agrupado-text-box09")[0].value || "";
+  const Med_hab = document.getElementsByClassName("ingreso-agrupado-text-box01")[0].value || "";
+  const Motivo = document.getElementsByClassName("ingreso-agrupado-text-box")[0].value || "";
+  const Dolor = document.getElementsByClassName("ingreso-agrupado-text-box02")[0].value || "";
+  const selectElement = document.getElementsByClassName("ingreso-agrupado-text-box03")[0];
+  const Hace_cuanto = selectElement.options[selectElement.selectedIndex].text || "";
+  const TriageIngresado = document.getElementsByClassName("ingreso-agrupado-text-box10")[0].value || "";
+  const Medico = document.getElementsByClassName("ingreso-agrupado-text-box11")[0].value ||"";
+  const Enfermero = document.getElementsByClassName("ingreso-agrupado-text-box12")[0].value|| "";
+
+  // Obtén la hora actual en mato de 24 horas
+  const currentDate = new Date();
+  const anio=currentDate.getFullYear();
+  const mes = currentDate.getMonth(); 
+  const dia = currentDate.getDay();
+  const horas = currentDate.getHours();
+  const minutos = currentDate.getMinutes();
+  const segundos = currentDate.getSeconds();
+
+  const fechaHoraFormateada = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1 < 10 ? '0' : '') + (currentDate.getMonth() + 1)}-${(currentDate.getDate() < 10 ? '0' : '') + currentDate.getDate()} ${(horas < 10 ? '0' : '') + horas}:${(minutos < 10 ? '0' : '') + minutos}:${(segundos < 10 ? '0' : '') + segundos}`;
+
+
+  /*
+  alert(`Fecha y hora actual: ${fechaHoraFormateada}`);
+  alert(`Selected info: ${selectedMonth}/${selectedDay}/${selectedYear}\nDatos:\nNombre: ${Nombre}\nBox: ${Box}\nMed_hab: ${Med_hab}\nMotivo: ${Motivo}\nDolor: ${Dolor}\nHace_cuanto: ${Hace_cuanto}\nFecha de nacimiento: ${Fechanacimiento}\nTriage Ingresado: ${TriageIngresado}`);
+  */
+  
+  const apiUrl = 'http://localhost:3000/patient';
+  
+  // Objeto con variables
+  var paciente = {
+    "patient_name": Nombre.toString(),
+    "date_of_birth": Fechanacimiento.toString(),
+    "entry_time": fechaHoraFormateada.toString(),
+    "exit_time": null,
+    "patient_triage_time": `${anio}-${(mes + 1 < 10 ? '0' : '') + (mes + 1)}-${(dia < 10 ? '0' : '') + dia} ${(horas < 10 ? '0' : '') + horas}:${(minutos < 10 ? '0' : '') + minutos}:${(segundos < 10 ? '0' : '') + segundos}`,
+    "patient_triage_level": parseInt(TriageIngresado, 10),
+    "patient_box": "CONSULTORIO",
+    "patient_status": 'EN ESPERA',
+    "patient_problem": Motivo.toString(),
+    "patient_medication": Med_hab.toString(),
+    "doctor_id": Medico,
+    "nurse_id": Enfermero,
+    "box_id": Box
+  };
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(paciente),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to add patient');
+    }
+  
+    // Handle success, e.g., show a success message or redirect
+    //alert('Patient added successfully');
+    const Nombre = document.getElementsByClassName("ingreso-agrupado-text-box08")[0].value = "";
+    const Box = document.getElementsByClassName("ingreso-agrupado-text-box09")[0].value = "";
+    const Med_hab = document.getElementsByClassName("ingreso-agrupado-text-box01")[0].value = "";
+    const Motivo = document.getElementsByClassName("ingreso-agrupado-text-box")[0].value = "";
+    const Dolor = document.getElementsByClassName("ingreso-agrupado-text-box02")[0].value = "";
+    const selectElement = document.getElementsByClassName("ingreso-agrupado-text-box03")[0];
+    selectElement.selectedIndex = 0; // Set the selected index to the default value
+    const Hace_cuanto = selectElement.options[selectElement.selectedIndex].text || "";
+    const TriageIngresado = document.getElementsByClassName("ingreso-agrupado-text-box10")[0].value = "";
+
+  } catch (error) {
+    console.error('Error adding patient:', error.message);
+    // Handle error, e.g., show an error message
+    alert('Failed to add patient. Please try again.');
+  }
 };
+
+
+
 
 const IngresoAgrupado = (props) => {
   return (
@@ -53,10 +145,8 @@ const IngresoAgrupado = (props) => {
               </div>
             </div>
           </div>
-          <img
-            src="/external/image1851-gil-300h.png"
-            alt="Image1851"
-            className="ingreso-agrupado-image01"
+          <div
+            className="FondoIngreso"
           />
           <span className="ingreso-agrupado-text04">
             <span>Ingreso Personificado</span>
@@ -186,7 +276,7 @@ const IngresoAgrupado = (props) => {
             className="ingreso-agrupado-button1"
           />
           <span className="ingreso-agrupado-text28">
-            <span>Nuevo Ingreso</span>
+            <span onClick={AgregarPaciente}>Nuevo Ingreso</span>
           </span>
           <div className="ingreso-agrupado-frame427319463">
             <select className='ingreso-agrupado-text-box02' id="frutas">
@@ -224,17 +314,23 @@ const IngresoAgrupado = (props) => {
             alt="Rectangule1851"
             className="ingreso-agrupado-rectangule"
           />
+          <spann className="ListaDespegable">
+            <ScrollableList data={[1,2]} columns={["id"]} ></ScrollableList>
+          </spann>
           <input
+            id='BuscarFechaNacimiento'
             src="/external/textbox1851-8ri-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box05"
           />
           <input
+            id='BuscarNombre'
             src="/external/textbox1851-p0cc-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box06"
           />
           <input
+            id='BuscarId'
             src="/external/textbox1851-414-200h.png"
             alt="TextBox1851"
             className="ingreso-agrupado-text-box07"
@@ -263,7 +359,7 @@ const IngresoAgrupado = (props) => {
           </span>
           <div className="ingreso-agrupado-frame427319460">
             <span className="ingreso-agrupado-text40">
-              <span onClick={getSelectedDate}>Triage</span>
+              <span>Triage</span>
             </span>
           </div>
           <input
@@ -277,11 +373,9 @@ const IngresoAgrupado = (props) => {
           <span className="ingreso-agrupado-text44">
             <span>Fecha nacimiento</span>
           </span>
-          <input
-            src="/external/textbox1861-ewaf-200h.png"
-            alt="TextBox1861"
-            className="ingreso-agrupado-text-box09"
-          />
+          <span className="ingreso-agrupado-text-box09">
+          <SelectDinamicoBoxes/>
+          </span>
           <span className="ingreso-agrupado-text46">
             <span>BOX</span>
           </span>
@@ -296,12 +390,17 @@ const IngresoAgrupado = (props) => {
           <input
             src="/external/textbox1953-n5m7-200h.png"
             alt="TextBox1953"
+            className='hay que borrar este elemento'
           />
-          <SelectDinamicoMedicos className="ingreso-agrupado-text-box11"></SelectDinamicoMedicos> 
+          <span className="ingreso-agrupado-text-box11">
+          <SelectDinamicoMedicos></SelectDinamicoMedicos> 
+          </span>
+          <span className="ingreso-agrupado-text-box12">
+            <SelectDinamicoEnfermeros/>
+          </span>
           <span className="ingreso-agrupado-text50">
             <span>Equipo Medico</span>
           </span>
-          <SelectDinamicoEnfermeros className="ingreso-agrupado-text-box12" ></SelectDinamicoEnfermeros> 
           <span className="ingreso-agrupado-text51">
             <span>Equipo Enfermero</span>
           </span>
@@ -329,6 +428,12 @@ const IngresoAgrupado = (props) => {
       </div>
       <style jsx>
         {`
+          .ListaDesplegable{
+            position: fixed; /* You can use 'absolute' or 'fixed' based on your needs */
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+          }
           .ingreso-agrupado-container {
             width: 100%;
             display: flex;
@@ -420,13 +525,23 @@ const IngresoAgrupado = (props) => {
             height: 24px;
             position: absolute;
           }
-          .ingreso-agrupado-image01 {
-            top: 124px;
-            left: 297px;
-            width: 925px;
-            height: 269px;
+          .FondoIngreso {
+            top: 15%;
+            left: 22%;
+            width: 80%;
+            height: 40%;
             position: absolute;
-            border-radius: 30px;
+            border-radius: 5vw; /* Use vw (viewport width) for responsive border-radius */
+            background-color: #FFFFFF;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+          }
+        
+          @media (max-width: 768px) {
+              .FondoIngreso {
+                  width: 90%;
+                  height: 50%;
+                  border-radius: 3vw;
+              }
           }
           .ingreso-agrupado-text04 {
             top: 130px;
@@ -1071,10 +1186,9 @@ const IngresoAgrupado = (props) => {
             text-decoration: none;
           }
           .ingreso-agrupado-text-box09 {
-            top: 281px;
-            left: 889px;
-            width: 142px;
-            height: 21px;
+            top: 40%; /* Ajusta este valor según tus necesidades */
+            left: 67%; /* Ajusta este valor según tus necesidades */
+            text-align:center;
             position: absolute;
             border-radius: 14px;
             background-color: #F3F3F3;
@@ -1121,56 +1235,53 @@ const IngresoAgrupado = (props) => {
             text-decoration: none;
           }
           .ingreso-agrupado-text-box11 {
-            top: 280px;
-            left: 1071px;
-            width: 142px;
-            height: 21px;
+            top: 39%; /* Ajusta este valor según tus necesidades */
+            left: 82%; /* Ajusta este valor según tus necesidades */
             position: absolute;
             border-radius: 14px;
             background-color: #F3F3F3;
-          }
+            }
           .ingreso-agrupado-text50 {
-            top: 260px;
-            left: 1081px;
+            top: 36%; /* Cambia este valor según tus necesidades */
+            left: 81%; /* Cambia este valor según tus necesidades */
             color: rgba(0, 0, 0, 1);
-            width: 127px;
+            width: 15vw; /* Ajusta el tamaño según tus necesidades */
             height: auto;
             position: absolute;
-            font-size: 16px;
-            font-style: Medium;
-            text-align: left;
-            font-family: Montserrat;
+            font-size: 1.2vw; /* Ajusta el tamaño de la fuente según tus necesidades */
+            font-style: medium; /* Cambié "Medium" a "medium" ya que es el valor correcto */
+            text-align: center;
+            font-family: Montserrat, sans-serif; /* Ajusta según tus necesidades */
             font-weight: 500;
             line-height: normal;
             font-stretch: normal;
             text-decoration: none;
+            z-index: 1;
           }
           .ingreso-agrupado-text-box12 {
-            top: 33%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
-            left: 87%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
-            transform: translate(-50%, -50%); /* Centrar el elemento en función del tamaño del contenedor padre */
-            width: 10%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
-            height: auto; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
-            position: absolute;
-            border-radius: 2vw; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
-            background-color: #F3F3F3;
+            top: 33% !important; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            left: 90% !important; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
+            transform: translate(-50%, -50%) !important ; /* Centrar el elemento en función del tamaño del contenedor padre */
+            position: absolute ;
+            border-radius: 2vw ; 
+            background-color: #F3F3F3 ;
           }
           .ingreso-agrupado-text51 {
-            top: 30%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
-            left: 87%; /* Cambiado a porcentaje para hacerlo relativo al contenedor padre */
-            transform: translate(-50%, -50%); /* Centrar el elemento en función del tamaño del contenedor padre */
+            top: 28.5%; /* Cambia este valor según tus necesidades */
+            left: 82%; /* Cambia este valor según tus necesidades */
             color: rgba(0, 0, 0, 1);
-            width: auto; /* Cambiado a 'auto' para que se ajuste al contenido */
+            width: 15vw; /* Ajusta el tamaño según tus necesidades */
             height: auto;
             position: absolute;
-            font-size: 1.2vw; /* Cambiado a unidades de vista para hacerlo relativo al ancho de la pantalla */
-            font-style: medium; /* Cambiado a minúscula y a 'medium' */
-            text-align: left;
-            font-family: Montserrat, sans-serif; /* Añadido un respaldo de fuente genérica */
+            font-size: 1.2vw; /* Ajusta el tamaño de la fuente según tus necesidades */
+            font-style: medium; /* Cambié "Medium" a "medium" ya que es el valor correcto */
+            text-align: center;
+            font-family: Montserrat, sans-serif; /* Ajusta según tus necesidades */
             font-weight: 500;
             line-height: normal;
             font-stretch: normal;
             text-decoration: none;
+            z-index: 1;
         }
         
           .ingreso-agrupado-frame427319459 {
@@ -1200,20 +1311,21 @@ const IngresoAgrupado = (props) => {
             border-radius: 43px;
           }
           .ingreso-agrupado-text52 {
-            left: 43.39111328125px;
+            left: 25%; /* Cambia este valor según tus necesidades */
             color: rgba(255, 255, 255, 1);
             height: auto;
-            z-index: 3;
+            z-index: 2;
             position: absolute;
-            font-size: 16px;
-            font-style: Medium;
+            font-size: 1.2vw; /* Ajusta el tamaño según tus necesidades */
+            font-style: medium; /* Cambié "Medium" a "medium" ya que es el valor correcto */
             text-align: left;
-            font-family: Montserrat;
+            font-family: Montserrat, sans-serif; /* Ajusta según tus necesidades */
             font-weight: 500;
             line-height: normal;
             font-stretch: normal;
             text-decoration: none;
           }
+          
         `}
       </style>
     </>

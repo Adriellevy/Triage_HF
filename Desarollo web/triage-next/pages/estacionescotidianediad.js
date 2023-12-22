@@ -21,9 +21,17 @@ const Estacionescotidianediad = (props) => {
 
   const [dataListaEnEspera, setData] = useState([]);
 useEffect(() => {
+  const headersList = {
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw",
+    "Content-Type": "application/json",
+  };
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/box');
+      const response = await fetch('http://localhost:3000/box', {
+        method: "GET",
+        headers: headersList,
+      });
       const jsonData = await response.json();
       const transformedData = transformDataBoxes(jsonData);
       setData(transformedData);

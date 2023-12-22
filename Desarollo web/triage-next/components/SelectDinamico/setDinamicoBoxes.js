@@ -14,7 +14,7 @@ const SelectDinamico = () => {
     // Realizar el fetch a la IP y actualizar el estado con las opciones obtenidas
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.0.19:3000/users/doctor', {
+        const response = await fetch('http://192.168.0.19:3000/box', {
           method: "GET",
           headers: headersList,
         });
@@ -35,11 +35,11 @@ const SelectDinamico = () => {
   return (
     <select value={selectedValue} onChange={handleChange} style={{ "border-radius": "2vw" , "backgroundColor": "#F3F3F3" }} >
       <option value="" disabled>
-        Selecciona un Medico
+        Selecciona un BOX
       </option>
       {options.map((option) => (
-        <option key={option.user_id} value={option.user_id}>
-          {option.user_name} - {option.user_type}
+        <option key={option.box_id}>
+          {option.box_id} 
         </option>
       ))}
     </select>
