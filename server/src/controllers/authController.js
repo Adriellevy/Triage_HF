@@ -8,8 +8,8 @@ import { validateUser, validatePartialUser } from '../schemas/userSchema.js'
 export class AuthController {
   static async login(req, res) {
     const result = validatePartialUser(req.body)
-    const { user_name, user_password } = result.data
     try {
+      const { user_name, user_password } = result.data
       const UserData = await UserModel.getUserByUserName(user_name)
       const checkPassword = await compare(user_password, UserData.user_password)
       if (checkPassword) {
