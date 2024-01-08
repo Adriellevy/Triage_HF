@@ -19,14 +19,15 @@ function App() {
         <Route
           path='*'
           element={
-            <div className='flex h-screen'>
+            <div className='flex h-screen '>
               <Sidebar />
-              <div className='flex-1 overflow-y-auto h-screen bg-gray-100'>
+              <div className='flex-1 overflow-y-auto h-screen bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
                 <Routes>
                   <Route path='/' element={<GuidedEntry />} />
                   <Route path='/guidedentry' element={<GuidedEntry />} />
                   <Route path='/patients' element={<Patients />} />
                   <Route path='/patients/:patient_id' element={<PatientDetail />} />
+                  <Route path='/users' element={<UserDetail />} />
                   <Route path='/users/:user_id' element={<UserDetail />} />
                   <Route path='/stats' element={<Stats />} />
                   <Route path='/boxes' element={<Boxes />} />
