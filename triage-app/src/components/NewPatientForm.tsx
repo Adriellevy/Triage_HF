@@ -1,127 +1,221 @@
+import { PartialPatient } from '@/interfaces/Patinet'
+import { addNewPatient } from '@/services/patientService'
 import { useState } from 'react'
 
 function NewPatientForm() {
-  const [Name, setName] = useState('')
-  const [DateOfBirth, setDateOfBirth] = useState('')
-  const [Reason, setReason] = useState('')
-  const [Medic, setMedic] = useState('')
-  const [Nurse, setNurse] = useState('')
-  const [Box, setBox] = useState('')
-  const [Triage, setTriage] = useState('')
+  const [formData, setFormData] = useState<PartialPatient>({
+    patient_name: '',
+    date_of_birth: '',
+    entry_time: '',
+    patient_triage_level: '',
+    patient_medication: '',
+    patient_problem: '',
+    box_id: '',
+    doctor_name: '',
+    nurse_name: '',
+    patient_status: ''
+  })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // Todo: Fetch doctors options
+  const doctorOptions = ['Dr. Smith', 'Dr. Johnson', 'Dr. Davis', 'Dr. Wilson']
+
+  // Todo: Fetch nurse options
+  const nurseOptions = ['Nurse Brown', 'Nurse Johnson', 'Nurse Davis', 'Nurse Wilson']
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
   }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      // TODO: JsonWebToken
+      const token = 'token'
+      const newPatient = await addNewPatient(token, formData)
+      console.log('Nuevo paciente agregado:', newPatient)
+    } catch (error) {
+      console.error('Error al intentar agregar un nuevo paciente:', error)
+    }
+  }
+
+  // Todo: Fix form css
+
   return (
-    <div className='min-h-full flex items-center justify-center mt-5'>
+    <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
+      <h2 className='text-2xl font-semibold mb-5'>Nuevo Paciente</h2>
       <form
-        className='bg-white p-8 shadow-md rounded-md grid grid-cols-3 gap-4 w-full max-w-screen-lg'
         onSubmit={handleSubmit}
+        className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
       >
-        <div className='col-span-1'>
-          <label
-            htmlFor='Name'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Name
+        <div>
+          <label htmlFor='patient_name' className='block text-sm font-medium text-gray-600'>
+            Nombre del Paciente
           </label>
           <input
             type='text'
-            id='Name'
-            className='w-full p-2 border rounded-md'
-            placeholder='Name'
-            value={Name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <label
-            htmlFor='dateofbirth'
-            className='block text-gray-700 text-sm font-bold mb-2 mt-4'
-          >
-            date of birth
-          </label>
-          <input
-            type='text'
-            id='dateofbirth'
-            className='w-full p-2 border rounded-md'
-            placeholder='date of birth'
-            value={DateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            required
-          />
-        </div>
-        <div className='col-span-1'>
-          <label
-            htmlFor='reason'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Reason
-          </label>
-          <input
-            type='text'
-            id='reason'
-            className='w-full p-2 border rounded-md'
-            placeholder='Reason'
-            value={Reason}
-            onChange={(e) => setReason(e.target.value)}
-            required
-          />
-          <label
-            htmlFor='Medic'
-            className='block text-gray-700 text-sm font-bold mb-2 mt-4'
-          >
-            Medicación Habitual
-          </label>
-          <input
-            type='text'
-            id='Medic'
-            className='w-full p-2 border rounded-md'
-            placeholder='Medicación Habitual'
-            value={Medic}
-            onChange={(e) => setMedic(e.target.value)}
+            id='patient_name'
+            name='patient_name'
+            value={formData.patient_name}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
             required
           />
         </div>
 
-        <div className='col-span-1'>
-          <label
-            htmlFor='reason'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Reason
+        <div>
+          <label htmlFor='date_of_birth' className='block text-sm font-medium text-gray-600'>
+            Fecha de Nacimiento
           </label>
           <input
-            type='text'
-            id='reason'
-            className='w-full p-2 border rounded-md'
-            placeholder='Reason'
-            value={Reason}
-            onChange={(e) => setReason(e.target.value)}
-            required
-          />
-          <label
-            htmlFor='medhab'
-            className='block text-gray-700 text-sm font-bold mb-2 mt-4'
-          >
-            Medicación Habitual
-          </label>
-          <input
-            type='text'
-            id='medhab'
-            className='w-full p-2 border rounded-md'
-            placeholder='Medicación Habitual'
-            value={Medic}
-            onChange={(e) => setMedic(e.target.value)}
-            required
+            type='date'
+            id='date_of_birth'
+            name='date_of_birth'
+            value={formData.date_of_birth}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
-        <button
-          type='submit'
-          className='col-span-2 bg-blue-500 text-white p-2 rounded-md mt-4'
-        >
-          Agregar Paciente
-        </button>
+        <div>
+          <label htmlFor='entry_time' className='block text-sm font-medium text-gray-600'>
+            Hora de Ingreso
+          </label>
+          <input
+            type='time'
+            id='entry_time'
+            name='entry_time'
+            value={formData.entry_time}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='patient_triage_level' className='block text-sm font-medium text-gray-600'>
+            Nivel de Triaje
+          </label>
+          <input
+            type='text'
+            id='patient_triage_level'
+            name='patient_triage_level'
+            value={formData.patient_triage_level}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='patient_medication' className='block text-sm font-medium text-gray-600'>
+            Medicación del Paciente
+          </label>
+          <input
+            type='text'
+            id='patient_medication'
+            name='patient_medication'
+            value={formData.patient_medication}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='patient_problem' className='block text-sm font-medium text-gray-600'>
+            Problema del Paciente
+          </label>
+          <input
+            type='text'
+            id='patient_problem'
+            name='patient_problem'
+            value={formData.patient_problem}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='box_id' className='block text-sm font-medium text-gray-600'>
+            ID de la Caja
+          </label>
+          <input
+            type='text'
+            id='box_id'
+            name='box_id'
+            value={formData.box_id}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='doctor_name' className='block text-sm font-medium text-gray-600'>
+            Nombre del Doctor
+          </label>
+          <input
+            type='text'
+            id='doctor_name'
+            name='doctor_name'
+            value={formData.doctor_name}
+            onChange={handleInputChange}
+            autoComplete='off' // Desactiva el autocompletado del navegador
+            list='doctorOptions' // Asociamos el datalist con el ID "doctorOptions"
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+          <datalist
+            id='doctorOptions'
+            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
+          >
+            {doctorOptions.map((option) => (
+              <option key={option} value={option} />
+            ))}
+          </datalist>
+        </div>
+
+        <div>
+          <label htmlFor='nurse_name' className='block text-sm font-medium text-gray-600'>
+            Nombre del Enfermero
+          </label>
+          <input
+            type='text'
+            id='nurse_name'
+            name='nurse_name'
+            value={formData.nurse_name}
+            onChange={handleInputChange}
+            autoComplete='off'
+            list='nurseOptions'
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+          <datalist id='nurseOptions'>
+            {nurseOptions.map((option) => (
+              <option key={option} value={option} />
+            ))}
+          </datalist>
+        </div>
+
+        <div>
+          <label htmlFor='patient_status' className='block text-sm font-medium text-gray-600'>
+            Estado del Paciente
+          </label>
+          <input
+            type='text'
+            id='patient_status'
+            name='patient_status'
+            value={formData.patient_status}
+            onChange={handleInputChange}
+            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+          />
+        </div>
+
+        <div className='col-span-4 mt-4 flex justify-end'>
+          <button
+            type='submit'
+            className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'
+          >
+            Crear Paciente
+          </button>
+        </div>
       </form>
     </div>
   )

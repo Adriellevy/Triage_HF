@@ -1,4 +1,4 @@
-import { Patient } from '../interfaces/Patinet'
+import { PartialPatient, Patient } from '../interfaces/Patinet'
 
 export const getPatients = async (token: string): Promise<Patient[]> => {
   try {
@@ -53,8 +53,8 @@ export const updatePatient = async (
 
 export const addNewPatient = async (
   token: string,
-  newPatientData: Omit<Patient, 'patient_id'>
-): Promise<Patient> => {
+  newPatientData: Omit<PartialPatient, 'patient_id'>
+): Promise<PartialPatient> => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'POST',
