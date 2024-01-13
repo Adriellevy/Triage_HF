@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Patient } from '../interfaces/Patinets'
+import { Patient } from '../interfaces/Patinet'
 import EditPencil from '../icons/edit-pencil.svg'
 
 interface PropsPatientDetailModal {

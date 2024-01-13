@@ -1,5 +1,5 @@
-import { Patient } from '../interfaces/Patinets'
-import { getPatientById } from '../services/patientService'
+import { Patient } from '@/interfaces/Patinet'
+import { getPatientById } from '@/services/patientService'
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 

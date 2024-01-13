@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent } from 'react'
-import { Patient } from '../interfaces/Patinets'
+import { Patient } from '../interfaces/Patinet'
 //TODO:
 //import { updatePatient } from '../services/patientService'
 

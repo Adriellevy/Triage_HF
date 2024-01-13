@@ -1,5 +1,5 @@
-import BoxItem from './BoxItem'
-import { Box } from '../interfaces/Boxes'
+import BoxItem from '@/components/BoxItem'
+import { Box } from '@/interfaces/Boxes'
 
 interface PropsBoxList {
   boxes: Box[] | null

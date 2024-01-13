@@ -1,4 +1,4 @@
-import { Patient } from '../interfaces/Patinets'
+import { PartialPatient, Patient } from '../interfaces/Patinet'
 
 export const getPatients = async (token: string): Promise<Patient[]> => {
   try {
@@ -11,13 +11,13 @@ export const getPatients = async (token: string): Promise<Patient[]> => {
     })
 
     if (!response.ok) {
-      throw new Error(`Error en la solicitud GET a /patient: ${response.statusText}`)
+      throw new Error(`Error in GET request to /patient: ${response.statusText}`)
     }
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error al obtener pacientes:', error)
-    throw new Error('Error al obtener pacientes')
+    console.error('Error fetching patients:', error)
+    throw new Error('Error fetching patients')
   }
 }
 
@@ -33,12 +33,12 @@ export const getPatientById = async (patient_id: string | undefined): Promise<Pa
       }
     })
     if (!response.ok) {
-      throw new Error(`Error al obtener el paciente. Código de estado: ${response.status}`)
+      throw new Error(`Error in GET request to /patient:${response.status}`)
     }
     return (await response.json()) as Patient
   } catch (error) {
-    console.error('Error al obtener el paciente:', error)
-    throw new Error('Error al obtener el paciente')
+    console.error('Error fetching patient:', error)
+    throw new Error('Error fetching patient')
   }
 }
 
@@ -53,8 +53,8 @@ export const updatePatient = async (
 
 export const addNewPatient = async (
   token: string,
-  newPatientData: Omit<Patient, 'patient_id'>
-): Promise<Patient> => {
+  newPatientData: Omit<PartialPatient, 'patient_id'>
+): Promise<PartialPatient> => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'POST',

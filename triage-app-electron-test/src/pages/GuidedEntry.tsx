@@ -1,6 +1,6 @@
 // import GuidedEntryForm from '../components/GuidedEntryForm'
 
-import NewPatientForm from '../components/NewPatientForm'
+import NewPatientForm from '@/components/NewPatientForm'
 
 function GuidedEntry() {
   return (

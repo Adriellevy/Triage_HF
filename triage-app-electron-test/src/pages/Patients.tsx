@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import PatientsList from '../components/PatientsList'
-import SearchPatientForm from '../components/SearchPatientForm'
+import PatientsList from '@/components/PatientsList'
+import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
-import { Patient } from '../interfaces/Patinets'
+import { Patient } from '../interfaces/Patinet'
 
 function Patients() {
   const token =

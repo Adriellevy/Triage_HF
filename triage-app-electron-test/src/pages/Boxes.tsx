@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import BoxList from '../components/BoxList'
-import LoadingModal from '../components/LoadingModal'
+import LoadingModal from '@/components/LoadingModal'
 import { getBoxes } from '../services/boxService'
 import { Box } from '../interfaces/Boxes'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Patient } from '../interfaces/Patinets'
+import { Patient } from '../interfaces/Patinet'
 import PatientItem from './PatientItem'
 import PatientDetailModal from './PatientDetailModal'
 

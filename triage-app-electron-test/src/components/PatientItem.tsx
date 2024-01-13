@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Patient } from '../interfaces/Patinets'
+import { Patient } from '../interfaces/Patinet'
 
 interface PropsPatientItem {
   patient: Patient
