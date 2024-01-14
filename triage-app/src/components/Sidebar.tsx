@@ -116,11 +116,17 @@ function Sidebar() {
               </Link>
             ))}
           </nav>
+          <div className='mt-auto p-4'>
+            <button onClick={handleLogout} className='bg-red-500 text-white p-2 rounded-md w-full'>
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className='sm:hidden fixed z-50 top-0 bg-gray-800 text-white w-full p-4 text-center'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
+              <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
               <span className='text-lg font-bold mx-auto'>Triage App</span>
             </div>
             <button onClick={toggleMenu} className='text-lg font-bold'>
