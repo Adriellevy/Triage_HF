@@ -1,8 +1,12 @@
 import { PartialPatient } from '@/interfaces/Patinet'
+import { User } from '@/interfaces/User'
 import { addNewPatient } from '@/services/patientService'
-import { useState } from 'react'
+import { getAllDoctors, getAllNurses } from '@/services/userService'
+import { useEffect, useState } from 'react'
 
 function NewPatientForm() {
+  const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
+  const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [formData, setFormData] = useState<PartialPatient>({
     patient_name: '',
     date_of_birth: '',
@@ -15,12 +19,6 @@ function NewPatientForm() {
     nurse_name: '',
     patient_status: ''
   })
-
-  // Todo: Fetch doctors options
-  const doctorOptions = ['Dr. Smith', 'Dr. Johnson', 'Dr. Davis', 'Dr. Wilson']
-
-  // Todo: Fetch nurse options
-  const nurseOptions = ['Nurse Brown', 'Nurse Johnson', 'Nurse Davis', 'Nurse Wilson']
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -41,7 +39,26 @@ function NewPatientForm() {
     }
   }
 
-  // Todo: Fix form css
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await getAllDoctors()
+        setDoctorOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    const fetchNurses = async () => {
+      try {
+        const data = await getAllNurses()
+        setNurseOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    fetchDoctors()
+    fetchNurses()
+  }, [])
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -167,8 +184,8 @@ function NewPatientForm() {
             id='doctorOptions'
             className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
           >
-            {doctorOptions.map((option) => (
-              <option key={option} value={option} />
+            {DoctorOptions?.map((option) => (
+              <option key={option.user_id} value={option.user_name} />
             ))}
           </datalist>
         </div>
@@ -188,8 +205,8 @@ function NewPatientForm() {
             className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
           <datalist id='nurseOptions'>
-            {nurseOptions.map((option) => (
-              <option key={option} value={option} />
+            {NurseOptions?.map((option) => (
+              <option key={option.user_id} value={option.user_name} />
             ))}
           </datalist>
         </div>
@@ -208,12 +225,12 @@ function NewPatientForm() {
           />
         </div>
 
-        <div className='col-span-4 mt-4 flex justify-end'>
+        <div className='flex items-end'>
           <button
             type='submit'
             className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'
           >
-            Crear Paciente
+            Add New Patient
           </button>
         </div>
       </form>
