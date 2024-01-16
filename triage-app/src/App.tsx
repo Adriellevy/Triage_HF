@@ -1,17 +1,23 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import GuidedEntry from './pages/GuidedEntry'
-import Stats from './pages/Stats'
-import Patients from './pages/Patients'
-import Boxes from './pages/Boxes'
-import Sidebar from '@/components/Sidebar'
-import { useAuth } from './contex/AuthContext'
-import PatientDetail from './pages/PatientDetail'
-import UserDetail from './pages/UserDetail'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import GuidedEntry from './pages/GuidedEntry';
+import Stats from './pages/Stats';
+import Patients from './pages/Patients';
+import Boxes from './pages/Boxes';
+import Sidebar from '@/components/Sidebar';
+import { useAuth } from './contex/AuthContext'; // Corrected the import path
+import PatientDetail from './pages/PatientDetail';
+import UserDetail from './pages/UserDetail';
 
 function App() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
+
+  // Check authentication status on startup
+  if (isAuthenticated === null) {
+    // You might want to display a loading spinner or some indicator here
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -38,11 +44,15 @@ function App() {
           }
         />
       ) : (
+        // Redirect to login if not authenticated
         <Route path='*' element={<Navigate to='/login' />} />
       )}
-      <Route path='/login' element={isAuthenticated ? <Navigate to='/' /> : <Login />} />
+      <Route
+        path='/login'
+        element={isAuthenticated ? <Navigate to='/' /> : <Login />}
+      />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react'
 import { useAuth } from '../contex/AuthContext'
-import { loginservice } from '../services/authService'
+import { loginService } from '../services/authService'
 
 function Loginform() {
   const [email, setEmail] = useState<string>('')
@@ -10,8 +10,9 @@ function Loginform() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const authResponse = await loginservice(email, password)
+    const authResponse = await loginService(email, password)
     if (authResponse.success) {
+      //se le podría pasar a la funcion login de Authcontext el token a guardar (hay que tener en cuenta que auth service ya lo hace)
       login()
     }
     if (!authResponse.success) {

@@ -3,10 +3,15 @@ import PatientsList from '@/components/PatientsList'
 import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
+import {getCookie} from '../contex/getCookie'
 
 function Patients() {
   const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
+  /*   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
+  */
+    getCookie('authToken');
+    console.log('Valor de la cookie sessionId:', token);
+
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
 
   const onDelete = (patient_id: string) => {

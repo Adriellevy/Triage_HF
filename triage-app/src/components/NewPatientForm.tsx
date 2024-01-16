@@ -3,8 +3,10 @@ import { User } from '@/interfaces/User'
 import { addNewPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { useEffect, useState } from 'react'
+import {getCookie} from '../contex/getCookie'
 
 function NewPatientForm() {
+  
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [formData, setFormData] = useState<PartialPatient>({
@@ -31,7 +33,7 @@ function NewPatientForm() {
     e.preventDefault()
     try {
       // TODO: JsonWebToken
-      const token = 'token'
+      const token = getCookie('authToken');
       const newPatient = await addNewPatient(token, formData)
       console.log('Nuevo paciente agregado:', newPatient)
     } catch (error) {
