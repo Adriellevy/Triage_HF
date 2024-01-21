@@ -3,10 +3,10 @@ import PatientsList from '@/components/PatientsList'
 import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
-
+import Cookies from 'js-cookie'
 function Patients() {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
+  const token = Cookies.get('authToken');
+
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
 
   const onDelete = (patient_id: string) => {

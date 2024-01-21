@@ -1,17 +1,40 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import GuidedEntry from './pages/GuidedEntry'
-import Stats from './pages/Stats'
-import Patients from './pages/Patients'
-import Boxes from './pages/Boxes'
-import Sidebar from '@/components/Sidebar'
-import { useAuth } from './contex/AuthContext'
-import PatientDetail from './pages/PatientDetail'
-import UserDetail from './pages/UserDetail'
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import GuidedEntry from './pages/GuidedEntry';
+import Stats from './pages/Stats';
+import Patients from './pages/Patients';
+import Boxes from './pages/Boxes';
+import Sidebar from '@/components/Sidebar';
+import { useAuth } from './contex/AuthContext'; // Corrected the import path
+import PatientDetail from './pages/PatientDetail';
+import UserDetail from './pages/UserDetail';
+import { useEffect,useState } from 'react';
+
+import Cookies from 'js-cookie';
 
 function App() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, login } = useAuth();
+  const [User, setUser]=useState<string>('');
+
+  useEffect(()=>{
+    const valor_token = Cookies.get("authToken");
+    console.log("Se imprime desde la app el token: "+valor_token)
+    if(valor_token){
+      //aca se puede mandar la solicitud aca o en login para chequear si el token es bueno o es shit (quiero que se vaya fijando cada vez que se haga algo en la app eso)
+      //ver si esto nos generaria algun cuello de botella
+      setUser(valor_token);
+      login(valor_token);
+    }
+    
+  },[login])
+
+
+  // Check authentication status on startup
+  /*if (isAuthenticated === null) {
+    // You might want to display a loading spinner or some indicator here
+    return <div>Loading...</div>;
+  }*/
 
   return (
     <Routes>
@@ -38,11 +61,19 @@ function App() {
           }
         />
       ) : (
-        <Route path='*' element={<Navigate to='/login' />} />
+        // Redirect to login if not authenticated
+        <Route path='*' element={<Login handleUserChange={setUser} user={User}/>} />
       )}
-      <Route path='/login' element={isAuthenticated ? <Navigate to='/' /> : <Login />} />
+      
+      
     </Routes>
-  )
+  );
 }
-
-export default App
+//saque este route de la ultima linea antes de </routes>
+/*
+<Route
+        path='/login'
+        element={isAuthenticated ? <GuidedEntry /> : <Login handleUserChange={setUser} user={User}/>}
+      />
+*/
+export default App;
