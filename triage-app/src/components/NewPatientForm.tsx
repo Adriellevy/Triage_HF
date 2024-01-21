@@ -3,7 +3,7 @@ import { User } from '@/interfaces/User'
 import { addNewPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { useEffect, useState } from 'react'
-import {getCookie} from '../contex/getCookie'
+import Cookies from 'js-cookie'
 
 function NewPatientForm() {
   
@@ -33,9 +33,13 @@ function NewPatientForm() {
     e.preventDefault()
     try {
       // TODO: JsonWebToken
-      const token = getCookie('authToken');
-      const newPatient = await addNewPatient(token, formData)
-      console.log('Nuevo paciente agregado:', newPatient)
+      const token = Cookies.get('authToken');
+      if (token) {
+        const newPatient = await addNewPatient(token, formData);
+        console.log('Nuevo paciente agregado:', newPatient)
+      } else {
+        console.error('Token is undefined');
+      }
     } catch (error) {
       console.error('Error al intentar agregar un nuevo paciente:', error)
     }

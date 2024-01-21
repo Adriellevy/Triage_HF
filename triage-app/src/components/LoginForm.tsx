@@ -1,8 +1,15 @@
 import { useState, FormEvent } from 'react'
 import { useAuth } from '../contex/AuthContext'
 import { loginService } from '../services/authService'
+import Cookies from 'js-cookie'
 
-function Loginform() {
+
+interface LoginFormProps {
+  handleUserChange: (user: string) => void; // Replace UserType with the actual type of your user object
+  user: string; // Replace UserType with the actual type of your user object
+}
+
+function LoginForm({ handleUserChange, user }: LoginFormProps) { 
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -10,13 +17,26 @@ function Loginform() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const authResponse = await loginService(email, password)
-    if (authResponse.success) {
-      //se le podría pasar a la funcion login de Authcontext el token a guardar (hay que tener en cuenta que auth service ya lo hace)
-      login()
-    }
-    if (!authResponse.success) {
-      setLoginError(authResponse.error || 'Error durante el inicio de sesión')
+    try{
+      const authResponse = await loginService(email, password)
+      if (authResponse.success) {
+        if (authResponse.serverRes) {
+          console.log("En login el token es: " + authResponse.serverRes);
+          Cookies.set("authToken",authResponse.serverRes);
+          handleUserChange(authResponse.serverRes);
+          setEmail('');
+          setPassword('');
+          login(user);
+      } else {
+          // Handle the case where serverRes is undefined
+          console.error("Authentication response does not contain a valid token.");
+      }
+      }
+      if (!authResponse.success) {
+        setLoginError(authResponse.error || 'Error durante el inicio de sesión')
+      }
+    }catch(e){
+      console.log("algo se rompio en LoginForm: "+e);
     }
   }
 
@@ -61,4 +81,4 @@ function Loginform() {
   )
 }
 
-export default Loginform
+export default LoginForm
