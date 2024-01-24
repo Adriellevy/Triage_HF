@@ -6,6 +6,7 @@ import Stats from './pages/Stats';
 import Patients from './pages/Patients';
 import Boxes from './pages/Boxes';
 import Sidebar from '@/components/Sidebar';
+import Configuration from './pages/Configuration';
 import { useAuth } from './contex/AuthContext'; // Corrected the import path
 import PatientDetail from './pages/PatientDetail';
 import UserDetail from './pages/UserDetail';
@@ -54,6 +55,7 @@ function App() {
                   <Route path='/users/:user_id' element={<UserDetail />} />
                   <Route path='/stats' element={<Stats />} />
                   <Route path='/boxes' element={<Boxes />} />
+                  <Route path='/configuration' element={<Configuration />} />
                   <Route path='*' element={<NotFound />} />
                 </Routes>
               </div>

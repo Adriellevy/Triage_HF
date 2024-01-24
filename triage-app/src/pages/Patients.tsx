@@ -24,10 +24,16 @@ function Patients() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPatients(token)
-        //TODO: add searchTerm
-        //const data = await getPatients(token, searchTerm);
-        setPatientsData(data)
+        if(token){
+          const data = await getPatients()
+            
+          //TODO: add searchTerm
+          //const data = await getPatients(token, searchTerm);
+          
+          setPatientsData(data)
+        }else{
+          console.log("Error en fetch data de Patients.tsx")
+        }
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)
       }

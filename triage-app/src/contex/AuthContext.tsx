@@ -15,9 +15,11 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState(false);
 
-  const login = () => {
+  const login = (token: string) => {
     // Store the token in a cookie token: string
     //document.cookie = `authToken=${token}; path=/`;
+    //aqui se podría hacer la request o el authservice hablarlo con luquitas
+    console.log("le llego el token a login: "+ token)
     setAuthenticated(true);
   };
 

@@ -4,7 +4,9 @@ export interface User {
   user_email: string
   user_password: string
   user_type: 'DOCTOR' | 'NURSE' | 'HOSPITAL'
-
+  speciality?:string
+  state?:boolean
+  
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Symbol.iterator](): IterableIterator<any>
 }
@@ -13,5 +15,7 @@ export interface PartialUser {
   user_name?: string
   user_email?: string
   user_password?: string
-  user_type?: 'DOCTOR' | 'NURSE' | 'HOSPITAL'
+  user_type?: 'DOCTOR' | 'NURSE' | 'HOSPITAL' 
+  speciality?:string
+  state?:boolean
 }
