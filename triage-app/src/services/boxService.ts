@@ -1,6 +1,7 @@
 import { Box } from '../interfaces/Boxes'
-
-export const getBoxes = async (token: string): Promise<Box[]> => {
+import Cookies from 'js-cookie';
+export const getBoxes = async (): Promise<Box[]> => {
+  const token = Cookies.get('authToken');
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/box`, {
       method: 'GET',
