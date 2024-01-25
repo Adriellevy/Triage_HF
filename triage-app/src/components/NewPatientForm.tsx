@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 function NewPatientForm() {
-  
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [formData, setFormData] = useState<PartialPatient>({

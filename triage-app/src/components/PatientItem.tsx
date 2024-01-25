@@ -22,21 +22,21 @@ function PatientItem({ patient, onDelete, onViewDetails }: PropsPatientItem) {
     patient_status
   } = patient
   return (
-    <tr>
-      <td className='border p-2'>{patient_name}</td>
-      <td className='border p-2'>{date_of_birth}</td>
-      <td className='border p-2'>{entry_time}</td>
-      <td className='border p-2'>{patient_triage_level}</td>
-      <td className='border p-2'>{patient_medication}</td>
-      <td className='border p-2'>{patient_problem}</td>
-      <td className='border p-2'>ID:{box_id}</td>
-      <td className='border p-2'>{doctor_name}</td>
-      <td className='border p-2'>{nurse_name}</td>
-      <td className='border p-2'>{patient_status}</td>
+    <tr className='max-w-full'>
+      <td className='border text-sm'>{patient_name}</td>
+      <td className='border p-2 hidden lg:table-cell'>{date_of_birth}</td>
+      <td className='border p-2 hidden lg:table-cell'>{entry_time}</td>
+      <td className='border md:p-2'>{patient_triage_level}</td>
+      <td className='border p-2 hidden lg:table-cell'>{patient_medication}</td>
+      <td className='border p-2 hidden lg:table-cell'>{patient_problem}</td>
+      <td className='border md:p-2'>ID:{box_id}</td>
+      <td className='border p-2 hidden lg:table-cell'>{doctor_name}</td>
+      <td className='border p-2 hidden lg:table-cell'>{nurse_name}</td>
+      <td className='border text-sm md:p-2'>{patient_status}</td>
       <td className='border p-2'>
         <button
           onClick={() => onViewDetails(patient)}
-          className='bg-green-500 text-white p-2 mt-2 rounded-md w-full'
+          className='bg-green-500 text-white md:p-2 md:mt-2 rounded-md w-full'
         >
           Details modal
         </button>
