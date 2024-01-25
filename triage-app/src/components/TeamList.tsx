@@ -1,15 +1,29 @@
 import { useState } from 'react'
 import { User } from '../interfaces/User'
 import TeamItem from'../components/TeamItem'
+import UserDetailModal from './UserDetailModal'
 
 interface PropsTeamList {
   Team_members: User[]
-  onDelete: (patient_id: string) => void
+  onDelete: (user_id: string) => void
+  onViewDetails: (user: User) => void
 }
 
-function PatientsList({ Team_members, onDelete }: PropsTeamList) {
+function TeamList({ Team_members}: PropsTeamList) {
+  
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [selectedPatient, setSelectedUser] = useState<User | null>(null)
+  
+  const handleViewDetails = (user: User) => {
+    setSelectedUser(user)
+    setShowDetailModal(true)
+  }
 
-  // console.log(patients)
+  const handleDetailModalClose = () => {
+    setShowDetailModal(false)
+    setSelectedUser(null)
+  }
+  //console.log(user)
   return (
     <div className='mt-4 mx-8'>
       {/*<h2 className='text-2xl font-semibold mb-4'>Patients List</h2> */}
@@ -28,13 +42,16 @@ function PatientsList({ Team_members, onDelete }: PropsTeamList) {
             <TeamItem
               key={Team_members.user_name}
               user={Team_members}
-              onDelete={onDelete}
+              onViewDetails={handleViewDetails}
             />
           ))}
         </tbody>
       </table>
+      {showDetailModal && (
+        <UserDetailModal user={selectedPatient} onClose={handleDetailModalClose} />
+      )}
     </div>
   )
 }
 
-export default PatientsList
+export default TeamList
