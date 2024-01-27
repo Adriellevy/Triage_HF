@@ -8,8 +8,7 @@ import PatientsIcon from '../icons/patients.svg'
 import StatsIcon from '../icons/stats-icon.svg'
 import HamburgerIcon from '../icons/hamburger-icon.svg'
 import HamburgerCloseIcon from '../icons/hamburger-close-icon.svg'
-import ConfigIcon  from "../icons/settings-2-svgrepo-com.svg";
-
+import ConfigIcon from '../icons/settings-2-svgrepo-com.svg'
 
 // TODO: Change LOGO
 import Logo from '../icons/stats-icon.svg'

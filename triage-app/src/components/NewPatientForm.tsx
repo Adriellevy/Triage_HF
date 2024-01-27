@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 function NewPatientForm() {
-  
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [formData, setFormData] = useState<PartialPatient>({
@@ -33,12 +32,13 @@ function NewPatientForm() {
     e.preventDefault()
     try {
       // TODO: JsonWebToken
-      const token = Cookies.get('authToken');
+      const token = Cookies.get('authToken')
+      console.log(formData)
       if (token) {
-        const newPatient = await addNewPatient(token, formData);
+        const newPatient = await addNewPatient(token, formData)
         console.log('Nuevo paciente agregado:', newPatient)
       } else {
-        console.error('Token is undefined');
+        console.error('Token is undefined')
       }
     } catch (error) {
       console.error('Error al intentar agregar un nuevo paciente:', error)
