@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PartialPatient } from '@/interfaces/Patinet'
 import { User } from '@/interfaces/User'
 import { addNewPatient } from '@/services/patientService'
@@ -6,20 +7,28 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 function NewPatientForm() {
-  
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
-  const [formData, setFormData] = useState<PartialPatient>({
-    patient_name: '',
-    date_of_birth: '',
-    entry_time: '',
-    patient_triage_level: '',
-    patient_medication: '',
-    patient_problem: '',
-    box_id: '',
-    doctor_name: '',
-    nurse_name: '',
-    patient_status: ''
+
+  //todo: sacar patient_box,
+  //todo: patient_triage_time se crea en api
+  //todo: entry time se crea en api
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formData, setFormData] = useState<any>({
+    patient_name: 'Nuevo Paciente123',
+    date_of_birth: '2000-01-01',
+    entry_time: '2023-01-01 10:00:00',
+    exit_time: null,
+    patient_triage_time: '2023-01-01 10:15:00',
+    patient_triage_level: 2,
+    patient_box: 'CONSULTORIO',
+    patient_status: 'EN ESPERA',
+    patient_problem: 'Síntomas generales',
+    patient_medication: 'Paracetamol',
+    doctor_id: 1,
+    nurse_id: 2,
+    box_id: 1
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -33,12 +42,12 @@ function NewPatientForm() {
     e.preventDefault()
     try {
       // TODO: JsonWebToken
-      const token = Cookies.get('authToken');
+      const token = Cookies.get('authToken')
       if (token) {
-        const newPatient = await addNewPatient(token, formData);
+        const newPatient = await addNewPatient(token, formData)
         console.log('Nuevo paciente agregado:', newPatient)
       } else {
-        console.error('Token is undefined');
+        console.error('Token is undefined')
       }
     } catch (error) {
       console.error('Error al intentar agregar un nuevo paciente:', error)
