@@ -43,10 +43,13 @@ function NewPatientForm() {
     try {
       // TODO: JsonWebToken
       const token = Cookies.get('authToken')
+      console.log(formData)
       if (token) {
+        const newPatient = await addNewPatient(token, formData)
         const newPatient = await addNewPatient(token, formData)
         console.log('Nuevo paciente agregado:', newPatient)
       } else {
+        console.error('Token is undefined')
         console.error('Token is undefined')
       }
     } catch (error) {
