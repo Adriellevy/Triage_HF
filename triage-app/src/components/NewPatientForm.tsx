@@ -32,6 +32,7 @@ function NewPatientForm() {
   }
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     formData.patient_triage_time = getCurrentTime()
+    formData.patient_box = formData.box_id
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
@@ -40,21 +41,62 @@ function NewPatientForm() {
     entry_time: '2023-01-01 10:00:00',
     exit_time: null,
     patient_triage_time: getCurrentTime(),
-    patient_triage_level: undefined,
+    patient_triage_level: '',
     patient_box: '',
     patient_status: '',
     patient_problem: '',
     patient_medication: '',
-    doctor_id: undefined,
-    nurse_id: undefined,
-    box_id: undefined
+    doctor_id: '',
+    nurse_id: '',
+    box_id: ''
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    // Get the selected option based on the entered value
+
+    // Check if it's the hidden input
+    if (name === 'doctor_id') {
+      const itemId = DoctorOptions
+        ? DoctorOptions.find((option) => option.user_name === value)?.user_id
+        : null
+
+      console.log(itemId)
+      setFormData({
+        ...formData,
+        [name]: itemId
+      })
+    } else if (name === 'nurse_id') {
+      const itemId = NurseOptions
+        ? NurseOptions.find((option) => option.user_name === value)?.user_id
+        : null
+
+      console.log(itemId)
+      setFormData({
+        ...formData,
+        [name]: itemId
+      })
+    } else if (name === 'box_id') {
+      const itemId = BoxesOptions
+        ? BoxesOptions.find((option) => option.box_id + ': ' + option.box_type === value)?.box_id
+        : null
+
+      console.log(itemId)
+      setFormData({
+        ...formData,
+        [name]: itemId
+      })
+    } else if (name === 'patient_triage_level') {
+      setFormData({
+        ...formData,
+        [name]: Number(value)
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -216,7 +258,11 @@ function NewPatientForm() {
             className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
           >
             {BoxesOptions?.map((option) => (
-              <option key={option.box_id} value={option.box_id + ': ' + option.box_type} />
+              <option
+                key={option.box_id}
+                value={option.box_id + ': ' + option.box_type}
+                data-id={option.box_id}
+              />
             ))}
           </datalist>
         </div>
@@ -240,7 +286,7 @@ function NewPatientForm() {
             className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
           >
             {DoctorOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} />
+              <option key={option.user_id} value={option.user_name} data-id={option.user_id} />
             ))}
           </datalist>
         </div>
