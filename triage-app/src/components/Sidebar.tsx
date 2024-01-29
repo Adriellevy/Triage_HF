@@ -72,7 +72,7 @@ function Sidebar() {
 
   return (
     <div>
-      <div className='hidden sm:flex md:flex lg:flex flex-col w-56 bg-gray-800 text-white h-full'>
+      <div className='hidden md:flex lg:flex flex-col w-56 bg-gray-800 text-white h-full'>
         <div className='p-4 flex items-center'>
           <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
           <div className='text-3xl font-bold'>Triage App</div>
@@ -104,7 +104,7 @@ function Sidebar() {
         </div>
       </div>
 
-      <div className='sm:hidden'>
+      <div className='md:hidden'>
         <div
           className={` ${
             menuVisible ? 'flex' : 'hidden'
@@ -129,7 +129,7 @@ function Sidebar() {
           </div>
         </div>
 
-        <div className='sm:hidden fixed z-50 top-0 bg-gray-800 text-white w-full p-4 text-center'>
+        <div className='md:hidden fixed z-50 top-0 bg-gray-800 text-white w-full p-4 text-center'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
