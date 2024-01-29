@@ -1,7 +1,11 @@
 import { PartialPatient, Patient } from '../interfaces/Patinet'
-
-export const getPatients = async (token: string): Promise<Patient[]> => {
+import Cookies from 'js-cookie'
+export const getPatients = async (): Promise<Patient[]> => {
+  
+  const token = Cookies.get('authToken')
   try {
+    
+    const token = Cookies.get('authToken');
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'GET',
       headers: {
@@ -52,10 +56,11 @@ export const updatePatient = async (
 }
 
 export const addNewPatient = async (
-  token: string,
   newPatientData: Omit<PartialPatient, 'patient_id'>
 ): Promise<PartialPatient> => {
   try {
+    
+    const token = Cookies.get('authToken')
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'POST',
       headers: {
