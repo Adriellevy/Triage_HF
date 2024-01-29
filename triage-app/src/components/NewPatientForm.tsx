@@ -1,34 +1,53 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PartialPatient } from '@/interfaces/Patinet'
 import { User } from '@/interfaces/User'
+import { Box } from '@/interfaces/Boxes'
 import { addNewPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
+import { getBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
 function NewPatientForm() {
+  const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
 
   //todo: sacar patient_box,
   //todo: patient_triage_time se crea en api
   //todo: entry time se crea en api
-
+  // Function to get the current time in the desired format
+  const getCurrentTime = () => {
+    const now = new Date()
+    const formattedTime = `${now.getFullYear()}-${(now.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now
+      .getHours()
+      .toString()
+      .padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now
+      .getSeconds()
+      .toString()
+      .padStart(2, '0')}`
+    return formattedTime
+  }
+  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    formData.patient_triage_time = getCurrentTime()
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
-    patient_name: 'Nuevo Paciente123',
+    patient_name: '',
     date_of_birth: '2000-01-01',
     entry_time: '2023-01-01 10:00:00',
     exit_time: null,
-    patient_triage_time: '2023-01-01 10:15:00',
-    patient_triage_level: 2,
-    patient_box: 'CONSULTORIO',
-    patient_status: 'EN ESPERA',
-    patient_problem: 'Síntomas generales',
-    patient_medication: 'Paracetamol',
-    doctor_id: 1,
-    nurse_id: 2,
-    box_id: 1
+    patient_triage_time: getCurrentTime(),
+    patient_triage_level: undefined,
+    patient_box: '',
+    patient_status: '',
+    patient_problem: '',
+    patient_medication: '',
+    doctor_id: undefined,
+    nurse_id: undefined,
+    box_id: undefined
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -42,9 +61,10 @@ function NewPatientForm() {
     e.preventDefault()
     try {
       // TODO: JsonWebToken
+      console.log(formData)
       const token = Cookies.get('authToken')
       if (token) {
-        const newPatient = await addNewPatient(token, formData)
+        const newPatient = await addNewPatient(formData)
         console.log('Nuevo paciente agregado:', newPatient)
       } else {
         console.error('Token is undefined')
@@ -71,8 +91,17 @@ function NewPatientForm() {
         // console.error('Error:', error.message)
       }
     }
+    const fetchBoxes = async () => {
+      try {
+        const data = await getBoxes()
+        setBoxesOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
     fetchDoctors()
     fetchNurses()
+    fetchBoxes()
   }, [])
 
   return (
@@ -178,18 +207,28 @@ function NewPatientForm() {
             value={formData.box_id}
             onChange={handleInputChange}
             className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
+            autoComplete='off' // Desactiva el autocompletado del navegador
+            list='BoxesOptions' // Asociamos el datalist con el ID "doctorOptions"
           />
+          <datalist
+            id='BoxesOptions'
+            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
+          >
+            {BoxesOptions?.map((option) => (
+              <option key={option.box_id} value={option.box_id + ': ' + option.box_type} />
+            ))}
+          </datalist>
         </div>
 
         <div>
-          <label htmlFor='doctor_name' className='block text-sm font-medium text-gray-600'>
+          <label htmlFor='doctor_id' className='block text-sm font-medium text-gray-600'>
             Nombre del Doctor
           </label>
           <input
             type='text'
-            id='doctor_name'
-            name='doctor_name'
-            value={formData.doctor_name}
+            id='doctor_id'
+            name='doctor_id'
+            key={formData.doctor_id}
             onChange={handleInputChange}
             autoComplete='off' // Desactiva el autocompletado del navegador
             list='doctorOptions' // Asociamos el datalist con el ID "doctorOptions"
@@ -206,14 +245,14 @@ function NewPatientForm() {
         </div>
 
         <div>
-          <label htmlFor='nurse_name' className='block text-sm font-medium text-gray-600'>
+          <label htmlFor='nurse_id' className='block text-sm font-medium text-gray-600'>
             Nombre del Enfermero
           </label>
           <input
             type='text'
-            id='nurse_name'
-            name='nurse_name'
-            value={formData.nurse_name}
+            id='nurse_id'
+            name='nurse_id'
+            value={formData.data}
             onChange={handleInputChange}
             autoComplete='off'
             list='nurseOptions'
@@ -221,7 +260,7 @@ function NewPatientForm() {
           />
           <datalist id='nurseOptions'>
             {NurseOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} />
+              <option key={option.user_id} value={option.user_name} data-id={option.user_id} />
             ))}
           </datalist>
         </div>
@@ -244,6 +283,7 @@ function NewPatientForm() {
           <button
             type='submit'
             className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'
+            onClick={handleButtonClick}
           >
             Add New Patient
           </button>

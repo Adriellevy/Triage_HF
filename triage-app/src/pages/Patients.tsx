@@ -5,7 +5,7 @@ import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
 function Patients() {
-  const token = Cookies.get('authToken');
+  const token = Cookies.get('authToken')
 
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
 
@@ -24,10 +24,12 @@ function Patients() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPatients(token)
+        if (token) {
+          const data = await getPatients(token)
+          setPatientsData(data)
+        }
         //TODO: add searchTerm
         //const data = await getPatients(token, searchTerm);
-        setPatientsData(data)
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)
       }

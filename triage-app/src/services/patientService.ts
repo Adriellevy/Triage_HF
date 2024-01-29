@@ -1,6 +1,8 @@
 import { PartialPatient, Patient } from '../interfaces/Patinet'
-
-export const getPatients = async (token: string): Promise<Patient[]> => {
+import Cookies from 'js-cookie'
+export const getPatients = async (): Promise<Patient[]> => {
+  
+  const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'GET',
@@ -22,9 +24,8 @@ export const getPatients = async (token: string): Promise<Patient[]> => {
 }
 
 export const getPatientById = async (patient_id: string | undefined): Promise<Patient> => {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
-
+  
+  const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/${patient_id}`, {
       method: 'GET',
@@ -52,10 +53,11 @@ export const updatePatient = async (
 }
 
 export const addNewPatient = async (
-  token: string,
   newPatientData: Omit<PartialPatient, 'patient_id'>
 ): Promise<PartialPatient> => {
   try {
+    
+    const token = Cookies.get('authToken')
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
       method: 'POST',
       headers: {
