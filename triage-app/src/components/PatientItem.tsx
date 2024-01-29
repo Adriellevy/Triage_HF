@@ -22,8 +22,10 @@ function PatientItem({ patient, onDelete, onViewDetails }: PropsPatientItem) {
     patient_status
   } = patient
   return (
-    <tr className='max-w-full'>
-      <td className='border text-sm'>{patient_name}</td>
+    <tr className='w-full'>
+      <td className={`border text-sm overflow-hidden `}>
+        {patient_name}
+        </td>
       <td className='border p-2 hidden lg:table-cell'>{date_of_birth}</td>
       <td className='border p-2 hidden lg:table-cell'>{entry_time}</td>
       <td className='border md:p-2'>{patient_triage_level}</td>

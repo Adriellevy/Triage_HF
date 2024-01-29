@@ -30,7 +30,7 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
       {/*<h2 className='text-2xl font-semibold mb-4'>Patients List</h2> */}
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='max-w-full'>
+          <tr className='min-w-full'>
             <th className='border p-2 '>Name</th>
             <th className='border p-2 hidden lg:table-cell'>Date of Birth</th>
             <th className='border p-2 hidden lg:table-cell'>Entry Time</th>
