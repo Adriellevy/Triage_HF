@@ -44,8 +44,9 @@ content-type: application/json
   "patient_medication": "Paracetamol",
   "doctor_id": 1,
   "nurse_id": 2,
-  "box_id": 1
+  "box_id": 1,
 }
+
 
 ### Delete a patient (TODO)
 DELETE http://localhost:3000/patient/2
