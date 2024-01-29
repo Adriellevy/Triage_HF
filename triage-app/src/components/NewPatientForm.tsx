@@ -63,6 +63,7 @@ function NewPatientForm() {
       // TODO: JsonWebToken
       console.log(formData)
       const token = Cookies.get('authToken')
+      console.log(formData)
       if (token) {
         const newPatient = await addNewPatient(formData)
         console.log('Nuevo paciente agregado:', newPatient)

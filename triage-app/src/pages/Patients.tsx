@@ -25,11 +25,16 @@ function Patients() {
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getPatients(token)
-          setPatientsData(data)
+          if (token) {
+            const data = await getPatients()
+
+            setPatientsData(data)
+          }
+          //TODO: add searchTerm
+          //const data = await getPatients(token, searchTerm);
+        } else {
+          console.log('Error en fetch data de Patients.tsx')
         }
-        //TODO: add searchTerm
-        //const data = await getPatients(token, searchTerm);
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)
       }
