@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Patient } from '../interfaces/Patinet'
+import { Patient, NullablePatient} from '../interfaces/Patinet'
 import PatientItem from './PatientItem'
 import PatientDetailModal from './PatientDetailModal'
 
@@ -32,7 +32,7 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
         <thead>
           <tr className='min-w-full'>
             <th className='border p-2 '>Name</th>
-            <th className='border p-2 hidden lg:table-cell'>Date of Birth</th>
+            <th className='border p-2 hidden lg:table-cell'>Age</th>
             <th className='border p-2 hidden lg:table-cell'>Entry Time</th>
             <th className='border p-2'>Triage Level</th>
             <th className='border p-2 hidden lg:table-cell'>Patient Medication</th>
@@ -46,17 +46,19 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
         </thead>
         <tbody>
           {patients.map((patient) => (
+          patient&&
             <PatientItem
-              key={patient.patient_id}
+              key={patient?.patient_id}
               patient={patient}
               onViewDetails={handleViewDetails}
               // onEdit={() => console.log(123)}
               onDelete={onDelete}
             />
+            
           ))}
         </tbody>
       </table>
-      {showDetailModal && (
+      {showDetailModal &&(
         <PatientDetailModal 
         patient={selectedPatient} 
         onClose={handleDetailModalClose} />

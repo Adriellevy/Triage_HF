@@ -13,7 +13,10 @@ export interface Patient {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Symbol.iterator](): IterableIterator<any>
-}
+} 
+
+export type NullablePatient = Patient | null;
+
 export interface PartialPatient {
   patient_name?: string
   patient_id?: string
