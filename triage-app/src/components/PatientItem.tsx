@@ -31,7 +31,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
     const actualDate = new Date()
     setAge(actualDate.getFullYear() - birthDate.getFullYear())
 
-    const fechaOriginal = new Date('2023-01-01T11:00:00.000Z')
+    const fechaOriginal = new Date(patient.entry_time)
 
     //format options
     const dateFormat = {

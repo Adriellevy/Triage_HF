@@ -23,6 +23,35 @@ function PatientDetail() {
     fetchData()
   }, [patient_id])
 
+  const getFormatEntryDate = (entry__time) => {
+    const entryTimeOriginal = new Date(entry__time)
+    //format options
+    const dateFormat = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    }
+    const formatoFechaHora = new Intl.DateTimeFormat('es-ES', dateFormat)
+    const formatEntryTime = formatoFechaHora.format(entryTimeOriginal)
+    return formatEntryTime
+  }
+
+  const getFormatBirthDate = (birth__date) => {
+    const originalBirthDate = new Date(birth__date)
+    const birthFormat = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour12: true
+    }
+    const formatoNacimiento = new Intl.DateTimeFormat('es-ES', birthFormat)
+    const formatBirthDate = formatoNacimiento.format(originalBirthDate)
+    return formatBirthDate
+  }
+
   return (
     <div className='container mx-auto my-8 p-8 bg-white rounded shadow-md'>
       <div className='flex justify-between items-center mb-4'>
@@ -37,10 +66,10 @@ function PatientDetail() {
             <strong>Patient Name:</strong> {Patient.patient_name}
           </li>
           <li>
-            <strong>Date of Birth:</strong> {Patient.date_of_birth}
+            <strong>Date of Birth:</strong> {getFormatBirthDate(Patient.date_of_birth)}
           </li>
           <li>
-            <strong>Entry Time:</strong> {Patient.entry_time}
+            <strong>Entry Time:</strong> {getFormatEntryDate(Patient.entry_time)}
           </li>
           <li>
             <strong>Triage Level:</strong> {Patient.patient_triage_level}

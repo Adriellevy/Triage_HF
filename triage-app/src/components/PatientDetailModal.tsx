@@ -27,7 +27,7 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
 
   useEffect(() => {
     const originalBirthDate = new Date(patient.date_of_birth)
-    const entryTimeOriginal = new Date('2023-01-01T11:00:00.000Z')
+    const entryTimeOriginal = new Date(patient.entry_time)
     //format options
     const dateFormat = {
       year: 'numeric',
