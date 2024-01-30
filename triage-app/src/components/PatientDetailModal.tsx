@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Patient } from '../interfaces/Patinet'
 import EditPencil from '../icons/edit-pencil.svg'
 
@@ -21,8 +21,43 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
   const [editedData, setEditedData] = useState({ ...patient })
   const [editingField, setEditingField] = useState<string | null>(null)
 
+  const [birthDate, setBirthDate] = useState<string | null>(null)
+  const [entryTime, setEntryTime] = useState<string | null>(null)
+  const [formatPatient, setFormatPatient] = useState(patient)
+
+  useEffect(() => {
+    const originalBirthDate = new Date(patient.date_of_birth)
+    const entryTimeOriginal = new Date(patient.entry_time)
+    //format options
+    const dateFormat = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    }
+    const birthFormat = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour12: true
+    }
+    const formatoFechaHora = new Intl.DateTimeFormat('es-ES', dateFormat)
+    const formatoNacimiento = new Intl.DateTimeFormat('es-ES', birthFormat)
+    const formatEntryTime = formatoFechaHora.format(entryTimeOriginal)
+    const formatBirthDate = formatoNacimiento.format(originalBirthDate)
+    setEntryTime(formatEntryTime)
+    setBirthDate(formatBirthDate)
+    setFormatPatient({
+      ...formatPatient,
+      date_of_birth: formatBirthDate,
+      entry_time: formatEntryTime
+    })
+  }, [])
+
   const fieldsConfig: FieldsConfig = {
-    patient_id: { label: 'Patient ID', type: 'text', editable: false },
+    // patient_id: { label: 'Patient ID', type: 'text', editable: false },  //innecesario
     patient_name: { label: 'Patient Name', type: 'text', editable: false },
     date_of_birth: { label: 'Date of Birth', type: 'text', editable: false },
     entry_time: { label: 'Entry Time', type: 'text', editable: false },
@@ -34,6 +69,8 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
     nurse_name: { label: 'Nurse', type: 'text', editable: true },
     patient_status: { label: 'Patient Status', type: 'text', editable: true }
   }
+
+  console.log(fieldsConfig)
 
   const handleEdit = (field: string) => {
     if (!isEditing) {
@@ -102,7 +139,7 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
                 </>
               ) : (
                 <>
-                  {patient[fieldName]}
+                  {formatPatient[fieldName]}
                   {!isEditing && fieldConfig.editable && (
                     <button
                       onClick={() => handleEdit(fieldName)}

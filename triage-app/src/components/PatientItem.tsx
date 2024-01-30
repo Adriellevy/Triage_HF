@@ -2,6 +2,10 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Patient } from '../interfaces/Patinet'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+
 interface PropsPatientItem {
   patient: Patient
   onDelete: (patient_id: string) => void
@@ -31,7 +35,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
     const actualDate = new Date()
     setAge(actualDate.getFullYear() - birthDate.getFullYear())
 
-    const fechaOriginal = new Date('2023-01-01T11:00:00.000Z')
+    const fechaOriginal = new Date(patient.entry_time)
 
     //format options
     const dateFormat = {
@@ -65,11 +69,11 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
           onClick={() => onViewDetails(patient)}
           className='bg-green-500 text-white md:p-2 md:mt-2 rounded-md w-full'
         >
-          Details modal
+          <FontAwesomeIcon icon={faPenToSquare} />
         </button>
         <Link to={`/patients/${patient_id}`}>
           <button className='bg-green-500 text-white p-2 mt-2 rounded-md w-full'>
-            Details page
+          <FontAwesomeIcon icon={faCircleInfo} />
           </button>
         </Link>
       </td>
