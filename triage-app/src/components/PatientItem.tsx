@@ -65,11 +65,11 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
           onClick={() => onViewDetails(patient)}
           className='bg-green-500 text-white md:p-2 md:mt-2 rounded-md w-full'
         >
-          Details modal
+          Edit
         </button>
         <Link to={`/patients/${patient_id}`}>
           <button className='bg-green-500 text-white p-2 mt-2 rounded-md w-full'>
-            Details page
+            Details
           </button>
         </Link>
       </td>
