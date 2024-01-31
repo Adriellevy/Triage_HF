@@ -21,7 +21,7 @@ const GuidedEntry = () => {
 
   return (
     <div className='flex h-screen'>
-      <div className='w-1/4 pt-44' style={{ minWidth: '100px' }}>
+      <div className='w-1/4 pt-44 mr-4' style={{ minWidth: '100px' }}>
         {' '}
         {/* Adjust the minWidth as needed */}
         <SelectorMenu options={options} onSelect={setSelectedOption} />

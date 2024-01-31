@@ -10,7 +10,7 @@ function Boxes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // setIsLoading(true)
+        setIsLoading(true)
         const data = await getBoxes()
         setboxesData(data)
         setIsLoading(false)
