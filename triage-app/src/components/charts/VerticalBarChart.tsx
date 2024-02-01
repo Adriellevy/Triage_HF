@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -5,21 +6,20 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const options = {
+const defaultOptions = {
   responsive: true,
   plugins: {
     legend: {
       position: 'top' as const
     },
     title: {
-      display: true,
-      text: 'Chart.js Bar Chart'
+      display: true
     }
   }
 }
@@ -42,13 +42,23 @@ const dataOriginal = {
   ]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function VerticalBarChart(data: any) {
-  try {
-    return <Bar options={options} data={data} />
-  } catch (error) {
-    console.log('Error in chart: ' + error)
-    console.log('Llego a VerticalBar: ' + data)
-    return <Bar options={options} data={dataOriginal} />
+interface VerticalBarChartProps {
+  options?: ChartOptions<'bar'> // Ajusta 'bar' según el tipo de gráfico que estás utilizando
+  data?: {
+    labels: string[]
+    datasets: {
+      label: string
+      data: number[]
+      backgroundColor: string
+    }[]
   }
 }
+
+const VerticalBarChart: React.FC<VerticalBarChartProps> = ({ options, data }) => {
+  const chartOptions = options || defaultOptions
+  const chartData = data || dataOriginal
+
+  return <Bar options={chartOptions} data={chartData} />
+}
+
+export default VerticalBarChart

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { AuthProvider } from '@/contex/AuthContext'
-import { HorizontalBarChart } from '../components/charts/HorizontalBarChart'
-import { LineChart } from '../components/charts/LineCharts'
-import { VerticalBarChart } from '../components/charts/VerticalBarChart'
 import SelectorMenu from '@/components/SelectorMenu'
-import TeamUsers from '@/components/UserConfig'
-import BoxConfig from '@/components/Boxconfig'
 import personas from '../assets/personas.png'
 import carpa from '../assets/carpa-medica (3).png'
-import StatsPatients from '@/components/StatsPatien'
-
+import StatsPatients from '@/components/StatsPatientTriage'
+import StatsUsers from '@/components/StatsUsers'
+import StatsPatientsIncome from '@/components/StatsPatientIncome'
+import StatsPatientsAge from '@/components/StatsPatientAge'
 function Stats() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
@@ -54,10 +51,10 @@ function Stats() {
         <SelectorMenu options={chartOptions} onSelect={setSelectedOption} />
       </div>
       <div className={`w-full h-full lg:w-3/4 lg:h-5/6 ${windowWidth < 1100 ? 'lg:w-full' : ''}`}>
-        {selectedOption === 0 && <LineChart />}
+        {selectedOption === 0 && <StatsPatientsIncome />}
         {selectedOption === 1 && <StatsPatients />}
-        {selectedOption === 2 && <HorizontalBarChart />}
-        {selectedOption === 3 && <VerticalBarChart />}
+        {selectedOption === 2 && <StatsUsers />}
+        {selectedOption === 3 && <StatsPatientsAge />}
       </div>
     </div>
   )
