@@ -26,7 +26,6 @@ export const loginService = async (email: string, password: string): Promise<Aut
     if (response.ok) {
       const responseData = await response.json();
       const { token } = responseData;
-      console.log("Authservice token: "+token)
       return { success: true, serverRes:token };
     } else {
         

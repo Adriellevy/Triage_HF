@@ -28,17 +28,17 @@ const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, onSelect }) => {
         )
         if (window.innerWidth <= 767) {
           setSidebarVisible(false)
-          sidebarRef.current.style.left = '0%'
-          sidebarRef.current.style.right = '0%'
+          sidebarRef.current.style.left = '0'
+          sidebarRef.current.style.right = '0'
           sidebarRef.current.style.maxWidth = '90%'
         } else if (window.innerWidth <= 1100) {
           setSidebarVisible(false)
           sidebarRef.current.style.position = 'fixed'
           sidebarRef.current.style.bottom = '0'
-          sidebarRef.current.style.width = `${calculatedWidth * 100}px`
+          sidebarRef.current.style.width = `${calculatedWidth}px`
           sidebarRef.current.style.maxWidth = '68%'
-          sidebarRef.current.style.left = '28%'
-          sidebarRef.current.style.right = '0%'
+          sidebarRef.current.style.left = '14%'
+          sidebarRef.current.style.right = '0'
         } else {
           setSidebarVisible(true)
           sidebarRef.current.style.position = 'static'
@@ -62,18 +62,18 @@ const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, onSelect }) => {
     <div
       ref={sidebarRef}
       className={`selector-menu-container ${
-        sidebarVisible ? 'mx-auto ml-4' : 'fixed bottom-0 w-full mx-auto pl-6 '
+        sidebarVisible ? 'mx-auto' : 'fixed bottom-0 w-full mx-auto pl-6 '
       } w-40 border-r border-gray-300 p-2 bg-white rounded-lg shadow-md`}
     >
       <div
         className={`selector-menu ${
-          sidebarVisible ? 'flex flex-col' : 'flex flex-row overflow-x-auto'
+          sidebarVisible ? 'flex flex-col items-center' : 'flex flex-row overflow-x-auto'
         }`}
       >
         {options.map((option, index) => (
           <div
             key={index}
-            className={` align-middle selector-option flex p-2 mt-2 cursor-pointer transition duration-200 ml-1  ${
+            className={` align-middle selector-option flex p-2 mt-2 cursor-pointer transition duration-200 mr-1  ${
               selectedOption === index
                 ? 'active bg-blue-500 text-white'
                 : 'bg-gray-100 hover:bg-gray-200'

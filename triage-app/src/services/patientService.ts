@@ -2,7 +2,6 @@ import { PartialPatient, Patient } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
 export const getPatients = async (): Promise<Patient[]> => {
   
-  const token = Cookies.get('authToken')
   try {
     
     const token = Cookies.get('authToken');
@@ -26,9 +25,8 @@ export const getPatients = async (): Promise<Patient[]> => {
 }
 
 export const getPatientById = async (patient_id: string | undefined): Promise<Patient> => {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
-
+  
+  const token = Cookies.get('authToken');
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/${patient_id}`, {
       method: 'GET',

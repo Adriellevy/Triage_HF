@@ -26,7 +26,7 @@ const options = {
 
 const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
 
-const data = {
+const dataOriginal = {
   labels,
   datasets: [
     {
@@ -42,6 +42,13 @@ const data = {
   ]
 }
 
-export function VerticalBarChart() {
-  return <Bar options={options} data={data} />
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function VerticalBarChart(data: any) {
+  try {
+    return <Bar options={options} data={data} />
+  } catch (error) {
+    console.log('Error in chart: ' + error)
+    console.log('Llego a VerticalBar: ' + data)
+    return <Bar options={options} data={dataOriginal} />
+  }
 }

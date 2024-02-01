@@ -3,13 +3,12 @@ import { useAuth } from '../contex/AuthContext'
 import { loginService } from '../services/authService'
 import Cookies from 'js-cookie'
 
-
 interface LoginFormProps {
-  handleUserChange: (user: string) => void; // Replace UserType with the actual type of your user object
-  user: string; // Replace UserType with the actual type of your user object
+  handleUserChange: (user: string) => void // Replace UserType with the actual type of your user object
+  user: string // Replace UserType with the actual type of your user object
 }
 
-function LoginForm({ handleUserChange, user }: LoginFormProps) { 
+function LoginForm({ handleUserChange, user }: LoginFormProps) {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -17,26 +16,25 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    try{
+    try {
       const authResponse = await loginService(email, password)
       if (authResponse.success) {
         if (authResponse.serverRes) {
-          console.log("En login el token es: " + authResponse.serverRes);
-          Cookies.set("authToken",authResponse.serverRes);
-          handleUserChange(authResponse.serverRes);
-          setEmail('');
-          setPassword('');
-          login(user);
-      } else {
+          Cookies.set('authToken', authResponse.serverRes)
+          handleUserChange(authResponse.serverRes)
+          setEmail('')
+          setPassword('')
+          login(user)
+        } else {
           // Handle the case where serverRes is undefined
-          console.error("Authentication response does not contain a valid token.");
-      }
+          console.error('Authentication response does not contain a valid token.')
+        }
       }
       if (!authResponse.success) {
         setLoginError(authResponse.error || 'Error durante el inicio de sesión')
       }
-    }catch(e){
-      console.log("algo se rompio en LoginForm: "+e);
+    } catch (e) {
+      console.log('algo se rompio en LoginForm: ' + e)
     }
   }
 

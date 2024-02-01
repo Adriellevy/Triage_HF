@@ -20,13 +20,11 @@ function App() {
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
-    console.log('Se imprime desde la app el token: ' + valor_token)
     if (valor_token) {
       //aca se puede mandar la solicitud aca o en login para chequear si el token es bueno o es shit (quiero que se vaya fijando cada vez que se haga algo en la app eso)
       //ver si esto nos generaria algun cuello de botella
       setUser(valor_token)
       login(valor_token)
-      console.log('Se corrio el login')
     }
   }, [login])
 

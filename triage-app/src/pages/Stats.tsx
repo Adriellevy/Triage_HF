@@ -9,6 +9,7 @@ import TeamUsers from '@/components/UserConfig'
 import BoxConfig from '@/components/Boxconfig'
 import personas from '../assets/personas.png'
 import carpa from '../assets/carpa-medica (3).png'
+import StatsPatients from '@/components/StatsPatien'
 
 function Stats() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -26,17 +27,16 @@ function Stats() {
   }, [])
 
   const token = Cookies.get('authToken')
-  console.log('Valor de la cookie sessionId:', token)
   const [selectedOption, setSelectedOption] = useState(0)
 
   const chartOptions = [
     {
       label: 'Line Chart',
-      image: TeamUsers
+      image: null
     },
     {
       label: 'Vertical Bar Chart (1)',
-      image: BoxConfig
+      image: null
     },
     {
       label: 'Horizontal Bar Chart',
@@ -55,7 +55,7 @@ function Stats() {
       </div>
       <div className={`w-full h-full lg:w-3/4 lg:h-5/6 ${windowWidth < 1100 ? 'lg:w-full' : ''}`}>
         {selectedOption === 0 && <LineChart />}
-        {selectedOption === 1 && <VerticalBarChart />}
+        {selectedOption === 1 && <StatsPatients />}
         {selectedOption === 2 && <HorizontalBarChart />}
         {selectedOption === 3 && <VerticalBarChart />}
       </div>
