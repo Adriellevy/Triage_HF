@@ -11,12 +11,14 @@ import { useAuth } from './contex/AuthContext' // Corrected the import path
 import PatientDetail from './pages/PatientDetail'
 import UserDetail from './pages/UserDetail'
 import { useEffect, useState } from 'react'
-
 import Cookies from 'js-cookie'
+import initializeSocket from './services/SocketService'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
   const [User, setUser] = useState<string>('')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  const [socket, setSocket] = useState<any>(null)
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
@@ -25,6 +27,11 @@ function App() {
       //ver si esto nos generaria algun cuello de botella
       setUser(valor_token)
       login(valor_token)
+      const newSocket = initializeSocket()
+      setSocket(newSocket)
+      return () => {
+        newSocket.disconnect()
+      }
     }
   }, [login])
 
