@@ -47,10 +47,30 @@ export const getPatientById = async (patient_id: string | undefined): Promise<Pa
 export const updatePatient = async (
   patient_id: string,
   updatedData: Partial<Patient>
-): Promise<void> => {
+): Promise<PartialPatient> => {
   // TODO: patch api
   console.log(patient_id)
   console.log(updatedData)
+  try {
+    
+    const token = Cookies.get('authToken')
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(updatedData)
+    })
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud POST a /patient: ${response.statusText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error al agregar nuevo paciente:', error)
+    throw new Error('Error al agregar nuevo paciente')
+  }
 }
 
 export const addNewPatient = async (

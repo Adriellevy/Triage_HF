@@ -6,6 +6,7 @@ import { Link, useParams } from 'react-router-dom'
 function PatientDetail() {
   const { patient_id } = useParams()
   const [Patient, setPatient] = useState<Patient | null>(null)
+  const [showRequestInfo, setShowRequestInfo] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,7 +52,12 @@ function PatientDetail() {
     const formatBirthDate = formatoNacimiento.format(originalBirthDate)
     return formatBirthDate
   }
-
+  const handleMedicalDischarge = () => {
+    setShowRequestInfo(true)
+  }
+  const handleRequestButtonClick = () => {
+    //setShowRequestInfo(!showRequestInfo)
+  }
   return (
     <div className='container mx-auto my-8 p-8 bg-white rounded shadow-md'>
       <div className='flex justify-between items-center mb-4'>
@@ -93,6 +99,30 @@ function PatientDetail() {
             <strong>Patient Status:</strong> {Patient.patient_status}
           </li>
         </ul>
+      )}
+      <div className='flex justify-end'>
+        {/* Red button for medical discharge */}
+        <button
+          className='bg-red-500 text-white p-2 rounded-md mr-4'
+          onClick={handleMedicalDischarge}
+        >
+          Medical Discharge
+        </button>
+      </div>
+
+      {showRequestInfo && (
+        <div className='mt-4'>
+          {/* Red button for request information */}
+          <button
+            className='bg-red-500 text-white p-2 rounded-md mb-2'
+            onClick={handleRequestButtonClick}
+          >
+            Request Inform
+          </button>
+          {/* Text space to show information of a request */}
+          <h3 className='text-lg font-bold mb-2'>Requested Inform:</h3>
+          <p className='text-gray-700'>{/* Add your request information here */}</p>
+        </div>
       )}
     </div>
   )
