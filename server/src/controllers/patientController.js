@@ -30,6 +30,23 @@ export class PatientController {
         io.emit('update', {
           message: 'New patient',
         })
+
+        io.emit(`${result.data.doctor_id}`, {
+          message: 'New patient assigned',
+          patient: {
+            patient_name: result.data.patient_name,
+            patient_id: newPatientId,
+          },
+        })
+
+        io.emit(`${result.data.nurse_id}`, {
+          message: 'New patient assigned',
+          patient: {
+            patient_name: result.data.patient_name,
+            patient_id: newPatientId,
+          },
+        })
+
         return res.status(201).json({
           message: 'New patient created successfully',
           // eslint-disable-next-line comma-dangle

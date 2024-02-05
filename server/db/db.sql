@@ -48,9 +48,9 @@ CREATE TABLE Patient (
 INSERT INTO Users (user_name, user_email, user_password, user_type)
 VALUES
   ('Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  ('Nurse Brown', 'nurse.brown@example.com', 'password456', 'NURSE'),
-  ('Dr. Smith2', 'admin@example.com', 'adminpasswor2d', 'DOCTOR'),
-  ('Hospital Admin', 'admin@example.com', 'adminpassword', 'HOSPITAL');
+  ('Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
+  ('Dr. Smith2', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
+  ('Hospital Admin', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'HOSPITAL');
 
 -- Insertar datos de ejemplo en la tabla Box
 INSERT INTO Box (box_type)
