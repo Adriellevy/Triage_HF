@@ -63,7 +63,7 @@ function Patients() {
         }
       })
       return () => {
-        socket.off('notification')
+        socket.off('update')
       }
     }
   }, [socket])
