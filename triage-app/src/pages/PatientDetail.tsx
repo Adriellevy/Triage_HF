@@ -2,10 +2,13 @@ import { Patient } from '@/interfaces/Patinet'
 import { getPatientById } from '@/services/patientService'
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { updatePatient } from '../services/patientService'
 
 function PatientDetail() {
   const { patient_id } = useParams()
   const [Patient, setPatient] = useState<Patient | null>(null)
+
+  const [showMedicalDischarge, SetMedicalDischarge] = useState(false)
   const [showRequestInfo, setShowRequestInfo] = useState(false)
 
   useEffect(() => {
@@ -13,6 +16,7 @@ function PatientDetail() {
       try {
         const [data] = await getPatientById(patient_id)
         setPatient(data)
+        handlePatientStatus(data)
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error al obtener pacientes:', error.message)
@@ -52,10 +56,25 @@ function PatientDetail() {
     const formatBirthDate = formatoNacimiento.format(originalBirthDate)
     return formatBirthDate
   }
+
+  const handlePatientStatus = (patientData: Patient | null) => {
+    if (patientData && patientData.patient_status === 'ALTA') {
+      SetMedicalDischarge(true)
+      setShowRequestInfo(false)
+    }
+  }
+
   const handleMedicalDischarge = () => {
-    setShowRequestInfo(true)
+    SetMedicalDischarge(true)
+    if (Patient) {
+      Patient.patient_status = 'ALTA'
+      updatePatient(Patient.patient_id, Patient)
+    } else {
+      console.log('Error en dar de ALTA al paciente')
+    }
   }
   const handleRequestButtonClick = () => {
+    setShowRequestInfo(true)
     //setShowRequestInfo(!showRequestInfo)
   }
   return (
@@ -110,7 +129,7 @@ function PatientDetail() {
         </button>
       </div>
 
-      {showRequestInfo && (
+      {showMedicalDischarge && (
         <div className='mt-4'>
           {/* Red button for request information */}
           <button
@@ -119,9 +138,13 @@ function PatientDetail() {
           >
             Request Inform
           </button>
-          {/* Text space to show information of a request */}
-          <h3 className='text-lg font-bold mb-2'>Requested Inform:</h3>
-          <p className='text-gray-700'>{/* Add your request information here */}</p>
+          {showRequestInfo && (
+            <div className='mt-4'>
+              {/* Text space to show information of a request */}
+              <h3 className='text-lg font-bold mb-2'>Requested Inform:</h3>
+              <p className='text-gray-700'>{/* Add your request information here */}</p>
+            </div>
+          )}
         </div>
       )}
     </div>
