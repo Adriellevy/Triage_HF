@@ -72,10 +72,13 @@ function App() {
                   <Route path='/patients/:patient_id' element={<PatientDetail />} />
                   <Route path='/users' element={<UserDetail />} />
                   <Route path='/users/:user_id' element={<UserDetail />} />
-                  <Route path='/stats' element={<Stats />} />
+
                   <Route path='/boxes' element={<Boxes />} />
                   {role === Role.HOSPITAL && (
-                    <Route path='/configuration' element={<Configuration />} />
+                    <>
+                      <Route path='/stats' element={<Stats />} />
+                      <Route path='/configuration' element={<Configuration />} />
+                    </>
                   )}
                   <Route path='*' element={<NotFound />} />
                 </Routes>

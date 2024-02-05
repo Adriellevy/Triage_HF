@@ -109,7 +109,8 @@ function Sidebar() {
         </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
-            (item.title !== 'Configuration' && role !== Role.HOSPITAL) || role === Role.HOSPITAL ? (
+            (item.title !== 'Configuration' && item.title !== 'Stats' && role !== Role.HOSPITAL) ||
+            role === Role.HOSPITAL ? (
               <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                 {item.icon && (
                   <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
