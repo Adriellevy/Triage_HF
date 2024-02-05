@@ -3,7 +3,10 @@ import { getPatientById } from '@/services/patientService'
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { updatePatient } from '../services/patientService'
+import { consulta } from '../services/openai-test'
 
+const solicitud =
+  'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
 function PatientDetail() {
   const { patient_id } = useParams()
   const [Patient, setPatient] = useState<Patient | null>(null)
@@ -75,7 +78,28 @@ function PatientDetail() {
   }
   const handleRequestButtonClick = () => {
     setShowRequestInfo(true)
-    //setShowRequestInfo(!showRequestInfo)
+    const patientProvisional = Patient
+    if (patientProvisional) {
+      patientProvisional.doctor_name = ''
+      patientProvisional.patient_name = ''
+      patientProvisional.box_id = ''
+    }
+    const prompt = solicitud + patientProvisional
+    handleRequestOpenAi(prompt)
+  }
+
+  const handleRequestOpenAi = async (prompt: string) => {
+    const result = await consulta(prompt)
+    const requestInfo = result && result.message && result.message.content // Extract content
+    console.log(requestInfo)
+    // Update the content of the <p> element
+    const requestInfoElement = document.querySelector('.text-gray-700') as HTMLElement
+
+    if (requestInfoElement) {
+      requestInfoElement.innerText = requestInfo || 'No information available'
+    } else {
+      console.error('Element with class "text-gray-700" not found')
+    }
   }
   return (
     <div className='container mx-auto my-8 p-8 bg-white rounded shadow-md'>
