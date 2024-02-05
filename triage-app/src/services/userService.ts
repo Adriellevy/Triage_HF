@@ -4,7 +4,7 @@ export const getAllUsers = async (): Promise<User[]> => {
   //TODO: jsonwebtoken
 
   const token = Cookies.get('authToken')
-  console.log('Token en Users: ' + token)
+  // console.log('Token en Users: ' + token)
   try {
     const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
       method: 'GET',
@@ -29,7 +29,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 export const getUserIdByToken = async (): Promise<number> => {
   //TODO: jsonwebtoken
   const token = Cookies.get('authToken')
-  console.log('Token en Users: ' + token)
+  // console.log('Token en Users: ' + token)
   const tokenpost = {
     token: token
   }

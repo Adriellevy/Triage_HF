@@ -12,11 +12,16 @@ import PatientDetail from './pages/PatientDetail'
 import UserDetail from './pages/UserDetail'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-// import initializeSocket from './services/SocketService'
+import { useRoleContext } from './contex/RoleContext'
+import { Role } from './interfaces/UserRole'
+import { getUserById, getUserIdByToken } from './services/userService'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
   const [User, setUser] = useState<string>('')
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { role, setRole } = useRoleContext()
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
@@ -27,6 +32,23 @@ function App() {
       login(valor_token)
     }
   }, [login])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (User) {
+          const data = await getUserIdByToken()
+          const user = await getUserById(String(data))
+          setRole(user.user_type)
+        } else {
+          // console.log('Error fetch data')
+        }
+      } catch (error) {
+        // console.error('Error al obtener pacientes:', error.message)
+      }
+    }
+    fetchData()
+  })
 
   // Check authentication status on startup
   /*if (isAuthenticated === null) {
@@ -52,7 +74,9 @@ function App() {
                   <Route path='/users/:user_id' element={<UserDetail />} />
                   <Route path='/stats' element={<Stats />} />
                   <Route path='/boxes' element={<Boxes />} />
-                  <Route path='/configuration' element={<Configuration />} />
+                  {role === Role.HOSPITAL && (
+                    <Route path='/configuration' element={<Configuration />} />
+                  )}
                   <Route path='*' element={<NotFound />} />
                 </Routes>
               </div>
