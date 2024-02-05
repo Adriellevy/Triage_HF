@@ -9,14 +9,6 @@ export class PatientController {
   static async getAllPatients(req, res) {
     try {
       const users = await PatientsModel.getAllPatients()
-
-      // Test Socket.io
-      // eslint-disable-next-line prefer-destructuring
-      const io = req.io
-      io.emit('notification', {
-        message: 'List of patients sent to React client',
-      })
-
       return res.json(users)
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })
@@ -24,6 +16,7 @@ export class PatientController {
   }
 
   static async createNewPatient(req, res) {
+    console.log(req.body)
     const result = await validatePatient(req.body)
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
@@ -33,13 +26,11 @@ export class PatientController {
         data: result.data,
       })
       if (newPatientId) {
-        // Test Socket.io
         // eslint-disable-next-line prefer-destructuring
         const io = req.io
-        io.emit('notification', {
-          message: 'New patient created successfully',
+        io.emit('update', {
+          message: 'New patient',
         })
-
         return res.status(201).json({
           message: 'New patient created successfully',
           // eslint-disable-next-line comma-dangle

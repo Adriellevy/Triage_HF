@@ -9,8 +9,8 @@ const initializeSocketMiddleware = (httpServer) => {
     },
   })
 
-  io.on('connection', (socket) => {
-    console.log('a user connected')
+  io.on('connect', (socket) => {
+    console.log('a user connected', socket?.id)
   })
 
   return (req, res, next) => {
