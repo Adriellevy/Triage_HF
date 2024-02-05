@@ -16,7 +16,6 @@ export class PatientController {
   }
 
   static async createNewPatient(req, res) {
-    console.log(req.body)
     const result = await validatePatient(req.body)
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
