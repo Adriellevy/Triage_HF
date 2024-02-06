@@ -2,16 +2,24 @@ import { Patient } from '@/interfaces/Patinet'
 import { getPatientById } from '@/services/patientService'
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { updatePatient } from '../services/patientService'
+import { consulta } from '../services/openai-test'
 
+const solicitud =
+  'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
 function PatientDetail() {
   const { patient_id } = useParams()
   const [Patient, setPatient] = useState<Patient | null>(null)
+
+  const [showMedicalDischarge, SetMedicalDischarge] = useState(false)
+  const [showRequestInfo, setShowRequestInfo] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [data] = await getPatientById(patient_id)
         setPatient(data)
+        handlePatientStatus(data)
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error al obtener pacientes:', error.message)
@@ -52,6 +60,47 @@ function PatientDetail() {
     return formatBirthDate
   }
 
+  const handlePatientStatus = (patientData: Patient | null) => {
+    if (patientData && patientData.patient_status === 'ALTA') {
+      SetMedicalDischarge(true)
+      setShowRequestInfo(false)
+    }
+  }
+
+  const handleMedicalDischarge = () => {
+    SetMedicalDischarge(true)
+    if (Patient) {
+      Patient.patient_status = 'ALTA'
+      updatePatient(Patient.patient_id, Patient)
+    } else {
+      console.log('Error en dar de ALTA al paciente')
+    }
+  }
+  const handleRequestButtonClick = () => {
+    setShowRequestInfo(true)
+    const patientProvisional = Patient
+    if (patientProvisional) {
+      patientProvisional.doctor_name = ''
+      patientProvisional.patient_name = ''
+      patientProvisional.box_id = ''
+    }
+    const prompt = solicitud + patientProvisional
+    handleRequestOpenAi(prompt)
+  }
+
+  const handleRequestOpenAi = async (prompt: string) => {
+    const result = await consulta(prompt)
+    const requestInfo = result && result.message && result.message.content // Extract content
+    console.log(requestInfo)
+    // Update the content of the <p> element
+    const requestInfoElement = document.querySelector('.text-gray-700') as HTMLElement
+
+    if (requestInfoElement) {
+      requestInfoElement.innerText = requestInfo || 'No information available'
+    } else {
+      console.error('Element with class "text-gray-700" not found')
+    }
+  }
   return (
     <div className='container mx-auto my-8 p-8 bg-white rounded shadow-md'>
       <div className='flex justify-between items-center mb-4'>
@@ -93,6 +142,34 @@ function PatientDetail() {
             <strong>Patient Status:</strong> {Patient.patient_status}
           </li>
         </ul>
+      )}
+      <div className='flex justify-end'>
+        {/* Red button for medical discharge */}
+        <button
+          className='bg-red-500 text-white p-2 rounded-md mr-4'
+          onClick={handleMedicalDischarge}
+        >
+          Medical Discharge
+        </button>
+      </div>
+
+      {showMedicalDischarge && (
+        <div className='mt-4'>
+          {/* Red button for request information */}
+          <button
+            className='bg-red-500 text-white p-2 rounded-md mb-2'
+            onClick={handleRequestButtonClick}
+          >
+            Request Inform
+          </button>
+          {showRequestInfo && (
+            <div className='mt-4'>
+              {/* Text space to show information of a request */}
+              <h3 className='text-lg font-bold mb-2'>Requested Inform:</h3>
+              <p className='text-gray-700'>{/* Add your request information here */}</p>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

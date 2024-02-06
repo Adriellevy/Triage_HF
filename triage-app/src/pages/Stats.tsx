@@ -28,19 +28,19 @@ function Stats() {
 
   const chartOptions = [
     {
-      label: 'Line Chart',
+      label: 'Ingreso Pacientes por Fecha',
       image: null
     },
     {
-      label: 'Vertical Bar Chart (1)',
+      label: 'Pacientes por Triage',
       image: null
     },
     {
-      label: 'Horizontal Bar Chart',
+      label: 'Pacientes por Triage (2)',
       image: carpa
     },
     {
-      label: 'Vertical Bar Chart (2)',
+      label: 'Pacientes por decadas',
       image: personas
     }
   ]

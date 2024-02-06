@@ -57,7 +57,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 
 
 ### Update a patient
-PATCH http://localhost:3000/patient/:3
+PATCH http://localhost:3000/patient/6bf1db22-bef8-11ee-baa5-d85ed3d87921
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 Content-Type: application/json
 
