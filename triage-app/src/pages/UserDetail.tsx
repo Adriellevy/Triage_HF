@@ -1,28 +1,28 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { User } from '@/interfaces/User'
+import { PartialUser } from '@/interfaces/User'
 import { getUserById } from '@/services/userService'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import DoctorImg from '../assets/doctor.jpeg'
+import { useRoleContext } from '@/contex/RoleContext'
 
 const UserProfileImage = DoctorImg
 
 function UserDetail() {
   const { user_id } = useParams()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [User, setUser] = useState<any>({
+  const { role } = useRoleContext()
+  const [User, setUser] = useState<PartialUser>({
     user_id: 1,
-    user_name: 'John Doe',
-    user_email: 'john.doe@example.com',
-    user_password: 'securepassword',
-    user_type: 'DOCTOR'
+    user_name: '',
+    user_email: '',
+    user_password: '',
+    user_type: role
   })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // TODO: Add api
-        const [data] = await getUserById(user_id)
+        const data = await getUserById(user_id)
         setUser(data)
       } catch (error) {
         if (error instanceof Error) {
@@ -33,7 +33,7 @@ function UserDetail() {
       }
     }
     fetchData()
-  }, [user_id])
+  })
   return (
     <div className=' bg-white h-full flex flex-col p-4'>
       <div className='flex items-center mb-4'>
