@@ -18,7 +18,7 @@ import DoctorImg from '../assets/doctor.jpeg'
 import { getUserById, getUserIdByToken } from '@/services/userService'
 import { SocketContext } from '@/contex/SocketContext'
 import { useRoleContext } from '@/contex/RoleContext'
-import { Role } from '@/interfaces/UserRole'
+import { UserRole } from '@/interfaces/User'
 
 interface MenuItem {
   icon?: string
@@ -109,8 +109,10 @@ function Sidebar() {
         </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
-            (item.title !== 'Configuration' && item.title !== 'Stats' && role !== Role.HOSPITAL) ||
-            role === Role.HOSPITAL ? (
+            (item.title !== 'Configuration' &&
+              item.title !== 'Stats' &&
+              role !== UserRole.HOSPITAL) ||
+            role === UserRole.HOSPITAL ? (
               <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                 {item.icon && (
                   <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
@@ -144,7 +146,7 @@ function Sidebar() {
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>
-              item.title !== 'Configuration' || role === Role.HOSPITAL ? (
+              item.title !== 'Configuration' || role === UserRole.HOSPITAL ? (
                 <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                   <button onClick={closedMenu}>
                     {item.icon && (

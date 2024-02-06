@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { Role } from '@/interfaces/UserRole'
+import { UserRole } from '@/interfaces/User'
 
 interface IUserRole {
-  role: Role
-  setRole: (role: Role) => void
+  role: UserRole
+  setRole: (role: UserRole) => void
 }
 
 const RoleContext = createContext<IUserRole | undefined>(undefined)
@@ -13,7 +13,7 @@ interface RoleProviderProps {
 }
 
 export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
-  const [role, setRole] = useState<Role>(Role.DOCTOR)
+  const [role, setRole] = useState<UserRole>(UserRole.DOCTOR)
 
   const contextValue: IUserRole = {
     role,
@@ -23,6 +23,7 @@ export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
   return <RoleContext.Provider value={contextValue}>{children}</RoleContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRoleContext = () => {
   const context = useContext(RoleContext)
 

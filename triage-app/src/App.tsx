@@ -13,7 +13,7 @@ import UserDetail from './pages/UserDetail'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { useRoleContext } from './contex/RoleContext'
-import { Role } from './interfaces/UserRole'
+import { UserRole } from './interfaces/User'
 import { getUserById, getUserIdByToken } from './services/userService'
 
 function App() {
@@ -74,7 +74,7 @@ function App() {
                   <Route path='/users/:user_id' element={<UserDetail />} />
 
                   <Route path='/boxes' element={<Boxes />} />
-                  {role === Role.HOSPITAL && (
+                  {role === UserRole.HOSPITAL && (
                     <>
                       <Route path='/stats' element={<Stats />} />
                       <Route path='/configuration' element={<Configuration />} />

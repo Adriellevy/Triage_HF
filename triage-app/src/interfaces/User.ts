@@ -1,11 +1,15 @@
-import { Role } from './UserRole'
+export enum UserRole {
+  DOCTOR = 'DOCTOR',
+  NURSE = 'NURSE',
+  HOSPITAL = 'HOSPITAL'
+}
 
 export interface User {
   user_id: number
   user_name: string
   user_email: string
   user_password: string
-  user_type: Role
+  user_type: UserRole
   speciality?: string
   state?: boolean
 
@@ -17,7 +21,7 @@ export interface PartialUser {
   user_name?: string
   user_email?: string
   user_password?: string
-  user_type?: Role
+  user_type?: UserRole
   speciality?: string
   state?: boolean
 }
