@@ -4,7 +4,7 @@ import OpenAI from 'openai'
 const apiKey = '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'
 
 const openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true })
-export async function consulta(Content, Model = null) {
+export async function consulta(Content: string, Model = null) {
   const completion = await openai.chat.completions.create({
     messages: [{ role: 'system', content: Content }],
     model: Model || 'gpt-3.5-turbo'

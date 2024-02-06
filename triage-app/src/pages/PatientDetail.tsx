@@ -13,7 +13,7 @@ function PatientDetail() {
   const [loading, setLoading] = useState(false)
   const [showMedicalDischarge, SetMedicalDischarge] = useState(false)
   const [showRequestInfo, setShowRequestInfo] = useState(false)
-  const [Inform, setInform] = useState<String | null>(null)
+  const [Inform, setInform] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
