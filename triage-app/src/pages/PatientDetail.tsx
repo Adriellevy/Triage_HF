@@ -10,9 +10,10 @@ const solicitud =
 function PatientDetail() {
   const { patient_id } = useParams()
   const [Patient, setPatient] = useState<Patient | null>(null)
-
+  const [loading, setLoading] = useState(false)
   const [showMedicalDischarge, SetMedicalDischarge] = useState(false)
   const [showRequestInfo, setShowRequestInfo] = useState(false)
+  const [Inform, setInform] = useState<String | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,7 +79,8 @@ function PatientDetail() {
   }
   const handleRequestButtonClick = () => {
     setShowRequestInfo(true)
-    const patientProvisional = Patient
+    setLoading(true)
+    const patientProvisional = { ...Patient }
     if (patientProvisional) {
       patientProvisional.doctor_name = ''
       patientProvisional.patient_name = ''
@@ -90,13 +92,14 @@ function PatientDetail() {
 
   const handleRequestOpenAi = async (prompt: string) => {
     const result = await consulta(prompt)
+    setLoading(false)
     const requestInfo = result && result.message && result.message.content // Extract content
     console.log(requestInfo)
     // Update the content of the <p> element
-    const requestInfoElement = document.querySelector('.text-gray-700') as HTMLElement
-
+    const requestInfoElement = document.getElementById('request-info') as HTMLElement
     if (requestInfoElement) {
       requestInfoElement.innerText = requestInfo || 'No information available'
+      setInform(requestInfo)
     } else {
       console.error('Element with class "text-gray-700" not found')
     }
@@ -154,22 +157,56 @@ function PatientDetail() {
       </div>
 
       {showMedicalDischarge && (
-        <div className='mt-4'>
-          {/* Red button for request information */}
-          <button
-            className='bg-red-500 text-white p-2 rounded-md mb-2'
-            onClick={handleRequestButtonClick}
-          >
-            Request Inform
-          </button>
-          {showRequestInfo && (
-            <div className='mt-4'>
-              {/* Text space to show information of a request */}
-              <h3 className='text-lg font-bold mb-2'>Requested Inform:</h3>
-              <p className='text-gray-700'>{/* Add your request information here */}</p>
-            </div>
-          )}
-        </div>
+        <>
+          <div className='mt-4'>
+            {/* Red button for request information */}
+            <button
+              className='bg-red-500 text-white p-2 rounded-md mb-2'
+              onClick={handleRequestButtonClick}
+            >
+              Request Inform
+            </button>
+            {showRequestInfo && (
+              <div className='mt-4'>
+                {/* Text space to show information of a request */}
+                <h3 className={`text-lg font-bold mb-2 ${loading ? 'hidden' : ''} `}>
+                  Requested Inform:
+                </h3>
+                <p className={`text-gray-700 ${loading ? 'hidden' : ''}`} id='request-info'>
+                  {loading ? 'Loading...' : Inform || 'Not able to charge the inform'}
+                </p>
+                <div className={`loader-container ${loading ? '' : 'hidden'}`}>
+                  <div className='loader' />
+                </div>
+              </div>
+            )}
+          </div>
+          <style>
+            {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .loader-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #3498db;
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          animation: spin 1s linear infinite;
+        }
+
+        .hidden {
+          display: none;
+        }
+      `}
+          </style>
+        </>
       )}
     </div>
   )
