@@ -5,6 +5,7 @@ import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
+import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 
 function Patients() {
   const socket = useContext(SocketContext)
@@ -57,13 +58,13 @@ function Patients() {
       }
     }
     if (socket) {
-      socket.on('update', (data) => {
-        if (data.message == 'New patient') {
+      socket.on(SocketEvent.UPDATE, (data) => {
+        if (data.message == UpdateEvent.NEW_PATIENT) {
           fetchData()
         }
       })
       return () => {
-        socket.off('update')
+        socket.off(SocketEvent.UPDATE)
       }
     }
   }, [socket])

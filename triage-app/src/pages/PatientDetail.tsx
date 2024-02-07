@@ -1,18 +1,18 @@
-import { Patient } from '@/interfaces/Patinet'
-import { getPatientById } from '@/services/patientService'
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { updatePatient } from '../services/patientService'
-import { consulta } from '../services/openai-test'
+import { NullablePatient, Patient, PatientStatus } from '@/interfaces/Patinet'
+import { getPatientById } from '@/services/patientService'
+import { updatePatient } from '@/services/patientService'
+import { consulta } from '@/services/openai-test'
 
 const solicitud =
   'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
 function PatientDetail() {
   const { patient_id } = useParams()
-  const [Patient, setPatient] = useState<Patient | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [showMedicalDischarge, SetMedicalDischarge] = useState(false)
-  const [showRequestInfo, setShowRequestInfo] = useState(false)
+  const [Patient, setPatient] = useState<NullablePatient>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
+  const [showRequestInfo, setShowRequestInfo] = useState<boolean>(false)
   const [Inform, setInform] = useState<string | null>(null)
 
   useEffect(() => {
@@ -32,10 +32,9 @@ function PatientDetail() {
     fetchData()
   }, [patient_id])
 
-  const getFormatEntryDate = (entry__time) => {
+  const getFormatEntryDate = (entry__time: string) => {
     const entryTimeOriginal = new Date(entry__time)
-    //format options
-    const dateFormat = {
+    const dateFormat: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -48,9 +47,9 @@ function PatientDetail() {
     return formatEntryTime
   }
 
-  const getFormatBirthDate = (birth__date) => {
+  const getFormatBirthDate = (birth__date: string) => {
     const originalBirthDate = new Date(birth__date)
-    const birthFormat = {
+    const birthFormat: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -62,7 +61,7 @@ function PatientDetail() {
   }
 
   const handlePatientStatus = (patientData: Patient | null) => {
-    if (patientData && patientData.patient_status === 'ALTA') {
+    if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
       SetMedicalDischarge(true)
       setShowRequestInfo(false)
     }
@@ -71,7 +70,7 @@ function PatientDetail() {
   const handleMedicalDischarge = () => {
     SetMedicalDischarge(true)
     if (Patient) {
-      Patient.patient_status = 'ALTA'
+      Patient.patient_status = PatientStatus.DISCHARGED
       updatePatient(Patient.patient_id, Patient)
     } else {
       console.log('Error en dar de ALTA al paciente')
@@ -93,9 +92,8 @@ function PatientDetail() {
   const handleRequestOpenAi = async (prompt: string) => {
     const result = await consulta(prompt)
     setLoading(false)
-    const requestInfo = result && result.message && result.message.content // Extract content
+    const requestInfo = result && result.message && result.message.content
     console.log(requestInfo)
-    // Update the content of the <p> element
     const requestInfoElement = document.getElementById('request-info') as HTMLElement
     if (requestInfoElement) {
       requestInfoElement.innerText = requestInfo || 'No information available'
@@ -105,7 +103,7 @@ function PatientDetail() {
     }
   }
   return (
-    <div className='container mx-auto my-8 p-8 bg-white rounded shadow-md'>
+    <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
         <h2 className='text-2xl font-bold'>Patient Details </h2>
         <Link to={`/patients/`}>
@@ -147,7 +145,6 @@ function PatientDetail() {
         </ul>
       )}
       <div className='flex justify-end'>
-        {/* Red button for medical discharge */}
         <button
           className='bg-red-500 text-white p-2 rounded-md mr-4'
           onClick={handleMedicalDischarge}
@@ -159,7 +156,6 @@ function PatientDetail() {
       {showMedicalDischarge && (
         <>
           <div className='mt-4'>
-            {/* Red button for request information */}
             <button
               className='bg-red-500 text-white p-2 rounded-md mb-2'
               onClick={handleRequestButtonClick}
@@ -168,7 +164,6 @@ function PatientDetail() {
             </button>
             {showRequestInfo && (
               <div className='mt-4'>
-                {/* Text space to show information of a request */}
                 <h3 className={`text-lg font-bold mb-2 ${loading ? 'hidden' : ''} `}>
                   Requested Inform:
                 </h3>

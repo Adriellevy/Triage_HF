@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Patient } from '../interfaces/Patinet'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 interface PropsPatientItem {
   patient: Patient
@@ -73,7 +73,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
         </button>
         <Link to={`/patients/${patient_id}`}>
           <button className='bg-green-500 text-white p-2 mt-2 rounded-md w-full'>
-          <FontAwesomeIcon icon={faCircleInfo} />
+            <FontAwesomeIcon icon={faCircleInfo} />
           </button>
         </Link>
       </td>

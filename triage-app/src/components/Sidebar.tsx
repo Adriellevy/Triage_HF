@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../contex/AuthContext'
 import Cookies from 'js-cookie'
-
+import { getUserById, getUserIdByToken } from '@/services/userService'
+import { SocketContext } from '@/contex/SocketContext'
+import { useAuth } from '@/contex/AuthContext'
+import { useRoleContext } from '@/contex/RoleContext'
+import { PartialUser, UserRole } from '@/interfaces/User'
 import GuidedEntryIcon from '@/icons/guided-entry-icon.svg'
 import BoxesIcon from '@/icons/boxes-icon.svg'
 import PatientsIcon from '@/icons/patients.svg'
@@ -10,15 +13,9 @@ import StatsIcon from '@/icons/stats-icon.svg'
 import HamburgerIcon from '@/icons/hamburger-icon.svg'
 import HamburgerCloseIcon from '@/icons/hamburger-close-icon.svg'
 import ConfigIcon from '@/icons/settings-2-svgrepo-com.svg'
-
-// TODO: Change LOGO
-import Logo from '../icons/stats-icon.svg'
+import Logo from '@/icons/stats-icon.svg'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
-import { getUserById, getUserIdByToken } from '@/services/userService'
-import { SocketContext } from '@/contex/SocketContext'
-import { useRoleContext } from '@/contex/RoleContext'
-import { UserRole } from '@/interfaces/User'
 
 interface MenuItem {
   icon?: string
@@ -32,8 +29,11 @@ function Sidebar() {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [UserInfo, setUserInfo] = useState<any>({ user_id: '', user_name: '', user_type: '' })
+  const [UserInfo, setUserInfo] = useState<PartialUser>({
+    user_id: '',
+    user_name: '',
+    user_type: undefined
+  })
 
   // TODO: GET IMG DB
   const UserProfileImage = DoctorImg
@@ -146,7 +146,8 @@ function Sidebar() {
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>
-              item.title !== 'Configuration' || role === UserRole.HOSPITAL ? (
+              (item.title !== 'Configuration' && item.title !== 'Stats') ||
+              role === UserRole.HOSPITAL ? (
                 <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                   <button onClick={closedMenu}>
                     {item.icon && (
