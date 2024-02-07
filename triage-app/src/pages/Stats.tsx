@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
-import { AuthProvider } from '@/contex/AuthContext'
+import { useEffect, useState } from 'react'
 import SelectorMenu from '@/components/SelectorMenu'
 import personas from '../assets/personas.png'
 import carpa from '../assets/carpa-medica (3).png'
@@ -23,7 +21,6 @@ function Stats() {
     }
   }, [])
 
-  const token = Cookies.get('authToken')
   const [selectedOption, setSelectedOption] = useState(0)
 
   const chartOptions = [

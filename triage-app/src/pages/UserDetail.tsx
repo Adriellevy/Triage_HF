@@ -1,18 +1,16 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PartialUser } from '@/interfaces/User'
 import { getUserById } from '@/services/userService'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import DoctorImg from '../assets/doctor.jpeg'
 import { useRoleContext } from '@/contex/RoleContext'
-
 const UserProfileImage = DoctorImg
 
 function UserDetail() {
   const { user_id } = useParams()
   const { role } = useRoleContext()
   const [User, setUser] = useState<PartialUser>({
-    user_id: 1,
+    user_id: '',
     user_name: '',
     user_email: '',
     user_password: '',

@@ -1,10 +1,8 @@
 import { User } from '../interfaces/User'
 import Cookies from 'js-cookie'
-export const getAllUsers = async (): Promise<User[]> => {
-  //TODO: jsonwebtoken
 
+export const getAllUsers = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
-  // console.log('Token en Users: ' + token)
   try {
     const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
       method: 'GET',
@@ -27,9 +25,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 }
 
 export const getUserIdByToken = async (): Promise<number> => {
-  //TODO: jsonwebtoken
   const token = Cookies.get('authToken')
-  // console.log('Token en Users: ' + token)
   const tokenpost = {
     token: token
   }
@@ -54,8 +50,6 @@ export const getUserIdByToken = async (): Promise<number> => {
 }
 
 export const getAllDoctors = async (): Promise<User[]> => {
-  //TODO: jsonwebtoken
-
   const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/users/doctor`, {
@@ -78,8 +72,6 @@ export const getAllDoctors = async (): Promise<User[]> => {
 }
 
 export const getAllNurses = async (): Promise<User[]> => {
-  //TODO: jsonwebtoken
-
   const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/users/nurse`, {
