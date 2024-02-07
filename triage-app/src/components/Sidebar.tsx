@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import Cookies from 'js-cookie'
 import { getUserById, getUserIdByToken } from '@/services/userService'
 import { SocketContext } from '@/contex/SocketContext'
@@ -25,6 +26,7 @@ interface MenuItem {
 
 function Sidebar() {
   const { logout } = useAuth()
+  const navigate = useNavigate()
   const { role } = useRoleContext()
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
@@ -38,9 +40,17 @@ function Sidebar() {
   // TODO: GET IMG DB
   const UserProfileImage = DoctorImg
 
-  // TODO: User notification
   socket.on(`${UserInfo.user_id}`, (data) => {
     console.log(data)
+    const { patient_id } = data.patient
+    toast.info('Nuevo paciente asignado', {
+      action: {
+        label: 'Ver datos paciente',
+        onClick: () => {
+          navigate(`/patients/${patient_id}`)
+        }
+      }
+    })
   })
 
   const menuitems: MenuItem[] = [
@@ -171,6 +181,15 @@ function Sidebar() {
             <div className='flex items-center'>
               <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
               <span className='text-lg font-bold mx-auto'>Triage App</span>
+            </div>
+            <div className='flex items-center'>
+              <img src={UserProfileImage} alt='Profile' className='w-10 h-10 rounded-full mr-2' />
+              <div>
+                <Link to={`/users/${UserInfo.user_id}`} className=' hover:underline'>
+                  <div className='font-semibold'>{UserInfo.user_name}</div>
+                </Link>
+                <div className=' text-gray-400'>{UserInfo.user_type}</div>
+              </div>
             </div>
             <button onClick={toggleMenu} className='text-lg font-bold'>
               {menuVisible ? (

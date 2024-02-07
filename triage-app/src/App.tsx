@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import GuidedEntry from './pages/GuidedEntry'
@@ -57,40 +58,43 @@ function App() {
   }*/
 
   return (
-    <Routes>
-      {isAuthenticated ? (
-        <Route
-          path='*'
-          element={
-            <div className='flex h-screen '>
-              <Sidebar />
-              <div className='flex-1 overflow-y-auto h-screen bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
-                <Routes>
-                  <Route path='/' element={<GuidedEntry />} />
-                  <Route path='/guidedentry' element={<GuidedEntry />} />
-                  <Route path='/patients' element={<Patients />} />
-                  <Route path='/patients/:patient_id' element={<PatientDetail />} />
-                  <Route path='/users' element={<UserDetail />} />
-                  <Route path='/users/:user_id' element={<UserDetail />} />
+    <>
+      <Toaster richColors closeButton visibleToasts={1} />
+      <Routes>
+        {isAuthenticated ? (
+          <Route
+            path='*'
+            element={
+              <div className='flex h-screen '>
+                <Sidebar />
+                <div className='flex-1 overflow-y-auto h-screen bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
+                  <Routes>
+                    <Route path='/' element={<GuidedEntry />} />
+                    <Route path='/guidedentry' element={<GuidedEntry />} />
+                    <Route path='/patients' element={<Patients />} />
+                    <Route path='/patients/:patient_id' element={<PatientDetail />} />
+                    <Route path='/users' element={<UserDetail />} />
+                    <Route path='/users/:user_id' element={<UserDetail />} />
 
-                  <Route path='/boxes' element={<Boxes />} />
-                  {role === UserRole.HOSPITAL && (
-                    <>
-                      <Route path='/stats' element={<Stats />} />
-                      <Route path='/configuration' element={<Configuration />} />
-                    </>
-                  )}
-                  <Route path='*' element={<NotFound />} />
-                </Routes>
+                    <Route path='/boxes' element={<Boxes />} />
+                    {role === UserRole.HOSPITAL && (
+                      <>
+                        <Route path='/stats' element={<Stats />} />
+                        <Route path='/configuration' element={<Configuration />} />
+                      </>
+                    )}
+                    <Route path='*' element={<NotFound />} />
+                  </Routes>
+                </div>
               </div>
-            </div>
-          }
-        />
-      ) : (
-        // Redirect to login if not authenticated
-        <Route path='*' element={<Login handleUserChange={setUser} user={User} />} />
-      )}
-    </Routes>
+            }
+          />
+        ) : (
+          // Redirect to login if not authenticated
+          <Route path='*' element={<Login handleUserChange={setUser} user={User} />} />
+        )}
+      </Routes>
+    </>
   )
 }
 

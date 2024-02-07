@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PartialPatient } from '@/interfaces/Patinet'
+import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
 import { Box } from '@/interfaces/Boxes'
 import { addNewPatient } from '@/services/patientService'
@@ -102,17 +103,22 @@ function NewPatientForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      // TODO: JsonWebToken
       console.log(formData)
       const token = Cookies.get('authToken')
       console.log(formData)
       if (token) {
         const newPatient = await addNewPatient(formData)
         console.log('Nuevo paciente agregado:', newPatient)
+        toast.success('Nuevo paciente agregado', {
+          duration: 2000
+        })
       } else {
         console.error('Token is undefined')
       }
     } catch (error) {
+      toast.error('Error al intentar agregar un nuevo paciente', {
+        duration: 2000
+      })
       console.error('Error al intentar agregar un nuevo paciente:', error)
     }
   }
