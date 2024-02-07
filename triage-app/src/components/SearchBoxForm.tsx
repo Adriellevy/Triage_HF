@@ -17,38 +17,27 @@ function SearchBoxForm({ onSearch }: PropsSearchTeamForm) {
       <h2 className='text-xl font-semibold mb-4'>Search Box</h2>
       <div className='flex space-x-4'>
         <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Search box:
-          </label>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>Search box:</label>
           <input
             type='text'
             value={searchBox}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setSearchbox(e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchbox(e.target.value)}
             className='w-full p-2 border rounded-md'
             placeholder='Enter search box'
           />
         </div>
         <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            Search By:
-          </label>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>Search By:</label>
           <select
             value={searchBy}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              setSearchBy(e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => setSearchBy(e.target.value)}
             className='w-full p-2 border rounded-md'
           >
             <option value='name'>Name</option>
             <option value='dob'>Date of Birth</option>
           </select>
         </div>
-        <button
-          onClick={handleSearch}
-          className='bg-blue-500 text-white p-2 rounded-md'
-        >
+        <button onClick={handleSearch} className='bg-blue-500 text-white p-2 rounded-md'>
           Search
         </button>
       </div>

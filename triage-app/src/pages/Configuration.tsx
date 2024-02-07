@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import SelectorMenu from '@/components/SelectorMenu'
 import TeamUsers from '@/components/UserConfig'
 import BoxConfig from '@/components/Boxconfig'

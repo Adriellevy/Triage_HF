@@ -28,12 +28,10 @@ function Patients() {
     const fetchData = async () => {
       try {
         if (token) {
-          if (token) {
-            const data = await getPatients()
-            setPatientsData(data)
-          }
+          const data = await getPatients()
+          setPatientsData(data)
         } else {
-          console.log('Error en fetch data de Patients.tsx')
+          // console.log('Error en fetch data de Patients.tsx')
         }
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)
@@ -46,12 +44,10 @@ function Patients() {
     const fetchData = async () => {
       try {
         if (token) {
-          if (token) {
-            const data = await getPatients()
-            setPatientsData(data)
-          }
+          const data = await getPatients()
+          setPatientsData(data)
         } else {
-          console.log('Error en fetch data de Patients.tsx')
+          // console.log('Error en fetch data de Patients.tsx')
         }
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)

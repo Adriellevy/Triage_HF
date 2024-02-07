@@ -1,28 +1,26 @@
-import { Routes, Route } from 'react-router-dom'
-import { Toaster } from 'sonner'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import GuidedEntry from './pages/GuidedEntry'
-import Stats from './pages/Stats'
-import Patients from './pages/Patients'
-import Boxes from './pages/Boxes'
-import Sidebar from '@/components/Sidebar'
-import Configuration from './pages/Configuration'
-import { useAuth } from './contex/AuthContext' // Corrected the import path
-import PatientDetail from './pages/PatientDetail'
-import UserDetail from './pages/UserDetail'
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import { useRoleContext } from './contex/RoleContext'
-import { UserRole } from './interfaces/User'
-import { getUserById, getUserIdByToken } from './services/userService'
+import { Toaster } from 'sonner'
+import { useAuth } from '@/contex/AuthContext'
+import { useRoleContext } from '@//contex/RoleContext'
+import Login from '@/pages/Login'
+import NotFound from '@/pages/NotFound'
+import GuidedEntry from '@/pages/GuidedEntry'
+import Stats from '@/pages/Stats'
+import Patients from '@/pages/Patients'
+import Boxes from '@/pages/Boxes'
+import Configuration from '@/pages/Configuration'
+import PatientDetail from '@/pages/PatientDetail'
+import UserDetail from '@/pages/UserDetail'
+import Sidebar from '@/components/Sidebar'
+import { UserRole } from '@/interfaces/User'
+import { getUserById, getUserIdByToken } from '@/services/userService'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
-  const [User, setUser] = useState<string>('')
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { role, setRole } = useRoleContext()
+  const [User, setUser] = useState<string>('')
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
@@ -50,12 +48,6 @@ function App() {
     }
     fetchData()
   })
-
-  // Check authentication status on startup
-  /*if (isAuthenticated === null) {
-    // You might want to display a loading spinner or some indicator here
-    return <div>Loading...</div>;
-  }*/
 
   return (
     <>
