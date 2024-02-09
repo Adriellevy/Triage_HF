@@ -9,6 +9,7 @@ interface PropsPatientItem {
   patient: Patient
   onDelete: (patient_id: string) => void
   onViewDetails: (patient: Patient) => void
+  onEdit: (updatedPatient: Patient) => void
 }
 
 function PatientItem({ patient, onViewDetails }: PropsPatientItem) {

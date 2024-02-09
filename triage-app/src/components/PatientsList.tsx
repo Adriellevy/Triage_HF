@@ -24,6 +24,12 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
     setSelectedPatient(null)
   }
 
+  const handleEditPatient = (updatedPatient: Patient) => {
+    // Update the patient in the parent component's state
+    // You need to implement the logic to update the patient in your state here
+    console.log('Updated patient:', updatedPatient)
+  }
+
   // console.log(patients)
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
@@ -63,7 +69,7 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
         <PatientDetailModal
           patient={selectedPatient}
           onClose={handleDetailModalClose}
-          onEdit={() => console.log('123')}
+          onEdit={handleEditPatient}
         />
       )}
     </div>

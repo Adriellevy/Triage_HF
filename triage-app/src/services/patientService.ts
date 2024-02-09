@@ -49,7 +49,7 @@ export const updatePatient = async (
   try {
     const token = Cookies.get('authToken')
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
-
+    console.log("api "+apiUrl)
     const response = await fetch(apiUrl, {
       method: 'PATCH',
       headers: {
@@ -70,7 +70,42 @@ export const updatePatient = async (
     throw new Error('Error al actualizar paciente')
   }
 }
+export const updateAnyPatient = async (
+  patient_id: string,
+  updatedData: Partial<Patient>
+): Promise<PartialPatient> => {
+  try {
+    const token = Cookies.get('authToken')
+    const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
+    console.log("api "+apiUrl)
 
+    const body: any = {}; // Initialize an empty object for the request body
+
+    // Loop through each key in updatedData
+    Object.keys(updatedData).forEach((fieldName) => {
+      // Add the key-value pair to the request body
+      body[fieldName] = updatedData[fieldName];
+    });
+
+    const response = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body) // Pass the constructed body object
+    })
+
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud PATCH a ${apiUrl}: ${response.statusText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error al actualizar paciente:', error)
+    throw new Error('Error al actualizar paciente')
+  }
+}
 export const addNewPatient = async (
   newPatientData: Omit<PartialPatient, 'patient_id'>
 ): Promise<PartialPatient> => {
