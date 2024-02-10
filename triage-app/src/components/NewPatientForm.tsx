@@ -8,6 +8,7 @@ import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { getBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import { Button, Input, Label } from '@/components/ui'
 
 function NewPatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
@@ -161,101 +162,80 @@ function NewPatientForm() {
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
       >
         <div>
-          <label htmlFor='patient_name' className='block text-sm font-medium text-gray-600'>
-            Nombre del Paciente
-          </label>
-          <input
+          <Label htmlFor='patient_name'>Nombre del Paciente</Label>
+          <Input
             type='text'
             id='patient_name'
             name='patient_name'
             value={formData.patient_name}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
             required
           />
         </div>
 
         <div>
-          <label htmlFor='date_of_birth' className='block text-sm font-medium text-gray-600'>
-            Fecha de Nacimiento
-          </label>
-          <input
+          <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
+          <Input
             type='date'
             id='date_of_birth'
             name='date_of_birth'
             value={formData.date_of_birth}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div>
-          <label htmlFor='entry_time' className='block text-sm font-medium text-gray-600'>
-            Hora de Ingreso
-          </label>
-          <input
+          <Label htmlFor='entry_time'>Hora de Ingreso</Label>
+          <Input
             type='time'
             id='entry_time'
             name='entry_time'
             value={formData.entry_time}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div>
-          <label htmlFor='patient_triage_level' className='block text-sm font-medium text-gray-600'>
-            Nivel de Triaje
-          </label>
-          <input
+          <Label htmlFor='patient_triage_level'>Nivel de Triaje</Label>
+          <Input
             type='text'
             id='patient_triage_level'
             name='patient_triage_level'
             value={formData.patient_triage_level}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div>
-          <label htmlFor='patient_medication' className='block text-sm font-medium text-gray-600'>
-            Medicación del Paciente
-          </label>
-          <input
+          <Label htmlFor='patient_medication'>Medicación del Paciente</Label>
+          <Input
             type='text'
             id='patient_medication'
             name='patient_medication'
             value={formData.patient_medication}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div>
-          <label htmlFor='patient_problem' className='block text-sm font-medium text-gray-600'>
-            Problema del Paciente
-          </label>
-          <input
+          <Label htmlFor='patient_problem'>Problema del Paciente</Label>
+          <Input
             type='text'
             id='patient_problem'
             name='patient_problem'
             value={formData.patient_problem}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div>
-          <label htmlFor='box_id' className='block text-sm font-medium text-gray-600'>
-            ID de la Caja
-          </label>
-          <input
+          <Label htmlFor='box_id'>ID de la Caja</Label>
+          <Input
             type='text'
             id='box_id'
             name='box_id'
             value={formData.box_id}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
             autoComplete='off' // Desactiva el autocompletado del navegador
             list='BoxesOptions' // Asociamos el datalist con el ID "doctorOptions"
           />
@@ -274,10 +254,8 @@ function NewPatientForm() {
         </div>
 
         <div>
-          <label htmlFor='doctor_id' className='block text-sm font-medium text-gray-600'>
-            Nombre del Doctor
-          </label>
-          <input
+          <Label htmlFor='doctor_id'>Nombre del Doctor</Label>
+          <Input
             type='text'
             id='doctor_id'
             name='doctor_id'
@@ -285,7 +263,6 @@ function NewPatientForm() {
             onChange={handleInputChange}
             autoComplete='off' // Desactiva el autocompletado del navegador
             list='doctorOptions' // Asociamos el datalist con el ID "doctorOptions"
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
           <datalist
             id='doctorOptions'
@@ -298,10 +275,8 @@ function NewPatientForm() {
         </div>
 
         <div>
-          <label htmlFor='nurse_id' className='block text-sm font-medium text-gray-600'>
-            Nombre del Enfermero
-          </label>
-          <input
+          <Label htmlFor='nurse_id'>Nombre del Enfermero</Label>
+          <Input
             type='text'
             id='nurse_id'
             name='nurse_id'
@@ -309,7 +284,6 @@ function NewPatientForm() {
             onChange={handleInputChange}
             autoComplete='off'
             list='nurseOptions'
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
           <datalist id='nurseOptions'>
             {NurseOptions?.map((option) => (
@@ -319,27 +293,20 @@ function NewPatientForm() {
         </div>
 
         <div>
-          <label htmlFor='patient_status' className='block text-sm font-medium text-gray-600'>
-            Estado del Paciente
-          </label>
-          <input
+          <Label htmlFor='patient_status'>Estado del Paciente</Label>
+          <Input
             type='text'
             id='patient_status'
             name='patient_status'
             value={formData.patient_status}
             onChange={handleInputChange}
-            className='mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300'
           />
         </div>
 
         <div className='flex items-end'>
-          <button
-            type='submit'
-            className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'
-            onClick={handleButtonClick}
-          >
+          <Button type='submit' color='blue' onClick={handleButtonClick}>
             Add New Patient
-          </button>
+          </Button>
         </div>
       </form>
     </div>
