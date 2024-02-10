@@ -4,11 +4,13 @@ import { Patient } from '../interfaces/Patinet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { Button } from '@/components/ui'
 
 interface PropsPatientItem {
   patient: Patient
   onDelete: (patient_id: string) => void
   onViewDetails: (patient: Patient) => void
+  onEdit: (updatedPatient: Patient) => void
 }
 
 function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
@@ -61,17 +63,18 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
       <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>
       <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
       <td className='border p-2'>
-        <button
-          onClick={() => onViewDetails(patient)}
-          className='bg-green-500 text-white md:p-2 md:mt-2 rounded-md w-full'
-        >
-          <FontAwesomeIcon icon={faPenToSquare} />
-        </button>
-        <Link to={`/patients/${patient_id}`}>
-          <button className='bg-green-500 text-white p-2 mt-2 rounded-md w-full'>
-            <FontAwesomeIcon icon={faCircleInfo} />
-          </button>
-        </Link>
+        <div className='mb-2'>
+          <Button onClick={() => onViewDetails(patient)} color='green'>
+            <FontAwesomeIcon icon={faPenToSquare} />
+          </Button>
+        </div>
+        <div>
+          <Link to={`/patients/${patient_id}`}>
+            <Button color='green'>
+              <FontAwesomeIcon icon={faCircleInfo} />
+            </Button>
+          </Link>
+        </div>
       </td>
     </tr>
   )

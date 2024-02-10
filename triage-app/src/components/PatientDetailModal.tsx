@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Patient } from '../interfaces/Patinet'
 import EditPencil from '../icons/edit-pencil.svg'
+import { updateAnyPatient } from '../services/patientService'
 
 interface PropsPatientDetailModal {
   patient: Patient
@@ -28,6 +29,7 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
   useEffect(() => {
     const originalBirthDate = new Date(patient.date_of_birth)
     const entryTimeOriginal = new Date(patient.entry_time)
+
     //format options
     const dateFormat = {
       year: 'numeric',
@@ -45,16 +47,25 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
     }
     const formatoFechaHora = new Intl.DateTimeFormat('es-ES', dateFormat)
     const formatoNacimiento = new Intl.DateTimeFormat('es-ES', birthFormat)
+
     const formatEntryTime = formatoFechaHora.format(entryTimeOriginal)
     const formatBirthDate = formatoNacimiento.format(originalBirthDate)
+
     setEntryTime(formatEntryTime)
     setBirthDate(formatBirthDate)
-    setFormatPatient({
-      ...formatPatient,
-      date_of_birth: formatBirthDate,
-      entry_time: formatEntryTime
-    })
-  }, [])
+
+    // Check if the formatPatient has changed before updating it
+    if (
+      formatPatient.date_of_birth !== formatBirthDate ||
+      formatPatient.entry_time !== formatEntryTime
+    ) {
+      setFormatPatient({
+        ...formatPatient,
+        date_of_birth: formatBirthDate,
+        entry_time: formatEntryTime
+      })
+    }
+  }, [formatPatient, patient.date_of_birth, patient.entry_time]) // Include relevant dependencies
 
   const fieldsConfig: FieldsConfig = {
     // patient_id: { label: 'Patient ID', type: 'text', editable: false },  //innecesario
@@ -69,9 +80,9 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
     nurse_name: { label: 'Nurse', type: 'text', editable: true },
     patient_status: { label: 'Patient Status', type: 'text', editable: true }
   }
-
-  console.log(fieldsConfig)
-
+  useEffect(() => {
+    setEditedData({ ...patient }) // Update editedData when patient prop changes
+  }, [patient])
   const handleEdit = (field: string) => {
     if (!isEditing) {
       setIsEditing(true)
@@ -80,15 +91,25 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
   }
 
   const handleSave = () => {
-    // onEdit(editedData)
     setIsEditing(false)
     setEditingField(null)
+    // Find the changed fields
+    const changedFields: Partial<Patient> = {}
+    Object.keys(editedData).forEach((fieldName) => {
+      if (editedData[fieldName] !== patient[fieldName]) {
+        changedFields[fieldName as keyof Patient] = editedData[fieldName]
+      }
+    })
+
+    updateAnyPatient(editedData.patient_id, changedFields)
+
+    setFormatPatient(editedData)
   }
 
   const handleCancelEdit = () => {
     setIsEditing(false)
     setEditingField(null)
-    setEditedData({ ...patient })
+    //setEditedData({ ...patient })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,12 +122,16 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
       }))
     }
   }
-
+  const handleDetailModalClose = () => {
+    patient = editedData
+    onEdit(editedData)
+    onClose()
+  }
   return (
     <div className='fixed inset-0 flex items-center justify-center'>
       <div className='fixed inset-0 bg-black opacity-50'></div>
       <div className='bg-white p-6 rounded-md z-10'>
-        <h2 className='text-2xl font-bold mb-4'>Patient Detailsa</h2>
+        <h2 className='text-2xl font-bold mb-4'>Patient Details</h2>
         <div className='flex flex-col space-y-2'>
           {Object.entries(fieldsConfig).map(([fieldName, fieldConfig]) => (
             <p key={fieldName}>
@@ -154,7 +179,10 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
           ))}
         </div>
         {!isEditing && (
-          <button onClick={onClose} className='bg-gray-500 text-white p-2 rounded-md mt-4'>
+          <button
+            onClick={() => handleDetailModalClose()}
+            className='bg-gray-500 text-white p-2 rounded-md mt-4'
+          >
             Close
           </button>
         )}

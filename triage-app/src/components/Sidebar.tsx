@@ -15,6 +15,7 @@ import HamburgerIcon from '@/icons/hamburger-icon.svg'
 import HamburgerCloseIcon from '@/icons/hamburger-close-icon.svg'
 import ConfigIcon from '@/icons/settings-2-svgrepo-com.svg'
 import Logo from '@/icons/stats-icon.svg'
+import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
 
@@ -142,9 +143,9 @@ function Sidebar() {
           </div>
         </div>
         <div className='mt-auto p-4'>
-          <button onClick={handleLogout} className='bg-red-500 text-white p-2 rounded-md w-full'>
+          <Button color='red' onClick={handleLogout}>
             Logout
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -170,9 +171,9 @@ function Sidebar() {
             )}
           </nav>
           <div className='mt-auto p-4'>
-            <button onClick={handleLogout} className='bg-red-500 text-white p-2 rounded-md w-full'>
+            <Button color='red' onClick={handleLogout}>
               Logout
-            </button>
+            </Button>
           </div>
         </div>
 
