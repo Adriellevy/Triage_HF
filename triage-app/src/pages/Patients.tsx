@@ -7,7 +7,7 @@ import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 
-function Patients(IdTeamMember: string) {
+function Patients() {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
@@ -55,7 +55,7 @@ function Patients(IdTeamMember: string) {
     }
     if (socket) {
       socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.NEW_PATIENT) {
+        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
           fetchData()
         }
       })

@@ -22,6 +22,7 @@ function UserDetail() {
     user_password: '',
     user_type: role
   })
+
   const onDelete = (patient_id: string) => {
     console.log(patient_id)
   }
@@ -39,7 +40,8 @@ function UserDetail() {
       try {
         if (token) {
           const data = await getPatients()
-          setPatientsData(data)
+          const filteredData = data.filter((data) => data.doctor_name === User.user_name)
+          setPatientsData(filteredData)
         } else {
           // console.log('Error en fetch data de Patients.tsx')
         }
@@ -48,7 +50,8 @@ function UserDetail() {
       }
     }
     fetchData()
-  }, [token])
+  }, [User, token])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,7 +66,7 @@ function UserDetail() {
       }
     }
     fetchData()
-  })
+  }, [user_id])
   return (
     <div className=' bg-white h-full flex flex-col p-4'>
       <div className='flex items-center mb-4'>

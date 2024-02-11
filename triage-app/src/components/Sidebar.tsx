@@ -18,6 +18,7 @@ import Logo from '@/icons/stats-icon.svg'
 import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
+import { UpdateEvent } from '@/interfaces/Socket'
 
 interface MenuItem {
   icon?: string
@@ -44,14 +45,25 @@ function Sidebar() {
   socket.on(`${UserInfo.user_id}`, (data) => {
     console.log(data)
     const { patient_id } = data.patient
-    toast.info('Nuevo paciente asignado', {
-      action: {
-        label: 'Ver datos paciente',
-        onClick: () => {
-          navigate(`/patients/${patient_id}`)
+    if (data.message == 'New patient assigned') {
+      toast.info('New Patient Assigned', {
+        action: {
+          label: 'Ver datos paciente',
+          onClick: () => {
+            navigate(`/patients/${patient_id}`)
+          }
         }
-      }
-    })
+      })
+    } else if (data.message == 'Updated patient') {
+      toast.info('One of your patient has been edited', {
+        action: {
+          label: 'Ver datos paciente',
+          onClick: () => {
+            navigate(`/patients/${patient_id}`)
+          }
+        }
+      })
+    }
   })
 
   const menuitems: MenuItem[] = [
