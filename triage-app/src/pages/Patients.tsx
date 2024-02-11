@@ -7,7 +7,7 @@ import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 
-function Patients() {
+function Patients(IdTeamMember: string) {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
