@@ -137,6 +137,32 @@ export class PatientController {
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
       }
+      // eslint-disable-next-line prefer-destructuring
+      const io = req.io
+      io.emit('update', {
+        message: 'Updated patient',
+      })
+      try {
+        const [Patient] = await PatientsModel.getPatientById({ id })
+        console.log(Patient.doctor_id)
+        io.emit(`${Patient.doctor_id}`, {
+          message: 'Updated patient',
+          patient: {
+            patient_name: Patient.patient_name,
+            patient_id: id,
+          },
+        })
+
+        io.emit(`${Patient.nurse_id}`, {
+          message: 'Updated patient',
+          patient: {
+            patient_name: Patient.patient_name,
+            patient_id: id,
+          },
+        })
+      } catch (e) {
+        console.log(e)
+      }
       return res.json(updatedUser)
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })

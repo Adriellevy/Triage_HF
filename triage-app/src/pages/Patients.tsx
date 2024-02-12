@@ -55,7 +55,7 @@ function Patients() {
     }
     if (socket) {
       socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.NEW_PATIENT) {
+        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
           fetchData()
         }
       })
