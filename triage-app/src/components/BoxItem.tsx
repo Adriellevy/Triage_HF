@@ -19,7 +19,7 @@ function BoxItem({ box }: PropsBoxItem) {
       <p>
         <strong>Status:</strong> {box_status}
       </p>
-      {box_status !== BoxStatus.OCUPADO && (
+      {box_status === BoxStatus.OCUPADO && (
         <>
           <p>
             <strong>Patient:</strong> {box_status}
