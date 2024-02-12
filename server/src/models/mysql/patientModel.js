@@ -109,7 +109,7 @@ export class PatientsModel {
       data.box_id,
     ])
     if (result.affectedRows > 0) {
-      return { message: 'New patient inserted successfully' }
+      return uuid
     } else {
       return { error: 'Error inserting a new patient' }
     }

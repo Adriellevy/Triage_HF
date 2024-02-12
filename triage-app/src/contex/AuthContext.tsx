@@ -19,18 +19,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Store the token in a cookie token: string
     //document.cookie = `authToken=${token}; path=/`;
     //aqui se podría hacer la request o el authservice hablarlo con luquitas
-    console.log('le llego el token a login: ' + token)
     setAuthenticated(true)
   }
 
   const logout = () => {
-    // Remove the token cookie
-    console.log('Logging out...')
-    // Remove the token cookie
     document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-    console.log('Cookie removed')
     setAuthenticated(false)
-    console.log('State updated')
   }
 
   return (

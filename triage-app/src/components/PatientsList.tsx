@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Patient } from '../interfaces/Patinet'
+import { Patient } from '@/interfaces/Patinet'
 import PatientItem from './PatientItem'
 import PatientDetailModal from './PatientDetailModal'
 
@@ -24,6 +24,12 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
     setSelectedPatient(null)
   }
 
+  const handleEditPatient = (updatedPatient: Patient) => {
+    // Update the patient in the parent component's state
+    // You need to implement the logic to update the patient in your state here
+    console.log('Updated patient:', updatedPatient)
+  }
+
   // console.log(patients)
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
@@ -32,7 +38,7 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
         <thead>
           <tr className='min-w-full'>
             <th className='border p-2 '>Name</th>
-            <th className='border p-2 hidden lg:table-cell'>Date of Birth</th>
+ <th className='border p-2 hidden lg:table-cell'>Age</th>
             <th className='border p-2 hidden lg:table-cell'>Entry Time</th>
             <th className='border p-2'>Triage Level</th>
             <th className='border p-2 hidden lg:table-cell'>Patient Medication</th>
@@ -45,21 +51,26 @@ function PatientsList({ patients, onDelete }: PropsPatientsList) {
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient) => (
-            <PatientItem
-              key={patient.patient_id}
-              patient={patient}
-              onViewDetails={handleViewDetails}
-              // onEdit={() => console.log(123)}
-              onDelete={onDelete}
-            />
-          ))}
+{patients.map(
+            (patient) =>
+              patient && (
+                <PatientItem
+                  key={patient?.patient_id}
+                  patient={patient}
+                  onViewDetails={handleViewDetails}
+                  // onEdit={() => console.log(123)}
+                  onDelete={onDelete}
+                />
+              )
+          )}
         </tbody>
       </table>
-      {showDetailModal && (
-        <PatientDetailModal 
-        patient={selectedPatient} 
-        onClose={handleDetailModalClose} />
+      {showDetailModal && selectedPatient && (
+        <PatientDetailModal
+          patient={selectedPatient}
+          onClose={handleDetailModalClose}
+          onEdit={handleEditPatient}
+        />
       )}
     </div>
   )

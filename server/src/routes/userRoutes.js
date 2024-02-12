@@ -3,5 +3,7 @@ import { UserController } from '../controllers/userController.js'
 
 export const userRouter = Router()
 
-userRouter.get('/doctor', UserController.getAllDoctors)
-userRouter.get('/nurse', UserController.getAllNurse)
+userRouter.get('/data/:id', UserController.getUserById)
+userRouter.post('/getuseridbytoken', UserController.getUserIdByToken)
+userRouter.get('/doctor/', UserController.getAllDoctors)
+userRouter.get('/nurse/', UserController.getAllNurse)

@@ -1,7 +1,7 @@
 import { useState, useEffect, ChangeEvent } from 'react'
 import { Patient } from '../interfaces/Patinet'
 //TODO:
-//import { updatePatient } from '../services/patientService'
+import { updatePatient } from '../services/patientService'
 
 interface EditPatientModalProps {
   patient: Patient
@@ -18,16 +18,18 @@ function EditPatientModal({ patient, onClose, onSave }: EditPatientModalProps) {
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
-    // const { name, value } = event.target
+    const { name, value } = event.target
     // TODO: Agregar más campos
-    //setEditedPatient()
+    setEditedPatient(editedPatient)
   }
 
   const handleSave = async () => {
     try {
       //TODO:
       // await updatePatient(editedPatient)
-      onSave(editedPatient)
+      if (editedPatient) {
+        onSave(editedPatient)
+      }
       onClose()
     } catch (error) {
       console.error('Error al actualizar paciente:', error.message)

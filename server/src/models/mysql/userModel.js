@@ -17,6 +17,21 @@ export class UserModel {
     }
   }
 
+  static async getUserByID({ id }) {
+    try {
+      const usersQuery = `
+        SELECT * FROM Users WHERE user_id = ?;
+      `
+      const [[user]] = await connection.query(usersQuery, [id])
+      if (user.length === 0) return false
+      const { user_id, user_name, user_type } = user
+      return { user_id, user_name, user_type }
+    } catch (error) {
+      console.error('Error en la consulta getUserByID:', error)
+      throw error
+    }
+  }
+
   static async createNewUser(data) {
     // TODO
     const { user_name, user_email, hash_password } = data

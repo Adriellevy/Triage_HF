@@ -25,6 +25,28 @@ export class PatientController {
         data: result.data,
       })
       if (newPatientId) {
+        // eslint-disable-next-line prefer-destructuring
+        const io = req.io
+        io.emit('update', {
+          message: 'New patient',
+        })
+
+        io.emit(`${result.data.doctor_id}`, {
+          message: 'New patient assigned',
+          patient: {
+            patient_name: result.data.patient_name,
+            patient_id: newPatientId,
+          },
+        })
+
+        io.emit(`${result.data.nurse_id}`, {
+          message: 'New patient assigned',
+          patient: {
+            patient_name: result.data.patient_name,
+            patient_id: newPatientId,
+          },
+        })
+
         return res.status(201).json({
           message: 'New patient created successfully',
           // eslint-disable-next-line comma-dangle
@@ -114,6 +136,32 @@ export class PatientController {
       })
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
+      }
+      // eslint-disable-next-line prefer-destructuring
+      const io = req.io
+      io.emit('update', {
+        message: 'Updated patient',
+      })
+      try {
+        const [Patient] = await PatientsModel.getPatientById({ id })
+        console.log(Patient.doctor_id)
+        io.emit(`${Patient.doctor_id}`, {
+          message: 'Updated patient',
+          patient: {
+            patient_name: Patient.patient_name,
+            patient_id: id,
+          },
+        })
+
+        io.emit(`${Patient.nurse_id}`, {
+          message: 'Updated patient',
+          patient: {
+            patient_name: Patient.patient_name,
+            patient_id: id,
+          },
+        })
+      } catch (e) {
+        console.log(e)
       }
       return res.json(updatedUser)
     } catch (error) {

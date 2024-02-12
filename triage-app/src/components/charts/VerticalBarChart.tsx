@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -5,28 +6,27 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const options = {
+const defaultOptions = {
   responsive: true,
   plugins: {
     legend: {
       position: 'top' as const
     },
     title: {
-      display: true,
-      text: 'Chart.js Bar Chart'
+      display: true
     }
   }
 }
 
 const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
 
-const data = {
+const dataOriginal = {
   labels,
   datasets: [
     {
@@ -42,6 +42,23 @@ const data = {
   ]
 }
 
-export function VerticalBarChart() {
-  return <Bar options={options} data={data} />
+interface VerticalBarChartProps {
+  options?: ChartOptions<'bar'> // Ajusta 'bar' según el tipo de gráfico que estás utilizando
+  data?: {
+    labels: string[]
+    datasets: {
+      label: string
+      data: number[]
+      backgroundColor: string
+    }[]
+  }
 }
+
+const VerticalBarChart: React.FC<VerticalBarChartProps> = ({ options, data }) => {
+  const chartOptions = options || defaultOptions
+  const chartData = data || dataOriginal
+
+  return <Bar options={chartOptions} data={chartData} />
+}
+
+export default VerticalBarChart
