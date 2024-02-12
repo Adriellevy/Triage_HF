@@ -52,7 +52,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
 
   return (
     <tr className='w-full'>
-      <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
+ <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>
       <td className='border md:p-2 text-center'>{patient_triage_level}</td>
