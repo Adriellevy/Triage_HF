@@ -96,6 +96,7 @@ function Sidebar() {
 
   const handleLogout = () => {
     logout()
+    navigate('/')
   }
 
   const toggleMenu = () => {
