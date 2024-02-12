@@ -10,10 +10,23 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label } from '@/components/ui'
 
+interface PatientState {
+  state_id: number
+  state_name: string
+}
+
 function NewPatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+  const [StateOptions, setStateOptions] = useState<PatientState[]>([
+    { state_id: 1, state_name: 'EN ESPERA' },
+    { state_id: 2, state_name: 'EN ESPERA DE INTERNACIÓN' },
+    { state_id: 3, state_name: 'INTERNADO' },
+    { state_id: 4, state_name: 'ALTA' }
+    // { state_id: 4, state_name: 'AFUERA' },
+    // { state_id: 4, state_name: 'EN AISLAMIENTO' }
+  ])
 
   //todo: sacar patient_box,
   //todo: patient_triage_time se crea en api
@@ -153,6 +166,7 @@ function NewPatientForm() {
     fetchNurses()
     fetchBoxes()
   }, [])
+
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -294,13 +308,21 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='patient_status'>Estado del Paciente</Label>
-          <Input
-            type='text'
+          <select
             id='patient_status'
             name='patient_status'
             value={formData.patient_status}
             onChange={handleInputChange}
-          />
+            className="w-full p-2 border rounded-md"
+            defaultValue={'default'}
+          >
+            <option value='default' disabled>Seleccionar estado</option>
+            {StateOptions.map((option) => (
+              <option key={option.state_id} value={option.state_name}>
+                {option.state_name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className='flex items-end'>
