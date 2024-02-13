@@ -92,8 +92,8 @@ function NewPatientForm() {
     setFormData({
       ...formData,
       patient_triage_level: level
-    });
-  };
+    })
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -121,13 +121,13 @@ function NewPatientForm() {
         [name]: itemId
       })
     } else if (name === 'box_id') {
-      console.log(BoxesOptions);
-      console.log(value);
+      console.log(BoxesOptions)
+      console.log(value)
       // const itemId = BoxesOptions
       //   // ? BoxesOptions.find((option) => option.box_id + ': ' + option.box_type === value)?.box_id
       //   ? BoxesOptions.find((option) => option.box_id === value)?.box_id
       //   : null
-      const itemId = BoxesOptions?.find(box=>box.box_id==value)?.box_id
+      const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
       console.log(itemId)
       setFormData({
         ...formData,
@@ -149,11 +149,11 @@ function NewPatientForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // const dateNow=getCurrentTime()
-    //actualizar entry_time 
+    //actualizar entry_time
     setFormData({
       ...formData,
       entry_time: getCurrentTime()
-    });
+    })
     try {
       console.log(formData)
       const token = Cookies.get('authToken')
@@ -205,7 +205,6 @@ function NewPatientForm() {
     fetchBoxes()
   }, [])
 
-
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       <h2 className='text-2xl font-semibold mb-5'>Nuevo Paciente</h2>
@@ -252,10 +251,15 @@ function NewPatientForm() {
           <div className='flex'>
             {TriageLevels.map((level) => (
               <button
-              onClick={()=>handleTriageLevelClick(level._id)}
-              type='button'
-              className={`mr-2 mb-2 py-1  flex-grow border-4 ${formData.patient_triage_level==level._id?' border-black':'border-transparent'}`}
-              style={{ backgroundColor: `${level.color}`, }}
+                key={level._id}
+                onClick={() => handleTriageLevelClick(level._id)}
+                type='button'
+                className={`mr-2 mb-2 py-1  flex-grow border-4 ${
+                  formData.patient_triage_level == level._id
+                    ? ' border-black'
+                    : 'border-transparent'
+                }`}
+                style={{ backgroundColor: `${level.color}` }}
               >
                 {level.name}
               </button>
