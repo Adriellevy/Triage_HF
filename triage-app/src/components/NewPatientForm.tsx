@@ -43,10 +43,10 @@ function NewPatientForm() {
     { _id: 13, name: 'Fiebre >38°' }
   ])
   const [TriageLevels, setTriageLevels] = useState([
-    { _id: 1, name: 'I', color: '#999999' },
-    { _id: 2, name: 'II', color: '#FF3300' },
-    { _id: 3, name: 'III', color: '#FFFF66' },
-    { _id: 4, name: 'IV', color: '#69A84F' }
+    { _id: 1, name: 'I', color: '153, 153, 153' },
+    { _id: 2, name: 'II', color: '255,51,0' },
+    { _id: 3, name: 'III', color: '255,255,102' },
+    { _id: 4, name: 'IV', color: '105,168,79' }
   ])
 
   //todo: sacar patient_box,
@@ -255,7 +255,7 @@ function NewPatientForm() {
               onClick={()=>handleTriageLevelClick(level._id)}
               type='button'
               className={`mr-2 mb-2 py-1  flex-grow border-4 ${formData.patient_triage_level==level._id?' border-black':'border-transparent'}`}
-              style={{ backgroundColor: `${level.color}`, }}
+              style={{ backgroundColor: `rgba(${level.color}, 0.6)`, }}
               >
                 {level.name}
               </button>
