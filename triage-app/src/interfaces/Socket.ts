@@ -5,6 +5,7 @@ export enum SocketEvent {
 
 export enum UpdateEvent {
   NEW_PATIENT = 'New patient',
-  BOX_UPDATE = 'Box Update', 
+  NEW_PATIENT_ASSIGNED = 'New patient assigned',
+  BOX_UPDATE = 'Box Update',
   UPDATE_PATIENT = 'Updated patient'
 }

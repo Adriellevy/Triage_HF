@@ -43,21 +43,20 @@ function Sidebar() {
   const UserProfileImage = DoctorImg
 
   socket.on(`${UserInfo.user_id}`, (data) => {
-    console.log(data)
     const { patient_id } = data.patient
-    if (data.message == 'New patient assigned') {
+    if (data.message == UpdateEvent.NEW_PATIENT_ASSIGNED) {
       toast.info('New Patient Assigned', {
         action: {
-          label: 'Ver datos paciente',
+          label: 'View patient data',
           onClick: () => {
             navigate(`/patients/${patient_id}`)
           }
         }
       })
-    } else if (data.message == 'Updated patient') {
+    } else if (data.message == UpdateEvent.UPDATE_PATIENT) {
       toast.info('One of your patient has been edited', {
         action: {
-          label: 'Ver datos paciente',
+          label: 'View patient data',
           onClick: () => {
             navigate(`/patients/${patient_id}`)
           }
@@ -115,7 +114,7 @@ function Sidebar() {
           const user = await getUserById(String(data))
           setUserInfo(user)
         } else {
-          console.log('Error en fetch data de Patients.tsx')
+          console.log('Error en fetch data')
         }
       } catch (error) {
         // console.error('Error al obtener pacientes:', error.message)
@@ -156,7 +155,7 @@ function Sidebar() {
           </div>
         </div>
         <div className='mt-auto p-4'>
-          <Button color='red' onClick={handleLogout}>
+          <Button wfull color='red' onClick={handleLogout}>
             Logout
           </Button>
         </div>
@@ -166,7 +165,7 @@ function Sidebar() {
         <div
           className={` ${
             menuVisible ? 'flex' : 'hidden'
-          } absolute z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold  dark:text-white bg-gray-50 dark:bg-slate-800 drop-shadow md w-full`}
+          } absolute z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold text-white bg-slate-800 drop-shadow md w-full`}
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>

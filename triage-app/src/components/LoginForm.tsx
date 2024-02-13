@@ -5,8 +5,8 @@ import { loginService } from '@/services/authService'
 import { Button, Input, Label } from '@/components/ui'
 
 interface LoginFormProps {
-  handleUserChange: (user: string) => void // Replace UserType with the actual type of your user object
-  user: string // Replace UserType with the actual type of your user object
+  handleUserChange: (user: string) => void
+  user: string
 }
 
 function LoginForm({ handleUserChange, user }: LoginFormProps) {
@@ -27,7 +27,6 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
           setPassword('')
           login(user)
         } else {
-          // Handle the case where serverRes is undefined
           console.error('Authentication response does not contain a valid token.')
         }
       }
@@ -45,7 +44,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
         <h2 className='text-2xl font-semibold mb-6'>Login</h2>
         {loginError && <div className='mb-4 text-red-500'>{loginError}</div>}
         <div className='mb-4'>
-          <Label htmlFor='email'>User Name</Label>
+          <Label htmlFor='username'>User Name</Label>
           <Input
             type='text'
             id='username'
@@ -66,7 +65,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
             required
           />
         </div>
-        <Button type='submit' color='blue'>
+        <Button wfull type='submit' color='blue'>
           Log In
         </Button>
       </form>
