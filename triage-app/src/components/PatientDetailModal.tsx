@@ -80,9 +80,25 @@ const PatientDetailModal: React.FC<PropsPatientDetailModal> = ({ patient, onClos
     nurse_name: { label: 'Nurse', type: 'text', editable: true },
     patient_status: { label: 'Patient Status', type: 'text', editable: true }
   }
+
   useEffect(() => {
     setEditedData({ ...patient }) // Update editedData when patient prop changes
   }, [patient])
+
+  // useEffect para que modal se cierre con tecla esc
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleDetailModalClose()
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+
   const handleEdit = (field: string) => {
     if (!isEditing) {
       setIsEditing(true)

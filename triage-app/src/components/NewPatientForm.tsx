@@ -8,16 +8,51 @@ import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { getBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-import { Button, Input, Label } from '@/components/ui'
+import { Button, Input, Label, Select } from '@/components/ui'
+
+interface PatientState {
+  state_id: number
+  state_name: string
+}
 
 function NewPatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+  const [StateOptions, setStateOptions] = useState<PatientState[]>([
+    { state_id: 1, state_name: 'EN ESPERA' },
+    { state_id: 2, state_name: 'EN ESPERA DE INTERNACIÓN' },
+    { state_id: 3, state_name: 'INTERNADO' },
+    { state_id: 4, state_name: 'ALTA' }
+    // { state_id: 4, state_name: 'AFUERA' },
+    // { state_id: 4, state_name: 'EN AISLAMIENTO' }
+  ])
+  const [PatientProblems, setPatientProblems] = useState([
+    { _id: 1, name: 'Convulsiones' },
+    { _id: 2, name: 'Trauma de Cráneo' },
+    { _id: 3, name: 'Dolor torácico / dorsal' },
+    { _id: 4, name: 'Dolor abdominal / lumbar' },
+    { _id: 5, name: 'Cefalea' },
+    { _id: 6, name: 'Déficit motor' },
+    { _id: 7, name: 'Disartria - afasia' },
+    { _id: 8, name: 'Pérdida aguda de visión' },
+    { _id: 9, name: 'Disnea' },
+    { _id: 10, name: 'Otro dolor en curso' },
+    { _id: 11, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
+    { _id: 12, name: 'Sangrado Digestivo' },
+    { _id: 13, name: 'Fiebre >38°' }
+  ])
+  const [TriageLevels, setTriageLevels] = useState([
+    { _id: 1, name: 'I', color: '153, 153, 153' },
+    { _id: 2, name: 'II', color: '255,51,0' },
+    { _id: 3, name: 'III', color: '255,255,102' },
+    { _id: 4, name: 'IV', color: '105,168,79' }
+  ])
 
   //todo: sacar patient_box,
   //todo: patient_triage_time se crea en api
   //todo: entry time se crea en api
+
   // Function to get the current time in the desired format
   const getCurrentTime = () => {
     const now = new Date()
@@ -53,6 +88,13 @@ function NewPatientForm() {
     box_id: ''
   })
 
+  const handleTriageLevelClick = (level: number) => {
+    setFormData({
+      ...formData,
+      patient_triage_level: level
+    })
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     // Get the selected option based on the entered value
@@ -79,10 +121,13 @@ function NewPatientForm() {
         [name]: itemId
       })
     } else if (name === 'box_id') {
-      const itemId = BoxesOptions
-        ? BoxesOptions.find((option) => option.box_id + ': ' + option.box_type === value)?.box_id
-        : null
-
+      console.log(BoxesOptions)
+      console.log(value)
+      // const itemId = BoxesOptions
+      //   // ? BoxesOptions.find((option) => option.box_id + ': ' + option.box_type === value)?.box_id
+      //   ? BoxesOptions.find((option) => option.box_id === value)?.box_id
+      //   : null
+      const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
       console.log(itemId)
       setFormData({
         ...formData,
@@ -103,6 +148,12 @@ function NewPatientForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // const dateNow=getCurrentTime()
+    //actualizar entry_time
+    setFormData({
+      ...formData,
+      entry_time: getCurrentTime()
+    })
     try {
       console.log(formData)
       const token = Cookies.get('authToken')
@@ -184,7 +235,7 @@ function NewPatientForm() {
           />
         </div>
 
-        <div>
+        {/* <div>  // Automatico
           <Label htmlFor='entry_time'>Hora de Ingreso</Label>
           <Input
             type='time'
@@ -193,17 +244,34 @@ function NewPatientForm() {
             value={formData.entry_time}
             onChange={handleInputChange}
           />
-        </div>
+        </div> */}
 
         <div>
           <Label htmlFor='patient_triage_level'>Nivel de Triaje</Label>
-          <Input
+          <div className='flex'>
+            {TriageLevels.map((level) => (
+              <button
+                key={level._id}
+                onClick={() => handleTriageLevelClick(level._id)}
+                type='button'
+                className={`mr-2 mb-2 py-1  flex-grow border-4 ${
+                  formData.patient_triage_level == level._id
+                    ? ' border-black'
+                    : 'border-transparent'
+                }`}
+                style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
+              >
+                {level.name}
+              </button>
+            ))}
+          </div>
+          {/* <Input
             type='text'
             id='patient_triage_level'
             name='patient_triage_level'
             value={formData.patient_triage_level}
             onChange={handleInputChange}
-          />
+          /> */}
         </div>
 
         <div>
@@ -225,12 +293,89 @@ function NewPatientForm() {
             name='patient_problem'
             value={formData.patient_problem}
             onChange={handleInputChange}
+            autoComplete='off'
+            list='patientProblems'
           />
+          <datalist
+            id='patientProblems'
+            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
+          >
+            {PatientProblems?.map((option) => (
+              <option key={option._id} value={option.name} data-id={option._id} />
+            ))}
+          </datalist>
         </div>
 
         <div>
           <Label htmlFor='box_id'>ID de la Caja</Label>
-          <Input
+          <Select id='box_id' name='box_id' value={formData.box_id} onChange={handleInputChange}>
+            <option value='' disabled>
+              Seleccionar box
+            </option>
+            {BoxesOptions?.map((option) => (
+              <option key={option.box_id} value={option.box_id}>
+                {option.box_id + ': ' + option.box_type}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor='doctor_id'>Nombre del Doctor</Label>
+          <Select
+            id='doctor_id'
+            name='doctor_id'
+            value={formData.doctor_id}
+            onChange={handleInputChange}
+          >
+            <option value='' disabled>
+              Seleccionar doctor
+            </option>
+            {DoctorOptions?.map((option) => (
+              <option key={option.user_id} value={option.user_name}>
+                {option.user_name}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor='nurse_id'>Nombre del Enfermero</Label>
+          <Select
+            id='nurse_id'
+            name='nurse_id'
+            value={formData.nurse_id}
+            onChange={handleInputChange}
+          >
+            <option value='' disabled>
+              Seleccionar enfermero
+            </option>
+            {NurseOptions?.map((option) => (
+              <option key={option.user_id} value={option.user_name}>
+                {option.user_name}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor='patient_status'>Estado del Paciente</Label>
+          <Select
+            id='patient_status'
+            name='patient_status'
+            value={formData.patient_status}
+            onChange={handleInputChange}
+          >
+            <option value='' disabled>
+              Seleccionar estado
+            </option>
+            {StateOptions.map((option) => (
+              <option key={option.state_id} value={option.state_name}>
+                {option.state_name}
+              </option>
+            ))}
+          </Select>
+          {/* <Input
             type='text'
             id='box_id'
             name='box_id'
@@ -243,64 +388,10 @@ function NewPatientForm() {
             id='BoxesOptions'
             className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
           >
-            {BoxesOptions?.map((option) => (
-              <option
-                key={option.box_id}
-                value={option.box_id + ': ' + option.box_type}
-                data-id={option.box_id}
-              />
-            ))}
-          </datalist>
-        </div>
-
-        <div>
-          <Label htmlFor='doctor_id'>Nombre del Doctor</Label>
-          <Input
-            type='text'
-            id='doctor_id'
-            name='doctor_id'
-            key={formData.doctor_id}
-            onChange={handleInputChange}
-            autoComplete='off' // Desactiva el autocompletado del navegador
-            list='doctorOptions' // Asociamos el datalist con el ID "doctorOptions"
-          />
-          <datalist
-            id='doctorOptions'
-            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
-          >
             {DoctorOptions?.map((option) => (
               <option key={option.user_id} value={option.user_name} data-id={option.user_id} />
             ))}
-          </datalist>
-        </div>
-
-        <div>
-          <Label htmlFor='nurse_id'>Nombre del Enfermero</Label>
-          <Input
-            type='text'
-            id='nurse_id'
-            name='nurse_id'
-            value={formData.data}
-            onChange={handleInputChange}
-            autoComplete='off'
-            list='nurseOptions'
-          />
-          <datalist id='nurseOptions'>
-            {NurseOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} data-id={option.user_id} />
-            ))}
-          </datalist>
-        </div>
-
-        <div>
-          <Label htmlFor='patient_status'>Estado del Paciente</Label>
-          <Input
-            type='text'
-            id='patient_status'
-            name='patient_status'
-            value={formData.patient_status}
-            onChange={handleInputChange}
-          />
+          </datalist> */}
         </div>
 
         <div className='flex items-end'>

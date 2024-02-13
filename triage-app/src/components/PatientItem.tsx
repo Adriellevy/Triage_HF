@@ -64,13 +64,13 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
       <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
       <td className='border p-2'>
         <div className='mb-2'>
-          <Button onClick={() => onViewDetails(patient)} color='green'>
+          <Button wfull color='green' onClick={() => onViewDetails(patient)}>
             <FontAwesomeIcon icon={faPenToSquare} />
           </Button>
         </div>
         <div>
           <Link to={`/patients/${patient_id}`}>
-            <Button color='green'>
+            <Button wfull color='green'>
               <FontAwesomeIcon icon={faCircleInfo} />
             </Button>
           </Link>
