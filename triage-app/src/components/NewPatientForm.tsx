@@ -9,6 +9,7 @@ import { getBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
+import { DatePickerMUI } from './DatePickerMUI'
 
 interface PatientState {
   state_id: number
@@ -67,6 +68,16 @@ function NewPatientForm() {
       .padStart(2, '0')}`
     return formattedTime
   }
+
+  // const getFormatTime = (date: Date | null) => {
+  //   if (date) {
+  //     const fecha = new Date(date)
+  //     const dia = fecha.getDate().toString().padStart(2, '0') // Obtiene el día y lo convierte a string con dos dígitos
+  //     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0') // Obtiene el mes (los meses empiezan desde 0)
+  //     const anio = fecha.getFullYear()
+  //     return `${anio}-${mes}-${dia}`
+  //   }
+  // }
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     formData.patient_triage_time = getCurrentTime()
     formData.patient_box = formData.box_id
@@ -75,7 +86,7 @@ function NewPatientForm() {
   const [formData, setFormData] = useState<any>({
     patient_name: '',
     date_of_birth: '2000-01-01',
-    entry_time: '2023-01-01 10:00:00',
+    entry_time: '',
     exit_time: null,
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
@@ -148,21 +159,33 @@ function NewPatientForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // const dateNow=getCurrentTime()
+    setSelectedDateExt(null)
     //actualizar entry_time
-    setFormData({
-      ...formData,
-      entry_time: getCurrentTime()
-    })
+    const FormDataNow = formData
+    FormDataNow.entry_time = getCurrentTime()
     try {
-      console.log(formData)
+      console.log(FormDataNow)
       const token = Cookies.get('authToken')
-      console.log(formData)
       if (token) {
-        const newPatient = await addNewPatient(formData)
+        const newPatient = await addNewPatient(FormDataNow)
         console.log('Nuevo paciente agregado:', newPatient)
         toast.success('Nuevo paciente agregado', {
           duration: 2000
+        })
+        setFormData({
+          patient_name: '',
+          date_of_birth: '2000-01-01',
+          entry_time: null,
+          exit_time: null,
+          patient_triage_time: getCurrentTime(),
+          patient_triage_level: '',
+          patient_box: '',
+          patient_status: '',
+          patient_problem: '',
+          patient_medication: '',
+          doctor_id: '',
+          nurse_id: '',
+          box_id: ''
         })
       } else {
         console.error('Token is undefined')
@@ -205,6 +228,12 @@ function NewPatientForm() {
     fetchBoxes()
   }, [])
 
+
+  const handleDateChange = (newDate: Date | null) => {
+    setFormData({ ...formData, date_of_birth: newDate })
+    console.log(newDate)
+  }
+
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       <h2 className='text-2xl font-semibold mb-5'>Nuevo Paciente</h2>
@@ -226,13 +255,14 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
-          <Input
+          <DatePickerMUI onChangeExt={handleDateChange}  />
+          {/* <Input
             type='date'
             id='date_of_birth'
             name='date_of_birth'
             value={formData.date_of_birth}
             onChange={handleInputChange}
-          />
+          /> */}
         </div>
 
         {/* <div>  // Automatico
