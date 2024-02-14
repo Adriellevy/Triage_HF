@@ -11,17 +11,23 @@ function Patients() {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
 
-  const onDelete = (patient_id: string) => {
-    console.log(patient_id)
-  }
-
-  const onViewDetails = (patient_id: string) => {
-    console.log(patient_id)
-  }
-
-  const onEdit = (patient_id: string) => {
-    console.log(patient_id)
+  const handleonSearch = ({ term, by }: { term: string; by: string }) => {
+    setSearchTerm(term)
+    const filterOptions: Record<string, (patient: Patient) => boolean> = {
+      name: (patient) => patient.patient_name.toLowerCase().includes(term.toLowerCase()),
+      status: (patient) => patient.patient_status.toLowerCase().includes(term.toLowerCase()),
+      triage_level: (patient) => patient.patient_triage_level === Number(term),
+      date_of_birth: () => false
+    }
+    const filtered = patientsData?.filter((patient) => {
+      const filterFunction = filterOptions[by]
+      return filterFunction(patient)
+    })
+    if (filtered?.length === 0 || filtered === undefined) setFilteredPatients(null)
+    else setFilteredPatients(filtered)
   }
 
   useEffect(() => {
@@ -30,27 +36,24 @@ function Patients() {
         if (token) {
           const data = await getPatients()
           setPatientsData(data)
-        } else {
-          // console.log('Error en fetch data de Patients.tsx')
         }
       } catch (error) {
-        // console.error('Error al obtener pacientes:', error.message)
+        console.error((error as Error).message)
       }
     }
     fetchData()
   }, [token])
 
   useEffect(() => {
+    const token = Cookies.get('authToken')
     const fetchData = async () => {
       try {
         if (token) {
           const data = await getPatients()
           setPatientsData(data)
-        } else {
-          // console.log('Error en fetch data de Patients.tsx')
         }
       } catch (error) {
-        // console.error('Error al obtener pacientes:', error.message)
+        console.error((error as Error).message)
       }
     }
     if (socket) {
@@ -67,16 +70,13 @@ function Patients() {
 
   return (
     <div>
-      <SearchPatientForm onSearch={() => console.log('123')} />
-      {patientsData ? (
-        <PatientsList
-          patients={patientsData}
-          onDelete={onDelete}
-          onViewDetails={onViewDetails}
-          onEdit={onEdit}
-        />
+      <SearchPatientForm onSearch={handleonSearch} />
+      {searchTerm === '' && patientsData ? (
+        <PatientsList patients={patientsData} />
+      ) : searchTerm !== '' && filteredPatients ? (
+        <PatientsList patients={filteredPatients} />
       ) : (
-        <p>Cargando pacientes...</p>
+        <p>No se encontraron pacientes.</p>
       )}
     </div>
   )
