@@ -20,6 +20,7 @@ function NewPatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+
   const [StateOptions, setStateOptions] = useState<PatientState[]>([
     { state_id: 1, state_name: 'EN ESPERA' },
     { state_id: 2, state_name: 'EN ESPERA DE INTERNACIÓN' },
@@ -159,7 +160,6 @@ function NewPatientForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSelectedDateExt(null)
     //actualizar entry_time
     const FormDataNow = formData
     FormDataNow.entry_time = getCurrentTime()
