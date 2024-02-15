@@ -8,9 +8,8 @@ import { Button } from '@/components/ui'
 
 interface PropsPatientItem {
   patient: Patient
-  onDelete: (patient_id: string) => void
+
   onViewDetails: (patient: Patient) => void
-  onEdit: (updatedPatient: Patient) => void
 }
 
 function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
@@ -30,6 +29,18 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
     nurse_name,
     patient_status
   } = patient
+
+  const TriageLevels = [
+    { _id: 1, name: 'I', color: '153, 153, 153' },
+    { _id: 2, name: 'II', color: '255,51,0' },
+    { _id: 3, name: 'III', color: '255,255,102' },
+    { _id: 4, name: 'IV', color: '105,168,79' }
+  ]
+
+  const getBackgroundColor = (id: number) => {
+    const triageLevel = TriageLevels.find((level) => level._id === id)
+    return triageLevel ? `rgb(${triageLevel.color}, 0.6)` : 'transparent'
+  }
 
   useEffect(() => {
     const birthDate = new Date(date_of_birth)
@@ -55,7 +66,12 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
       <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>
-      <td className='border md:p-2 text-center'>{patient_triage_level}</td>
+      <td
+        className={`border md:p-2 text-center `}
+        style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
+      >
+        {patient_triage_level}
+      </td>
       <td className='border p-2 hidden lg:table-cell text-center'>{patient_medication}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{patient_problem}</td>
       <td className='border md:p-2 text-center'>ID:{box_id}</td>

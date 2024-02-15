@@ -36,6 +36,7 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt, selec
           openTo='year'
           // value={selectedDateExt}
           onChange={handleChange}
+          format='DD/MM/YYYY'
           className='w-full h-0 m-0 p-0 text-sm datePick'
         />
       </LocalizationProvider>
