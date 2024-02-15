@@ -144,7 +144,6 @@ export class PatientController {
       })
       try {
         const [Patient] = await PatientsModel.getPatientById({ id })
-        console.log(Patient.doctor_id)
         io.emit(`${Patient.doctor_id}`, {
           message: 'Updated patient',
           patient: {
