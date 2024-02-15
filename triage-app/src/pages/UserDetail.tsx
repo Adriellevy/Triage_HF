@@ -112,8 +112,10 @@ function UserDetail() {
           <span className='font-semibold'>User Type:</span> {User.user_type}
         </div>
       </div>
-      <Select options={options} isMulti closeMenuOnSelect={false} onChange={SetSelectOption} />
-      <MultiSelectComponent></MultiSelectComponent>
+      <Select options={options} isMulti closeMenuOnSelect={false} />
+      {
+        //<MultiSelectComponent></MultiSelectComponent>
+      }
       <div>
         {
           //agregar selector de tipos de pacientes

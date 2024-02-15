@@ -228,7 +228,6 @@ function NewPatientForm() {
     fetchBoxes()
   }, [])
 
-
   const handleDateChange = (newDate: Date | null) => {
     setFormData({ ...formData, date_of_birth: newDate })
     console.log(newDate)
@@ -255,7 +254,7 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
-          <DatePickerMUI onChangeExt={handleDateChange}  />
+          <DatePickerMUI onChangeExt={handleDateChange} />
           {/* <Input
             type='date'
             id='date_of_birth'
