@@ -28,7 +28,7 @@ const options = [
       { value: 'patient_status', label: 'EN ESPERA DE INTERNACION', color: '#36B37E' },
       { value: 'patient_status', label: 'EN INTERNACION', color: '#36B37E' },
       { value: 'patient_status', label: 'AFUERA', color: '#36B37E' },
-      { value: 'patient_status', label: 'EN ASILAMIENTO', color: '#36B37E' },
+      { value: 'patient_status', label: 'EN AISLAMIENTO', color: '#36B37E' },
       { value: 'patient_status', label: 'ALTA', color: '#36B37E' },
       { value: 'patient_status', label: 'TODOS', color: '#36B37E' }
     ]
