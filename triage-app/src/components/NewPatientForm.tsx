@@ -25,9 +25,9 @@ function NewPatientForm() {
     { state_id: 1, state_name: 'EN ESPERA' },
     { state_id: 2, state_name: 'EN ESPERA DE INTERNACION' },
     { state_id: 3, state_name: 'INTERNADO' },
-    { state_id: 4, state_name: 'ALTA' }
-    // { state_id: 4, state_name: 'AFUERA' },
-    // { state_id: 4, state_name: 'EN AISLAMIENTO' }
+    { state_id: 4, state_name: 'ALTA' },
+    { state_id: 5, state_name: 'AFUERA' },
+    { state_id: 6, state_name: 'EN AISLAMIENTO' }
   ])
   const [PatientProblems, setPatientProblems] = useState([
     { _id: 1, name: 'Convulsiones' },
