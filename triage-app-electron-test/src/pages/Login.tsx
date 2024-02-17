@@ -1,5 +1,10 @@
-import Loginform from '../components/LoginForm'
+import Loginform from '@/components/LoginForm'
 
-export default function Login() {
-  return <Loginform />
+interface LoginProps {
+  handleUserChange: (newUser: string) => void
+  user: string
+}
+
+export default function Login({ handleUserChange, user }: LoginProps) {
+  return <Loginform handleUserChange={handleUserChange} user={user} />
 }

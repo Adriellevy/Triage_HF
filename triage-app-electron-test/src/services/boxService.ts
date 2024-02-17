@@ -1,6 +1,8 @@
 import { Box } from '../interfaces/Boxes'
+import Cookies from 'js-cookie'
 
-export const getBoxes = async (token: string): Promise<Box[]> => {
+export const getBoxes = async (): Promise<Box[]> => {
+  const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/box`, {
       method: 'GET',
@@ -21,7 +23,8 @@ export const getBoxes = async (token: string): Promise<Box[]> => {
   }
 }
 
-export const searchBoxById = async (token: string, boxId: string): Promise<Box | null> => {
+export const searchBoxById = async (boxId: string): Promise<Box | null> => {
+  const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/box/${boxId}`, {
       method: 'GET',
