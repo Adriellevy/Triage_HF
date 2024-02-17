@@ -167,28 +167,33 @@ function NewPatientForm() {
       console.log(FormDataNow)
       const token = Cookies.get('authToken')
       if (token) {
-        const newPatient = await addNewPatient(FormDataNow)
-        console.log('Nuevo paciente agregado:', newPatient)
-        toast.success('Nuevo paciente agregado', {
-          duration: 2000
-        })
-        setFormData({
-          patient_name: '',
-          date_of_birth: '2000-01-01',
-          entry_time: null,
-          exit_time: null,
-          patient_triage_time: getCurrentTime(),
-          patient_triage_level: '',
-          patient_box: '',
-          patient_status: '',
-          patient_problem: '',
-          patient_medication: '',
-          doctor_id: '',
-          nurse_id: '',
-          box_id: ''
-        })
-      } else {
-        console.error('Token is undefined')
+        const { data, errors } = await addNewPatient(FormDataNow)
+        if (errors) {
+          console.error('Errores en el formulario al agregar nuevo paciente:', errors)
+          toast.error('Error al intentar agregar un nuevo paciente', {
+            duration: 2000
+          })
+        } else {
+          console.log('Nuevo paciente agregado:', data)
+          toast.success('Nuevo paciente agregado', {
+            duration: 2000
+          })
+          setFormData({
+            patient_name: '',
+            date_of_birth: '2000-01-01',
+            entry_time: null,
+            exit_time: null,
+            patient_triage_time: getCurrentTime(),
+            patient_triage_level: '',
+            patient_box: '',
+            patient_status: '',
+            patient_problem: '',
+            patient_medication: '',
+            doctor_id: '',
+            nurse_id: '',
+            box_id: ''
+          })
+        }
       }
     } catch (error) {
       toast.error('Error al intentar agregar un nuevo paciente', {
