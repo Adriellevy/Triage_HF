@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 
 interface AuthContextProps {
   isAuthenticated: boolean
-  login: () => void
+  login: (token: string) => void
   logout: () => void
 }
 
@@ -15,11 +15,15 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState(false)
 
-  const login = () => {
+  const login = (token: string) => {
+    // Store the token in a cookie token: string
+    //document.cookie = `authToken=${token}; path=/`;
+    //aqui se podría hacer la request o el authservice hablarlo con luquitas
     setAuthenticated(true)
   }
 
   const logout = () => {
+    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     setAuthenticated(false)
   }
 

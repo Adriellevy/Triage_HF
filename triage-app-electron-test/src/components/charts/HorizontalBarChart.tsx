@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +12,7 @@ import { Bar } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const options = {
+const defaultOptions = {
   indexAxis: 'y' as const,
   elements: {
     bar: {
@@ -25,31 +26,29 @@ const options = {
     },
     title: {
       display: true,
-      text: 'Chart.js Horizontal Bar Chart'
+      text: 'Horizontal Bar Chart'
     }
   }
 }
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-
-const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [1, 2, 3, 4, 5, 6],
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)'
-    },
-    {
-      label: 'Dataset 2',
-      data: [4, 1, 9, 2, 3, 2],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)'
-    }
-  ]
+interface HorizontalBarChartProps {
+  options?: typeof defaultOptions
+  data?: {
+    labels: string[]
+    datasets: {
+      label: string
+      data: number[]
+      borderColor: string
+      backgroundColor: string
+    }[]
+  }
 }
 
-export function HorizontalBarChart() {
-  return <Bar options={options} data={data} />
+const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ options, data }) => {
+  const chartOptions = options || defaultOptions
+  const chartData = data || { labels: [], datasets: [] }
+
+  return <Bar type='bar' options={chartOptions} data={chartData} />
 }
+
+export default HorizontalBarChart
