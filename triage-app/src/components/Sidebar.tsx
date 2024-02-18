@@ -19,6 +19,7 @@ import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
 import { UpdateEvent } from '@/interfaces/Socket'
+import { Patient } from '@/interfaces/Patinet'
 
 interface MenuItem {
   icon?: string
@@ -41,29 +42,6 @@ function Sidebar() {
 
   // TODO: GET IMG DB
   const UserProfileImage = DoctorImg
-
-  socket.on(`${UserInfo.user_id}`, (data) => {
-    const { patient_id } = data.patient
-    if (data.message == UpdateEvent.NEW_PATIENT_ASSIGNED) {
-      toast.info('New Patient Assigned', {
-        action: {
-          label: 'View patient data',
-          onClick: () => {
-            navigate(`/patients/${patient_id}`)
-          }
-        }
-      })
-    } else if (data.message == UpdateEvent.UPDATE_PATIENT) {
-      toast.info('One of your patient has been edited', {
-        action: {
-          label: 'View patient data',
-          onClick: () => {
-            navigate(`/patients/${patient_id}`)
-          }
-        }
-      })
-    }
-  })
 
   const menuitems: MenuItem[] = [
     {
@@ -107,17 +85,53 @@ function Sidebar() {
   }
 
   useEffect(() => {
+    const handleSocketEvent = (data: { patient: Patient; message: UpdateEvent }) => {
+      const { patient_id } = data.patient
+      console.log(patient_id)
+      if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
+        toast.info('New Patient Assigned', {
+          action: {
+            label: 'View patient data',
+            onClick: () => {
+              navigate(`/patients/${patient_id}`)
+            }
+          }
+        })
+      } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
+        toast.info('One of your patients has been edited', {
+          action: {
+            label: 'View patient data',
+            onClick: () => {
+              navigate(`/patients/${patient_id}`)
+            }
+          }
+        })
+      }
+    }
+    const fetchData = async () => {
+      try {
+        socket.on(`${UserInfo.user_id}`, handleSocketEvent)
+        return () => {
+          socket.off(`${UserInfo.user_id}`, handleSocketEvent)
+        }
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, UserInfo.user_id, socket])
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         if (token) {
           const data = await getUserIdByToken()
           const user = await getUserById(String(data))
           setUserInfo(user)
-        } else {
-          console.log('Error en fetch data')
         }
       } catch (error) {
-        // console.error('Error al obtener pacientes:', error.message)
+        console.error((error as Error).message)
       }
     }
     fetchData()

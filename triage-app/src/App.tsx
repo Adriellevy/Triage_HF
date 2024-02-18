@@ -51,7 +51,7 @@ function App() {
 
   return (
     <>
-      <Toaster richColors closeButton visibleToasts={1} />
+      <Toaster richColors closeButton visibleToasts={7} />
       <Routes>
         {isAuthenticated ? (
           <Route

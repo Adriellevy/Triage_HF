@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -6,13 +7,14 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-const options = {
+const defaultOptions: ChartOptions<'line'> = {
   responsive: true,
   plugins: {
     legend: {
@@ -27,7 +29,7 @@ const options = {
 
 const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
 
-const data = {
+const dataOriginal = {
   labels,
   datasets: [
     {
@@ -45,6 +47,24 @@ const data = {
   ]
 }
 
-export function LineChart() {
-  return <Line options={options} data={data} />
+interface LineChartProps {
+  options?: ChartOptions<'line'>
+  data?: {
+    labels: string[]
+    datasets: {
+      label: string
+      data: number[]
+      borderColor: string
+      backgroundColor: string
+    }[]
+  }
 }
+
+const LineChart: React.FC<LineChartProps> = ({ options, data }) => {
+  const chartOptions = options || defaultOptions
+  const chartData = data || dataOriginal
+
+  return <Line options={chartOptions} data={chartData} />
+}
+
+export default LineChart

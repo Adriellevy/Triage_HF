@@ -1,6 +1,5 @@
 import z from 'zod'
 
-// TODO
 const patientSchema = z.object({
   patient_name: z
     .string({
@@ -18,6 +17,8 @@ const patientSchema = z.object({
     'EN ESPERA',
     'EN ESPERA DE INTERNACION',
     'INTERNADO',
+    'AFUERA',
+    'EN AISLAMIENTO',
   ]),
   patient_problem: z.string().min(1).max(500),
   patient_medication: z.string().min(1).max(500),

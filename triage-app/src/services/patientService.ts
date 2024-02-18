@@ -49,7 +49,7 @@ export const updatePatient = async (
   try {
     const token = Cookies.get('authToken')
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
-    console.log("api "+apiUrl)
+    console.log('api ' + apiUrl)
     const response = await fetch(apiUrl, {
       method: 'PATCH',
       headers: {
@@ -77,15 +77,15 @@ export const updateAnyPatient = async (
   try {
     const token = Cookies.get('authToken')
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
-    console.log("api "+apiUrl)
+    console.log('api ' + apiUrl)
 
-    const body: any = {}; // Initialize an empty object for the request body
+    const body: any = {} // Initialize an empty object for the request body
 
     // Loop through each key in updatedData
     Object.keys(updatedData).forEach((fieldName) => {
       // Add the key-value pair to the request body
-      body[fieldName] = updatedData[fieldName];
-    });
+      body[fieldName] = updatedData[fieldName]
+    })
 
     const response = await fetch(apiUrl, {
       method: 'PATCH',
@@ -106,9 +106,13 @@ export const updateAnyPatient = async (
     throw new Error('Error al actualizar paciente')
   }
 }
+
 export const addNewPatient = async (
   newPatientData: Omit<PartialPatient, 'patient_id'>
-): Promise<PartialPatient> => {
+): Promise<{
+  data?: PartialPatient | null
+  errors?: { message: string; path: string }[] | null
+}> => {
   try {
     const token = Cookies.get('authToken')
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
@@ -119,11 +123,23 @@ export const addNewPatient = async (
       },
       body: JSON.stringify(newPatientData)
     })
+
     if (!response.ok) {
-      throw new Error(`Error en la solicitud POST a /patient: ${response.statusText}`)
+      const errorResponse = await response.json()
+      if (errorResponse.error) {
+        const simplifiedErrors = errorResponse.error.map(
+          ({ message, path }: { message: string; path: string[] }) => ({
+            message,
+            path: path[0]
+          })
+        )
+        return { data: null, errors: simplifiedErrors }
+      }
+      throw new Error(`Error en la solicitud POST a /patient: ${errorResponse}`)
     }
+
     const data = await response.json()
-    return data
+    return { data, errors: null }
   } catch (error) {
     console.error('Error al agregar nuevo paciente:', error)
     throw new Error('Error al agregar nuevo paciente')

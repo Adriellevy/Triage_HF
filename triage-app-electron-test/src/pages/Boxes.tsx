@@ -1,32 +1,55 @@
-import { useState, useEffect } from 'react'
-import BoxList from '../components/BoxList'
-import LoadingModal from '@/components/LoadingModal'
-import { getBoxes } from '../services/boxService'
-import { Box } from '../interfaces/Boxes'
+import { useState, useEffect, useContext } from 'react'
+import Cookies from 'js-cookie'
+import { SocketContext } from '@/contex/SocketContext'
+import BoxList from '@/components/BoxList'
+import { getBoxes } from '@/services/boxService'
+import { Box } from '@/interfaces/Boxes'
+import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 
 function Boxes() {
+  const socket = useContext(SocketContext)
   const [isLoading, setIsLoading] = useState(false)
   const [boxesData, setboxesData] = useState<Box[] | null>(null)
-
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw'
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // setIsLoading(true)
-        const data = await getBoxes(token)
+        setIsLoading(true)
+        const data = await getBoxes()
         setboxesData(data)
         setIsLoading(false)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        console.error(error.message)
+      } catch (error) {
+        console.error((error as Error).message)
       }
     }
     fetchData()
-  }, [token])
+  }, [])
 
-  return <div>{!isLoading ? <BoxList boxes={boxesData} /> : <LoadingModal />}</div>
+  useEffect(() => {
+    const token = Cookies.get('authToken')
+    const fetchData = async () => {
+      try {
+        if (token) {
+          const data = await getBoxes()
+          setboxesData(data)
+        }
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    if (socket) {
+      socket.on(SocketEvent.UPDATE, (data) => {
+        if (data.message == UpdateEvent.BOX_UPDATE) {
+          fetchData()
+        }
+      })
+      return () => {
+        socket.off(SocketEvent.UPDATE)
+      }
+    }
+  }, [socket])
+
+  return <div>{!isLoading ? <BoxList boxes={boxesData} /> : <p>Cargando boxes...</p>}</div>
 }
 
 export default Boxes

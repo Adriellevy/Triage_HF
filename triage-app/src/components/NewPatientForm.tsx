@@ -25,9 +25,9 @@ function NewPatientForm() {
     { state_id: 1, state_name: 'EN ESPERA' },
     { state_id: 2, state_name: 'EN ESPERA DE INTERNACION' },
     { state_id: 3, state_name: 'INTERNADO' },
-    { state_id: 4, state_name: 'ALTA' }
-    // { state_id: 4, state_name: 'AFUERA' },
-    // { state_id: 4, state_name: 'EN AISLAMIENTO' }
+    { state_id: 4, state_name: 'ALTA' },
+    { state_id: 5, state_name: 'AFUERA' },
+    { state_id: 6, state_name: 'EN AISLAMIENTO' }
   ])
   const [PatientProblems, setPatientProblems] = useState([
     { _id: 1, name: 'Convulsiones' },
@@ -167,28 +167,33 @@ function NewPatientForm() {
       console.log(FormDataNow)
       const token = Cookies.get('authToken')
       if (token) {
-        const newPatient = await addNewPatient(FormDataNow)
-        console.log('Nuevo paciente agregado:', newPatient)
-        toast.success('Nuevo paciente agregado', {
-          duration: 2000
-        })
-        setFormData({
-          patient_name: '',
-          date_of_birth: '2000-01-01',
-          entry_time: null,
-          exit_time: null,
-          patient_triage_time: getCurrentTime(),
-          patient_triage_level: '',
-          patient_box: '',
-          patient_status: '',
-          patient_problem: '',
-          patient_medication: '',
-          doctor_id: '',
-          nurse_id: '',
-          box_id: ''
-        })
-      } else {
-        console.error('Token is undefined')
+        const { data, errors } = await addNewPatient(FormDataNow)
+        if (errors) {
+          console.error('Errores en el formulario al agregar nuevo paciente:', errors)
+          toast.error('Error al intentar agregar un nuevo paciente', {
+            duration: 2000
+          })
+        } else {
+          console.log('Nuevo paciente agregado:', data)
+          toast.success('Nuevo paciente agregado', {
+            duration: 2000
+          })
+          setFormData({
+            patient_name: '',
+            date_of_birth: '2000-01-01',
+            entry_time: null,
+            exit_time: null,
+            patient_triage_time: getCurrentTime(),
+            patient_triage_level: '',
+            patient_box: '',
+            patient_status: '',
+            patient_problem: '',
+            patient_medication: '',
+            doctor_id: '',
+            nurse_id: '',
+            box_id: ''
+          })
+        }
       }
     } catch (error) {
       toast.error('Error al intentar agregar un nuevo paciente', {
@@ -228,7 +233,6 @@ function NewPatientForm() {
     fetchBoxes()
   }, [])
 
-
   const handleDateChange = (newDate: Date | null) => {
     setFormData({ ...formData, date_of_birth: newDate })
     console.log(newDate)
@@ -255,7 +259,7 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
-          <DatePickerMUI onChangeExt={handleDateChange}  />
+          <DatePickerMUI onChangeExt={handleDateChange} />
           {/* <Input
             type='date'
             id='date_of_birth'
