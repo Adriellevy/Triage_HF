@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { DatePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
 
 interface DatePickerMUIProps {
   onChangeExt: (newDate: Date | null) => void
@@ -24,8 +25,10 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt, selec
 
   const handleChange = (newDate: Date | null) => {
     onChangeExt(getFormatTime(newDate))
-    // setSelectedDate(newDate)
   }
+
+  const yesterday = dayjs().subtract(130, 'year');
+  const today = dayjs()
 
   return (
     <div>
@@ -34,7 +37,8 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt, selec
           // label="Seleccionar fecha"
           views={['year', 'month', 'day']}
           openTo='year'
-          // value={selectedDateExt}
+          minDate={yesterday}
+          maxDate={today}
           onChange={handleChange}
           format='DD/MM/YYYY'
           className='w-full h-0 m-0 p-0 text-sm datePick'
