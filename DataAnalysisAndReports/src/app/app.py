@@ -1,8 +1,14 @@
 from flask import Flask
 
+import numpy as np
+import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
+import datetime as dt
 
 app = Flask(__name__)
+
+train_df = pd.read_csv('../dataset/raw/TRIAGE_2024.csv')
 
 @app.route('/grafico')
 def mostrar_grafico():
