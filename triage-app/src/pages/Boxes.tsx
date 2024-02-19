@@ -30,7 +30,7 @@ function Boxes() {
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getBoxes()
+          const data = await getAllBoxes()
           setboxesData(data)
         }
       } catch (error) {
