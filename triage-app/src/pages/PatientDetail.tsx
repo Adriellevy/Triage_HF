@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { NullablePatient, Patient, PatientStatus } from '@/interfaces/Patinet'
+import { Patient, PatientStatus, PatientData } from '@/interfaces/Patinet'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
 import { consulta } from '@/services/openai-test'
@@ -11,7 +11,7 @@ const solicitud =
 function PatientDetail() {
   const { patient_id } = useParams()
   const navigate = useNavigate()
-  const [Patient, setPatient] = useState<NullablePatient>(null)
+  const [Patient, setPatient] = useState<PatientData | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
   const [showRequestInfo, setShowRequestInfo] = useState<boolean>(false)
@@ -108,6 +108,24 @@ function PatientDetail() {
       console.error('Element with class "text-gray-700" not found')
     }
   }
+  interface Field {
+    label: string
+    key: keyof PatientData
+    format: ((value: string) => string) | null
+  }
+
+  const patientFields: Field[] = [
+    { label: 'Patient Name', key: 'patient_name', format: null },
+    { label: 'Date of Birth', key: 'date_of_birth', format: getFormatBirthDate },
+    { label: 'Entry Time', key: 'entry_time', format: getFormatEntryDate },
+    { label: 'Triage Level', key: 'patient_triage_level', format: null },
+    { label: 'Patient Medication', key: 'patient_medication', format: null },
+    { label: 'Patient Problem', key: 'patient_problem', format: null },
+    { label: 'Box ID', key: 'box_code', format: null },
+    { label: 'Doctor Name', key: 'doctor_name', format: null },
+    { label: 'Nurse Name', key: 'nurse_name', format: null },
+    { label: 'Patient Status', key: 'patient_status', format: null }
+  ]
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
@@ -116,40 +134,20 @@ function PatientDetail() {
           Back
         </Button>
       </div>
-      {Patient && (
+      {
         <ul className='list-disc pl-4'>
-          <li>
-            <strong>Patient Name:</strong> {Patient.patient_name}
-          </li>
-          <li>
-            <strong>Date of Birth:</strong> {getFormatBirthDate(Patient.date_of_birth)}
-          </li>
-          <li>
-            <strong>Entry Time:</strong> {getFormatEntryDate(Patient.entry_time)}
-          </li>
-          <li>
-            <strong>Triage Level:</strong> {Patient.patient_triage_level}
-          </li>
-          <li>
-            <strong>Patient Medication:</strong> {Patient.patient_medication}
-          </li>
-          <li>
-            <strong>Patient Problem:</strong> {Patient.patient_problem}
-          </li>
-          <li>
-            <strong>Box ID:</strong> {Patient.box_code}
-          </li>
-          <li>
-            <strong>Doctor Name:</strong> {Patient.doctor_name}
-          </li>
-          <li>
-            <strong>Nurse Name:</strong> {Patient.nurse_name}
-          </li>
-          <li>
-            <strong>Patient Status:</strong> {Patient.patient_status}
-          </li>
+          {patientFields.map((field) => (
+            <li key={field.label}>
+              <strong>{field.label}:</strong>{' '}
+              {Patient
+                ? field.format
+                  ? field.format(String(Patient[field.key]))
+                  : Patient[field.key]
+                : null}
+            </li>
+          ))}
         </ul>
-      )}
+      }
       <div className='flex justify-end'>
         <Button color='red' onClick={handleMedicalDischarge}>
           Medical Discharge

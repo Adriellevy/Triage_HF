@@ -21,7 +21,22 @@ export interface Patient {
   nurse_name: string
   patient_status: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [Symbol.iterator](): IterableIterator<any>
+  [Symbol.iterator](): IterableIterator<Patient>
+}
+
+export interface PatientData {
+  patient_name: string
+  patient_id: string
+  date_of_birth: string
+  entry_time: string
+  patient_triage_level: number
+  patient_medication: string
+  patient_problem: string
+  box_id: string
+  box_code: string
+  doctor_name: string
+  nurse_name: string
+  patient_status: string
 }
 
 export type NullablePatient = Patient | null
