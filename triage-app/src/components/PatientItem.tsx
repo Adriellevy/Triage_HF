@@ -16,6 +16,8 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
 
+  // const [edditingPatient, setEdditingPatient] = useState<Patient|null>(null)
+
   const {
     patient_name,
     patient_id,
@@ -81,6 +83,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
       <td className='border p-2'>
         <div className='mb-2'>
           <Button wfull color='green' onClick={() => onViewDetails(patient)}>
+          {/* <Button wfull color='green' onClick={() => console.log(patient)}> */}
             <FontAwesomeIcon icon={faPenToSquare} />
           </Button>
         </div>
