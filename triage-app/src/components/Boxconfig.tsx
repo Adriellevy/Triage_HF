@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import BoxList from '../components/BoxList'
 import SearchBox from './SearchBoxForm'
 import LoadingModal from '@/components/LoadingModal'
-import { getBoxes } from '../services/boxService'
+import { getAllBoxes } from '../services/boxService'
 import Cookies from 'js-cookie'
 import { Box } from '../interfaces/Boxes'
 import SearchBoxForm from './SearchBoxForm'
@@ -20,7 +20,7 @@ function BoxConfig() {
       try {
         if (token) {
           //const dataUsers = await getAllUsers() Arreglar el post en userService
-          const dataBoxes = await getBoxes()
+          const dataBoxes = await getAllBoxes()
           //TODO: add searchTerm
           //const data = await getPatients(token, searchTerm);
           setBoxesData(dataBoxes)

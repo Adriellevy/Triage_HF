@@ -137,7 +137,7 @@ function PatientDetail() {
             <strong>Patient Problem:</strong> {Patient.patient_problem}
           </li>
           <li>
-            <strong>Box ID:</strong> {Patient.box_id}
+            <strong>Box ID:</strong> {Patient.box_code}
           </li>
           <li>
             <strong>Doctor Name:</strong> {Patient.doctor_name}

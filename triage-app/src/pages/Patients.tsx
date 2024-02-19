@@ -91,6 +91,7 @@ function Patients() {
         if (token) {
           const data = await getPatients()
           setRawData(data)
+          console.log(data)
           setPatientsData(data)
         }
       } catch (error) {

@@ -16,6 +16,7 @@ export interface Patient {
   patient_medication: string
   patient_problem: string
   box_id: string
+  box_code: string
   doctor_name: string
   nurse_name: string
   patient_status: string
