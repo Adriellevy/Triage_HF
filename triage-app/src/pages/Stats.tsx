@@ -7,6 +7,9 @@ import StatsUsers from '@/components/StatsUsers'
 import StatsPatientsIncome from '@/components/StatsPatientIncome'
 import StatsPatientsAge from '@/components/StatsPatientAge'
 */
+
+import { useEffect, useRef } from 'react'
+
 function Stats() {
   const graficos = [
     'http://localhost:5000/grafico',
@@ -14,10 +17,32 @@ function Stats() {
     'http://localhost:5000/grafico',
     'http://localhost:5000/grafico'
   ]
+
+  const IframeRef = useRef()
+  const sendDataIframe = () => {
+    const IframeElement = IframeRef.current
+    console.log(IframeElement)
+    IframeElement &&
+      IframeElement.contentWindow.postMessage('test info', 'http://localhost:5000/grafico')
+  }
+
+//en puerto 5000/grafico
+  // useEffect(() => {
+  //   window.addEventListener('message',(e)=>{
+  //     alert(e.data)
+  //   })
+  // }, [])
+
   return (
     <>
+      <div>
+        <button className=' bg-slate-400' onClick={()=>sendDataIframe}>
+          Send Data Test
+        </button>
+      </div>
       <div className='w-full h-full'>
         <iframe
+          ref={IframeRef}
           src='http://localhost:5000/grafico'
           title='Gráfico'
           width='100%'
