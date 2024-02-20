@@ -8,7 +8,7 @@ from visualization.visualize import bar_chart
 app = Flask(__name__)
 
 
-@app.route('/grafico')
+@app.route('/')
 def mostrar_grafico():
     df = get_df()
     df = build_features(df)
