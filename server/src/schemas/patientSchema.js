@@ -24,7 +24,7 @@ const patientSchema = z.object({
   patient_medication: z.string().min(1).max(500),
   doctor_id: z.number().int().nullable(),
   nurse_id: z.number().int().nullable(),
-  box_id: z.number().int().nullable(),
+  box_id: z.string(),
 })
 
 export function validatePatient(input) {

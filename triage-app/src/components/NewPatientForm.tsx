@@ -5,7 +5,7 @@ import { User } from '@/interfaces/User'
 import { Box } from '@/interfaces/Boxes'
 import { addNewPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
-import { getBoxes } from '@/services/boxService'
+import { getAvailableBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
@@ -193,7 +193,7 @@ function NewPatientForm() {
             nurse_id: '',
             box_id: ''
           })
-          setSelectedDate(null);
+          setSelectedDate(null)
         }
       }
     } catch (error) {
@@ -223,7 +223,7 @@ function NewPatientForm() {
     }
     const fetchBoxes = async () => {
       try {
-        const data = await getBoxes()
+        const data = await getAvailableBoxes()
         setBoxesOptions(data)
       } catch (error) {
         // console.error('Error:', error.message)
@@ -236,13 +236,11 @@ function NewPatientForm() {
 
   const handleDateChange = (newDate: Date | null) => {
     setFormData({ ...formData, date_of_birth: newDate })
-    setSelectedDate(newDate);
+    setSelectedDate(newDate)
     console.log(newDate)
   }
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -328,7 +326,7 @@ function NewPatientForm() {
             </option>
             {BoxesOptions?.map((option) => (
               <option key={option.box_id} value={option.box_id}>
-                {option.box_id + ': ' + option.box_type}
+                {option.box_code + ': ' + option.box_type}
               </option>
             ))}
           </Select>

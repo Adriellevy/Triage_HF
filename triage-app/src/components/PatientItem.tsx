@@ -16,6 +16,8 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
 
+  // const [edditingPatient, setEdditingPatient] = useState<Patient|null>(null)
+
   const {
     patient_name,
     patient_id,
@@ -24,7 +26,7 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
     patient_triage_level,
     patient_medication,
     patient_problem,
-    box_id,
+    box_code,
     doctor_name,
     nurse_name,
     patient_status
@@ -74,13 +76,14 @@ function PatientItem({ patient, onViewDetails }: PropsPatientItem) {
       </td>
       <td className='border p-2 hidden lg:table-cell text-center'>{patient_medication}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{patient_problem}</td>
-      <td className='border md:p-2 text-center'>ID:{box_id}</td>
+      <td className='border md:p-2 text-center'>{box_code}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>
       <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
       <td className='border p-2'>
         <div className='mb-2'>
           <Button wfull color='green' onClick={() => onViewDetails(patient)}>
+            {/* <Button wfull color='green' onClick={() => console.log(patient)}> */}
             <FontAwesomeIcon icon={faPenToSquare} />
           </Button>
         </div>

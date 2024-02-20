@@ -52,8 +52,6 @@ function Patients() {
   //hardoceado ver como obtenerlo de otra forma
 
   const onChangeSelect = (selectedOptions: readonly Option[]) => {
-    // Filtrar patientsData
-
     if (RawData) {
       const filteredData = RawData.filter((patient) => {
         // Verificar si el paciente cumple con todas las opciones seleccionadas
@@ -77,8 +75,6 @@ function Patients() {
     setSearchTerm(term)
     const filterOptions: Record<string, (patient: Patient) => boolean> = {
       name: (patient) => patient.patient_name.toLowerCase().includes(term.toLowerCase()),
-      status: (patient) => patient.patient_status.toLowerCase().includes(term.toLowerCase()),
-      triage_level: (patient) => patient.patient_triage_level === Number(term),
       date_of_birth: () => false
     }
     const filtered = patientsData?.filter((patient) => {
@@ -95,6 +91,7 @@ function Patients() {
         if (token) {
           const data = await getPatients()
           setRawData(data)
+          console.log(data)
           setPatientsData(data)
         }
       } catch (error) {
@@ -132,7 +129,7 @@ function Patients() {
     <div>
       <div>
         <SearchPatientForm onSearch={handleonSearch} />
-        <Select options={options} isMulti closeMenuOnSelect={false} onChange={onChangeSelect} />
+        <Select options={options} isMulti closeMenuOnSelect={true} onChange={onChangeSelect} />
       </div>
 
       {searchTerm === '' && patientsData ? (

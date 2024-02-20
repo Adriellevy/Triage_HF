@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import Cookies from 'js-cookie'
 import { SocketContext } from '@/contex/SocketContext'
 import BoxList from '@/components/BoxList'
-import { getBoxes } from '@/services/boxService'
+import { getAllBoxes } from '@/services/boxService'
 import { Box } from '@/interfaces/Boxes'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 
@@ -15,7 +15,7 @@ function Boxes() {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const data = await getBoxes()
+        const data = await getAllBoxes()
         setboxesData(data)
         setIsLoading(false)
       } catch (error) {
@@ -30,7 +30,7 @@ function Boxes() {
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getBoxes()
+          const data = await getAllBoxes()
           setboxesData(data)
         }
       } catch (error) {
