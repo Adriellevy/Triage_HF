@@ -143,8 +143,6 @@ export class PatientsModel {
             `
         await connection.query(updateBoxStatusQuery, [data.box_id])
         return uuid
-      } else {
-        return { error: 'Error inserting a new patient' }
       }
     } catch (error) {
       throw error
@@ -156,13 +154,21 @@ export class PatientsModel {
   }
 
   static async updatePatient({ id, data }) {
-    // eslint-disable-next-line no-useless-catch
     try {
+      const [[Box]] = await connection.query(
+        'SELECT box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
+        [id],
+      )
       const updateFields = Object.entries(data)
         .filter(([key, value]) => value !== null && value !== undefined)
-        .map(([key]) => `${key} = ?`)
+        .map(([key, value]) => {
+          if (key === 'box_id') {
+            return `${key} = UUID_TO_BIN(?)`
+          } else {
+            return `${key} = ?`
+          }
+        })
         .join(', ')
-
       const patientsUpdateQuery = `
         UPDATE Patient
         SET ${updateFields}
@@ -174,12 +180,20 @@ export class PatientsModel {
       updateValues.push(id)
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
       if (result.affectedRows > 0) {
+        await connection.query(
+          `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
+          [Box.box_id],
+        )
+        await connection.query(
+          `UPDATE Box SET box_status = 'OCUPADO' WHERE box_id = UUID_TO_BIN(?);`,
+          [data.box_id],
+        )
         return { message: 'Patient updated successfully' }
       } else {
         return { error: 'Error updating the patient' }
       }
     } catch (error) {
-      throw error
+      return { error: 'An error occurred during the update' }
     }
   }
 }
