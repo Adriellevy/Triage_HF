@@ -12,7 +12,9 @@ export interface Patient {
   patient_id: string
   date_of_birth: string
   entry_time: string
+  exit_time: string
   patient_triage_level: number
+  patient_triage_time:string
   patient_medication: string
   patient_problem: string
   box_id: string
