@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def mostrar_grafico():
-    #df = get_df()
-    df = build_features()
+    df = get_df()
+    df = build_features(df)
     df = cant_pacientes_fecha(df = df)
 
     # Dejar fijo
