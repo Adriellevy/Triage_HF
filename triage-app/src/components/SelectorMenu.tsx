@@ -57,7 +57,7 @@ const SelectorMenu: React.FC<SelectorMenuProps> = ({ options, onSelect }) => {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [options])
 
   return (
     <div
