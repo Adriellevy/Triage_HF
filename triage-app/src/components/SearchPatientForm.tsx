@@ -42,8 +42,6 @@ function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
             className='w-full p-2 border rounded-md'
           >
             <option value='name'>Name</option>
-            <option value='status'>Status</option>
-            <option value='triage_level'>Triage Level</option>
             <option value='date_of_birth'>Date of Birth</option>
           </select>
         </div>

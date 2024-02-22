@@ -5,7 +5,7 @@ import { User } from '@/interfaces/User'
 import { Box } from '@/interfaces/Boxes'
 import { addNewPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
-import { getBoxes } from '@/services/boxService'
+import { getAvailableBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
@@ -193,6 +193,7 @@ function NewPatientForm() {
             nurse_id: '',
             box_id: ''
           })
+          setSelectedDate(null)
         }
       }
     } catch (error) {
@@ -222,7 +223,7 @@ function NewPatientForm() {
     }
     const fetchBoxes = async () => {
       try {
-        const data = await getBoxes()
+        const data = await getAvailableBoxes()
         setBoxesOptions(data)
       } catch (error) {
         // console.error('Error:', error.message)
@@ -235,8 +236,11 @@ function NewPatientForm() {
 
   const handleDateChange = (newDate: Date | null) => {
     setFormData({ ...formData, date_of_birth: newDate })
+    setSelectedDate(newDate)
     console.log(newDate)
   }
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -259,27 +263,8 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
-          <DatePickerMUI onChangeExt={handleDateChange} />
-          {/* <Input
-            type='date'
-            id='date_of_birth'
-            name='date_of_birth'
-            value={formData.date_of_birth}
-            onChange={handleInputChange}
-          /> */}
+          <DatePickerMUI onChangeExt={handleDateChange} selectedDateExt={selectedDate} />
         </div>
-
-        {/* <div>  // Automatico
-          <Label htmlFor='entry_time'>Hora de Ingreso</Label>
-          <Input
-            type='time'
-            id='entry_time'
-            name='entry_time'
-            value={formData.entry_time}
-            onChange={handleInputChange}
-          />
-        </div> */}
-
         <div>
           <Label htmlFor='patient_triage_level'>Nivel de Triaje</Label>
           <div className='flex'>
@@ -299,13 +284,6 @@ function NewPatientForm() {
               </button>
             ))}
           </div>
-          {/* <Input
-            type='text'
-            id='patient_triage_level'
-            name='patient_triage_level'
-            value={formData.patient_triage_level}
-            onChange={handleInputChange}
-          /> */}
         </div>
 
         <div>
@@ -348,7 +326,7 @@ function NewPatientForm() {
             </option>
             {BoxesOptions?.map((option) => (
               <option key={option.box_id} value={option.box_id}>
-                {option.box_id + ': ' + option.box_type}
+                {option.box_code + ': ' + option.box_type}
               </option>
             ))}
           </Select>
@@ -409,23 +387,6 @@ function NewPatientForm() {
               </option>
             ))}
           </Select>
-          {/* <Input
-            type='text'
-            id='box_id'
-            name='box_id'
-            value={formData.box_id}
-            onChange={handleInputChange}
-            autoComplete='off' // Desactiva el autocompletado del navegador
-            list='BoxesOptions' // Asociamos el datalist con el ID "doctorOptions"
-          />
-          <datalist
-            id='BoxesOptions'
-            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
-          >
-            {DoctorOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} data-id={option.user_id} />
-            ))}
-          </datalist> */}
         </div>
 
         <div className='flex items-end'>

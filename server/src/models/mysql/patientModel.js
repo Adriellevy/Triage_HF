@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable no-else-return */
 /* eslint-disable quotes */
 /* eslint-disable camelcase */
@@ -6,14 +7,25 @@ import { connection } from '../../db.js'
 export class PatientsModel {
   static async getAllPatients() {
     const patientsQuery = `
-    SELECT Patient.*, 
+    SELECT 
+    BIN_TO_UUID(patient_id) AS patient_id,
+    patient_name,
+    date_of_birth,
+    entry_time,
+    exit_time,
+    patient_triage_time,
+    patient_triage_level,
+    BIN_TO_UUID(patient.box_id) AS box_id,
+    box.box_code,
+    patient_status,
+    patient_problem,
+    patient_medication,
     Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name,
-    BIN_TO_UUID(patient_id) patient_id 
+    Nurse.user_name AS nurse_name
     FROM Patient
     LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    ;
+    LEFT JOIN Box ON patient.box_id = Box.box_id;
     `
     const [patients] = await connection.query(patientsQuery)
     return patients
@@ -21,14 +33,26 @@ export class PatientsModel {
 
   static async getPatientById({ id }) {
     const patientsQuery = `
-    SELECT Patient.*, 
-    Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name,
-    BIN_TO_UUID(patient_id) patient_id 
-    FROM Patient
-    LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    WHERE Patient.patient_id = UUID_TO_BIN(?);
+        SELECT 
+        BIN_TO_UUID(patient.patient_id) AS patient_id,
+        patient.patient_name,
+        patient.date_of_birth,
+        patient.entry_time,
+        patient.exit_time,
+        patient.patient_triage_time,
+        patient.patient_triage_level,
+        BIN_TO_UUID(patient.box_id) AS box_id,
+        box.box_code,
+        patient.patient_status,
+        patient.patient_problem,
+        patient.patient_medication,
+        Doctor.user_name AS doctor_name,
+        Nurse.user_name AS nurse_name
+        FROM Patient
+        LEFT JOIN Users AS Doctor ON patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN Users AS Nurse ON patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        LEFT JOIN Box ON patient.box_id = Box.box_id  -- Agregar LEFT JOIN con la tabla Box
+        WHERE patient.patient_id = UUID_TO_BIN(?);
     `
     const [patients] = await connection.query(patientsQuery, [id])
     if (patients.length === 0) return false
@@ -84,34 +108,46 @@ export class PatientsModel {
   }
 
   static async createNewPatient({ data }) {
-    const [uuidResult] = await connection.query('SELECT UUID() uuid;')
-    const [{ uuid }] = uuidResult
+    try {
+      const [uuidResult] = await connection.query('SELECT UUID() uuid;')
+      const [{ uuid }] = uuidResult
 
-    const patientsQuery = `INSERT INTO Patient 
-    (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, 
-    patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id, box_id) 
-    VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
-    const [result] = await connection.query(patientsQuery, [
-      uuid,
-      data.patient_name,
-      data.date_of_birth,
-      data.entry_time,
-      data.exit_time,
-      data.patient_triage_time,
-      data.patient_triage_level,
-      data.patient_box,
-      data.patient_status,
-      data.patient_problem,
-      data.patient_medication,
-      data.doctor_id,
-      data.nurse_id,
-      data.box_id,
-    ])
-    if (result.affectedRows > 0) {
-      return uuid
-    } else {
-      return { error: 'Error inserting a new patient' }
+      const patientsQuery = `
+            INSERT INTO Patient 
+                (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, 
+                patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id, box_id) 
+            VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UUID_TO_BIN(?))
+        `
+      const [result] = await connection.query(patientsQuery, [
+        uuid,
+        data.patient_name,
+        data.date_of_birth,
+        data.entry_time,
+        data.exit_time,
+        data.patient_triage_time,
+        data.patient_triage_level,
+        data.patient_box,
+        data.patient_status,
+        data.patient_problem,
+        data.patient_medication,
+        data.doctor_id,
+        data.nurse_id,
+        data.box_id,
+      ])
+
+      if (result.affectedRows > 0) {
+        const updateBoxStatusQuery = `
+                UPDATE Box
+                SET box_status = 'OCUPADO'
+                WHERE box_id = UUID_TO_BIN(?);
+            `
+        await connection.query(updateBoxStatusQuery, [data.box_id])
+        return uuid
+      } else {
+        return { error: 'Error inserting a new patient' }
+      }
+    } catch (error) {
+      throw error
     }
   }
 

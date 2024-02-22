@@ -7,12 +7,11 @@ interface PropsBoxItem {
 }
 
 function BoxItem({ box }: PropsBoxItem) {
-  const { box_id, box_type, box_status } = box
-  //TODO: Fetch patient_id
-  const patient_id = '123'
+  const { patient_id, patient_name, box_code, box_type, box_status } = box
+
   return (
     <div className='border p-4 mb-4 rounded-md'>
-      <h2 className='text-xl font-bold mb-2'>Box {box_id}</h2>
+      <h2 className='text-xl font-bold mb-2'>Box {box_code}</h2>
       <p>
         <strong>Type:</strong> {box_type}
       </p>
@@ -22,7 +21,7 @@ function BoxItem({ box }: PropsBoxItem) {
       {box_status === BoxStatus.OCUPADO && (
         <>
           <p>
-            <strong>Patient:</strong> {box_status}
+            <strong>Patient:</strong> {patient_name}
           </p>
           <p>
             <strong>Time:</strong> {box_status}

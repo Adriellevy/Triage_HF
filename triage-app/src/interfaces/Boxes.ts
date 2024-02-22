@@ -11,8 +11,11 @@ export enum BoxStatus {
 
 export interface Box {
   box_id: string
+  box_code: string
   box_type: BoxType
   box_status: BoxStatus
+  patient_id?: string
+  patient_name?: string
 }
 
 export type NullableBox = Box | null
