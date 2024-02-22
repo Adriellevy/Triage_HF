@@ -5,11 +5,8 @@ import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
-import { getUserById } from '@/services/userService'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import Select from 'react-select'
-import { useRoleContext } from '@/contex/RoleContext'
-import { PartialUser, User } from '@/interfaces/User'
 const options = [
   {
     label: 'TRIAGE LEVEL',
@@ -53,7 +50,6 @@ function Patients() {
 
   const onChangeSelect = (selectedOptions: readonly Option[]) => {
     // Filtrar patientsData
-
     if (RawData) {
       const filteredData = RawData.filter((patient) => {
         // Verificar si el paciente cumple con todas las opciones seleccionadas
@@ -68,7 +64,6 @@ function Patients() {
           return patient[option.value].toString() === option.label
         })
       })
-      console.log(filteredData)
       setPatientsData(filteredData)
     }
   }
@@ -94,8 +89,11 @@ function Patients() {
       try {
         if (token) {
           const data = await getPatients()
-          setRawData(data)
-          setPatientsData(data)
+          const sortedData = data.sort((a, b) => {
+            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+          })
+          setRawData(sortedData)
+          setPatientsData(sortedData)
         }
       } catch (error) {
         console.error((error as Error).message)
@@ -110,7 +108,11 @@ function Patients() {
       try {
         if (token) {
           const data = await getPatients()
-          setPatientsData(data)
+          const sortedData = data.sort((a, b) => {
+            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+          })
+          setRawData(sortedData)
+          setPatientsData(sortedData)
         }
       } catch (error) {
         console.error((error as Error).message)
