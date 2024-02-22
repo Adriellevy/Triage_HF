@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Patient } from '@/interfaces/Patinet'
 import PatientItem from './PatientItem'
 import PatientDetailModal from './PatientDetailModal'
+import NewPatientForm from './NewPatientForm'
 
 interface PropsPatientsList {
   patients: Patient[]
@@ -13,7 +14,7 @@ function PatientsList({ patients }: PropsPatientsList) {
 
   const handleViewDetails = (patient: Patient) => {
     setSelectedPatient(patient)
-    setShowDetailModal(true)
+    // setShowDetailModal(true)
   }
 
   const handleDetailModalClose = () => {
@@ -21,11 +22,19 @@ function PatientsList({ patients }: PropsPatientsList) {
     setSelectedPatient(null)
   }
 
-  const handleEditPatient = (updatedPatient: Patient) => {
-    // Update the patient in the parent component's state
-    // You need to implement the logic to update the patient in your state here
-    console.log('Updated patient:', updatedPatient)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const handleEditPatient = (patient: Patient) => {
+    console.log(patient)
+    setShowEditForm(true)
   }
+
+
+
+  // const handleEditPatient = (updatedPatient: Patient) => {
+  //   // Update the patient in the parent component's state
+  //   // You need to implement the logic to update the patient in your state here
+  //   console.log('Updated patient:', updatedPatient)
+  // }
 
   // console.log(patients)
   return (
@@ -55,18 +64,20 @@ function PatientsList({ patients }: PropsPatientsList) {
                   key={patient?.patient_id}
                   patient={patient}
                   onViewDetails={handleViewDetails}
+                  onEditPatient={handleEditPatient}
                 />
               )
           )}
         </tbody>
       </table>
-      {showDetailModal && selectedPatient && (
+      {/* {showEditForm && <NewPatientForm onCancelEdit={handleCancelEdit} />} */}
+      {/* {showDetailModal && selectedPatient && (
         <PatientDetailModal
           patient={selectedPatient}
           onClose={handleDetailModalClose}
           onEdit={handleEditPatient}
         />
-      )}
+      )} */}
     </div>
   )
 }

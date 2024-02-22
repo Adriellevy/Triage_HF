@@ -38,6 +38,7 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt,select
   const yesterday = dayjs().subtract(130, 'year');
   const today = dayjs()
 
+  //preguntar como dar fecha a chat
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDayjs}>

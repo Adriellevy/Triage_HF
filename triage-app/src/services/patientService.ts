@@ -70,6 +70,7 @@ export const updatePatient = async (
     throw new Error('Error al actualizar paciente')
   }
 }
+
 export const updateAnyPatient = async (
   patient_id: string,
   updatedData: Partial<Patient>

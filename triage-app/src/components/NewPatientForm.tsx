@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PartialPatient } from '@/interfaces/Patinet'
+import { PartialPatient, Patient } from '@/interfaces/Patinet'
 import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
 import { Box } from '@/interfaces/Boxes'
-import { addNewPatient } from '@/services/patientService'
+import { addNewPatient, updateAnyPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
-import { getAvailableBoxes } from '@/services/boxService'
+import { getAvailableBoxes, getAllBoxes } from '@/services/boxService'
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { DatePickerMUI } from './DatePickerMUI'
+// import { Patient } from '@/interfaces/Patinet'
+import { Link, useParams } from 'react-router-dom'
+import { getPatientById } from '@/services/patientService'
+import dayjs from 'dayjs'
 
 interface PatientState {
   state_id: number
@@ -21,15 +25,153 @@ function NewPatientForm() {
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
 
-  const [StateOptions, setStateOptions] = useState<PatientState[]>([
+  //Edit select
+  const { edditingPatientID } = useParams()
+  const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [data] = await getPatientById(edditingPatientID)
+        // console.log(data);
+        setedditingPatient(data)
+        //TODO necesito que datos de formdata queden en patient
+        // setFormData(data)
+        // console.log(formData);
+        // console.log(data);//en algunos esta el id y en otros el nombre
+        //poner fecha
+        //poner doc
+        // console.log(DoctorOptions);
+        // const nuevoData= completarFormData(formData,data,BoxesOptions,DoctorOptions,NurseOptions)
+        // console.log(nuevoData);
+        // setFormData({
+        //   ...formData,
+        //   doctor_id:
+        // })
+        //poner enfermero
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error al obtener pacientes:', error.message)
+        } else {
+          console.error('Error desconocido al obtener pacientes:', error)
+        }
+      }
+    }
+    edditingPatientID && fetchData() //solo hace fetch si existe params
+  }, [edditingPatientID])
+  //todo listo
+  useEffect(() => {
+    console.log('cambio edditinPatient: ')
+    console.log(edditingPatient)
+
+    const asFun = async () => {
+      try {
+        const docs = await getAllDoctors()
+        const nurses = await getAllNurses()
+        const boxes = await getAvailableBoxes()
+        const allBoxes = await getAllBoxes()
+        setDoctorOptions(docs)
+        setNurseOptions(nurses)
+        setBoxesOptions(boxes)
+        const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
+        formData.doctor_id = doctor ? doctor.user_id : ''
+        const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
+        formData.nurse_id = nurse ? nurse.user_id : ''
+        const box = allBoxes?.find((box) => box.box_code === edditingPatient?.box_code)
+        formData.box_id = box ? box.box_id : ''
+      } catch (error) {
+        // console.error(error.message);
+      }
+    }
+    if (edditingPatient) {
+      formData.patient_name = edditingPatient.patient_name || ''
+      formData.date_of_birth = edditingPatient.date_of_birth.slice(0, 10) || ''
+      formData.entry_time = edditingPatient.entry_time || ''
+      formData.exit_time = edditingPatient.exit_time || null
+      formData.patient_triage_time = edditingPatient.patient_triage_time || ''
+      formData.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formData.patient_status = edditingPatient.patient_status || ''
+      formData.patient_problem = edditingPatient.patient_problem || ''
+      formData.patient_medication = edditingPatient.patient_medication || ''
+      asFun()
+      const newDate = dayjs(edditingPatient.date_of_birth)
+      setSelectedDate(newDate)
+      console.log('HAY EDDITTING PATIENT')
+    }
+  }, [edditingPatient])
+
+  //funcion para completar formdata con los datos de edditingPatient
+  function completarFormData(
+    formData: any,
+    patient,
+    boxesOptions: Box[],
+    doctorOptions: User[],
+    nurseOptions: User[]
+  ) {
+    if (!patient || !formData) {
+      return null //si no viene nada
+    }
+    //campos comunes
+    formData.patient_name = patient.patient_name || ''
+    formData.date_of_birth = patient.date_of_birth || ''
+    formData.entry_time = patient.entry_time || ''
+    formData.exit_time = patient.exit_time || null
+    formData.patient_triage_time = patient.patient_triage_time || ''
+    formData.patient_triage_level = patient.patient_triage_level || ''
+    formData.patient_status = patient.patient_status || ''
+    formData.patient_problem = patient.patient_problem || ''
+    formData.patient_medication = patient.patient_medication || ''
+    // Buscar el ID del doctor
+    const doctor = doctorOptions?.find((doctor) => doctor.user_name === patient.doctor_name)
+    formData.doctor_id = doctor ? doctor.user_id : ''
+    // Buscar el ID de enfermera
+    const nurse = nurseOptions?.find((nurse) => nurse.user_name === patient.nurse_name)
+    formData.nurse_id = nurse ? nurse.user_id : ''
+    // Buscar el ID de caja
+    const box = boxesOptions?.find((box) => box.box_code === patient.box_code)
+    formData.box_id = box ? box.box_id : ''
+    return formData
+  }
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await getAllDoctors()
+        setDoctorOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    const fetchNurses = async () => {
+      try {
+        const data = await getAllNurses()
+        setNurseOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    const fetchBoxes = async () => {
+      try {
+        const data = await getAvailableBoxes()
+        setBoxesOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    fetchDoctors()
+    fetchNurses()
+    fetchBoxes()
+  }, [])
+
+  //TODO estas 3 const deberian traerse desde api
+  const StateOptions = [
     { state_id: 1, state_name: 'EN ESPERA' },
     { state_id: 2, state_name: 'EN ESPERA DE INTERNACION' },
     { state_id: 3, state_name: 'INTERNADO' },
     { state_id: 4, state_name: 'ALTA' },
     { state_id: 5, state_name: 'AFUERA' },
     { state_id: 6, state_name: 'EN AISLAMIENTO' }
-  ])
-  const [PatientProblems, setPatientProblems] = useState([
+  ]
+  const PatientProblems = [
     { _id: 1, name: 'Convulsiones' },
     { _id: 2, name: 'Trauma de Cráneo' },
     { _id: 3, name: 'Dolor torácico / dorsal' },
@@ -43,13 +185,13 @@ function NewPatientForm() {
     { _id: 11, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
     { _id: 12, name: 'Sangrado Digestivo' },
     { _id: 13, name: 'Fiebre >38°' }
-  ])
-  const [TriageLevels, setTriageLevels] = useState([
+  ]
+  const TriageLevels = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
     { _id: 2, name: 'II', color: '255,51,0' },
     { _id: 3, name: 'III', color: '255,255,102' },
     { _id: 4, name: 'IV', color: '105,168,79' }
-  ])
+  ]
 
   //todo: sacar patient_box,
   //todo: patient_triage_time se crea en api
@@ -160,24 +302,34 @@ function NewPatientForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     //actualizar entry_time
     const FormDataNow = formData
     FormDataNow.entry_time = getCurrentTime()
     try {
       console.log(FormDataNow)
+      const formDataNoID=FormDataNow
+      delete formDataNoID.patient_id
+      console.log(formDataNoID);
       const token = Cookies.get('authToken')
       if (token) {
-        const { data, errors } = await addNewPatient(FormDataNow)
-        if (errors) {
-          console.error('Errores en el formulario al agregar nuevo paciente:', errors)
-          toast.error('Error al intentar agregar un nuevo paciente', {
-            duration: 2000
-          })
+        if (edditingPatient) {
+          const data= await updateAnyPatient(edditingPatient.patient_id,formDataNoID)
+          console.log(data);
         } else {
-          console.log('Nuevo paciente agregado:', data)
-          toast.success('Nuevo paciente agregado', {
-            duration: 2000
-          })
+          const { data, errors } = await addNewPatient(FormDataNow)
+          if (errors) {
+            console.error('Errores en el formulario al agregar nuevo paciente:', errors)
+            toast.error('Error al intentar agregar un nuevo paciente', {
+              duration: 2000
+            })
+          } else {
+            console.log('Nuevo paciente agregado:', data)
+            toast.success('Nuevo paciente agregado', {
+              duration: 2000
+            })
+          }
+
           setFormData({
             patient_name: '',
             date_of_birth: '2000-01-01',
@@ -204,36 +356,6 @@ function NewPatientForm() {
     }
   }
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const data = await getAllDoctors()
-        setDoctorOptions(data)
-      } catch (error) {
-        // console.error('Error:', error.message)
-      }
-    }
-    const fetchNurses = async () => {
-      try {
-        const data = await getAllNurses()
-        setNurseOptions(data)
-      } catch (error) {
-        // console.error('Error:', error.message)
-      }
-    }
-    const fetchBoxes = async () => {
-      try {
-        const data = await getAvailableBoxes()
-        setBoxesOptions(data)
-      } catch (error) {
-        // console.error('Error:', error.message)
-      }
-    }
-    fetchDoctors()
-    fetchNurses()
-    fetchBoxes()
-  }, [])
-
   const handleDateChange = (newDate: Date | null) => {
     setFormData({ ...formData, date_of_birth: newDate })
     setSelectedDate(newDate)
@@ -241,6 +363,13 @@ function NewPatientForm() {
   }
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+
+  //EDIT
+  const handleCancelButton = () => {
+    console.log('cerrar edit')
+    console.log(edditingPatient)
+    onCancelEdit()
+  }
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -391,8 +520,15 @@ function NewPatientForm() {
 
         <div className='flex items-end'>
           <Button type='submit' color='blue' onClick={handleButtonClick}>
-            Add New Patient
+            {edditingPatient ? 'Save Patient' : 'Add New Patient'}
           </Button>
+          {edditingPatient && (
+            <Link to={`/patients`}>
+              <Button type='button' color='blue'>
+                Cancel
+              </Button>
+            </Link>
+          )}
         </div>
       </form>
     </div>
