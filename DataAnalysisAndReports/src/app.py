@@ -14,13 +14,23 @@ def grafico_cant_pacientes_fecha():
 
     desde = request.args.get('desde', default=None, type=str)
     hasta = request.args.get('hasta', default=None, type=str)
-    nombre_y_apellido = request.args.get('nombreyapellido', default=None, type=str).upper()
+    nombre_y_apellido = request.args.get('nombreyapellido', default=None, type=str)
+    if(nombre_y_apellido):
+        nombre_y_apellido = nombre_y_apellido.upper()
     motivo_de_consulta = request.args.get('motivodeconsulta', default=None, type=str)
+    if(motivo_de_consulta):
+        motivo_de_consulta = motivo_de_consulta.upper()
     box = request.args.get('box', default=None, type=int)
     triage = request.args.get('triage', default=None, type=float)
-    medico = request.args.get('medico', default=None, type=str).upper()
-    enfermero = request.args.get('enfermero', default=None, type=str).upper()
+    medico = request.args.get('medico', default=None, type=str)
+    if(medico):
+        medico = medico.upper()
+    enfermero = request.args.get('enfermero', default=None, type=str)
+    if(enfermero):
+        enfermero = enfermero.upper()
     alta = request.args.get('alta', default=None, type=str)
+    if(alta):
+        alta = alta.upper()
     aislado = request.args.get('aislado', default=None, type=bool)
 
     print(f"desde: {desde}")
@@ -42,7 +52,7 @@ def grafico_cant_pacientes_fecha():
     # Dejar fijo
     fig = bar_chart(df = df, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
-               x_title='Cantidad de Pacientes por Fecha de Ingreso', y_title='Fecha de Ingreso', title='Cantidad de Pacientes', 
+               x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean = media)
     
     return fig.to_html()
