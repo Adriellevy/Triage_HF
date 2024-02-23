@@ -58,7 +58,7 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
     return df
 
 def cant_pacientes_fecha(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
-    df_acotado = df.groupby('FECHA DE INGRESO', sort = False).size().reset_index()
+    df_acotado = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+    df_acotado = df_acotado.groupby('FECHA DE INGRESO', sort = False).size().reset_index()
     df_acotado.rename(columns={0: 'CANTIDAD DE PACIENTES'}, inplace = True)
-    df_acotado = filters(df_acotado, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
     return df_acotado
