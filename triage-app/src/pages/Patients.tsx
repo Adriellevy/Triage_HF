@@ -1,43 +1,133 @@
 import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import Select, { StylesConfig, MultiValue } from 'react-select'
+import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientsList'
 import SearchPatientForm from '@/components/SearchPatientForm'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
-import Select from 'react-select'
-const options = [
+
+interface ColourOption {
+  readonly value: string
+  readonly label: string
+  readonly item?: string
+  readonly color: string
+  readonly isFixed?: boolean
+  readonly isDisabled?: boolean
+}
+
+interface Option {
+  readonly label: string
+  readonly options: ColourOption[]
+}
+
+const options: Option[] = [
   {
     label: 'TRIAGE LEVEL',
     options: [
-      { value: 'patient_triage_level', label: '1', color: '#FF5630' },
-      { value: 'patient_triage_level', label: '2', color: '#FFC400' },
-      { value: 'patient_triage_level', label: '3', color: '#FF8B00' },
-      { value: 'patient_triage_level', label: '4', color: '#36B37E' },
-      { value: 'patient_triage_level', label: '1-4', color: '#5243AA', isFixed: true }
+      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#999999' },
+      { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
+      { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
+      { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
+      {
+        value: 'patient_triage_level',
+        item: '1-4',
+        label: 'Triage Level 1-4',
+        color: '#5243AA',
+        isFixed: true
+      }
     ]
   },
   {
     label: 'PATIENT STATE',
     options: [
-      { value: 'patient_status', label: 'EN ESPERA', color: '#36B37E' },
-      { value: 'patient_status', label: 'EN ESPERA DE INTERNACION', color: '#36B37E' },
-      { value: 'patient_status', label: 'EN INTERNACION', color: '#36B37E' },
-      { value: 'patient_status', label: 'AFUERA', color: '#36B37E' },
-      { value: 'patient_status', label: 'EN AISLAMIENTO', color: '#36B37E' },
-      { value: 'patient_status', label: 'ALTA', color: '#36B37E' },
-      { value: 'patient_status', label: 'TODOS', color: '#36B37E' }
+      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#999999' },
+      {
+        value: 'patient_status',
+        item: 'EN ESPERA DE INTERNACION',
+        label: 'EN ESPERA DE INTERNACION',
+        color: '#999999'
+      },
+      {
+        value: 'patient_status',
+        item: 'EN INTERNACION',
+        label: 'EN INTERNACION',
+        color: '#999999'
+      },
+      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#999999' },
+      {
+        value: 'patient_status',
+        item: 'EN AISLAMIENTO',
+        label: 'EN AISLAMIENTO',
+        color: '#999999'
+      },
+      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#999999' },
+      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#999999' }
     ]
   },
   {
     label: 'From Who',
     options: [
-      { value: 'type_user', label: 'ALL', color: '#36B37E' },
-      { value: 'type_user', label: 'MINE', color: '#36B37E' }
+      { value: 'type_user', label: 'ALL', color: '#999999' },
+      { value: 'type_user', label: 'MINE', color: '#999999' }
     ]
   }
 ]
+
+const colourStyles: StylesConfig<ColourOption, true> = {
+  control: (styles) => ({ ...styles, backgroundColor: 'white' }),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    const color = chroma(data.color)
+    return {
+      ...styles,
+      backgroundColor: isDisabled
+        ? undefined
+        : isSelected
+        ? data.color
+        : isFocused
+        ? color.alpha(0.1).css()
+        : undefined,
+      color: isDisabled
+        ? '#ccc'
+        : isSelected
+        ? chroma.contrast(color, 'white') > 2
+          ? 'white'
+          : 'black'
+        : data.color,
+      cursor: isDisabled ? 'not-allowed' : 'default',
+
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: !isDisabled
+          ? isSelected
+            ? data.color
+            : color.alpha(0.3).css()
+          : undefined
+      }
+    }
+  },
+  multiValue: (styles, { data }) => {
+    const color = chroma(data.color)
+    return {
+      ...styles,
+      backgroundColor: color.alpha(0.1).css()
+    }
+  },
+  multiValueLabel: (styles, { data }) => ({
+    ...styles,
+    color: data.color
+  }),
+  multiValueRemove: (styles, { data }) => ({
+    ...styles,
+    color: data.color,
+    ':hover': {
+      backgroundColor: data.color,
+      color: 'white'
+    }
+  })
+}
 
 function Patients() {
   const socket = useContext(SocketContext)
@@ -46,23 +136,22 @@ function Patients() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
   const [RawData, setRawData] = useState<Patient[] | null>(null)
+
   //hardoceado ver como obtenerlo de otra forma
-
-  const onChangeSelect = (selectedOptions: readonly Option[]) => {
+  const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
     // Filtrar patientsData
-
     if (RawData) {
       const filteredData = RawData.filter((patient) => {
         // Verificar si el paciente cumple con todas las opciones seleccionadas
         return selectedOptions.every((option) => {
-          if (option.label === 'TODOS' || option.label === '1-4') {
+          if (option.item === 'TODOS' || option.item === '1-4') {
             return patient[option.value]
-          } else if (option.label === 'MINE') {
+          } else if (option.item === 'MINE') {
             // Verificar si el paciente tiene el doctor_name igual a 'Dr. Smith'
             return patient.doctor_name === 'Dr. Smith'
           }
           // Comprobar si el paciente tiene el valor de la opción seleccionada
-          return patient[option.value].toString() === option.label
+          return patient[option.value].toString() === option.item
         })
       })
       setPatientsData(filteredData)
@@ -133,7 +222,13 @@ function Patients() {
     <div>
       <div>
         <SearchPatientForm onSearch={handleonSearch} />
-        <Select options={options} isMulti closeMenuOnSelect={true} onChange={onChangeSelect} />
+        <Select
+          options={options}
+          isMulti
+          closeMenuOnSelect={true}
+          onChange={onChangeSelect}
+          styles={colourStyles}
+        />
       </div>
 
       {searchTerm === '' && patientsData ? (
