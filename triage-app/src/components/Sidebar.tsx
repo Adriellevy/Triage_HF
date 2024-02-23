@@ -151,9 +151,7 @@ function Sidebar() {
         </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
-            (item.title !== 'Configuration' &&
-              item.title !== 'Stats' &&
-              role !== UserRole.HOSPITAL) ||
+            (item.title !== 'Settings' && item.title !== 'Stats' && role !== UserRole.HOSPITAL) ||
             role === UserRole.HOSPITAL ? (
               <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                 {item.icon && (
@@ -188,7 +186,7 @@ function Sidebar() {
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>
-              (item.title !== 'Configuration' && item.title !== 'Stats') ||
+              (item.title !== 'Settings' && item.title !== 'Stats') ||
               role === UserRole.HOSPITAL ? (
                 <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
                   <button onClick={closedMenu}>
