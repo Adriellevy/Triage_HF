@@ -12,16 +12,14 @@ def grafico_cant_pacientes_fecha():
     df = get_df()
     df = build_features(df)
 
-    print(df)
-
     desde = request.args.get('desde', default=None, type=str)
     hasta = request.args.get('hasta', default=None, type=str)
-    nombre_y_apellido = request.args.get('nombreyapellido', default=None, type=str)
+    nombre_y_apellido = request.args.get('nombreyapellido', default=None, type=str).upper()
     motivo_de_consulta = request.args.get('motivodeconsulta', default=None, type=str)
     box = request.args.get('box', default=None, type=int)
-    triage = request.args.get('triage', default=None, type=int)
-    medico = request.args.get('medico', default=None, type=str)
-    enfermero = request.args.get('enfermero', default=None, type=str)
+    triage = request.args.get('triage', default=None, type=float)
+    medico = request.args.get('medico', default=None, type=str).upper()
+    enfermero = request.args.get('enfermero', default=None, type=str).upper()
     alta = request.args.get('alta', default=None, type=str)
     aislado = request.args.get('aislado', default=None, type=bool)
 
