@@ -10,7 +10,7 @@ import GuidedEntry from '@/pages/GuidedEntry'
 import Stats from '@/pages/Stats'
 import Patients from '@/pages/Patients'
 import Boxes from '@/pages/Boxes'
-import Configuration from '@/pages/Configuration'
+import Configuration from '@/pages/Settings'
 import PatientDetail from '@/pages/PatientDetail'
 import UserDetail from '@/pages/UserDetail'
 import Sidebar from '@/components/Sidebar'
@@ -66,7 +66,7 @@ function App() {
                     <Route path='/guidedentry' element={<GuidedEntry />} />
                     <Route path='/patients' element={<Patients />} />
                     <Route path='/patients/:patient_id' element={<PatientDetail />} />
-                    <Route path='/edit_patient/:edditingPatientID' element={<NewPatientForm/>} />
+                    <Route path='/edit_patient/:edditingPatientID' element={<NewPatientForm />} />
                     <Route path='/users' element={<UserDetail />} />
                     <Route path='/users/:user_id' element={<UserDetail />} />
 
@@ -74,7 +74,7 @@ function App() {
                     {role === UserRole.HOSPITAL && (
                       <>
                         <Route path='/stats' element={<Stats />} />
-                        <Route path='/configuration' element={<Configuration />} />
+                        <Route path='/settings' element={<Configuration />} />
                       </>
                     )}
                     <Route path='*' element={<NotFound />} />

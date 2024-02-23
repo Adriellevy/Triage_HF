@@ -25,6 +25,7 @@ interface MenuItem {
   icon?: string
   title: string
   linkUrl: string
+  submenu?: MenuItem[]
 }
 
 function Sidebar() {
@@ -66,8 +67,12 @@ function Sidebar() {
     },
     {
       icon: ConfigIcon,
-      title: 'Configuration',
-      linkUrl: '/configuration'
+      title: 'Settings',
+      linkUrl: '/settings',
+      submenu: [
+        { icon: ConfigIcon, title: 'SettingsSub1', linkUrl: '/SettingsSub1' },
+        { icon: ConfigIcon, title: 'SettingsSub2', linkUrl: '/SettingsSub2' }
+      ]
     }
   ]
 
