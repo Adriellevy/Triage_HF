@@ -1,0 +1,22 @@
+{
+  "Models": [
+    {
+      "name": "Default",
+      "levels": [
+        { "_id": 1, "name": "I", "colorRGB": "153, 153, 153" },
+        { "_id": 2, "name": "II", "colorRGB": "255,51,0" },
+        { "_id": 3, "name": "III", "colorRGB": "255,255,102" },
+        { "_id": 4, "name": "IV", "colorRGB": "105,168,79" }
+      ]
+    },
+    {
+      "name": "Manchester",
+      "levels": [
+        { "_id": 1, "name": "I", "colorRGB": "153, 153, 153" },
+        { "_id": 2, "name": "II", "colorRGB": "255,51,0" },
+        { "_id": 3, "name": "III", "colorRGB": "255,255,102" },
+        { "_id": 4, "name": "IV", "colorRGB": "105,168,79" }
+      ]
+    }
+  ]
+}
