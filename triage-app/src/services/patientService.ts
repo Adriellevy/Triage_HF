@@ -78,7 +78,7 @@ export const updateAnyPatient = async (
   try {
     const token = Cookies.get('authToken')
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
-    console.log('api ' + apiUrl)
+    // console.log('api ' + apiUrl)
 
     const body: any = {} // Initialize an empty object for the request body
 

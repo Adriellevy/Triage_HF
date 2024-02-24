@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface PropsInput extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color: 'red' | 'blue' | 'green'
+  color: 'red' | 'blue' | 'green' | 'grey'
   wfull?: boolean
 }
 
@@ -9,7 +9,8 @@ export function Button({ children, color, wfull = false, ...props }: PropsInput)
   const colorVariants = {
     blue: 'bg-blue-500 hover:bg-blue-700',
     green: 'bg-green-500 hover:bg-green-700',
-    red: 'bg-red-500 hover:bg-red-700'
+    red: 'bg-red-500 hover:bg-red-700',
+    grey: 'bg-slate-500 hover:bg-slate-700'
   }
 
   return (
