@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import Cookies from 'js-cookie'
 import { getUserById, getUserIdByToken } from '@/services/userService'
@@ -15,6 +15,8 @@ import HamburgerIcon from '@/icons/hamburger-icon.svg'
 import HamburgerCloseIcon from '@/icons/hamburger-close-icon.svg'
 import ConfigIcon from '@/icons/settings-2-svgrepo-com.svg'
 import Logo from '@/icons/stats-icon.svg'
+import ArrowDown from '@/icons/arrow-down.svg'
+import ArrowUp from '@/icons/arrow-up.svg'
 import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
@@ -34,7 +36,9 @@ function Sidebar() {
   const { role } = useRoleContext()
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
+  const location = useLocation()
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
+  const [openSubMenu, setOpenSubMenu] = useState<number | null>(null)
   const [UserInfo, setUserInfo] = useState<PartialUser>({
     user_id: '',
     user_name: '',
@@ -70,8 +74,8 @@ function Sidebar() {
       title: 'Settings',
       linkUrl: '/settings',
       submenu: [
-        { icon: ConfigIcon, title: 'SettingsSub1', linkUrl: '/SettingsSub1' },
-        { icon: ConfigIcon, title: 'SettingsSub2', linkUrl: '/SettingsSub2' }
+        { icon: ConfigIcon, title: 'Users', linkUrl: '/settings' },
+        { icon: ConfigIcon, title: 'Boxes', linkUrl: '/settings' }
       ]
     }
   ]
@@ -88,6 +92,14 @@ function Sidebar() {
   const closedMenu = () => {
     setMenuVisible(false)
   }
+
+  const handleSubMenuToggle = (index: number) => {
+    setOpenSubMenu(openSubMenu === index ? null : index)
+  }
+
+  useEffect(() => {
+    setOpenSubMenu(null)
+  }, [location.pathname])
 
   useEffect(() => {
     const handleSocketEvent = (data: { patient: Patient; message: UpdateEvent }) => {
@@ -153,12 +165,44 @@ function Sidebar() {
           {menuitems.map((item, index) =>
             (item.title !== 'Settings' && item.title !== 'Stats' && role !== UserRole.HOSPITAL) ||
             role === UserRole.HOSPITAL ? (
-              <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
-                {item.icon && (
-                  <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
-                )}
-                {item.title}
-              </Link>
+              item.submenu ? (
+                <div key={index} className='relative'>
+                  <button
+                    className='w-full p-3 hover:bg-gray-700 text-lg text-left flex items-center justify-between'
+                    onClick={() => handleSubMenuToggle(index)}
+                  >
+                    <div className='flex items-center'>
+                      <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
+                      {item.title}
+                    </div>
+                    {openSubMenu === index ? (
+                      <img src={ArrowUp} className='inline-block w-5 h-5 mr-2' />
+                    ) : (
+                      <img src={ArrowDown} className='inline-block w-5 h-5 mr-2' />
+                    )}
+                  </button>
+                  {openSubMenu === index && (
+                    <div className=' left-full top-0 mt-2 ml-2 bg-gray-800'>
+                      {item.submenu.map((submenuItem, submenuIndex) => (
+                        <Link
+                          key={submenuIndex}
+                          to={submenuItem.linkUrl}
+                          className='block px-3 py-2 hover:bg-gray-700'
+                        >
+                          {submenuItem.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
+                  {item.icon && (
+                    <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
+                  )}
+                  {item.title}
+                </Link>
+              )
             ) : null
           )}
         </nav>
