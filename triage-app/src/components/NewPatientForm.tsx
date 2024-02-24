@@ -233,7 +233,6 @@ function NewPatientForm() {
       //Delete Id
       const formDataNoID = FormDataNow
       delete formDataNoID.patient_id
-      console.log(formDataNoID)
       const token = Cookies.get('authToken')
       if (token) {
         if (edditingPatient) {
