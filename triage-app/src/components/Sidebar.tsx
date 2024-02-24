@@ -74,8 +74,8 @@ function Sidebar() {
       title: 'Settings',
       linkUrl: '/settings',
       submenu: [
-        { icon: ConfigIcon, title: 'Users', linkUrl: '/settings' },
-        { icon: ConfigIcon, title: 'Boxes', linkUrl: '/settings' }
+        { icon: ConfigIcon, title: 'Users', linkUrl: '/settings/user' },
+        { icon: ConfigIcon, title: 'Boxes', linkUrl: '/settings/box' }
       ]
     }
   ]

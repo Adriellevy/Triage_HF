@@ -19,7 +19,11 @@ function Settings() {
     fetchData()
   }, [])
 
-  return <div className='flex h-screen'></div>
+  return (
+    <div className='flex h-screen'>
+      <h1>Settings</h1>
+    </div>
+  )
 }
 
 export default Settings

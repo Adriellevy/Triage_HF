@@ -10,7 +10,7 @@ import GuidedEntry from '@/pages/GuidedEntry'
 import Stats from '@/pages/Stats'
 import Patients from '@/pages/Patients'
 import Boxes from '@/pages/Boxes'
-import Configuration from '@/pages/Settings'
+import Settings from '@/pages/Settings'
 import PatientDetail from '@/pages/PatientDetail'
 import UserDetail from '@/pages/UserDetail'
 import Sidebar from '@/components/Sidebar'
@@ -40,11 +40,9 @@ function App() {
           const data = await getUserIdByToken()
           const user = await getUserById(String(data))
           setRole(user.user_type)
-        } else {
-          // console.log('Error fetch data')
         }
       } catch (error) {
-        // console.error('Error al obtener pacientes:', error.message)
+        console.error((error as Error).message)
       }
     }
     fetchData()
@@ -69,14 +67,16 @@ function App() {
                     <Route path='/edit_patient/:edditingPatientID' element={<NewPatientForm />} />
                     <Route path='/users' element={<UserDetail />} />
                     <Route path='/users/:user_id' element={<UserDetail />} />
-
                     <Route path='/boxes' element={<Boxes />} />
+
                     {role === UserRole.HOSPITAL && (
                       <>
                         <Route path='/stats' element={<Stats />} />
-                        <Route path='/settings' element={<Configuration />} />
+                        <Route path='/settings/user' element={<Settings />} />
+                        <Route path='/settings/box' element={<Settings />} />
                       </>
                     )}
+
                     <Route path='*' element={<NotFound />} />
                   </Routes>
                 </div>
@@ -84,7 +84,6 @@ function App() {
             }
           />
         ) : (
-          // Redirect to login if not authenticated
           <Route path='*' element={<Login handleUserChange={setUser} user={User} />} />
         )}
       </Routes>
