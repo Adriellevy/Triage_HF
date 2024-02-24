@@ -31,11 +31,12 @@ def get_args():
 @app.route('/cant_pacientes_fecha/')
 def grafico_cant_pacientes_fecha():
     global df
-    df_acotado = cant_pacientes_fecha(df, **get_args())
+    df_cant_pacientes_fecha = df.copy(deep=True)
+    
+    df_cant_pacientes_fecha = cant_pacientes_fecha(df_cant_pacientes_fecha, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
-
-    fig = bar_chart(df = df_acotado, 
+    fig = bar_chart(df = df_cant_pacientes_fecha, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean = media)
@@ -43,16 +44,16 @@ def grafico_cant_pacientes_fecha():
     return fig.to_html()
 
 @app.route('/top_consultas_fecha/')
-def grafico_top_consultas_fechas():
+def grafico_top_consultas_fecha():
     global df
+    df_top_consultas_fecha = df.copy(deep=True)
+
     top = request.args.get('top', default=10, type=int)
     order = request.args.get('order', default=None, type=str)
-
-    df_acotado = top_consultas_fecha(df, top, order, **get_args())
+    df_top_consultas_fecha = top_consultas_fecha(df_top_consultas_fecha, top, order, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
-
-    fig = bar_chart(df = df_acotado, 
+    fig = bar_chart(df = df_top_consultas_fecha, 
                x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
                x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
                mean = media)    
@@ -61,4 +62,3 @@ def grafico_top_consultas_fechas():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    initialize_data()
