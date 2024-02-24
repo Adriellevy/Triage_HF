@@ -107,6 +107,7 @@ export class PatientsModel {
     return patients
   }
 
+  // eslint-disable-next-line consistent-return
   static async createNewPatient({ data }) {
     try {
       const [uuidResult] = await connection.query('SELECT UUID() uuid;')
@@ -180,6 +181,19 @@ export class PatientsModel {
       updateValues.push(id)
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
       if (result.affectedRows > 0) {
+        if (data.patient_status === 'ALTA' && data.box_id !== null) {
+          await connection.query(
+            `UPDATE Patient
+            SET box_id = null
+            WHERE patient_id = UUID_TO_BIN(?);`,
+            [id],
+          )
+          await connection.query(
+            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
+            [Box.box_id],
+          )
+          return { message: 'Patient updated successfully' }
+        }
         await connection.query(
           `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
           [Box.box_id],

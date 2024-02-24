@@ -4,8 +4,9 @@ import { Patient, PatientStatus, PatientData } from '@/interfaces/Patinet'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
 import { consulta } from '@/services/openai-test'
-import { Button } from '@/components/ui'
+import { Button, Label } from '@/components/ui'
 import LoaderSpin from '@/components/LoaderSpin'
+import QRCode from 'react-qr-code'
 
 const solicitud =
   'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
@@ -132,32 +133,54 @@ function PatientDetail() {
           Back
         </Button>
       </div>
-      {
-        <ul className='list-disc pl-4'>
-          {patientFields.map((field) => (
-            <li key={field.label}>
-              <strong>{field.label}:</strong>{' '}
-              {Patient
-                ? field.format
-                  ? field.format(String(Patient[field.key]))
-                  : Patient[field.key]
-                : null}
-            </li>
-          ))}
-        </ul>
-      }
-      <div className='flex justify-end'>
-        <Button color='red' onClick={handleMedicalDischarge}>
-          Medical Discharge
-        </Button>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
+        <div>
+          {
+            <ul className='list-disc pl-4'>
+              {patientFields.map((field) => (
+                <li key={field.label}>
+                  <strong>{field.label}:</strong>{' '}
+                  {Patient
+                    ? field.format
+                      ? field.format(String(Patient[field.key]))
+                      : Patient[field.key]
+                    : null}
+                </li>
+              ))}
+            </ul>
+          }
+        </div>
+        <div className='flex items-center mt-4'>
+          <div className='mx-auto w-full max-w-48 '>
+            <QRCode
+              size={256}
+              style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+              value={`${import.meta.env.VITE_NETWORK_APP_URL}/patients/${patient_id}`}
+              viewBox={`0 0 256 256`}
+            />
+            <div className='text-center mt-1'>
+              <Label>Scan QR Code for mobile</Label>
+            </div>
+          </div>
+        </div>
       </div>
-
+      <div className='flex justify-between mt-4'>
+        <div className=''>
+          <Button color='red' onClick={handleMedicalDischarge}>
+            Medical Discharge
+          </Button>
+        </div>
+        {showMedicalDischarge && (
+          <div className=''>
+            <Button color='blue' onClick={handleRequestButtonClick}>
+              Request Inform
+            </Button>
+          </div>
+        )}
+      </div>
       {showMedicalDischarge && (
         <>
           <div className='mt-4'>
-            <Button color='red' onClick={handleRequestButtonClick}>
-              Request Inform
-            </Button>
             {showRequestInfo && (
               <div className='mt-4'>
                 <h3 className={`text-lg font-bold mb-2 ${loading ? 'hidden' : ''} `}>
