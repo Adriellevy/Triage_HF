@@ -233,13 +233,21 @@ function NewPatientForm() {
       //Delete Id
       const formDataNoID = FormDataNow
       delete formDataNoID.patient_id
-      delete formDataNoID.box_id
+      console.log(formDataNoID)
       const token = Cookies.get('authToken')
       if (token) {
         if (edditingPatient) {
-          const data = await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
-          console.log(data)
-          navigate('/patients')
+          try {
+            const data = await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
+            toast.success('Paciente actualizado', {
+              duration: 2000
+            })
+            navigate('/patients')
+          } catch {
+            toast.error('Error al actualizar un paciente', {
+              duration: 2000
+            })
+          }
         } else {
           const { data, errors } = await addNewPatient(FormDataNow)
           if (errors) {

@@ -32,10 +32,10 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
     df['FECHA DE INGRESO'] = df['FECHA DE INGRESO'].dt.strftime('%d-%m-%Y')      
        
     if(nombre_y_apellido != None):
-        df = df[df['NOMBRE Y APELLIDO'] == nombre_y_apellido]
+        df = df[df['NOMBRE Y APELLIDO'] == nombre_y_apellido.upper()]
 
     if(motivo_de_consulta != None):
-        df = df[df['MOTIVO DE CONSULTA'] == motivo_de_consulta]
+        df = df[df['MOTIVO DE CONSULTA'] == motivo_de_consulta.upper()]
 
     if(box != None):
         df = df[df['BOX'] == box]
@@ -44,13 +44,13 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
         df = df[df['TRIAGE'] == triage]
 
     if(medico != None):
-        df = df[df['MEDICO'] == medico]
+        df = df[df['MEDICO'] == medico.upper()]
 
     if(enfermero != None):
-        df = df[df['ENFERMERO'] == enfermero]
+        df = df[df['ENFERMERO'] == enfermero.upper()]
 
     if(alta != None):
-        df = df[df['ALTA'] == alta]
+        df = df[df['ALTA'] == alta.upper()]
 
     if(aislado != None):
         df = df[df['AISLADO'] == aislado]
@@ -58,7 +58,20 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
     return df
 
 def cant_pacientes_fecha(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
-    df_acotado = df.groupby('FECHA DE INGRESO', sort = False).size().reset_index()
-    df_acotado.rename(columns={0: 'CANTIDAD DE PACIENTES'}, inplace = True)
-    df_acotado = filters(df_acotado, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
-    return df_acotado
+    df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+    
+    df = df.groupby('FECHA DE INGRESO', sort = False).size().reset_index()
+    df.rename(columns={0: 'CANTIDAD DE PACIENTES'}, inplace = True)
+
+    return df
+
+def top_consultas_fecha(df, top = None, order=None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
+    df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+
+    count = df['MOTIVO DE CONSULTA'].value_counts()
+    df = count.nlargest(top).reset_index()
+    df.rename(columns={'count': 'CANTIDAD DE CONSULTAS'}, inplace = True)
+    if order == 'asc':
+        df.sort_values(by='CANTIDAD DE CONSULTAS', ascending = True, inplace = True)
+
+    return df
