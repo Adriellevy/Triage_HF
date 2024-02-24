@@ -7,10 +7,6 @@ from visualization.visualize import bar_chart
 
 app = Flask(__name__)
 
-#
-# Arreglar problemas con los filtros de las fechas
-#
-
 def initialize_data():
     df = get_df()
     df = build_features(df)
@@ -32,16 +28,15 @@ def get_args():
             }
     return args
 
-@app.route('/')
+@app.route('/cant_pacientes_fecha/')
 def grafico_cant_pacientes_fecha():
     global df
-
-    df = cant_pacientes_fecha(df, **get_args())
+    df_acotado = cant_pacientes_fecha(df, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
 
     # Dejar fijo
-    fig = bar_chart(df = df, 
+    fig = bar_chart(df = df_acotado, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean = media)
