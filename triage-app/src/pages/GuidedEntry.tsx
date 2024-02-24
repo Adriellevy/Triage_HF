@@ -1,9 +1,9 @@
-import NewPatientForm from '@/components/NewPatientForm'
+import PatientForm from '@/components/PatientForm'
 
 function GuidedEntry() {
   return (
     <div>
-      <NewPatientForm />
+      <PatientForm />
     </div>
   )
 }

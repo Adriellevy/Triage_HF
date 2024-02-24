@@ -15,7 +15,7 @@ import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 
-function NewPatientForm() {
+function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
@@ -463,4 +463,4 @@ function NewPatientForm() {
   )
 }
 
-export default NewPatientForm
+export default PatientForm

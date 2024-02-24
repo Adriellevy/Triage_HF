@@ -16,7 +16,7 @@ import UserDetail from '@/pages/UserDetail'
 import Sidebar from '@/components/Sidebar'
 import { UserRole } from '@/interfaces/User'
 import { getUserById, getUserIdByToken } from '@/services/userService'
-import NewPatientForm from './components/NewPatientForm'
+import PatientForm from './components/PatientForm'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
@@ -64,7 +64,7 @@ function App() {
                     <Route path='/guidedentry' element={<GuidedEntry />} />
                     <Route path='/patients' element={<Patients />} />
                     <Route path='/patients/:patient_id' element={<PatientDetail />} />
-                    <Route path='/edit_patient/:edditingPatientID' element={<NewPatientForm />} />
+                    <Route path='/edit_patient/:edditingPatientID' element={<PatientForm />} />
                     <Route path='/users' element={<UserDetail />} />
                     <Route path='/users/:user_id' element={<UserDetail />} />
                     <Route path='/boxes' element={<Boxes />} />
