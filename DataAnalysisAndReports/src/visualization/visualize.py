@@ -32,10 +32,10 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
     df['FECHA DE INGRESO'] = df['FECHA DE INGRESO'].dt.strftime('%d-%m-%Y')      
        
     if(nombre_y_apellido != None):
-        df = df[df['NOMBRE Y APELLIDO'] == nombre_y_apellido]
+        df = df[df['NOMBRE Y APELLIDO'] == nombre_y_apellido.upper()]
 
     if(motivo_de_consulta != None):
-        df = df[df['MOTIVO DE CONSULTA'] == motivo_de_consulta]
+        df = df[df['MOTIVO DE CONSULTA'] == motivo_de_consulta.upper()]
 
     if(box != None):
         df = df[df['BOX'] == box]
@@ -44,13 +44,13 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
         df = df[df['TRIAGE'] == triage]
 
     if(medico != None):
-        df = df[df['MEDICO'] == medico]
+        df = df[df['MEDICO'] == medico.upper()]
 
     if(enfermero != None):
-        df = df[df['ENFERMERO'] == enfermero]
+        df = df[df['ENFERMERO'] == enfermero.upper()]
 
     if(alta != None):
-        df = df[df['ALTA'] == alta]
+        df = df[df['ALTA'] == alta.upper()]
 
     if(aislado != None):
         df = df[df['AISLADO'] == aislado]
