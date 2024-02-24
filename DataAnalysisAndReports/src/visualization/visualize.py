@@ -59,6 +59,19 @@ def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_
 
 def cant_pacientes_fecha(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
     df_acotado = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+
     df_acotado = df_acotado.groupby('FECHA DE INGRESO', sort = False).size().reset_index()
     df_acotado.rename(columns={0: 'CANTIDAD DE PACIENTES'}, inplace = True)
+
+    return df_acotado
+
+def top_consultas_fecha(df, top = None, order=None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
+    df_acotado = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+
+    count = df['MOTIVO DE CONSULTA'].value_counts()
+    df_acotado = count.nlargest(top).reset_index()
+    df_acotado.rename(columns={'count': 'CANTIDAD DE CONSULTAS'}, inplace = True)
+    if order == 'asc':
+        df_acotado.sort_values(by='CANTIDAD DE CONSULTAS', ascending = True, inplace = True)
+
     return df_acotado

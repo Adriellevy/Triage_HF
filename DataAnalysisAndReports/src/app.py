@@ -2,7 +2,7 @@ from flask import Flask, request
 
 from data.make_dataset import get_df
 from features.build_features import build_features
-from visualization.visualize import cant_pacientes_fecha
+from visualization.visualize import cant_pacientes_fecha, top_consultas_fecha
 from visualization.visualize import bar_chart
 
 app = Flask(__name__)
@@ -35,11 +35,27 @@ def grafico_cant_pacientes_fecha():
 
     media = request.args.get('media', default=None, type=bool)
 
-    # Dejar fijo
     fig = bar_chart(df = df_acotado, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean = media)
+    
+    return fig.to_html()
+
+@app.route('/top_consultas_fecha/')
+def grafico_top_consultas_fechas():
+    global df
+    top = request.args.get('top', default=10, type=int)
+    order = request.args.get('order', default=None, type=str)
+
+    df_acotado = top_consultas_fecha(df, top, order, **get_args())
+
+    media = request.args.get('media', default=None, type=bool)
+
+    fig = bar_chart(df = df_acotado, 
+               x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
+               x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
+               mean = media)    
     
     return fig.to_html()
 
