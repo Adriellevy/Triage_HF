@@ -5,6 +5,10 @@ from features.build_features import build_features
 from visualization.visualize import cant_pacientes_fecha, top_consultas_fecha
 from visualization.visualize import bar_chart
 
+#
+# AGREGAR QUE EL PRIMER GRAFICO MUESTRE UNICAMENTE DE LA ULTIMA SEMANA
+#
+
 app = Flask(__name__)
 
 def initialize_data():
