@@ -7,16 +7,18 @@ import { useRoleContext } from '@//contex/RoleContext'
 import Login from '@/pages/Login'
 import NotFound from '@/pages/NotFound'
 import GuidedEntry from '@/pages/GuidedEntry'
-import Stats from '@/pages/Stats'
 import Patients from '@/pages/Patients'
 import Boxes from '@/pages/Boxes'
-import Settings from '@/pages/Settings'
 import PatientDetail from '@/pages/PatientDetail'
 import UserDetail from '@/pages/UserDetail'
 import Sidebar from '@/components/Sidebar'
 import { UserRole } from '@/interfaces/User'
 import { getUserById, getUserIdByToken } from '@/services/userService'
 import PatientForm from './components/PatientForm'
+import StatsPatinet from './pages/stats/StatsPatinet'
+import StatsTopConsultas from './pages/stats/StatsTopConsultas'
+import BoxSettings from './pages/settings/BoxSettings'
+import UserSettings from './pages/settings/UserSettings'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
@@ -71,9 +73,10 @@ function App() {
 
                     {role === UserRole.HOSPITAL && (
                       <>
-                        <Route path='/stats' element={<Stats />} />
-                        <Route path='/settings/user' element={<Settings />} />
-                        <Route path='/settings/box' element={<Settings />} />
+                        <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
+                        <Route path='/stats/top_consultas_fecha' element={<StatsTopConsultas />} />
+                        <Route path='/settings/user' element={<UserSettings />} />
+                        <Route path='/settings/box' element={<BoxSettings />} />
                       </>
                     )}
 

@@ -15,8 +15,8 @@ import HamburgerIcon from '@/icons/hamburger-icon.svg'
 import HamburgerCloseIcon from '@/icons/hamburger-close-icon.svg'
 import ConfigIcon from '@/icons/settings-2-svgrepo-com.svg'
 import Logo from '@/icons/stats-icon.svg'
-import ArrowDown from '@/icons/arrow-down.svg'
-import ArrowUp from '@/icons/arrow-up.svg'
+import ArrowNext from '@/icons/arrow-next.svg'
+import ArrowPrev from '@/icons/arrow-prev.svg'
 import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
@@ -67,15 +67,23 @@ function Sidebar() {
     {
       icon: StatsIcon,
       title: 'Stats',
-      linkUrl: '/stats'
+      linkUrl: '/stats',
+      submenu: [
+        {
+          icon: ConfigIcon,
+          title: 'Cantidad de pacientes por fecha',
+          linkUrl: '/stats/cant_pacientes_fecha'
+        },
+        { icon: ConfigIcon, title: 'Top consultas', linkUrl: '/stats/top_consultas_fecha' }
+      ]
     },
     {
       icon: ConfigIcon,
       title: 'Settings',
       linkUrl: '/settings',
       submenu: [
-        { icon: ConfigIcon, title: 'Users', linkUrl: '/settings/user' },
-        { icon: ConfigIcon, title: 'Boxes', linkUrl: '/settings/box' }
+        { icon: ConfigIcon, title: 'Users settings', linkUrl: '/settings/user' },
+        { icon: ConfigIcon, title: 'Boxes settings', linkUrl: '/settings/box' }
       ]
     }
   ]
@@ -176,18 +184,18 @@ function Sidebar() {
                       {item.title}
                     </div>
                     {openSubMenu === index ? (
-                      <img src={ArrowUp} className='inline-block w-5 h-5 mr-2' />
+                      <img src={ArrowPrev} className='inline-block w-5 h-5 mr-2' />
                     ) : (
-                      <img src={ArrowDown} className='inline-block w-5 h-5 mr-2' />
+                      <img src={ArrowNext} className='inline-block w-5 h-5 mr-2' />
                     )}
                   </button>
                   {openSubMenu === index && (
-                    <div className=' left-full top-0 mt-2 ml-2 bg-gray-800'>
+                    <div className='absolute left-full top-0 mt-2 ml-2 bg-gray-800 rounded-md p-2'>
                       {item.submenu.map((submenuItem, submenuIndex) => (
                         <Link
                           key={submenuIndex}
                           to={submenuItem.linkUrl}
-                          className='block px-3 py-2 hover:bg-gray-700'
+                          className=' block px-3 py-2 hover:bg-gray-700 whitespace-nowrap'
                         >
                           {submenuItem.title}
                         </Link>
