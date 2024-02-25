@@ -60,7 +60,7 @@ function App() {
             element={
               <div className='flex h-screen '>
                 <Sidebar />
-                <div className='flex-1 overflow-y-auto h-screen bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
+                <div className='flex-1 overflow-y-auto bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
                   <Routes>
                     <Route path='/' element={<GuidedEntry />} />
                     <Route path='/guidedentry' element={<GuidedEntry />} />
