@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PartialPatient, Patient } from '@/interfaces/Patinet'
+import { Patient } from '@/interfaces/Patinet'
 import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
 import { Box } from '@/interfaces/Boxes'
@@ -10,44 +10,27 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { DatePickerMUI } from './DatePickerMUI'
-// import { Patient } from '@/interfaces/Patinet'
 import { Link, useParams } from 'react-router-dom'
 import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
+import { useNavigate } from 'react-router-dom'
 
-interface PatientState {
-  state_id: number
-  state_name: string
-}
-
-function NewPatientForm() {
+function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
 
-  //Edit select
+  const navigate = useNavigate()
+
+  // Edit states
   const { edditingPatientID } = useParams()
   const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [data] = await getPatientById(edditingPatientID)
-        // console.log(data);
         setedditingPatient(data)
-        //TODO necesito que datos de formdata queden en patient
-        // setFormData(data)
-        // console.log(formData);
-        // console.log(data);//en algunos esta el id y en otros el nombre
-        //poner fecha
-        //poner doc
-        // console.log(DoctorOptions);
-        // const nuevoData= completarFormData(formData,data,BoxesOptions,DoctorOptions,NurseOptions)
-        // console.log(nuevoData);
-        // setFormData({
-        //   ...formData,
-        //   doctor_id:
-        // })
-        //poner enfermero
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error al obtener pacientes:', error.message)
@@ -56,13 +39,11 @@ function NewPatientForm() {
         }
       }
     }
-    edditingPatientID && fetchData() //solo hace fetch si existe params
+    edditingPatientID && fetchData() //Only runs if params exists
   }, [edditingPatientID])
-  //todo listo
-  useEffect(() => {
-    console.log('cambio edditinPatient: ')
-    console.log(edditingPatient)
 
+  useEffect(() => {
+    //Only runs in edit mode
     const asFun = async () => {
       try {
         const docs = await getAllDoctors()
@@ -79,7 +60,7 @@ function NewPatientForm() {
         const box = allBoxes?.find((box) => box.box_code === edditingPatient?.box_code)
         formData.box_id = box ? box.box_id : ''
       } catch (error) {
-        // console.error(error.message);
+        console.log(error)
       }
     }
     if (edditingPatient) {
@@ -95,44 +76,11 @@ function NewPatientForm() {
       asFun()
       const newDate = dayjs(edditingPatient.date_of_birth)
       setSelectedDate(newDate)
-      console.log('HAY EDDITTING PATIENT')
     }
   }, [edditingPatient])
 
-  //funcion para completar formdata con los datos de edditingPatient
-  function completarFormData(
-    formData: any,
-    patient,
-    boxesOptions: Box[],
-    doctorOptions: User[],
-    nurseOptions: User[]
-  ) {
-    if (!patient || !formData) {
-      return null //si no viene nada
-    }
-    //campos comunes
-    formData.patient_name = patient.patient_name || ''
-    formData.date_of_birth = patient.date_of_birth || ''
-    formData.entry_time = patient.entry_time || ''
-    formData.exit_time = patient.exit_time || null
-    formData.patient_triage_time = patient.patient_triage_time || ''
-    formData.patient_triage_level = patient.patient_triage_level || ''
-    formData.patient_status = patient.patient_status || ''
-    formData.patient_problem = patient.patient_problem || ''
-    formData.patient_medication = patient.patient_medication || ''
-    // Buscar el ID del doctor
-    const doctor = doctorOptions?.find((doctor) => doctor.user_name === patient.doctor_name)
-    formData.doctor_id = doctor ? doctor.user_id : ''
-    // Buscar el ID de enfermera
-    const nurse = nurseOptions?.find((nurse) => nurse.user_name === patient.nurse_name)
-    formData.nurse_id = nurse ? nurse.user_id : ''
-    // Buscar el ID de caja
-    const box = boxesOptions?.find((box) => box.box_code === patient.box_code)
-    formData.box_id = box ? box.box_id : ''
-    return formData
-  }
-
   useEffect(() => {
+    //bring doctors, nurses, and boxes available
     const fetchDoctors = async () => {
       try {
         const data = await getAllDoctors()
@@ -193,10 +141,6 @@ function NewPatientForm() {
     { _id: 4, name: 'IV', color: '105,168,79' }
   ]
 
-  //todo: sacar patient_box,
-  //todo: patient_triage_time se crea en api
-  //todo: entry time se crea en api
-
   // Function to get the current time in the desired format
   const getCurrentTime = () => {
     const now = new Date()
@@ -212,15 +156,6 @@ function NewPatientForm() {
     return formattedTime
   }
 
-  // const getFormatTime = (date: Date | null) => {
-  //   if (date) {
-  //     const fecha = new Date(date)
-  //     const dia = fecha.getDate().toString().padStart(2, '0') // Obtiene el día y lo convierte a string con dos dígitos
-  //     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0') // Obtiene el mes (los meses empiezan desde 0)
-  //     const anio = fecha.getFullYear()
-  //     return `${anio}-${mes}-${dia}`
-  //   }
-  // }
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     formData.patient_triage_time = getCurrentTime()
     formData.patient_box = formData.box_id
@@ -252,14 +187,11 @@ function NewPatientForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     // Get the selected option based on the entered value
-
     // Check if it's the hidden input
     if (name === 'doctor_id') {
       const itemId = DoctorOptions
         ? DoctorOptions.find((option) => option.user_name === value)?.user_id
         : null
-
-      console.log(itemId)
       setFormData({
         ...formData,
         [name]: itemId
@@ -268,21 +200,12 @@ function NewPatientForm() {
       const itemId = NurseOptions
         ? NurseOptions.find((option) => option.user_name === value)?.user_id
         : null
-
-      console.log(itemId)
       setFormData({
         ...formData,
         [name]: itemId
       })
     } else if (name === 'box_id') {
-      console.log(BoxesOptions)
-      console.log(value)
-      // const itemId = BoxesOptions
-      //   // ? BoxesOptions.find((option) => option.box_id + ': ' + option.box_type === value)?.box_id
-      //   ? BoxesOptions.find((option) => option.box_id === value)?.box_id
-      //   : null
       const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
-      console.log(itemId)
       setFormData({
         ...formData,
         [name]: itemId
@@ -302,15 +225,14 @@ function NewPatientForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    //actualizar entry_time
+    //Update entry_time
     const FormDataNow = formData
     FormDataNow.entry_time = getCurrentTime()
+
     try {
-      console.log(FormDataNow)
+      //Delete Id
       const formDataNoID = FormDataNow
       delete formDataNoID.patient_id
-      console.log(formDataNoID)
       const token = Cookies.get('authToken')
       if (token) {
         if (edditingPatient) {
@@ -319,6 +241,7 @@ function NewPatientForm() {
             toast.success('Paciente actualizado', {
               duration: 2000
             })
+            navigate('/patients')
           } catch {
             toast.error('Error al actualizar un paciente', {
               duration: 2000
@@ -372,16 +295,13 @@ function NewPatientForm() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
-  //EDIT
-  const handleCancelButton = () => {
-    console.log('cerrar edit')
-    console.log(edditingPatient)
-    onCancelEdit()
-  }
-
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
-      <h2 className='text-2xl font-semibold mb-5'>Nuevo Paciente</h2>
+      {edditingPatient ? (
+        <h2 className='text-2xl font-semibold mb-5'>Edit Patient</h2>
+      ) : (
+        <h2 className='text-2xl font-semibold mb-5'>New Patient</h2>
+      )}
       <form
         onSubmit={handleSubmit}
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
@@ -526,13 +446,13 @@ function NewPatientForm() {
           </Select>
         </div>
 
-        <div className='flex items-end'>
-          <Button type='submit' color='blue' onClick={handleButtonClick}>
+        <div className='flex items-end gap-4 '>
+          <Button type='submit' color='green' onClick={handleButtonClick}>
             {edditingPatient ? 'Save Patient' : 'Add New Patient'}
           </Button>
           {edditingPatient && (
             <Link to={`/patients`}>
-              <Button type='button' color='blue'>
+              <Button type='button' color='grey'>
                 Cancel
               </Button>
             </Link>
@@ -543,4 +463,4 @@ function NewPatientForm() {
   )
 }
 
-export default NewPatientForm
+export default PatientForm

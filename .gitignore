@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+
 node_modules
 .next
 
@@ -16,6 +17,7 @@ dist-ssr
 *.env
 *.env.local
 *.env.staging
+__pycache__/
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +29,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+DataAnalysisAndReports/src/data/__pycache__/make_dataset.cpython-310.pyc
+DataAnalysisAndReports/src/features/__pycache__/build_features.cpython-310.pyc
+DataAnalysisAndReports/src/visualization/__pycache__/visualize.cpython-310.pyc

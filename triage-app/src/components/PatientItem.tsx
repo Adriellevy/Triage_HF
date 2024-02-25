@@ -8,15 +8,11 @@ import { Button } from '@/components/ui'
 
 interface PropsPatientItem {
   patient: Patient
-  onViewDetails: (patient: Patient) => void
-  onEditPatient: (patient:Patient) => void
 }
 
-function PatientItem({ patient, onViewDetails, onEditPatient }: PropsPatientItem) {
+function PatientItem({ patient }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
-
-  // const [edditingPatient, setEdditingPatient] = useState<Patient|null>(null)
 
   const {
     patient_name,
@@ -82,11 +78,6 @@ function PatientItem({ patient, onViewDetails, onEditPatient }: PropsPatientItem
       <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
       <td className='border p-2'>
         <div className='mb-2'>
-          {/* <Button wfull color='green' onClick={() => onViewDetails(patient)}> */}
-            {/* <Button wfull color='green' onClick={() => onEditPatient(patient)}>
-            <FontAwesomeIcon icon={faPenToSquare} />
-          </Button> */}
-          {/* //TODO que mande a un nuevo componente donde tome el id y busque el paciente para editar */}
           <Link to={`/edit_patient/${patient_id}`}>
             <Button wfull color='green'>
               <FontAwesomeIcon icon={faPenToSquare} />
