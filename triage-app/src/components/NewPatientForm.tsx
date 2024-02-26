@@ -297,7 +297,6 @@ function NewPatientForm() {
     //Update entry_time
     const FormDataNow = formData
     FormDataNow.entry_time = getCurrentTime()
-    console.log(FormDataNow)
     try {
       //Delete Id
       const formDataNoID = FormDataNow
@@ -392,8 +391,6 @@ function NewPatientForm() {
       box_id: { value: null, message: 'Seleccione un box válido' }
     })
   }
-
-  console.log(ErrorsForm)
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
