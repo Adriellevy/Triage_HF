@@ -163,7 +163,7 @@ function NewPatientForm() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
     patient_name: '',
-    date_of_birth: '2000-01-01',
+    date_of_birth: null,
     entry_time: '',
     exit_time: null,
     patient_triage_time: getCurrentTime(),
@@ -174,15 +174,39 @@ function NewPatientForm() {
     patient_medication: '',
     doctor_id: '',
     nurse_id: '',
-    box_id: ''
+    box_id: null
   })
 
+  //Triage level buttons
   const handleTriageLevelClick = (level: number) => {
     setFormData({
       ...formData,
       patient_triage_level: level
     })
+    setErrorsForm({
+      ...ErrorsForm,
+      patient_triage_level: {
+        ...ErrorsForm.patient_triage_level,
+        value: false
+      }
+    })
   }
+
+  //Date Picker
+  const handleDateChange = (newDate: Date | null) => {
+    setFormData({ ...formData, date_of_birth: newDate })
+    setErrorsForm({
+      ...ErrorsForm,
+      date_of_birth: {
+        ...ErrorsForm.date_of_birth,
+        value: false
+      }
+    })
+    setSelectedDate(newDate)
+    console.log(newDate)
+  }
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -196,6 +220,13 @@ function NewPatientForm() {
         ...formData,
         [name]: itemId
       })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
     } else if (name === 'nurse_id') {
       const itemId = NurseOptions
         ? NurseOptions.find((option) => option.user_name === value)?.user_id
@@ -204,22 +235,60 @@ function NewPatientForm() {
         ...formData,
         [name]: itemId
       })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
     } else if (name === 'box_id') {
       const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
       setFormData({
         ...formData,
         [name]: itemId
       })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
     } else if (name === 'patient_triage_level') {
       setFormData({
         ...formData,
         [name]: Number(value)
+      })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
       })
     } else {
       setFormData({
         ...formData,
         [name]: value
       })
+      if (value) {
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      } else {
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: true
+          }
+        })
+      }
     }
   }
 
@@ -228,7 +297,7 @@ function NewPatientForm() {
     //Update entry_time
     const FormDataNow = formData
     FormDataNow.entry_time = getCurrentTime()
-
+    console.log(FormDataNow)
     try {
       //Delete Id
       const formDataNoID = FormDataNow
@@ -254,29 +323,40 @@ function NewPatientForm() {
             toast.error('Error al intentar agregar un nuevo paciente', {
               duration: 2000
             })
+            resetErrors()
+            setErrorsForm((prevErrorsForm: any) => {
+              let updatedErrorsForm = { ...prevErrorsForm }
+              errors.forEach((error) => {
+                updatedErrorsForm = {
+                  ...updatedErrorsForm,
+                  [error.path]: { ...updatedErrorsForm[error.path], value: true }
+                }
+              })
+              return updatedErrorsForm
+            })
           } else {
             console.log('Nuevo paciente agregado:', data)
             toast.success('Nuevo paciente agregado', {
               duration: 2000
             })
-          }
 
-          setFormData({
-            patient_name: '',
-            date_of_birth: '2000-01-01',
-            entry_time: null,
-            exit_time: null,
-            patient_triage_time: getCurrentTime(),
-            patient_triage_level: '',
-            patient_box: '',
-            patient_status: '',
-            patient_problem: '',
-            patient_medication: '',
-            doctor_id: '',
-            nurse_id: '',
-            box_id: ''
-          })
-          setSelectedDate(null)
+            setFormData({
+              patient_name: '',
+              date_of_birth: '2000-01-01',
+              entry_time: null,
+              exit_time: null,
+              patient_triage_time: getCurrentTime(),
+              patient_triage_level: '',
+              patient_box: '',
+              patient_status: '',
+              patient_problem: '',
+              patient_medication: '',
+              doctor_id: '',
+              nurse_id: '',
+              box_id: ''
+            })
+            setSelectedDate(null)
+          }
         }
       }
     } catch (error) {
@@ -287,13 +367,33 @@ function NewPatientForm() {
     }
   }
 
-  const handleDateChange = (newDate: Date | null) => {
-    setFormData({ ...formData, date_of_birth: newDate })
-    setSelectedDate(newDate)
-    console.log(newDate)
+  // Errors
+  const [ErrorsForm, setErrorsForm] = useState<any>({
+    patient_name: { value: null, message: 'Escriba un nombre válido' },
+    date_of_birth: { value: null, message: 'Seleccione una fecha válida' },
+    patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
+    patient_status: { value: null, message: 'Seleccione un estado válido' },
+    patient_problem: { value: null, message: 'Escriba el problema del paciente' },
+    patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
+    doctor_id: { value: null, message: 'Seleccione un doctor válido' },
+    nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
+    box_id: { value: null, message: 'Seleccione un box válido' }
+  })
+  const resetErrors = () => {
+    setErrorsForm({
+      patient_name: { value: null, message: 'Escriba un nombre válido' },
+      date_of_birth: { value: null, message: 'Seleccione una fecha válida' },
+      patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
+      patient_status: { value: null, message: 'Seleccione un estado válido' },
+      patient_problem: { value: null, message: 'Escriba el problema del paciente' },
+      patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
+      doctor_id: { value: null, message: 'Seleccione un doctor válido' },
+      nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
+      box_id: { value: null, message: 'Seleccione un box válido' }
+    })
   }
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  console.log(ErrorsForm)
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -305,28 +405,37 @@ function NewPatientForm() {
         <div>
           <Label htmlFor='patient_name'>Nombre del Paciente</Label>
           <Input
+            error_active={ErrorsForm.patient_name}
             type='text'
             id='patient_name'
             name='patient_name'
             value={formData.patient_name}
             onChange={handleInputChange}
-            required
+            // required
           />
         </div>
 
         <div>
           <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
-          <DatePickerMUI onChangeExt={handleDateChange} selectedDateExt={selectedDate} />
+          <DatePickerMUI
+            onChangeExt={handleDateChange}
+            selectedDateExt={selectedDate}
+            error_active={ErrorsForm.date_of_birth}
+          />
         </div>
         <div>
           <Label htmlFor='patient_triage_level'>Nivel de Triaje</Label>
-          <div className='flex'>
+          <div
+            className={`flex gap-3 p-0.5 ${
+              ErrorsForm.patient_triage_level.value ? 'border border-red-500' : ''
+            }`}
+          >
             {TriageLevels.map((level) => (
               <button
                 key={level._id}
                 onClick={() => handleTriageLevelClick(level._id)}
                 type='button'
-                className={`mr-2 mb-2 py-1  flex-grow border-4 ${
+                className={`py-1  flex-grow border-4 ${
                   formData.patient_triage_level == level._id
                     ? ' border-black'
                     : 'border-transparent'
@@ -337,11 +446,17 @@ function NewPatientForm() {
               </button>
             ))}
           </div>
+          <div>
+            {ErrorsForm.patient_triage_level.value && (
+              <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
+            )}
+          </div>
         </div>
 
         <div>
           <Label htmlFor='patient_medication'>Medicación del Paciente</Label>
           <Input
+            error_active={ErrorsForm.patient_medication}
             type='text'
             id='patient_medication'
             name='patient_medication'
@@ -353,6 +468,7 @@ function NewPatientForm() {
         <div>
           <Label htmlFor='patient_problem'>Problema del Paciente</Label>
           <Input
+            error_active={ErrorsForm.patient_problem}
             type='text'
             id='patient_problem'
             name='patient_problem'
@@ -373,7 +489,13 @@ function NewPatientForm() {
 
         <div>
           <Label htmlFor='box_id'>ID de la Caja</Label>
-          <Select id='box_id' name='box_id' value={formData.box_id} onChange={handleInputChange}>
+          <Select
+            error_active={ErrorsForm.box_id}
+            id='box_id'
+            name='box_id'
+            value={formData.box_id ? formData.box_id : ''}
+            onChange={handleInputChange}
+          >
             <option value='' disabled>
               Seleccionar box
             </option>
@@ -388,6 +510,7 @@ function NewPatientForm() {
         <div>
           <Label htmlFor='doctor_id'>Nombre del Doctor</Label>
           <Select
+            error_active={ErrorsForm.doctor_id}
             id='doctor_id'
             name='doctor_id'
             value={formData.doctor_id}
@@ -407,6 +530,7 @@ function NewPatientForm() {
         <div>
           <Label htmlFor='nurse_id'>Nombre del Enfermero</Label>
           <Select
+            error_active={ErrorsForm.nurse_id}
             id='nurse_id'
             name='nurse_id'
             value={formData.nurse_id}
@@ -426,6 +550,7 @@ function NewPatientForm() {
         <div>
           <Label htmlFor='patient_status'>Estado del Paciente</Label>
           <Select
+            error_active={ErrorsForm.patient_status}
             id='patient_status'
             name='patient_status'
             value={formData.patient_status}

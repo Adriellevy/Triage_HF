@@ -6,12 +6,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 
+
 interface DatePickerMUIProps {
   onChangeExt: (newDate: Date | null) => void
   selectedDateExt: Date | null;
+  error_active:any
 }
 
-export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt,selectedDateExt }) => {
+
+export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt,selectedDateExt,error_active }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   useEffect(() => {
@@ -38,10 +41,14 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt,select
   const yesterday = dayjs().subtract(130, 'year');
   const today = dayjs()
 
-  //preguntar como dar fecha a chat
+  const errorBorder = error_active?.value == true ? 'border-red-500' : ''
+  const errorMessage = error_active?.message
+
+ 
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className={`${errorBorder?'redBorderDataPick':''}`}>
         <DatePicker
           // label="Seleccionar fecha"
           views={['year', 'month', 'day']}
@@ -51,9 +58,12 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({ onChangeExt,select
           value={selectedDate}
           onChange={handleChange}
           format='DD/MM/YYYY'
-          className='w-full h-0 m-0 p-0 text-sm datePick'
-        />
+          className={`w-full h-0 m-0 p-0 text-sm datePick`}
+          />
+          </div>
       </LocalizationProvider>
+      {errorBorder && <span className='text-red-500 relative'>{errorMessage}</span>}
+
     </div>
   )
 }

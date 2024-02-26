@@ -2,11 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Date-Picker */
 .datePick input {
-      padding: .6em;
-      font-size: 1em;
-  }
+  padding: 0.6em;
+  font-size: 1em;
+}
 
- 
+.datePick > div {
+  /* border: 1px solid red; */
+}
+
+.redBorderDataPick {
+  /* background-color: red; */
+  height: 2.6em;
+  border: 1px solid red;
+  border-radius: 5px;
+}
