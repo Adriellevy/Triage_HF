@@ -21,7 +21,7 @@ function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
   }
 
   return (
-    <div className='bg-white p-4 rounded-md shadow-md'>
+    <div className='bg-white p-4'>
       <h2 className='text-xl font-semibold mb-4'>Search Patients</h2>
       <div className='flex space-x-4'>
         <div className='flex-1'>

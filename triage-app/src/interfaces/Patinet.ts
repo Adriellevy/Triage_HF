@@ -14,7 +14,7 @@ export interface Patient {
   entry_time: string
   exit_time: string
   patient_triage_level: number
-  patient_triage_time:string
+  patient_triage_time: string
   patient_medication: string
   patient_problem: string
   box_id: string
@@ -55,4 +55,13 @@ export interface PartialPatient {
   doctor_name?: string
   nurse_name?: string
   patient_status?: string
+}
+
+export interface PatientHistoryItem {
+  id: string
+  time: string
+  patientitem: string
+  before: string
+  after: string
+  user: string
 }

@@ -1,26 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import QRCode from 'react-qr-code'
 import { Patient, PatientStatus, PatientData } from '@/interfaces/Patinet'
+import { Button, Label } from '@/components/ui'
+import PatientHistory from '@/components/PatientHistory/PatientHistory'
+import PatientInformIA from '@/components/PatientInformIA'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
-import { consulta } from '@/services/openai-test'
-import { Button, Label } from '@/components/ui'
-import LoaderSpin from '@/components/LoaderSpin'
-import QRCode from 'react-qr-code'
 
-const solicitud =
-  'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
 function PatientDetail() {
   const { patient_id } = useParams()
   const navigate = useNavigate()
   const [Patient, setPatient] = useState<PatientData | null>(null)
-  const [loadingInform, setLoadingInform] = useState<boolean>(false)
-  const [loadingHistory, setLoadingHistory] = useState<boolean>(false)
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
-  const [showinform, setShowInform] = useState<boolean>(false)
-  const [showhistorial, setShowHistorial] = useState<boolean>(false)
-  const [inform, setInform] = useState<string | null>(null)
-  const [historial, setHistorial] = useState<string | null>(null)
+  const isPatientStatusAlta = Patient?.patient_status !== PatientStatus.DISCHARGED
 
   const handleGoBack = () => {
     navigate(-1)
@@ -73,6 +66,7 @@ function PatientDetail() {
     const formatBirthDate = formatoNacimiento.format(originalBirthDate)
     return formatBirthDate
   }
+
   interface Field {
     label: string
     key: keyof PatientData
@@ -96,7 +90,6 @@ function PatientDetail() {
   const handlePatientStatus = (patientData: Patient | null) => {
     if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
       SetMedicalDischarge(true)
-      setShowInform(false)
     }
   }
 
@@ -109,59 +102,12 @@ function PatientDetail() {
       console.log('Error en dar de ALTA al paciente')
     }
   }
-  //------------------------------------------- inform Open AI -------------------------------------------------------------------------------------
-  const handleRequestButtonClick = () => {
-    setShowInform(true)
-    setLoadingInform(true)
-    const patientProvisional = { ...Patient }
-    if (patientProvisional) {
-      patientProvisional.doctor_name = ''
-      patientProvisional.patient_name = ''
-      patientProvisional.box_id = ''
-    }
-    const prompt = solicitud + patientProvisional
-    handleRequestOpenAi(prompt)
-  }
-  const handleRequestOpenAi = async (prompt: string) => {
-    const result = await consulta(prompt)
-    setLoadingInform(false)
-    const requestInfo = result && result.message && result.message.content
-    if (requestInfo) {
-      setInform(requestInfo)
-    } else {
-      console.error('Element with class "text-gray-700" not found')
-    }
-  }
-  interface Field {
-    label: string
-    key: keyof PatientData
-    format: ((value: string) => string) | null
-  }
-
-  //------------------------------------------- Handle Historial button + request ---------------------------------------------------------------
-
-  const handleHistorial = () => {
-    setShowHistorial(true)
-    setLoadingHistory(true)
-    handleRequestHistorial()
-  }
-  const handleRequestHistorial = async () => {
-    //const result = await consulta(prompt)
-    setLoadingHistory(false)
-    const requestInfo = 'Dr. Smith: Estado = EN ESPERA 12/2/24'
-    //const requestInfo = result && result.message && result.message.content
-    if (requestInfo) {
-      setHistorial(requestInfo)
-    } else {
-      console.error('Element with class "text-gray-700" not found')
-    }
-  }
 
   return (
-    <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
+    <div className='max-w-5xl mx-auto mt-5 mb-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
         <h2 className='text-2xl font-bold'>Patient Details </h2>
-        <Button color='green' onClick={handleGoBack}>
+        <Button color='red' onClick={handleGoBack}>
           Back
         </Button>
       </div>
@@ -182,7 +128,7 @@ function PatientDetail() {
             </ul>
           }
         </div>
-        <div className='flex items-center mt-4'>
+        <div className='flex items-center'>
           <div className='mx-auto w-full max-w-48 '>
             <QRCode
               size={256}
@@ -196,65 +142,17 @@ function PatientDetail() {
           </div>
         </div>
       </div>
-      <div className='flex justify-between mt-4'>
-        <div className=''>
+      {isPatientStatusAlta ? (
+        <div className='mt-4 mb-4'>
           <Button color='red' onClick={handleMedicalDischarge}>
             Discharge
           </Button>
         </div>
-        {showMedicalDischarge && (
-          <div className=''>
-            <Button color='blue' onClick={handleRequestButtonClick}>
-              inform
-            </Button>
-          </div>
-        )}
-      </div>
-      {showMedicalDischarge && (
-        <>
-          <div className='mt-4'>
-            {showinform && (
-              <div className='mt-4'>
-                <h3 className={`text-lg font-bold mb-2 ${loadingInform ? 'hidden' : ''} `}>
-                  Requested inform:
-                </h3>
-                {loadingInform ? (
-                  <div className='flex justify-center items-center'>
-                    <LoaderSpin />
-                  </div>
-                ) : (
-                  <p className='text-gray-700' id='request-info'>
-                    {inform}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        </>
-      )}
+      ) : null}
 
-      <div className='mt-4'>
-        <Button color='yellow' onClick={handleHistorial}>
-          Request Historial of Changes
-        </Button>
+      {showMedicalDischarge && <PatientInformIA Patient={Patient} />}
 
-        {showhistorial && (
-          <div className='mt-4'>
-            <h3 className={`text-lg font-bold mb-2 ${loadingHistory ? 'hidden' : ''} `}>
-              Requested Historial:
-            </h3>
-            {loadingHistory ? (
-              <div className='flex justify-center items-center'>
-                <LoaderSpin />
-              </div>
-            ) : (
-              <p className='text-gray-700' id='request-info'>
-                {historial}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      <PatientHistory patient_id={patient_id} />
     </div>
   )
 }

@@ -8,10 +8,9 @@ interface PropsPatientsList {
 function PatientsList({ patients }: PropsPatientsList) {
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
-      {/*<h2 className='text-2xl font-semibold mb-4'>Patients List</h2> */}
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='min-w-full'>
+          <tr className='min-w-full bg-blue-400'>
             <th className='border p-2 '>Name</th>
             <th className='border p-2 hidden lg:table-cell'>Age</th>
             <th className='border p-2 hidden lg:table-cell'>Entry Time</th>
@@ -27,7 +26,8 @@ function PatientsList({ patients }: PropsPatientsList) {
         </thead>
         <tbody>
           {patients.map(
-            (patient) => patient && <PatientItem key={patient?.patient_id} patient={patient} />
+            (patient, index) =>
+              patient && <PatientItem key={patient?.patient_id} patient={patient} index={index} />
           )}
         </tbody>
       </table>
