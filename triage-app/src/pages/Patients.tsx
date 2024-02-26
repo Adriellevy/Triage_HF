@@ -219,16 +219,20 @@ function Patients() {
   }, [socket])
 
   return (
-    <div>
+    <div className='bg-white pb-4'>
       <div>
         <SearchPatientForm onSearch={handleonSearch} />
-        <Select
-          options={options}
-          isMulti
-          closeMenuOnSelect={true}
-          onChange={onChangeSelect}
-          styles={colourStyles}
-        />
+        <div className='bg-white pl-4 pr-4'>
+          <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
+          <Select
+            className='w-full'
+            options={options}
+            isMulti
+            closeMenuOnSelect={true}
+            onChange={onChangeSelect}
+            styles={colourStyles}
+          />
+        </div>
       </div>
 
       {searchTerm === '' && patientsData ? (

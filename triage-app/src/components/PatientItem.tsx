@@ -8,9 +8,10 @@ import { Button } from '@/components/ui'
 
 interface PropsPatientItem {
   patient: Patient
+  index: number
 }
 
-function PatientItem({ patient }: PropsPatientItem) {
+function PatientItem({ patient, index }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
 
@@ -27,6 +28,10 @@ function PatientItem({ patient }: PropsPatientItem) {
     nurse_name,
     patient_status
   } = patient
+
+  const isOdd = index % 2 !== 0
+
+  const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
 
   const TriageLevels = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
@@ -60,7 +65,7 @@ function PatientItem({ patient }: PropsPatientItem) {
   }, [])
 
   return (
-    <tr className='w-full'>
+    <tr className={bgClass}>
       <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>

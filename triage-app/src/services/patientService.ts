@@ -1,4 +1,4 @@
-import { PartialPatient, Patient } from '../interfaces/Patinet'
+import { PartialPatient, Patient, PatientHistoryItem } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
 
 export const getPatients = async (): Promise<Patient[]> => {
@@ -144,5 +144,26 @@ export const addNewPatient = async (
   } catch (error) {
     console.error('Error al agregar nuevo paciente:', error)
     throw new Error('Error al agregar nuevo paciente')
+  }
+}
+
+export const getPatientHistory = async (
+  patient_id: string | undefined
+): Promise<PatientHistoryItem[]> => {
+  const token = Cookies.get('authToken')
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/history/${patient_id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    if (!response.ok) {
+      throw new Error(`Error in GET request to /patient:${response.status}`)
+    }
+    return (await response.json()) as PatientHistoryItem[]
+  } catch (error) {
+    console.error('Error fetching patient:', error)
+    throw new Error('Error fetching patient')
   }
 }
