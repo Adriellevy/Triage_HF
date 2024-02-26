@@ -27,7 +27,7 @@ const options: Option[] = [
   {
     label: 'TRIAGE LEVEL',
     options: [
-      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#999999' },
+      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#bdbebe' },
       { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
       { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
       { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
@@ -43,35 +43,35 @@ const options: Option[] = [
   {
     label: 'PATIENT STATE',
     options: [
-      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#999999' },
+      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
       {
         value: 'patient_status',
         item: 'EN ESPERA DE INTERNACION',
         label: 'EN ESPERA DE INTERNACION',
-        color: '#999999'
+        color: '#525252'
       },
       {
         value: 'patient_status',
         item: 'EN INTERNACION',
         label: 'EN INTERNACION',
-        color: '#999999'
+        color: '#525252'
       },
-      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#999999' },
+      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       {
         value: 'patient_status',
         item: 'EN AISLAMIENTO',
         label: 'EN AISLAMIENTO',
-        color: '#999999'
+        color: '#525252'
       },
-      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#999999' },
-      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#999999' }
+      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
+      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
     ]
   },
   {
     label: 'From Who',
     options: [
-      { value: 'type_user', label: 'ALL', color: '#999999' },
-      { value: 'type_user', label: 'MINE', color: '#999999' }
+      { value: 'type_user', label: 'ALL', color: '#525252' },
+      { value: 'type_user', label: 'MINE', color: '#525252' }
     ]
   }
 ]

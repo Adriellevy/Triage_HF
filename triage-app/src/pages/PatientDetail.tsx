@@ -14,14 +14,18 @@ function PatientDetail() {
   const { patient_id } = useParams()
   const navigate = useNavigate()
   const [Patient, setPatient] = useState<PatientData | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingInform, setLoadingInform] = useState<boolean>(false)
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(false)
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
-  const [showRequestInfo, setShowRequestInfo] = useState<boolean>(false)
-  const [Inform, setInform] = useState<string | null>(null)
+  const [showinform, setShowInform] = useState<boolean>(false)
+  const [showhistorial, setShowHistorial] = useState<boolean>(false)
+  const [inform, setInform] = useState<string | null>(null)
+  const [historial, setHistorial] = useState<string | null>(null)
 
   const handleGoBack = () => {
     navigate(-1)
   }
+  //------------------------------------------- Our Api Get Patient  --------------------------------------------------------------------------------------
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +43,8 @@ function PatientDetail() {
     }
     fetchData()
   }, [patient_id])
+
+  //------------------------------------------------------  Formating Patient -----------------------------------------------------------------------------
 
   const getFormatEntryDate = (entry__time: string) => {
     const entryTimeOriginal = new Date(entry__time)
@@ -67,46 +73,6 @@ function PatientDetail() {
     const formatBirthDate = formatoNacimiento.format(originalBirthDate)
     return formatBirthDate
   }
-
-  const handlePatientStatus = (patientData: Patient | null) => {
-    if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
-      SetMedicalDischarge(true)
-      setShowRequestInfo(false)
-    }
-  }
-
-  const handleMedicalDischarge = () => {
-    SetMedicalDischarge(true)
-    if (Patient) {
-      Patient.patient_status = PatientStatus.DISCHARGED
-      updatePatient(Patient.patient_id, Patient)
-    } else {
-      console.log('Error en dar de ALTA al paciente')
-    }
-  }
-  const handleRequestButtonClick = () => {
-    setShowRequestInfo(true)
-    setLoading(true)
-    const patientProvisional = { ...Patient }
-    if (patientProvisional) {
-      patientProvisional.doctor_name = ''
-      patientProvisional.patient_name = ''
-      patientProvisional.box_id = ''
-    }
-    const prompt = solicitud + patientProvisional
-    handleRequestOpenAi(prompt)
-  }
-
-  const handleRequestOpenAi = async (prompt: string) => {
-    const result = await consulta(prompt)
-    setLoading(false)
-    const requestInfo = result && result.message && result.message.content
-    if (requestInfo) {
-      setInform(requestInfo)
-    } else {
-      console.error('Element with class "text-gray-700" not found')
-    }
-  }
   interface Field {
     label: string
     key: keyof PatientData
@@ -125,6 +91,72 @@ function PatientDetail() {
     { label: 'Nurse Name', key: 'nurse_name', format: null },
     { label: 'Patient Status', key: 'patient_status', format: null }
   ]
+  //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
+
+  const handlePatientStatus = (patientData: Patient | null) => {
+    if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
+      SetMedicalDischarge(true)
+      setShowInform(false)
+    }
+  }
+
+  const handleMedicalDischarge = () => {
+    SetMedicalDischarge(true)
+    if (Patient) {
+      Patient.patient_status = PatientStatus.DISCHARGED
+      updatePatient(Patient.patient_id, Patient)
+    } else {
+      console.log('Error en dar de ALTA al paciente')
+    }
+  }
+  //------------------------------------------- inform Open AI -------------------------------------------------------------------------------------
+  const handleRequestButtonClick = () => {
+    setShowInform(true)
+    setLoadingInform(true)
+    const patientProvisional = { ...Patient }
+    if (patientProvisional) {
+      patientProvisional.doctor_name = ''
+      patientProvisional.patient_name = ''
+      patientProvisional.box_id = ''
+    }
+    const prompt = solicitud + patientProvisional
+    handleRequestOpenAi(prompt)
+  }
+  const handleRequestOpenAi = async (prompt: string) => {
+    const result = await consulta(prompt)
+    setLoadingInform(false)
+    const requestInfo = result && result.message && result.message.content
+    if (requestInfo) {
+      setInform(requestInfo)
+    } else {
+      console.error('Element with class "text-gray-700" not found')
+    }
+  }
+  interface Field {
+    label: string
+    key: keyof PatientData
+    format: ((value: string) => string) | null
+  }
+
+  //------------------------------------------- Handle Historial button + request ---------------------------------------------------------------
+
+  const handleHistorial = () => {
+    setShowHistorial(true)
+    setLoadingHistory(true)
+    handleRequestHistorial()
+  }
+  const handleRequestHistorial = async () => {
+    //const result = await consulta(prompt)
+    setLoadingHistory(false)
+    const requestInfo = 'Dr. Smith: Estado = EN ESPERA 12/2/24'
+    //const requestInfo = result && result.message && result.message.content
+    if (requestInfo) {
+      setHistorial(requestInfo)
+    } else {
+      console.error('Element with class "text-gray-700" not found')
+    }
+  }
+
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
@@ -167,13 +199,13 @@ function PatientDetail() {
       <div className='flex justify-between mt-4'>
         <div className=''>
           <Button color='red' onClick={handleMedicalDischarge}>
-            Medical Discharge
+            Discharge
           </Button>
         </div>
         {showMedicalDischarge && (
           <div className=''>
             <Button color='blue' onClick={handleRequestButtonClick}>
-              Request Inform
+              inform
             </Button>
           </div>
         )}
@@ -181,18 +213,18 @@ function PatientDetail() {
       {showMedicalDischarge && (
         <>
           <div className='mt-4'>
-            {showRequestInfo && (
+            {showinform && (
               <div className='mt-4'>
-                <h3 className={`text-lg font-bold mb-2 ${loading ? 'hidden' : ''} `}>
-                  Requested Inform:
+                <h3 className={`text-lg font-bold mb-2 ${loadingInform ? 'hidden' : ''} `}>
+                  Requested inform:
                 </h3>
-                {loading ? (
+                {loadingInform ? (
                   <div className='flex justify-center items-center'>
                     <LoaderSpin />
                   </div>
                 ) : (
                   <p className='text-gray-700' id='request-info'>
-                    {Inform}
+                    {inform}
                   </p>
                 )}
               </div>
@@ -200,6 +232,29 @@ function PatientDetail() {
           </div>
         </>
       )}
+
+      <div className='mt-4'>
+        <Button color='yellow' onClick={handleHistorial}>
+          Request Historial of Changes
+        </Button>
+
+        {showhistorial && (
+          <div className='mt-4'>
+            <h3 className={`text-lg font-bold mb-2 ${loadingHistory ? 'hidden' : ''} `}>
+              Requested Historial:
+            </h3>
+            {loadingHistory ? (
+              <div className='flex justify-center items-center'>
+                <LoaderSpin />
+              </div>
+            ) : (
+              <p className='text-gray-700' id='request-info'>
+                {historial}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

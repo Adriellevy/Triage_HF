@@ -15,7 +15,7 @@ import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 
-function NewPatientForm() {
+function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
@@ -394,7 +394,11 @@ function NewPatientForm() {
 
   return (
     <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
-      <h2 className='text-2xl font-semibold mb-5'>Nuevo Paciente</h2>
+      {edditingPatient ? (
+        <h2 className='text-2xl font-semibold mb-5'>Edit Patient</h2>
+      ) : (
+        <h2 className='text-2xl font-semibold mb-5'>New Patient</h2>
+      )}
       <form
         onSubmit={handleSubmit}
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
@@ -581,4 +585,4 @@ function NewPatientForm() {
   )
 }
 
-export default NewPatientForm
+export default PatientForm
