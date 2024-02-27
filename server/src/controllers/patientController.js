@@ -31,6 +31,10 @@ export class PatientController {
           message: 'New patient',
         })
 
+        io.emit('update', {
+          message: 'Box Update',
+        })
+
         io.emit(`${result.data.doctor_id}`, {
           message: 'New patient assigned',
           patient: {
@@ -150,6 +154,10 @@ export class PatientController {
             patient_name: Patient.patient_name,
             patient_id: id,
           },
+        })
+
+        io.emit('update', {
+          message: 'Box Update',
         })
 
         io.emit(`${Patient.nurse_id}`, {
