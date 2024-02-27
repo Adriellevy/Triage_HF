@@ -43,7 +43,7 @@ function PatientInformIA({ Patient }: PropsPatientInformIA) {
   return (
     <div className='mt-8'>
       <div className='flex justify-between items-center mt-4 mb-4'>
-        <h2 className={`text-xl  font-bold mt-4 mb-4`}>Patinet Inform:</h2>
+        <h2 className='text-xl  font-bold mt-4 mb-4'>Patinet Inform</h2>
         <div className=''>
           <Button color='blue' onClick={handleRequestButtonClick} disabled={!isPatientStatusAlta}>
             Generate with IA
