@@ -113,20 +113,20 @@ function PatientDetail() {
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
         <div>
-          {
-            <ul className='list-disc pl-4'>
-              {patientFields.map((field) => (
-                <li key={field.label}>
-                  <strong>{field.label}:</strong>{' '}
+          <ul className='list-disc pl-4 space-y-2'>
+            {patientFields.map((field) => (
+              <li key={field.label} className='flex items-start'>
+                <span className='font-semibold mr-2'>{field.label}:</span>
+                <span className='flex-1'>
                   {Patient
                     ? field.format
                       ? field.format(String(Patient[field.key]))
                       : Patient[field.key]
                     : null}
-                </li>
-              ))}
-            </ul>
-          }
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className='flex items-center'>
           <div className='mx-auto w-full max-w-48 '>

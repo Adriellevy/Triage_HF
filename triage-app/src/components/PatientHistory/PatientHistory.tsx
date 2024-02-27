@@ -4,8 +4,6 @@ import PatientHystoryItem from '@/components/PatientHistory/PatientHystoryItem'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getPatientHistory } from '@/services/patientService'
 import LoaderSpin from '../LoaderSpin'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Button } from '../ui'
 
 interface PropsPatienHistory {
   patient_id: string | undefined
@@ -65,7 +63,7 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
 
   return (
     <div className='mx-0 mt-4 lg:mx-0'>
-      <h3 className={`text-xl  font-bold mt-4 mb-6`}>Patient Change History:</h3>
+      <h3 className='text-xl  font-bold mt-4 mb-6'>Patient Change History</h3>
       <div className='max-h-72 overflow-y-auto'>
         {isLoading ? (
           <div className='flex justify-center items-center'>

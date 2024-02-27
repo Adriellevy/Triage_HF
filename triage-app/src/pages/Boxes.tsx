@@ -49,7 +49,11 @@ function Boxes() {
     }
   }, [socket])
 
-  return <div>{!isLoading ? <BoxList boxes={boxesData} /> : <p>Cargando boxes...</p>}</div>
+  return (
+    <div className='bg-white pb-4'>
+      {!isLoading ? <BoxList boxes={boxesData} /> : <p>Cargando boxes...</p>}
+    </div>
+  )
 }
 
 export default Boxes
