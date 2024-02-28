@@ -197,7 +197,7 @@ export class PatientsModel {
             [id],
           )
           await connection.query(
-            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
+            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
             [prevBox],
           )
           return { message: 'Patient updated successfully' }
