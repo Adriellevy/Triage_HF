@@ -9,6 +9,7 @@ export class BoxModel {
                 BIN_TO_UUID(b.box_id) AS box_id,
                 b.box_code,
                 b.box_type,
+                b.box_time,
                 b.box_status,
                 BIN_TO_UUID(p.patient_id) AS patient_id,
                 p.patient_name

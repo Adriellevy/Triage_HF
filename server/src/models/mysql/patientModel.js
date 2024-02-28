@@ -136,13 +136,17 @@ export class PatientsModel {
         data.box_id,
       ])
 
+      const now = new Date()
+
       if (result.affectedRows > 0) {
         const updateBoxStatusQuery = `
                 UPDATE Box
-                SET box_status = 'OCUPADO'
+                SET box_time = ?,
+                box_status = 'OCUPADO'
                 WHERE box_id = UUID_TO_BIN(?);
             `
-        await connection.query(updateBoxStatusQuery, [data.box_id])
+        await connection.query(updateBoxStatusQuery, [now, data.box_id])
+
         return uuid
       }
     } catch (error) {
@@ -155,11 +159,15 @@ export class PatientsModel {
   }
 
   static async updatePatient({ id, data }) {
+    console.log('asd')
     try {
       const [[Box]] = await connection.query(
-        'SELECT box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
+        'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
         [id],
       )
+
+      const prevBox = Box.box_id
+
       const updateFields = Object.entries(data)
         .filter(([key, value]) => value !== null && value !== undefined)
         .map(([key, value]) => {
@@ -180,6 +188,9 @@ export class PatientsModel {
       )
       updateValues.push(id)
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
+
+      const now = Date()
+
       if (result.affectedRows > 0) {
         if (data.patient_status === 'ALTA' && data.box_id !== null) {
           await connection.query(
@@ -190,18 +201,26 @@ export class PatientsModel {
           )
           await connection.query(
             `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
-            [Box.box_id],
+            [prevBox],
           )
           return { message: 'Patient updated successfully' }
         }
-        await connection.query(
-          `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = ?;`,
-          [Box.box_id],
-        )
-        await connection.query(
-          `UPDATE Box SET box_status = 'OCUPADO' WHERE box_id = UUID_TO_BIN(?);`,
-          [data.box_id],
-        )
+
+        if (prevBox !== data.box_id) {
+          // eslint-disable-next-line no-shadow
+          const now = new Date()
+          await connection.query(
+            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
+            [prevBox],
+          )
+          await connection.query(
+            `UPDATE Box
+            SET box_time = ?,
+            box_status = 'OCUPADO'
+            WHERE box_id = UUID_TO_BIN(?)`,
+            [now, data.box_id],
+          )
+        }
         return { message: 'Patient updated successfully' }
       } else {
         return { error: 'Error updating the patient' }

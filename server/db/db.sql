@@ -21,6 +21,7 @@ CREATE TABLE Box (
   box_id BINARY(16) NOT NULL,
   box_code VARCHAR(50) NOT NULL,
   box_type ENUM('CONSULTORIO', 'CAMA', 'INTERNACION'),
+  box_time TIMESTAMP,
   box_status ENUM('DISPONIBLE', 'OCUPADO') DEFAULT 'DISPONIBLE',
   PRIMARY KEY(box_id)
 );
@@ -46,6 +47,7 @@ CREATE TABLE Patient (
   FOREIGN KEY (nurse_id) REFERENCES Users(user_id),
   PRIMARY KEY(patient_id)
 );
+
 -- Insertar datos de ejemplo en la tabla Users
 INSERT INTO Users (user_name, user_email, user_password, user_type)
 VALUES
