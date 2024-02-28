@@ -188,8 +188,6 @@ export class PatientsModel {
       updateValues.push(id)
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
 
-      const now = Date()
-
       if (result.affectedRows > 0) {
         if (data.patient_status === 'ALTA' && data.box_id !== null) {
           await connection.query(
