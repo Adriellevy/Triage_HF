@@ -159,7 +159,6 @@ export class PatientsModel {
   }
 
   static async updatePatient({ id, data }) {
-    console.log('asd')
     try {
       const [[Box]] = await connection.query(
         'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
