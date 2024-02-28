@@ -155,6 +155,7 @@ function Patients() {
         })
       })
       setPatientsData(filteredData)
+      setFilteredPatients(filteredData)
     }
   }
 
