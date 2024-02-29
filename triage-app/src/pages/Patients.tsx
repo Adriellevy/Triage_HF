@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientsList'
-import SearchPatientForm from '@/components/SearchPatientForm'
+import Search from '@/components/Search'
 import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
@@ -129,6 +129,17 @@ const colourStyles: StylesConfig<ColourOption, true> = {
   })
 }
 
+const SearchOption = [
+  {
+    value: 'name',
+    text: 'Name'
+  },
+  {
+    value: 'date_of_birth',
+    text: 'Date of Birth'
+  }
+]
+
 function Patients() {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
@@ -222,7 +233,7 @@ function Patients() {
   return (
     <div className='bg-white pb-4'>
       <div>
-        <SearchPatientForm onSearch={handleonSearch} />
+        <Search onSearch={handleonSearch} options={SearchOption} />
         <div className='bg-white pl-4 pr-4'>
           <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
           <Select
