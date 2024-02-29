@@ -1,12 +1,18 @@
 import { useState, ChangeEvent } from 'react'
 
-interface PropsSearchPatientForm {
-  onSearch: ({ term, by }: { term: string; by: string }) => void
+interface optionitem {
+  value: string
+  text: string
 }
 
-function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
+interface PropsSearch {
+  onSearch: ({ term, by }: { term: string; by: string }) => void
+  options: optionitem[]
+}
+
+function Search({ onSearch, options }: PropsSearch) {
   const [searchTerm, setSearchTerm] = useState<string>('')
-  const [searchBy, setSearchBy] = useState<string>('name')
+  const [searchBy, setSearchBy] = useState<string>(options[0].value)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value
@@ -22,10 +28,10 @@ function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
 
   return (
     <div className='bg-white p-4'>
-      <h2 className='text-xl font-semibold mb-4'>Search Patients</h2>
+      <h2 className='text-xl font-semibold mb-4'>Search</h2>
       <div className='flex space-x-4'>
         <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>Search Term:</label>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>Term:</label>
           <input
             type='text'
             value={searchTerm}
@@ -35,14 +41,15 @@ function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
           />
         </div>
         <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>Search By:</label>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>By:</label>
           <select
             value={searchBy}
             onChange={handleSelectChange}
             className='w-full p-2 border rounded-md'
           >
-            <option value='name'>Name</option>
-            <option value='date_of_birth'>Date of Birth</option>
+            {options.map((option) => (
+              <option value={option.value}>{option.text}</option>
+            ))}
           </select>
         </div>
       </div>
@@ -50,4 +57,4 @@ function SearchPatientForm({ onSearch }: PropsSearchPatientForm) {
   )
 }
 
-export default SearchPatientForm
+export default Search
