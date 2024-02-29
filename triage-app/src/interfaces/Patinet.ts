@@ -22,7 +22,6 @@ export interface Patient {
   doctor_name: string
   nurse_name: string
   patient_status: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Symbol.iterator](): IterableIterator<Patient>
 }
 
