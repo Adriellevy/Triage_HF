@@ -2,11 +2,12 @@ from flask import Flask, request
 
 from data.make_dataset import get_df
 from features.build_features import build_features
-from visualization.visualize import cant_pacientes_fecha, top_consultas_fecha
+from visualization.visualize import cant_pacientes_fecha, cant_pacientes_triage, top_consultas_fecha
 from visualization.visualize import bar_chart
 
 #
 # AGREGAR QUE EL PRIMER GRAFICO MUESTRE UNICAMENTE DE LA ULTIMA SEMANA
+#
 #
 
 app = Flask(__name__)
@@ -40,10 +41,25 @@ def grafico_cant_pacientes_fecha():
     df_cant_pacientes_fecha = cant_pacientes_fecha(df_cant_pacientes_fecha, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
-    fig = bar_chart(df = df_cant_pacientes_fecha, 
+    fig = bar_chart(df=df_cant_pacientes_fecha, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
-               mean = media)
+               mean=media)
+    
+    return fig.to_html()
+
+@app.route('/cant_pacientes_triage/')
+def grafico_cant_pacientes_triage():
+    global df
+    df_cant_pacientes_triage = df.copy(deep=True)
+    
+    df_cant_pacientes_triage = cant_pacientes_triage(df_cant_pacientes_triage, **get_args())
+
+    media = request.args.get('media', default=None, type=bool)
+    fig = bar_chart(df=df_cant_pacientes_triage, 
+               x='TRIAGE', y='CANTIDAD DE PACIENTES', 
+               x_title='Nivel de Triage', y_title='Cantidad de pacientes', title='Cantidad de Pacientes por Nivel de Triage', 
+               mean=media)
     
     return fig.to_html()
 
@@ -57,7 +73,7 @@ def grafico_top_consultas_fecha():
     df_top_consultas_fecha = top_consultas_fecha(df_top_consultas_fecha, top, order, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
-    fig = bar_chart(df = df_top_consultas_fecha, 
+    fig = bar_chart(df=df_top_consultas_fecha, 
                x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
                x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
                mean = media)    

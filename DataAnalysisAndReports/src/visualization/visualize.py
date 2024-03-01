@@ -65,6 +65,14 @@ def cant_pacientes_fecha(df, desde = None, hasta = None, nombre_y_apellido = Non
 
     return df
 
+def cant_pacientes_triage(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
+    df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
+    
+    df = df.groupby('TRIAGE', sort = False).size().reset_index()
+    df.rename(columns={0: 'CANTIDAD DE PACIENTES'}, inplace = True)
+
+    return df
+
 def top_consultas_fecha(df, top = None, order=None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
     df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
 
