@@ -226,4 +226,17 @@ export class PatientsModel {
       return { error: 'An error occurred during the update' }
     }
   }
+
+  static async getPatientUpdateHistory({ id }) {
+    // TODO: PatientUpdateHistoryQuery
+    const PatientUpdateHistoryQuery = ` 
+    SELECT PatientUpdateHistory.*FROM PatientUpdateHistory
+    WHERE PatientUpdateHistory.patient_id = UUID_TO_BIN(?);
+    `
+    const [PatientUpdateHistory] = await connection.query(
+      PatientUpdateHistoryQuery,
+      [id],
+    )
+    return PatientUpdateHistory
+  }
 }

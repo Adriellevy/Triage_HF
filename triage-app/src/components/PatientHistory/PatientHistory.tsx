@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PatientHistoryItem } from '@/interfaces/Patinet'
 import PatientHystoryItem from '@/components/PatientHistory/PatientHystoryItem'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getPatientHistory } from '@/services/patientService'
 import LoaderSpin from '../LoaderSpin'
 
@@ -10,49 +9,14 @@ interface PropsPatienHistory {
 }
 
 function PatientHistory({ patient_id }: PropsPatienHistory) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItem[]>([
-    {
-      id: '1',
-      time: '22/02/2024 6:00 p.m.',
-      patientitem: 'Patient Status',
-      before: 'INTERNACION',
-      after: 'ALTA',
-      user: 'Dr. Smith'
-    },
-    {
-      id: '2',
-      time: '22/02/2024 4:00 p.m.',
-      patientitem: 'Patient Medication',
-      before: 'Medication 2',
-      after: 'Medication 3',
-      user: 'Dr. Smith'
-    },
-    {
-      id: '3',
-      time: '22/02/2024 2:00 p.m.',
-      patientitem: 'Patient Medication',
-      before: 'Medication 1',
-      after: 'Medication 2',
-      user: 'Dr. Smith'
-    },
-    {
-      id: '4',
-      time: '22/02/2024 1:00 p.m.',
-      patientitem: 'Patient Name',
-      before: 'Name 1',
-      after: 'Name 2',
-      user: 'Dr. Smith'
-    }
-  ])
-
+  const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItem[]>([])
   const [isLoading, setisLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //const data = await getPatientHistory(patient_id)
-        //setPatientHistoryData(data)
+        const data = await getPatientHistory(patient_id)
+        setPatientHistoryData(data)
         setisLoading(false)
       } catch (error) {
         console.error((error as Error).message)
@@ -84,7 +48,11 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
               {PatientHistoryData.map(
                 (HistoryItem, index) =>
                   HistoryItem && (
-                    <PatientHystoryItem key={HistoryItem.id} item={HistoryItem} index={index} />
+                    <PatientHystoryItem
+                      key={HistoryItem.update_id}
+                      item={HistoryItem}
+                      index={index}
+                    />
                   )
               )}
             </tbody>

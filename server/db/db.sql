@@ -7,6 +7,7 @@ USE Triage_db;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Box;
 DROP TABLE IF EXISTS Patient;
+DROP TABLE IF EXISTS PatientUpdateHistory;
 
 CREATE TABLE Users (
   user_id INT NOT NULL AUTO_INCREMENT,
@@ -46,6 +47,19 @@ CREATE TABLE Patient (
   FOREIGN KEY (doctor_id) REFERENCES Users(user_id),
   FOREIGN KEY (nurse_id) REFERENCES Users(user_id),
   PRIMARY KEY(patient_id)
+);
+
+CREATE TABLE PatientUpdateHistory (
+  update_id BINARY(16) NOT NULL,
+  patient_id BINARY(16) NOT NULL,
+  updated_column VARCHAR(50) NOT NULL,
+  old_value VARCHAR(500) NOT NULL,
+  new_value VARCHAR(500) NOT NULL,
+  update_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  user_id INT NOT NULL,
+  PRIMARY KEY(update_id),
+  FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
+  FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 -- Insertar datos de ejemplo en la tabla Users

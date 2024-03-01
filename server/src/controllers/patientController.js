@@ -100,13 +100,6 @@ export class PatientController {
     }
   }
 
-  static async getPatientasdasd(req, res) {
-    // Pacientes con menos de 3 minutos de espera
-    // Tiempo de llegada - Tiempo de triage
-    // devuelve lista de pacientes
-    // estado en espera
-  }
-
   static async getPatientsAwaitingAdmission(req, res) {
     try {
       const users = await PatientsModel.getPatientsAwaitingAdmission()
@@ -171,6 +164,16 @@ export class PatientController {
         console.log(e)
       }
       return res.json(updatedUser)
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' })
+    }
+  }
+
+  static async getPatientUpdateHistory(req, res) {
+    try {
+      const { id } = req.params
+      const UpdateHistory = await PatientsModel.getPatientUpdateHistory({ id })
+      return res.json(UpdateHistory)
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })
     }

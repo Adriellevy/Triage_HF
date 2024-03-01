@@ -58,10 +58,12 @@ export interface PartialPatient {
 }
 
 export interface PatientHistoryItem {
-  id: string
-  time: string
-  patientitem: string
-  before: string
-  after: string
-  user: string
+  update_id: string
+  patient_id?: string
+  updated_column: keyof Patient
+  old_value: string
+  new_value: string
+  update_date: string
+  user_id?: string
+  user_name: string
 }

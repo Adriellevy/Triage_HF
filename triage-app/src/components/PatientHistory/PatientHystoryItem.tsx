@@ -6,7 +6,7 @@ interface PropsPatientHystoryItem {
 }
 
 function PatientHystoryItem({ item, index }: PropsPatientHystoryItem) {
-  const { time, patientitem, before, after, user } = item
+  const { update_date, updated_column, old_value, new_value, user_name } = item
 
   const isOdd = index % 2 !== 0
 
@@ -14,11 +14,11 @@ function PatientHystoryItem({ item, index }: PropsPatientHystoryItem) {
 
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{time}</td>
-      <td className='border p-2 '>{patientitem}</td>
-      <td className='border p-2 '>{before}</td>
-      <td className='border p-2 '>{after}</td>
-      <td className='border p-2 '>{user}</td>
+      <td className='border p-2 '>{update_date}</td>
+      <td className='border p-2 '>{String(updated_column)}</td>
+      <td className='border p-2 '>{old_value}</td>
+      <td className='border p-2 '>{new_value}</td>
+      <td className='border p-2 '>{user_name}</td>
     </tr>
   )
 }
