@@ -47,8 +47,10 @@ function Search({ onSearch, options }: PropsSearch) {
             onChange={handleSelectChange}
             className='w-full p-2 border rounded-md'
           >
-            {options.map((option) => (
-              <option value={option.value}>{option.text}</option>
+            {options.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.text}
+              </option>
             ))}
           </select>
         </div>
