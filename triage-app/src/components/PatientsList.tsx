@@ -10,6 +10,35 @@ function PatientsList({ patients }: PropsPatientsList) {
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
+  const columns = [
+    { label: 'Name', field: 'patient_name', sortable: true, showOnLargeScreen: true },
+    { label: 'Age', field: 'date_of_birth', sortable: true, showOnLargeScreen: false },
+    { label: 'Entry Time', field: 'entry_time', sortable: true, showOnLargeScreen: false },
+    {
+      label: 'Triage Level',
+      field: 'patient_triage_level',
+      sortable: true,
+      showOnLargeScreen: true
+    },
+    {
+      label: 'Patient Medication',
+      field: 'patient_medication',
+      sortable: true,
+      showOnLargeScreen: false
+    },
+    {
+      label: 'Patient Problem',
+      field: 'patient_problem',
+      sortable: true,
+      showOnLargeScreen: false
+    },
+    { label: 'Patient Box', field: 'box_code', sortable: true, showOnLargeScreen: true },
+    { label: 'Medic', field: 'doctor_name', sortable: true, showOnLargeScreen: false },
+    { label: 'Nurse', field: 'nurse_name', sortable: true, showOnLargeScreen: false },
+    { label: 'Patient Status', field: 'patient_status', sortable: true, showOnLargeScreen: true },
+    { label: 'Patients Actions', field: 'actions', sortable: false, showOnLargeScreen: true }
+  ]
+
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -41,74 +70,18 @@ function PatientsList({ patients }: PropsPatientsList) {
       <table className='w-full border border-gray-300'>
         <thead>
           <tr className='min-w-full bg-blue-400'>
-            <th className='border p-2 ' onClick={() => handleSort('patient_name')}>
-              {' '}
-              Name{' '}
-              {sortColumn === 'patient_name' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('date_of_birth')}
-            >
-              Age{' '}
-              {sortColumn === 'date_of_birth' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('entry_time')}
-            >
-              Entry Time{' '}
-              {sortColumn === 'entry_time' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th className='border p-2' onClick={() => handleSort('patient_triage_level')}>
-              Triage Level{' '}
-              {sortColumn === 'patient_triage_level' && (
-                <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
-              )}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('patient_medication')}
-            >
-              Patient Medication{' '}
-              {sortColumn === 'patient_medication' && (
-                <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
-              )}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('patient_problem')}
-            >
-              Patient Problem{' '}
-              {sortColumn === 'patient_problem' && (
-                <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
-              )}
-            </th>
-            <th className='border p-2' onClick={() => handleSort('box_id')}>
-              Patient Box{' '}
-              {sortColumn === 'box_id' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('doctor_name')}
-            >
-              Medic{' '}
-              {sortColumn === 'doctor_name' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th
-              className='border p-2 hidden lg:table-cell'
-              onClick={() => handleSort('nurse_name')}
-            >
-              Nurse{' '}
-              {sortColumn === 'nurse_name' && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
-            </th>
-            <th className='border p-2' onClick={() => handleSort('patient_status')}>
-              Patient Status{' '}
-              {sortColumn === 'patient_status' && (
-                <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
-              )}
-            </th>
-            <th className='border p-2'>Patients Actions</th>
+            {columns.map((column) => (
+              <th
+                key={column.field}
+                className={`border p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
+                onClick={() => (column.sortable ? handleSort(column.field) : null)}
+              >
+                {column.label}{' '}
+                {column.sortable && sortColumn === column.field && (
+                  <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
+                )}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>

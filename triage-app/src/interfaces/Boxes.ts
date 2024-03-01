@@ -17,6 +17,7 @@ export interface Box {
   box_status: BoxStatus
   patient_id?: string
   patient_name?: string
+  [Symbol.iterator](): IterableIterator<Box>
 }
 
 export type NullableBox = Box | null
