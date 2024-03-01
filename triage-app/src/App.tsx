@@ -19,6 +19,7 @@ import StatsTopConsultas from './pages/stats/StatsTopConsultas'
 import BoxSettings from './pages/settings/BoxSettings'
 import UserSettings from './pages/settings/UserSettings'
 import PatientEdit from './pages/PatientEdit'
+import StatsPatientTriage from './pages/stats/StatsPatientTriage'
 
 function App() {
   const { isAuthenticated, login } = useAuth()
@@ -58,7 +59,7 @@ function App() {
           <Route
             path='*'
             element={
-              <div className='flex h-screen '>
+              <div className='flex sm:h-screen'>
                 <Sidebar />
                 <div className='flex-1 overflow-y-auto bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
                   <Routes>
@@ -75,6 +76,10 @@ function App() {
                       <>
                         <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
                         <Route path='/stats/top_consultas_fecha' element={<StatsTopConsultas />} />
+                        <Route
+                          path='/stats/cant_pacientes_triage'
+                          element={<StatsPatientTriage />}
+                        />
                         <Route path='/settings/user' element={<UserSettings />} />
                         <Route path='/settings/box' element={<BoxSettings />} />
                       </>

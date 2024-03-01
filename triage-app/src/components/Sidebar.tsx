@@ -70,11 +70,20 @@ function Sidebar() {
       linkUrl: '/stats',
       submenu: [
         {
-          icon: ConfigIcon,
+          icon: StatsIcon,
           title: 'Cantidad de pacientes por fecha',
           linkUrl: '/stats/cant_pacientes_fecha'
         },
-        { icon: ConfigIcon, title: 'Top consultas', linkUrl: '/stats/top_consultas_fecha' }
+        {
+          icon: StatsIcon,
+          title: 'Cantidad de pacientes por triage',
+          linkUrl: '/stats/cant_pacientes_triage'
+        },
+        {
+          icon: StatsIcon,
+          title: 'Motivos de consulta por fecha',
+          linkUrl: '/stats/top_consultas_fecha'
+        }
       ]
     },
     {
