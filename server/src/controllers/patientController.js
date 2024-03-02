@@ -141,7 +141,7 @@ export class PatientController {
       })
       try {
         const [Patient] = await PatientsModel.getPatientById({ id })
-        io.emit(`${Patient.doctor_id}`, {
+        io.emit(`${result.data.doctor_id}`, {
           message: 'Updated patient',
           patient: {
             patient_name: Patient.patient_name,
@@ -153,7 +153,7 @@ export class PatientController {
           message: 'Box Update',
         })
 
-        io.emit(`${Patient.nurse_id}`, {
+        io.emit(`${result.data.nurse_id}`, {
           message: 'Updated patient',
           patient: {
             patient_name: Patient.patient_name,
