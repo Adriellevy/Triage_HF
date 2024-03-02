@@ -1,14 +1,17 @@
 from flask import Flask, request
 
 from data.make_dataset import get_df
+
 from features.build_features import build_features
+
+from visualization.event_handler import handle_bar_click
+
 from visualization.visualize import cant_pacientes_fecha, cant_pacientes_triage, top_consultas_fecha
 from visualization.visualize import bar_chart
 
 #
 # AGREGAR EVENTO DE CLIC EN GRAFICOS
 # PASAR EL PRIMER GRAFICO A UNO DE LINEAS
-# ! ADAPTAR NOTEBOOK A LAS UPDATES QUE HICE EN LA PAGINA
 # ADAPTAR TODO A LA BASE DE DATOS
 #
 
@@ -47,7 +50,9 @@ def grafico_cant_pacientes_fecha():
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean=media)
-    
+
+    fig.data[0].on_click(handle_bar_click)
+
     return fig.to_html()
 
 @app.route('/cant_pacientes_triage/')
