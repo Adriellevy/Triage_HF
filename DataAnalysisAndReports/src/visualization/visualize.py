@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import timedelta
 
 
 def bar_chart(df, x, y, title, x_title, y_title, mean = None):
@@ -23,12 +24,19 @@ def bar_chart(df, x, y, title, x_title, y_title, mean = None):
         font = dict(color = 'red'))
     return fig 
 
+def get_last_week(df):
+    end_date = df['FECHA DE INGRESO'].max()
+    start_date = end_date- timedelta(days=6)
+    return (start_date, end_date)
+
 def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
-    if(desde != None and hasta != None):
+    if(desde == None and hasta == None):
+        desde, hasta = get_last_week(df)
+    else:
         desde = pd.to_datetime(desde, format = '%d-%m-%Y', errors = 'coerce') 
-        hasta = pd.to_datetime(hasta, format = '%d-%m-%Y', errors = 'coerce')   
-        df = df[(df['FECHA DE INGRESO'] >= desde) & (df['FECHA DE INGRESO'] <= hasta)]
-        
+        hasta = pd.to_datetime(hasta, format = '%d-%m-%Y', errors = 'coerce')  
+
+    df = df[(df['FECHA DE INGRESO'] >= desde) & (df['FECHA DE INGRESO'] <= hasta)]
     df['FECHA DE INGRESO'] = df['FECHA DE INGRESO'].dt.strftime('%d-%m-%Y')      
        
     if(nombre_y_apellido != None):
