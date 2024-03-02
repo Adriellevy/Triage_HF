@@ -34,7 +34,7 @@ def generating_alta_col(df):
     'alta|obito|traslado|derivacion|AL. VOL|DERIVAC',
     case = False,  
     regex = True)
-    return df['ALTA'].fillna(True)
+    return df['ALTA'].fillna(False)
 
 def remove_colums(df):
     cols_to_keep = ['NUMERO DE TURNO', 'FECHA DE INGRESO', 'NOMBRE Y APELLIDO', 'MOTIVO DE CONSULTA', 'BOX', 'TRIAGE', 'ENFERMERO', 'MEDICO','DESTINO','ALTA','AISLADO']

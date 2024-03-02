@@ -26,7 +26,7 @@ def bar_chart(df, x, y, title, x_title, y_title, mean = None):
 
 def get_last_week(df):
     end_date = df['FECHA DE INGRESO'].max()
-    start_date = end_date- timedelta(days=6)
+    start_date = end_date - timedelta(days=6)
     return (start_date, end_date)
 
 def filters(df, desde = None, hasta = None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
@@ -81,7 +81,7 @@ def cant_pacientes_triage(df, desde = None, hasta = None, nombre_y_apellido = No
 
     return df
 
-def top_consultas_fecha(df, top = None, order=None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
+def top_consultas_fecha(df, top = 10, order = None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
     df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
 
     count = df['MOTIVO DE CONSULTA'].value_counts()

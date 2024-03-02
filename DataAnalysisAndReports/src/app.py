@@ -6,9 +6,10 @@ from visualization.visualize import cant_pacientes_fecha, cant_pacientes_triage,
 from visualization.visualize import bar_chart
 
 #
-# AGREGAR QUE EL PRIMER GRAFICO MUESTRE UNICAMENTE DE LA ULTIMA SEMANA
-# AGREGAR EVENTO DE CLIC EN GRAFICO DE BARRAS
+# AGREGAR EVENTO DE CLIC EN GRAFICOS
 # PASAR EL PRIMER GRAFICO A UNO DE LINEAS
+# ! ADAPTAR NOTEBOOK A LAS UPDATES QUE HICE EN LA PAGINA
+# ADAPTAR TODO A LA BASE DE DATOS
 #
 
 app = Flask(__name__)
