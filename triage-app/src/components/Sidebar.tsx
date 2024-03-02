@@ -70,11 +70,20 @@ function Sidebar() {
       linkUrl: '/stats',
       submenu: [
         {
-          icon: ConfigIcon,
+          icon: StatsIcon,
           title: 'Cantidad de pacientes por fecha',
           linkUrl: '/stats/cant_pacientes_fecha'
         },
-        { icon: ConfigIcon, title: 'Top consultas', linkUrl: '/stats/top_consultas_fecha' }
+        {
+          icon: StatsIcon,
+          title: 'Cantidad de pacientes por triage',
+          linkUrl: '/stats/cant_pacientes_triage'
+        },
+        {
+          icon: StatsIcon,
+          title: 'Motivos de consulta por fecha',
+          linkUrl: '/stats/top_consultas_fecha'
+        }
       ]
     },
     {
@@ -114,18 +123,18 @@ function Sidebar() {
       const { patient_id } = data.patient
       console.log(patient_id)
       if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
-        toast.info('New Patient Assigned', {
+        toast.info('Nuevo paciente asignado', {
           action: {
-            label: 'View patient data',
+            label: 'Ver datos del paciente',
             onClick: () => {
               navigate(`/patients/${patient_id}`)
             }
           }
         })
       } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
-        toast.info('One of your patients has been edited', {
+        toast.info('Uno de tus pacientes ha sido editado', {
           action: {
-            label: 'View patient data',
+            label: 'Ver datos del paciente',
             onClick: () => {
               navigate(`/patients/${patient_id}`)
             }
@@ -133,19 +142,23 @@ function Sidebar() {
         })
       }
     }
-    const fetchData = async () => {
+    const setupSocket = () => {
       try {
         socket.on(`${UserInfo.user_id}`, handleSocketEvent)
-        return () => {
-          socket.off(`${UserInfo.user_id}`, handleSocketEvent)
-        }
       } catch (error) {
         console.error((error as Error).message)
       }
     }
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, UserInfo.user_id, socket])
+    const cleanupSocket = () => {
+      try {
+        socket.off(`${UserInfo.user_id}`, handleSocketEvent)
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    setupSocket()
+    return cleanupSocket
+  }, [token, UserInfo.user_id, socket, navigate])
 
   useEffect(() => {
     const fetchData = async () => {

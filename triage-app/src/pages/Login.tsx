@@ -6,5 +6,9 @@ interface LoginProps {
 }
 
 export default function Login({ handleUserChange, user }: LoginProps) {
-  return <Loginform handleUserChange={handleUserChange} user={user} />
+  return (
+    <div className='bg-gray-100'>
+      <Loginform handleUserChange={handleUserChange} user={user} />
+    </div>
+  )
 }

@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+import jwt from 'jsonwebtoken'
+import 'dotenv/config'
 import { PatientsModel } from '../models/mysql/patientModel.js'
 import {
   validatePartialPatient,
@@ -17,6 +19,12 @@ export class PatientController {
 
   static async createNewPatient(req, res) {
     const result = await validatePatient(req.body)
+    // eslint-disable-next-line operator-linebreak
+    const token =
+      req.headers.authorization && req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const userID = decoded.id
+
     if (!result.success) {
       return res.status(500).json({ error: JSON.parse(result.error) })
     }
@@ -35,22 +43,24 @@ export class PatientController {
           message: 'Box Update',
         })
 
-        io.emit(`${result.data.doctor_id}`, {
-          message: 'New patient assigned',
-          patient: {
-            patient_name: result.data.patient_name,
-            patient_id: newPatientId,
-          },
-        })
-
-        io.emit(`${result.data.nurse_id}`, {
-          message: 'New patient assigned',
-          patient: {
-            patient_name: result.data.patient_name,
-            patient_id: newPatientId,
-          },
-        })
-
+        if (userID !== result.data.doctor_id) {
+          io.emit(`${result.data.doctor_id}`, {
+            message: 'New patient assigned',
+            patient: {
+              patient_name: result.data.patient_name,
+              patient_id: newPatientId,
+            },
+          })
+        }
+        if (userID !== result.data.nurse_id) {
+          io.emit(`${result.data.nurse_id}`, {
+            message: 'New patient assigned',
+            patient: {
+              patient_name: result.data.patient_name,
+              patient_id: newPatientId,
+            },
+          })
+        }
         return res.status(201).json({
           message: 'New patient created successfully',
           // eslint-disable-next-line comma-dangle
@@ -122,6 +132,13 @@ export class PatientController {
 
   static async updatePatient(req, res) {
     const result = validatePartialPatient(req.body)
+
+    // eslint-disable-next-line operator-linebreak
+    const token =
+      req.headers.authorization && req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const userID = decoded.id
+
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
@@ -134,31 +151,36 @@ export class PatientController {
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
       }
-      // eslint-disable-next-line prefer-destructuring
-      const io = req.io
+
+      const { io } = req
       io.emit('update', {
         message: 'Updated patient',
       })
       try {
         const [Patient] = await PatientsModel.getPatientById({ id })
-        io.emit(`${Patient.doctor_id}`, {
-          message: 'Updated patient',
-          patient: {
-            patient_name: Patient.patient_name,
-            patient_id: id,
-          },
-        })
+
+        if (userID !== result.data.doctor_id) {
+          io.emit(`${result.data.doctor_id}`, {
+            message: 'Updated patient',
+            patient: {
+              patient_name: Patient.patient_name,
+              patient_id: id,
+            },
+          })
+        }
+
+        if (userID !== result.data.nurse_id) {
+          io.emit(`${result.data.nurse_id}`, {
+            message: 'Updated patient',
+            patient: {
+              patient_name: Patient.patient_name,
+              patient_id: id,
+            },
+          })
+        }
 
         io.emit('update', {
           message: 'Box Update',
-        })
-
-        io.emit(`${Patient.nurse_id}`, {
-          message: 'Updated patient',
-          patient: {
-            patient_name: Patient.patient_name,
-            patient_id: id,
-          },
         })
       } catch (e) {
         console.log(e)
