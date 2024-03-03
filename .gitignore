@@ -6,7 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+complete.kv
+complete.kv.vectors.npy
+GoogleNews-vectors-negative300.bin
 
 node_modules
 .next
