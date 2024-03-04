@@ -1,8 +1,45 @@
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from datetime import timedelta
 
+# GRAPH OBJECTS METHOD
+#import plotly.graph_objects as go
+# def test(trace, points, selector):
+#     print('FUNCIONA')
+
+# def bar_chart(df, x, y, title, x_title, y_title, mean=None):
+#     # Create a bar chart using Plotly Graph Objects
+#     fig = go.FigureWidget([
+#         go.Bar(
+#         x=df[x],
+#         y=df[y],
+#         textposition='outside',
+#         name=y_title,
+#         hovertemplate='%{y}')])
+    
+#     # Update layout
+#     fig.update_layout(
+#         title=title,
+#         xaxis_title=x_title,
+#         yaxis_title=y_title,
+#         title_x=0.5,
+#         template='simple_white'
+#     )
+
+#     fig.update_traces(texttemplate = '%{y}', textposition = 'outside')
+
+#     # Add mean line if specified
+#     if mean:
+#         mean_value = df[y].mean()
+#         fig.add_trace(go.Scatter(
+#             x=df[x],
+#             y=[mean_value] * len(df),
+#             mode='lines',
+#             name='Media',
+#             line=dict(color='red', width=2, dash='dash'),
+#             hovertemplate=f'{mean_value:.2f}'
+#         ))
+#     return fig
 
 def bar_chart(df, x, y, title, x_title, y_title, mean = None):
     fig = px.bar(df, x = x, y = y, barmode = "group")
@@ -23,6 +60,7 @@ def bar_chart(df, x, y, title, x_title, y_title, mean = None):
         showarrow = False,
         font = dict(color = 'red'))
     return fig 
+
 
 def get_last_week(df):
     end_date = df['FECHA DE INGRESO'].max()
