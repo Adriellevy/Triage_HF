@@ -1,9 +1,9 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from datetime import timedelta
 
 # GRAPH OBJECTS METHOD
-#import plotly.graph_objects as go
 # def test(trace, points, selector):
 #     print('FUNCIONA')
 
@@ -43,8 +43,27 @@ from datetime import timedelta
 
 def bar_chart(df, x, y, title, x_title, y_title, mean = None):
     fig = px.bar(df, x = x, y = y, barmode = "group")
-    fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5)
+    fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5, plot_bgcolor='white')
     fig.update_traces(texttemplate = '%{y}', textposition = 'outside')
+    if(mean):
+        mean = df[y].mean()
+        fig.add_trace(go.Scatter(x = df[x],
+                                 y = [mean] * len(df),
+                                 mode = 'lines',
+                                 name = 'Media',
+                                 line = dict(color = 'red', width = 2, dash = 'dash'),
+                                 hovertemplate = '%{y:.2f}'))
+        fig.add_annotation(
+        xref = 'paper', yref = 'y',
+        x = -0.03, y = mean,
+        text = f'{mean:.2f}',
+        showarrow = False,
+        font = dict(color = 'red'))
+    return fig 
+
+def line_chart(df, x, y, title, x_title, y_title, mean = None):
+    fig = px.line(df, x = x, y = y, markers = True)
+    fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5, plot_bgcolor='white', xaxis=dict(linecolor='black', showgrid=True), yaxis=dict(linecolor='black', showgrid=True))
     if(mean):
         mean = df[y].mean()
         fig.add_trace(go.Scatter(x = df[x],

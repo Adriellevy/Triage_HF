@@ -5,15 +5,13 @@ from data.make_dataset import get_df
 from features.build_features import build_features
 
 from visualization.visualize import cant_pacientes_fecha, cant_pacientes_triage, top_consultas_fecha
-from visualization.visualize import bar_chart
+from visualization.visualize import bar_chart, line_chart
 
 #
 # ?AGREGAR EVENTO DE CLIC EN GRAFICOS
-# PASAR EL PRIMER GRAFICO A UNO DE LINEAS
 # ADAPTAR TODO A LA BASE DE DATOS
 # ?AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
 # LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TODO EL GRAFICO
-# EL FONDO DEL GRAFICO DEBE SER BLANCO
 #
 
 
@@ -48,7 +46,7 @@ def grafico_cant_pacientes_fecha():
     df_cant_pacientes_fecha = cant_pacientes_fecha(df_cant_pacientes_fecha, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
-    fig = bar_chart(df=df_cant_pacientes_fecha, 
+    fig = line_chart(df=df_cant_pacientes_fecha, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
                x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
                mean=media)
