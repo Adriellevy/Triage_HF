@@ -34,9 +34,9 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
             <LoaderSpin />
           </div>
         ) : (
-          <table className='w-full border border-gray-300'>
+          <table className='w-full border border-gray-300 text-white'>
             <thead>
-              <tr className='min-w-full bg-blue-400'>
+              <tr className='min-w-full bg-blue-800'>
                 <th className='border p-2 '>Time</th>
                 <th className='border p-2 '>Item</th>
                 <th className='border p-2 '>Before</th>

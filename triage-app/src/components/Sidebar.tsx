@@ -177,7 +177,7 @@ function Sidebar() {
 
   return (
     <div>
-      <div className='hidden md:flex lg:flex flex-col w-56 bg-gray-800 text-white h-full'>
+      <div className='hidden md:flex lg:flex flex-col w-56 bg-blue-900 text-white h-full'>
         <div className='p-4 flex items-center'>
           <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
           <div className='text-3xl font-bold'>Triage App</div>
@@ -189,7 +189,7 @@ function Sidebar() {
               item.submenu ? (
                 <div key={index} className='relative'>
                   <button
-                    className='w-full p-3 hover:bg-gray-700 text-lg text-left flex items-center justify-between'
+                    className='w-full p-3 hover:bg-blue-800 text-lg text-left flex items-center justify-between'
                     onClick={() => handleSubMenuToggle(index)}
                   >
                     <div className='flex items-center'>
@@ -203,12 +203,12 @@ function Sidebar() {
                     )}
                   </button>
                   {openSubMenu === index && (
-                    <div className='absolute left-full top-0 mt-2 ml-2 bg-gray-800 rounded-md p-2'>
+                    <div className='absolute left-full top-0 mt-2 ml-2 bg-blue-900 rounded-md p-2'>
                       {item.submenu.map((submenuItem, submenuIndex) => (
                         <Link
                           key={submenuIndex}
                           to={submenuItem.linkUrl}
-                          className=' block px-3 py-2 hover:bg-gray-700 whitespace-nowrap'
+                          className=' block px-3 py-2 hover:bg-blue-800 whitespace-nowrap'
                         >
                           {submenuItem.title}
                         </Link>
@@ -217,7 +217,7 @@ function Sidebar() {
                   )}
                 </div>
               ) : (
-                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
+                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-blue-800 text-lg'>
                   {item.icon && (
                     <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                   )}
@@ -247,7 +247,7 @@ function Sidebar() {
         <div
           className={` ${
             menuVisible ? 'flex' : 'hidden'
-          } absolute z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold text-white bg-slate-800 drop-shadow md w-full`}
+          } absolute z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold text-white bg-blue-900 drop-shadow md w-full`}
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>
@@ -271,7 +271,7 @@ function Sidebar() {
           </div>
         </div>
 
-        <div className='md:hidden fixed z-50 top-0 bg-gray-800 text-white w-full p-4 text-center'>
+        <div className='md:hidden fixed z-50 top-0 bg-blue-900 text-white w-full p-4 text-center'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />

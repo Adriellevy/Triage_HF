@@ -69,7 +69,7 @@ function PatientsList({ patients }: PropsPatientsList) {
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='min-w-full bg-blue-400'>
+          <tr className='min-w-full bg-blue-800 text-white'>
             {columns.map((column) => (
               <th
                 key={column.field}

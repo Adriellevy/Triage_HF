@@ -393,7 +393,7 @@ function PatientForm() {
   }
 
   return (
-    <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
+    <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       {edditingPatient ? (
         <h2 className='text-2xl font-semibold mb-5'>Edit Patient</h2>
       ) : (

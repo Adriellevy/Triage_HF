@@ -49,7 +49,7 @@ function BoxList({ boxes }: PropsBoxList) {
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='min-w-full bg-blue-400'>
+          <tr className='min-w-full bg-blue-800 text-white'>
             {columns.map((column) => (
               <th
                 key={column.field}
@@ -64,7 +64,7 @@ function BoxList({ boxes }: PropsBoxList) {
             ))}
           </tr>
         </thead>
-        <tbody className='text-center'>
+        <tbody className='text-center text-black'>
           {sortedPatients.map(
             (Item, index) => boxes && <BoxItem key={Item.box_id} box={Item} index={index} />
           )}
