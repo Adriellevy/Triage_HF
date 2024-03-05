@@ -7,7 +7,7 @@ function PatientEdit() {
   return (
     <div className='mb-4'>
       <PatientForm />
-      <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
+      <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
         <PatientHistory patient_id={edditingPatientID} />
       </div>
     </div>
