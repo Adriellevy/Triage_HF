@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import PatientForm from '@/components/PatientForm'
 import Dashboard from '@/components/Dashboard/Dashboard'
 
