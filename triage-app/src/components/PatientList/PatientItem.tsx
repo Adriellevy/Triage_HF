@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Patient } from '../interfaces/Patinet'
+import { Patient } from '../../interfaces/Patinet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'

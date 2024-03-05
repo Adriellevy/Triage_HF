@@ -1,4 +1,4 @@
-import BoxItem from '@/components/BoxItem'
+import BoxItem from '@/components/BoxList/BoxItem'
 import { Box } from '@/interfaces/Boxes'
 import { useState } from 'react'
 

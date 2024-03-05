@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import PatientItem from '@/components/PatientItem'
+import PatientItem from '@/components/PatientList/PatientItem'
 import { Patient } from '@/interfaces/Patinet'
 
 interface PropsPatientsList {

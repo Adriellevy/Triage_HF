@@ -1,7 +1,7 @@
 import { Box, BoxStatus } from '@/interfaces/Boxes'
-import { Button } from './ui'
+import { Button } from '../ui'
 import { Link } from 'react-router-dom'
-import Counter from './Counter'
+import Counter from '../Counter'
 
 interface PropsBoxItem {
   box: Box

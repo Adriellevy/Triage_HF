@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import Cookies from 'js-cookie'
 import { SocketContext } from '@/contex/SocketContext'
-import BoxList from '@/components/BoxList'
+import BoxList from '@/components/BoxList/BoxList'
 import Search from '@/components/Search'
 import { getAllBoxes } from '@/services/boxService'
 import { Box } from '@/interfaces/Boxes'
