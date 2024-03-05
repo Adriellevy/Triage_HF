@@ -243,11 +243,11 @@ function Sidebar() {
         </div>
       </div>
 
-      <div className='md:hidden'>
+      <div className='md:hidden '>
         <div
           className={` ${
             menuVisible ? 'flex' : 'hidden'
-          } absolute z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold text-white bg-blue-900 drop-shadow md w-full`}
+          } fixed z-20 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold text-white bg-blue-900 drop-shadow md w-full`}
         >
           <nav className='flex-1'>
             {menuitems.map((item, index) =>
