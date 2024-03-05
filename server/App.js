@@ -9,6 +9,7 @@ import { boxRouter } from './src/routes/boxRoutes.js'
 import { authRouter } from './src/routes/authRoutes.js'
 import { userRouter } from './src/routes/userRoutes.js'
 import { settingsRouter } from './src/routes/settingRoutes.js'
+import { dashboardRouter } from './src/routes/dashboardRoutes.js'
 
 const PORT = process.env.PORTAPI ?? 3000
 
@@ -30,6 +31,7 @@ app.use('/patient', authenticateToken, patientRouter)
 app.use('/box', authenticateToken, boxRouter)
 app.use('/users', authenticateToken, userRouter)
 app.use('/settings', authenticateToken, settingsRouter)
+app.use('/dashboard', authenticateToken, dashboardRouter)
 
 app.use((req, res) => {
   res.status(404).send('<h1>404</h1>')

@@ -239,4 +239,34 @@ export class PatientsModel {
     )
     return PatientUpdateHistory
   }
+
+  static async getPatientsCount() {
+    const patientsQuery = `
+      SELECT COUNT(*) AS cantidad
+      FROM Patient
+      WHERE patient_status != "ALTA";
+    `
+    const [result] = await connection.query(patientsQuery)
+    return result[0].cantidad
+  }
+
+  static async getOutsidePatientsCount() {
+    const patientsQuery = `
+      SELECT COUNT(*) AS cantidad
+      FROM Patient
+      WHERE patient_status = "AFUERA";
+    `
+    const [result] = await connection.query(patientsQuery)
+    return result[0].cantidad
+  }
+
+  static async getTriageIIPatientsCount() {
+    const patientsQuery = `
+      SELECT COUNT(*) AS cantidad
+      FROM Patient
+      WHERE patient_triage_level = 2 AND patient_status != "ALTA";
+    `
+    const [result] = await connection.query(patientsQuery)
+    return result[0].cantidad
+  }
 }

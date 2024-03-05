@@ -25,4 +25,14 @@ export class BoxModel {
     const [boxes] = await connection.query(boxQuery)
     return boxes
   }
+
+  static async getAvailableBoxesCount() {
+    const availableBoxesQuery = `
+      SELECT COUNT(*) AS cantidad
+      FROM Box
+      WHERE box_status = "DISPONIBLE";
+    `
+    const [result] = await connection.query(availableBoxesQuery)
+    return result[0].cantidad
+  }
 }
