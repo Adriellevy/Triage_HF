@@ -12,7 +12,14 @@ from visualization.visualize import bar_chart, line_chart
 # ADAPTAR TODO A LA BASE DE DATOS
 # ?AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
 # LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TODO EL GRAFICO
+# ACTUALIZAR JUPYTER NOTEBOOK
 #
+# !BAR CHART
+# !MODIFICAR TEXT TRACE TEMPLATE
+# !ORDENAR LA CANTIDAD DE CADA NIVEL DE TRIAGE POR MOTIVO DE CONSULTA
+# !SIMPLIFICAR LA FORMA DE ORDENAR
+# !CAMBIAR PALETA DE COLORES
+# !QUITAR EL MAPA DE REFERENCIAS DE LA DERECHA
 
 
 app = Flask(__name__)
@@ -48,7 +55,7 @@ def grafico_cant_pacientes_fecha():
     media = request.args.get('media', default=None, type=bool)
     fig = line_chart(df=df_cant_pacientes_fecha, 
                x='FECHA DE INGRESO', y='CANTIDAD DE PACIENTES', 
-               x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso', 
+               x_title='Fecha de Ingreso', y_title='Cantidad de Pacientes', title='Cantidad de Pacientes por Fecha de Ingreso',
                mean=media)
     
     return fig.to_html()
@@ -81,6 +88,7 @@ def grafico_top_consultas_fecha():
     fig = bar_chart(df=df_top_consultas_fecha, 
                x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
                x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
+               color='TRIAGE',
                mean = media)    
     
     return fig.to_html()

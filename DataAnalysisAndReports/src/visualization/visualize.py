@@ -41,8 +41,28 @@ from datetime import timedelta
 #         ))
 #     return fig
 
-def bar_chart(df, x, y, title, x_title, y_title, mean = None):
-    fig = px.bar(df, x = x, y = y, barmode = "group")
+# def bar_chart(df, x, y, title, x_title, y_title, mean = None):
+#     fig = px.bar(df, x = x, y = y, barmode = "group")
+#     fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5, plot_bgcolor='white')
+#     fig.update_traces(texttemplate = '%{y}', textposition = 'outside')
+#     if(mean):
+#         mean = df[y].mean()
+#         fig.add_trace(go.Scatter(x = df[x],
+#                                  y = [mean] * len(df),
+#                                  mode = 'lines',
+#                                  name = 'Media',
+#                                  line = dict(color = 'red', width = 2, dash = 'dash'),
+#                                  hovertemplate = '%{y:.2f}'))
+#         # fig.add_annotation(
+#         # xref = 'paper', yref = 'y',
+#         # x = -0.03, y = mean,
+#         # text = f'{mean:.2f}',
+#         # showarrow = False,
+#         # font = dict(color = 'red'))
+#     return fig 
+
+def bar_chart(df, x, y, title, x_title, y_title, color, mean = None):
+    fig = px.bar(df, x = x, y = y, color = color, barmode = "group")
     fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5, plot_bgcolor='white')
     fig.update_traces(texttemplate = '%{y}', textposition = 'outside')
     if(mean):
@@ -53,12 +73,6 @@ def bar_chart(df, x, y, title, x_title, y_title, mean = None):
                                  name = 'Media',
                                  line = dict(color = 'red', width = 2, dash = 'dash'),
                                  hovertemplate = '%{y:.2f}'))
-        fig.add_annotation(
-        xref = 'paper', yref = 'y',
-        x = -0.03, y = mean,
-        text = f'{mean:.2f}',
-        showarrow = False,
-        font = dict(color = 'red'))
     return fig 
 
 def line_chart(df, x, y, title, x_title, y_title, mean = None):
@@ -72,12 +86,12 @@ def line_chart(df, x, y, title, x_title, y_title, mean = None):
                                  name = 'Media',
                                  line = dict(color = 'red', width = 2, dash = 'dash'),
                                  hovertemplate = '%{y:.2f}'))
-        fig.add_annotation(
-        xref = 'paper', yref = 'y',
-        x = -0.03, y = mean,
-        text = f'{mean:.2f}',
-        showarrow = False,
-        font = dict(color = 'red'))
+        # fig.add_annotation(
+        # xref = 'x', yref = 'y',
+        # x = -0.5, y = mean,
+        # text = f'{mean:.2f}',
+        # showarrow = False,
+        # font = dict(color = 'red'))
     return fig 
 
 
@@ -138,13 +152,20 @@ def cant_pacientes_triage(df, desde = None, hasta = None, nombre_y_apellido = No
 
     return df
 
-def top_consultas_fecha(df, top = 10, order = None, desde=None, hasta=None, nombre_y_apellido = None, motivo_de_consulta = None, box = None, triage = None, medico = None, enfermero = None, alta = None, aislado = None):
+def top_consultas_fecha(df, top=10, order=None, desde=None, hasta=None, nombre_y_apellido=None, motivo_de_consulta=None, box=None, triage=None, medico=None, enfermero=None, alta=None, aislado=None):
+    # Filtrar el DataFrame según los parámetros proporcionados
     df = filters(df, desde, hasta, nombre_y_apellido, motivo_de_consulta, box, triage, medico, enfermero, alta, aislado)
 
-    count = df['MOTIVO DE CONSULTA'].value_counts()
-    df = count.nlargest(top).reset_index()
-    df.rename(columns={'count': 'CANTIDAD DE CONSULTAS'}, inplace = True)
-    if order == 'asc':
-        df.sort_values(by='CANTIDAD DE CONSULTAS', ascending = True, inplace = True)
+    # Contar la cantidad de consultas por motivo y triage
+    count = df.groupby(['MOTIVO DE CONSULTA', 'TRIAGE']).size().reset_index(name='CANTIDAD DE CONSULTAS')
 
-    return df
+    # Obtener los n motivos de consulta más frecuentes
+    top_motivos = count.groupby('MOTIVO DE CONSULTA')['CANTIDAD DE CONSULTAS'].sum().nlargest(top).index
+    count = count[count['MOTIVO DE CONSULTA'].isin(top_motivos)] 
+
+    # ASC
+    # count = count.sort_values(by='MOTIVO DE CONSULTA', key=lambda x: x.map(dict(zip(top_motivos[::-1], range(len(top_motivos))))))
+
+    count = count.sort_values(by='MOTIVO DE CONSULTA', key=lambda x: x.map(dict(zip(top_motivos, range(len(top_motivos))))))
+
+    return count
