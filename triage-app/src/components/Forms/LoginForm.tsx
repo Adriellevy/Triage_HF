@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import { useAuth } from '@/contex/AuthContext'
 import { loginService } from '@/services/authService'
 import { Button, Input, Label } from '@/components/ui'
+import { useTranslation } from 'react-i18next'
 
 interface LoginFormProps {
   handleUserChange: (user: string) => void
@@ -10,6 +11,7 @@ interface LoginFormProps {
 }
 
 function LoginForm({ handleUserChange, user }: LoginFormProps) {
+  const { t } = useTranslation('LoginForm')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -41,10 +43,10 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
   return (
     <div>
       <form className='bg-white min-w-72 p-8 shadow-md rounded-md' onSubmit={handleSubmit}>
-        <h2 className='text-2xl font-semibold mb-6'>Login</h2>
+        <h2 className='text-2xl font-semibold mb-6'>{t('title')}</h2>
         {loginError && <div className='mb-4 text-red-500'>{loginError}</div>}
         <div className='mb-4'>
-          <Label htmlFor='username'>User Name</Label>
+          <Label htmlFor='username'>{t('user_label')}</Label>
           <Input
             type='text'
             id='username'
@@ -55,7 +57,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
           />
         </div>
         <div className='mb-4'>
-          <Label htmlFor='password'>Password</Label>
+          <Label htmlFor='password'>{t('password_label')}</Label>
           <Input
             type='password'
             id='password'
@@ -66,7 +68,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
           />
         </div>
         <Button wfull type='submit' color='blue'>
-          Log In
+          {t('button')}
         </Button>
       </form>
     </div>
