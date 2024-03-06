@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { Toaster } from 'sonner'
@@ -52,7 +52,7 @@ function App() {
   })
 
   return (
-    <>
+    <Suspense>
       <Toaster richColors closeButton visibleToasts={7} />
       <Routes>
         {isAuthenticated ? (
@@ -95,7 +95,7 @@ function App() {
           <Route path='*' element={<Login handleUserChange={setUser} user={User} />} />
         )}
       </Routes>
-    </>
+    </Suspense>
   )
 }
 
