@@ -1,4 +1,4 @@
-import PatientForm from '@/components/PatientForm'
+import PatientForm from '@/components/Forms/PatientForm'
 import PatientHistory from '@/components/PatientHistory/PatientHistory'
 import { useParams } from 'react-router-dom'
 

@@ -1,4 +1,4 @@
-import Loginform from '@/components/LoginForm'
+import Loginform from '@/components/Forms/LoginForm'
 
 interface LoginProps {
   handleUserChange: (newUser: string) => void
