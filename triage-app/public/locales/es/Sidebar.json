@@ -1,0 +1,13 @@
+{
+  "GuidedEntry": "Entrada Guiada",
+  "Boxes": "Boxes",
+  "Patients": "Pacientes",
+  "Stats": "Estadisticas",
+  "StatsPatientsDate": "Cantidad de pacientes por fecha",
+  "StatsPatientsTriage": "Cantidad de pacientes por triage",
+  "StatsReasons": "Motivos de consulta por fecha",
+  "Settings": "Configuracion",
+  "UsersSettings": "Configuración de usuarios",
+  "BoxesSettings": "Configuración de boxes",
+  "LogoutButton": "Cerrar Sesión"
+}

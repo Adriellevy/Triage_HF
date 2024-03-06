@@ -22,15 +22,18 @@ import { Button } from '@/components/ui'
 import DoctorImg from '../assets/doctor.jpeg'
 import { UpdateEvent } from '@/interfaces/Socket'
 import { Patient } from '@/interfaces/Patinet'
+import { useTranslation } from 'react-i18next'
 
 interface MenuItem {
   icon?: string
+  label?: string
   title: string
   linkUrl: string
   submenu?: MenuItem[]
 }
 
 function Sidebar() {
+  const { t } = useTranslation('Sidebar')
   const { logout } = useAuth()
   const navigate = useNavigate()
   const { role } = useRoleContext()
@@ -51,48 +54,53 @@ function Sidebar() {
   const menuitems: MenuItem[] = [
     {
       icon: GuidedEntryIcon,
-      title: 'Guided Entry',
+      label: t('GuidedEntry'),
+      title: 'GuidedEntry',
       linkUrl: '/guidedentry'
     },
     {
       icon: BoxesIcon,
+      label: t('Boxes'),
       title: 'Boxes',
       linkUrl: '/boxes'
     },
     {
       icon: PatientsIcon,
+      label: t('Patients'),
       title: 'Patients',
       linkUrl: '/patients'
     },
     {
       icon: StatsIcon,
+      label: t('Stats'),
       title: 'Stats',
       linkUrl: '/stats',
       submenu: [
         {
           icon: StatsIcon,
-          title: 'Cantidad de pacientes por fecha',
+          title: t('StatsPatientsDate'),
           linkUrl: '/stats/cant_pacientes_fecha'
         },
         {
           icon: StatsIcon,
-          title: 'Cantidad de pacientes por triage',
+          title: t('StatsPatientsTriage'),
           linkUrl: '/stats/cant_pacientes_triage'
         },
         {
           icon: StatsIcon,
-          title: 'Motivos de consulta por fecha',
+          title: t('StatsReasons'),
           linkUrl: '/stats/top_consultas_fecha'
         }
       ]
     },
     {
       icon: ConfigIcon,
+      label: t('Settings'),
       title: 'Settings',
       linkUrl: '/settings',
       submenu: [
-        { icon: ConfigIcon, title: 'Users settings', linkUrl: '/settings/user' },
-        { icon: ConfigIcon, title: 'Boxes settings', linkUrl: '/settings/box' }
+        { icon: ConfigIcon, title: t('UsersSettings'), linkUrl: '/settings/user' },
+        { icon: ConfigIcon, title: t('BoxesSettings'), linkUrl: '/settings/box' }
       ]
     }
   ]
@@ -180,7 +188,7 @@ function Sidebar() {
       <div className='hidden md:flex lg:flex flex-col w-56 bg-blue-900 text-white h-full'>
         <div className='p-4 flex items-center'>
           <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
-          <div className='text-3xl font-bold'>Triage App</div>
+          <div className='text-3xl font-bold whitespace-nowrap'>Triage App</div>
         </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
@@ -194,7 +202,7 @@ function Sidebar() {
                   >
                     <div className='flex items-center'>
                       <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
-                      {item.title}
+                      {item.label}
                     </div>
                     {openSubMenu === index ? (
                       <img src={ArrowPrev} className='inline-block w-5 h-5 mr-2' />
@@ -221,7 +229,7 @@ function Sidebar() {
                   {item.icon && (
                     <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                   )}
-                  {item.title}
+                  {item.label}
                 </Link>
               )
             ) : null
@@ -238,7 +246,7 @@ function Sidebar() {
         </div>
         <div className='mt-auto p-4'>
           <Button wfull color='red' onClick={handleLogout}>
-            Logout
+            {t('LogoutButton')}
           </Button>
         </div>
       </div>
@@ -258,7 +266,7 @@ function Sidebar() {
                     {item.icon && (
                       <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                     )}
-                    {item.title}
+                    {item.label}
                   </button>
                 </Link>
               ) : null
