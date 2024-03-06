@@ -1,0 +1,14 @@
+{
+  "title": { "AddMode": "Add New Patient", "EditMode": "Edit Patient" },
+  "NameLabel": "Patient Name",
+  "DateOfBirthLabel": "Date of Birth",
+  "TriageLevelLabel": "Triage Level",
+  "PatientMedLabel": "Patient Medication",
+  "BoxIDLabel": "Box ID",
+  "DoctorNameLabel": "Doctor's Name",
+  "NurseNameLabel": "Nurse's Name",
+  "PatientStatusLabel": "Patient Status",
+  "AddNewPatientButton": "Add Patient",
+  "SavePatientButton": "Save Patient",
+  "CancelButton": "Cancel"
+}

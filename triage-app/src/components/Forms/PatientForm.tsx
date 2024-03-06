@@ -14,11 +14,14 @@ import { Link, useParams } from 'react-router-dom'
 import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+
+  const { t } = useTranslation('PatientForm')
 
   const navigate = useNavigate()
 
@@ -395,16 +398,16 @@ function PatientForm() {
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       {edditingPatient ? (
-        <h2 className='text-2xl font-semibold mb-5'>Edit Patient</h2>
+        <h2 className='text-2xl font-semibold mb-5'>{t('title.EditMode')}</h2>
       ) : (
-        <h2 className='text-2xl font-semibold mb-5'>New Patient</h2>
+        <h2 className='text-2xl font-semibold mb-5'>{t('title.AddMode')}</h2>
       )}
       <form
         onSubmit={handleSubmit}
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
       >
         <div>
-          <Label htmlFor='patient_name'>Nombre del Paciente</Label>
+          <Label htmlFor='patient_name'>{t('NameLabel')}</Label>
           <Input
             error_active={ErrorsForm.patient_name}
             type='text'
@@ -417,7 +420,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='date_of_birth'>Fecha de Nacimiento</Label>
+          <Label htmlFor='date_of_birth'>{t('DateOfBirthLabel')}</Label>
           <DatePickerMUI
             onChangeExt={handleDateChange}
             selectedDateExt={selectedDate}
@@ -425,7 +428,7 @@ function PatientForm() {
           />
         </div>
         <div>
-          <Label htmlFor='patient_triage_level'>Nivel de Triaje</Label>
+          <Label htmlFor='patient_triage_level'>{t('TriageLevelLabel')}</Label>
           <div
             className={`flex gap-3 p-0.5 ${
               ErrorsForm.patient_triage_level.value ? 'border border-red-500' : ''
@@ -455,7 +458,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='patient_medication'>Medicación del Paciente</Label>
+          <Label htmlFor='patient_medication'>{t('PatientMedLabel')}</Label>
           <Input
             error_active={ErrorsForm.patient_medication}
             type='text'
@@ -467,7 +470,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='patient_problem'>Problema del Paciente</Label>
+          <Label htmlFor='patient_problem'>{t('PatientProblem')}</Label>
           <Input
             error_active={ErrorsForm.patient_problem}
             type='text'
@@ -489,7 +492,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='box_id'>ID de la Caja</Label>
+          <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
           <Select
             error_active={ErrorsForm.box_id}
             id='box_id'
@@ -509,7 +512,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='doctor_id'>Nombre del Doctor</Label>
+          <Label htmlFor='doctor_id'>{t('DoctorNameLabel')}</Label>
           <Select
             error_active={ErrorsForm.doctor_id}
             id='doctor_id'
@@ -529,7 +532,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='nurse_id'>Nombre del Enfermero</Label>
+          <Label htmlFor='nurse_id'>{t('NurseNameLabel')}</Label>
           <Select
             error_active={ErrorsForm.nurse_id}
             id='nurse_id'
@@ -549,7 +552,7 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='patient_status'>Estado del Paciente</Label>
+          <Label htmlFor='patient_status'>{t('PatientStatusLabel')}</Label>
           <Select
             error_active={ErrorsForm.patient_status}
             id='patient_status'
@@ -570,12 +573,12 @@ function PatientForm() {
 
         <div className='flex items-end gap-4 '>
           <Button type='submit' color='green' onClick={handleButtonClick}>
-            {edditingPatient ? 'Save Patient' : 'Add New Patient'}
+            {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
           </Button>
           {edditingPatient && (
             <Link to={`/patients`}>
               <Button type='button' color='grey'>
-                Cancel
+                {t('CancelButton')}
               </Button>
             </Link>
           )}

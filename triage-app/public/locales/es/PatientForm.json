@@ -1,0 +1,14 @@
+{
+  "title": { "AddMode": "Agregar un nuevo paciente", "EditMode": "Editar paciente" },
+  "NameLabel": "Nombre del paciente",
+  "DateOfBirthLabel": "Fecha de nacimiento",
+  "TriageLevelLabel": "Nivel de Triage",
+  "PatientMedLabel": "Medicación del paciente",
+  "BoxIDLabel": "ID de la caja",
+  "DoctorNameLabel": "Nombre del Doctor",
+  "NurseNameLabel": "Nombre del Enfermero",
+  "PatientStatusLabel": "Estado del Paciente",
+  "AddNewPatientButton": "Agregar Paciente",
+  "SavePatientButton": "Guardar Paciente",
+  "CancelButton": "Cancelar"
+}
