@@ -39,8 +39,8 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center'>
-      <form className='bg-white p-8 shadow-md rounded-md' onSubmit={handleSubmit}>
+    <div>
+      <form className='bg-white min-w-72 p-8 shadow-md rounded-md' onSubmit={handleSubmit}>
         <h2 className='text-2xl font-semibold mb-6'>Login</h2>
         {loginError && <div className='mb-4 text-red-500'>{loginError}</div>}
         <div className='mb-4'>
