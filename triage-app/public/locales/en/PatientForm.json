@@ -4,6 +4,7 @@
   "DateOfBirthLabel": "Date of Birth",
   "TriageLevelLabel": "Triage Level",
   "PatientMedLabel": "Patient Medication",
+  "PatientProblem": "Patient's Problem",
   "BoxIDLabel": "Box ID",
   "DoctorNameLabel": "Doctor's Name",
   "NurseNameLabel": "Nurse's Name",

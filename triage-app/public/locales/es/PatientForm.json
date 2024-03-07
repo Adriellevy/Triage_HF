@@ -4,6 +4,7 @@
   "DateOfBirthLabel": "Fecha de nacimiento",
   "TriageLevelLabel": "Nivel de Triage",
   "PatientMedLabel": "Medicación del paciente",
+  "PatientProblem": "Problema del paciente",
   "BoxIDLabel": "ID de la caja",
   "DoctorNameLabel": "Nombre del Doctor",
   "NurseNameLabel": "Nombre del Enfermero",
