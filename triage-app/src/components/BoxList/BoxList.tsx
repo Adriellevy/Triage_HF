@@ -1,12 +1,14 @@
 import BoxItem from '@/components/BoxList/BoxItem'
 import { Box } from '@/interfaces/Boxes'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface PropsBoxList {
   boxes: Box[]
 }
 
 function BoxList({ boxes }: PropsBoxList) {
+  const { t } = useTranslation('BoxList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
@@ -37,12 +39,12 @@ function BoxList({ boxes }: PropsBoxList) {
   })
 
   const columns = [
-    { label: 'Code', field: 'box_code', showOnLargeScreen: true, sortable: true },
-    { label: 'Type', field: 'box_type', showOnLargeScreen: false, sortable: true },
-    { label: 'Status', field: 'box_status', showOnLargeScreen: true, sortable: true },
-    { label: 'Patient', field: 'patient_name', showOnLargeScreen: true, sortable: false },
-    { label: 'Time', field: 'box_time', showOnLargeScreen: false, sortable: false },
-    { label: 'Action', field: 'action', showOnLargeScreen: true, sortable: false }
+    { label: t('Code'), field: 'box_code', showOnLargeScreen: true, sortable: true },
+    { label: t('Type'), field: 'box_type', showOnLargeScreen: false, sortable: true },
+    { label: t('Status'), field: 'box_status', showOnLargeScreen: true, sortable: true },
+    { label: t('Patient'), field: 'patient_name', showOnLargeScreen: true, sortable: false },
+    { label: t('Time'), field: 'box_time', showOnLargeScreen: false, sortable: false },
+    { label: t('Action'), field: 'action', showOnLargeScreen: true, sortable: false }
   ]
 
   return (
