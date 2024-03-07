@@ -1,0 +1,4 @@
+{
+  "BoxStatus": { "DISPONIBLE": "AVAILABLE", "OCUPADO": "BUSY" },
+  "PatientInfoButton": "Get Patient Info"
+}
