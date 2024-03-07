@@ -16,10 +16,12 @@ from visualization.visualize import bar_chart, line_chart
 #
 # !BAR CHART
 # !MODIFICAR TEXT TRACE TEMPLATE
-# !ORDENAR LA CANTIDAD DE CADA NIVEL DE TRIAGE POR MOTIVO DE CONSULTA
 # !SIMPLIFICAR LA FORMA DE ORDENAR
-# !CAMBIAR PALETA DE COLORES
-# !QUITAR EL MAPA DE REFERENCIAS DE LA DERECHA
+# !TOD0S LOS NIVELES DE TRIAGE EN UNA MISMA BARRA
+# !SACAR EL 0, Y CAMBIAR EL FORMATO A INTEGER ANTES DE PASARLO A STRING
+# !VERIFICAR POR QUE NO SE ESTA ORDENANDO
+#
+
 
 
 app = Flask(__name__)
@@ -85,6 +87,7 @@ def grafico_top_consultas_fecha():
     df_top_consultas_fecha = top_consultas_fecha(df_top_consultas_fecha, top, order, **get_args())
 
     media = request.args.get('media', default=None, type=bool)
+    df_top_consultas_fecha['TRIAGE'] = df_top_consultas_fecha['TRIAGE'].astype(str)
     fig = bar_chart(df=df_top_consultas_fecha, 
                x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
                x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
