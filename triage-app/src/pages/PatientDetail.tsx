@@ -145,7 +145,7 @@ function PatientDetail() {
         </div>
       </div>
       {isPatientStatusAlta ? (
-        <div className='mt-4 mb-4'>
+        <div className='mt-4 mb-4 justify-end flex'>
           <Button color='red' onClick={handleMedicalDischarge}>
             {t('DischargeButton')}
           </Button>
