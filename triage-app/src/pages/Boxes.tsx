@@ -6,8 +6,10 @@ import Search from '@/components/Search'
 import { getAllBoxes } from '@/services/boxService'
 import { Box } from '@/interfaces/Boxes'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
+import { useTranslation } from 'react-i18next'
 
 function Boxes() {
+  const { t } = useTranslation('Boxes')
   const socket = useContext(SocketContext)
   const [isLoading, setIsLoading] = useState(false)
   const [boxesData, setboxesData] = useState<Box[] | null>(null)
@@ -17,11 +19,11 @@ function Boxes() {
   const SearchOption = [
     {
       value: 'box_code',
-      text: 'Code'
+      text: t('SearchOption.CodeText')
     },
     {
       value: 'patient_name',
-      text: 'Patient'
+      text: t('SearchOption.PatientText')
     }
   ]
 
