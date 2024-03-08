@@ -104,7 +104,7 @@ function PatientDetail() {
   }
 
   return (
-    <div className='max-w-5xl mx-auto mt-5 mb-5 p-6 bg-white shadow-md rounded-md'>
+    <div className='max-w-6xl mx-auto mt-5 mb-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
         <h2 className='text-2xl font-bold'>Patient Details </h2>
         <Button color='red' onClick={handleGoBack}>
