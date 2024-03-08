@@ -17,6 +17,8 @@ import PatientForm_es from './locales/es/PatientForm.json'
 import PatientForm_en from './locales/en/PatientForm.json'
 import PatientDetail_es from './locales/es/PatientDetail.json'
 import PatientDetail_en from './locales/en/PatientDetail.json'
+import PatientInform_es from './locales/es/PatientInform.json'
+import PatientInform_en from './locales/en/PatientInform.json'
 import BoxList_es from './locales/es/BoxList.json'
 import BoxList_en from './locales/en/BoxList.json'
 import BoxItem_es from './locales/es/BoxItem.json'
@@ -45,6 +47,7 @@ i18n
         PatientHistory: PatientHistory_es,
         PatientForm: PatientForm_es,
         PatientDetail: PatientDetail_es,
+        PatientInform: PatientInform_es,
         BoxList: BoxList_es,
         BoxItem: BoxItem_es,
         Boxes: Boxes_es
@@ -57,6 +60,7 @@ i18n
         PatientHistory: PatientHistory_en,
         PatientForm: PatientForm_en,
         PatientDetail: PatientDetail_en,
+        PatientInform: PatientInform_en,
         BoxList: BoxList_en,
         BoxItem: BoxItem_en,
         Boxes: Boxes_en
