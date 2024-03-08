@@ -7,7 +7,7 @@ import { AuthProvider } from './contex/AuthContext.tsx'
 import { SocketProvider } from './contex/SocketContext.tsx'
 import { RoleProvider } from './contex/RoleContext.tsx'
 import { I18nextProvider } from 'react-i18next'
-import i18n from './i18n'
+import i18n from './i18n/i18n.ts'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
