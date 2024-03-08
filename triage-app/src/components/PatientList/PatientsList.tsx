@@ -1,42 +1,59 @@
 import { useState } from 'react'
 import PatientItem from '@/components/PatientList/PatientItem'
 import { Patient } from '@/interfaces/Patinet'
+import { useTranslation } from 'react-i18next'
 
 interface PropsPatientsList {
   patients: Patient[]
 }
 
 function PatientsList({ patients }: PropsPatientsList) {
+  const { t } = useTranslation('PatientList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
   const columns = [
-    { label: 'Name', field: 'patient_name', sortable: true, showOnLargeScreen: true },
-    { label: 'Age', field: 'date_of_birth', sortable: true, showOnLargeScreen: false },
-    { label: 'Entry Time', field: 'entry_time', sortable: true, showOnLargeScreen: false },
+    { label: t('NameLabel'), field: 'patient_name', sortable: true, showOnLargeScreen: true },
+    { label: t('AgeLabel'), field: 'date_of_birth', sortable: true, showOnLargeScreen: false },
+    { label: t('EntryTimeLabel'), field: 'entry_time', sortable: true, showOnLargeScreen: false },
     {
-      label: 'Triage Level',
+      label: t('TriageLevelLabel'),
       field: 'patient_triage_level',
       sortable: true,
       showOnLargeScreen: true
     },
     {
-      label: 'Patient Medication',
+      label: t('PatientMedication'),
       field: 'patient_medication',
       sortable: true,
       showOnLargeScreen: false
     },
     {
-      label: 'Patient Problem',
+      label: t('PatientProblem'),
       field: 'patient_problem',
       sortable: true,
       showOnLargeScreen: false
     },
-    { label: 'Patient Box', field: 'box_code', sortable: true, showOnLargeScreen: true },
-    { label: 'Medic', field: 'doctor_name', sortable: true, showOnLargeScreen: false },
-    { label: 'Nurse', field: 'nurse_name', sortable: true, showOnLargeScreen: false },
-    { label: 'Patient Status', field: 'patient_status', sortable: true, showOnLargeScreen: true },
-    { label: 'Patients Actions', field: 'actions', sortable: false, showOnLargeScreen: true }
+    { label: t('PatientBoxLabel'), field: 'box_code', sortable: true, showOnLargeScreen: true },
+    {
+      label: t('DoctorNameLabel'),
+      field: 'doctor_name',
+      sortable: true,
+      showOnLargeScreen: false
+    },
+    {
+      label: t('NurseNameLabel'),
+      field: 'nurse_name',
+      sortable: true,
+      showOnLargeScreen: false
+    },
+    {
+      label: t('PatientStatusLabel'),
+      field: 'patient_status',
+      sortable: true,
+      showOnLargeScreen: true
+    },
+    { label: t('PatientActionsLabel'), field: 'actions', sortable: false, showOnLargeScreen: true }
   ]
 
   const handleSort = (column: string) => {
