@@ -7,8 +7,10 @@ import PatientHistory from '@/components/PatientHistory/PatientHistory'
 import PatientInformIA from '@/components/PatientInformIA'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
+import { useTranslation } from 'react-i18next'
 
 function PatientDetail() {
+  const { t } = useTranslation('PatientDetail')
   const { patient_id } = useParams()
   const navigate = useNavigate()
   const [Patient, setPatient] = useState<PatientData | null>(null)
@@ -74,16 +76,16 @@ function PatientDetail() {
   }
 
   const patientFields: Field[] = [
-    { label: 'Patient Name', key: 'patient_name', format: null },
-    { label: 'Date of Birth', key: 'date_of_birth', format: getFormatBirthDate },
-    { label: 'Entry Time', key: 'entry_time', format: getFormatEntryDate },
-    { label: 'Triage Level', key: 'patient_triage_level', format: null },
-    { label: 'Patient Medication', key: 'patient_medication', format: null },
-    { label: 'Patient Problem', key: 'patient_problem', format: null },
-    { label: 'Box ID', key: 'box_code', format: null },
-    { label: 'Doctor Name', key: 'doctor_name', format: null },
-    { label: 'Nurse Name', key: 'nurse_name', format: null },
-    { label: 'Patient Status', key: 'patient_status', format: null }
+    { label: t('NameLabel'), key: 'patient_name', format: null },
+    { label: t('DateOfBirthLabel'), key: 'date_of_birth', format: getFormatBirthDate },
+    { label: t('EntryTimeLabel'), key: 'entry_time', format: getFormatEntryDate },
+    { label: t('TriageLevelLabel'), key: 'patient_triage_level', format: null },
+    { label: t('PatientMedication'), key: 'patient_medication', format: null },
+    { label: t('PatientProblem'), key: 'patient_problem', format: null },
+    { label: t('PatientBoxCodeLabel'), key: 'box_code', format: null },
+    { label: t('DoctorNameLabel'), key: 'doctor_name', format: null },
+    { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
+    { label: t('PatientStatusLabel'), key: 'patient_status', format: null }
   ]
   //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
 
@@ -106,9 +108,9 @@ function PatientDetail() {
   return (
     <div className='max-w-6xl mx-auto mt-5 mb-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-2xl font-bold'>Patient Details </h2>
+        <h2 className='text-2xl font-bold'>{t('title')}</h2>
         <Button color='red' onClick={handleGoBack}>
-          Back
+          {t('BackButton')}
         </Button>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
@@ -137,7 +139,7 @@ function PatientDetail() {
               viewBox={`0 0 256 256`}
             />
             <div className='text-center mt-1'>
-              <Label>Scan QR Code for mobile</Label>
+              <Label>{t('QRLabel')}</Label>
             </div>
           </div>
         </div>
@@ -145,7 +147,7 @@ function PatientDetail() {
       {isPatientStatusAlta ? (
         <div className='mt-4 mb-4'>
           <Button color='red' onClick={handleMedicalDischarge}>
-            Discharge
+            {t('DischargeButton')}
           </Button>
         </div>
       ) : null}
