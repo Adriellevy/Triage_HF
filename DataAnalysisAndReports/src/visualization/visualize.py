@@ -62,7 +62,7 @@ from datetime import timedelta
 #     return fig 
 
 def bar_chart(df, x, y, title, x_title, y_title, color, mean = None):
-    fig = px.bar(df, x = x, y = y, color = color, barmode = "group")
+    fig = px.bar(df, x = x, y = y, color = color, category_orders={x: df[x].unique()})
     fig.update_layout(title = title, xaxis_title = x_title, yaxis_title = y_title, title_x = 0.5, plot_bgcolor='white', xaxis=dict(linecolor='black', showgrid=True), yaxis=dict(linecolor='black', showgrid=True))
     #fig.update_traces(texttemplate = '%{y}', textposition = 'outside')
     if(mean):

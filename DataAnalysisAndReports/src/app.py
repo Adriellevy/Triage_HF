@@ -16,11 +16,9 @@ from visualization.visualize import bar_chart, line_chart
 #
 # !BAR CHART
 # !MODIFICAR TEXT TRACE TEMPLATE
-# !SIMPLIFICAR LA FORMA DE ORDENAR
-# !TOD0S LOS NIVELES DE TRIAGE EN UNA MISMA BARRA
 # !SACAR EL 0, Y CAMBIAR EL FORMATO A INTEGER ANTES DE PASARLO A STRING
-# !VERIFICAR POR QUE NO SE ESTA ORDENANDO
-#
+# !SACAR FILTRO POR TRIAGE
+# !AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 
 
 
@@ -86,8 +84,10 @@ def grafico_top_consultas_fecha():
     order = request.args.get('order', default=None, type=str)
     df_top_consultas_fecha = top_consultas_fecha(df_top_consultas_fecha, top, order, **get_args())
 
+    df_top_consultas_fecha['TRIAGE'] = df_top_consultas_fecha['TRIAGE'].apply(lambda x: str(int(float(x))))
+    df_top_consultas_fecha = df_top_consultas_fecha[df_top_consultas_fecha['TRIAGE'] != '0']
+
     media = request.args.get('media', default=None, type=bool)
-    df_top_consultas_fecha['TRIAGE'] = df_top_consultas_fecha['TRIAGE'].astype(str)
     fig = bar_chart(df=df_top_consultas_fecha, 
                x='MOTIVO DE CONSULTA', y='CANTIDAD DE CONSULTAS', 
                x_title='Motivo de Consulta', y_title='Cantidad de Consultas', title='Motivos de Consulta mas Frecuentes', 
