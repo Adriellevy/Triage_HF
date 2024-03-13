@@ -4,7 +4,7 @@ from data.make_dataset import get_df
 
 from features.build_features import build_features
 
-from visualization.visualize import cant_pacientes_fecha, top_consultas_fecha
+from visualization.visualize import number_patients_date, top_queries_date
 from visualization.visualize import bar_chart, line_chart
 
 
@@ -29,65 +29,72 @@ from visualization.visualize import bar_chart, line_chart
 
 app = Flask(__name__)
 
+
 def initialize_data():
     df = get_df()
     df = build_features(df)
     return df
 
+
 df = initialize_data()
 
+
 def get_args():
-    args = { 'desde': request.args.get('desde', default=None, type=str),
-             'hasta': request.args.get('hasta', default=None, type=str),
-             'nombre_y_apellido': request.args.get('nombreyapellido', default=None, type=str),
-             'motivo_de_consulta': request.args.get('motivodeconsulta', default=None, type=str),
-             'box': request.args.get('box', default=None, type=int),
-             'medico': request.args.get('medico', default=None, type=str),
-             'enfermero': request.args.get('enfermero', default=None, type=str),
-             'alta': request.args.get('alta', default=None, type=str),
-             'aislado': request.args.get('aislado', default=None, type=bool)
+    args = {'from_': request.args.get('from', default=None, type=str),
+            'to': request.args.get('to', default=None, type=str),
+            'name_lastname': request.args.get('namelastname', default=None, type=str),
+            'consulting_reason': request.args.get('consultingreason', default=None, type=str),
+            'box': request.args.get('box', default=None, type=int),
+            'doctor': request.args.get('doctor', default=None, type=str),
+            'nurse': request.args.get('nurse', default=None, type=str),
+            'discharged': request.args.get('discharged', default=None, type=str),
+            'isolated': request.args.get('isolated', default=None, type=bool)
             }
     return args
 
-@app.route('/cant_pacientes_fecha/')
-def grafico_cant_pacientes_fecha():
-    global df
-    df_cant_pacientes_fecha = df.copy(deep=True)
-    
-    df_cant_pacientes_fecha = cant_pacientes_fecha(df_cant_pacientes_fecha, **get_args())
 
-    media = request.args.get('media', default=None, type=bool)
-    fig = line_chart(df=df_cant_pacientes_fecha, 
-               x='FECHA DE INGRESO', 
-               y='CANTIDAD DE PACIENTES', 
-               x_title='Fecha de Ingreso', 
-               y_title='Cantidad de Pacientes', 
-               title='Cantidad de Pacientes por Fecha de Ingreso',
-               color='TRIAGE',
-               mean=media)
-    
+@app.route('/number_patients_date/')
+def chart_number_patients_date():
+    global df
+    df_number_patients_date = df.copy(deep=True)
+    df_number_patients_date = number_patients_date(
+        df_number_patients_date, **get_args())
+
+    mean = request.args.get('mean', default=None, type=bool)
+    fig = line_chart(df=df_number_patients_date,
+                     x='FECHA DE INGRESO',
+                     y='CANTIDAD DE PACIENTES',
+                     x_title='Fecha de Ingreso',
+                     y_title='Cantidad de Pacientes',
+                     title='Cantidad de Pacientes por Fecha de Ingreso',
+                     color='TRIAGE',
+                     mean=mean)
+
     return fig.to_html()
 
-@app.route('/top_consultas_fecha/')
-def grafico_top_consultas_fecha():
+
+@app.route('/top_queries_date/')
+def chart_top_queries_date():
     global df
-    df_top_consultas_fecha = df.copy(deep=True)
+    df_number_patients_date = df.copy(deep=True)
 
     top = request.args.get('top', default=10, type=int)
     order = request.args.get('order', default=None, type=str)
-    df_top_consultas_fecha = top_consultas_fecha(df_top_consultas_fecha, top, order, **get_args())
+    df_number_patients_date = top_queries_date(
+        df_number_patients_date, top, order, **get_args())
 
-    media = request.args.get('media', default=None, type=bool)
-    fig = bar_chart(df=df_top_consultas_fecha, 
-               x='MOTIVO DE CONSULTA', 
-               y='CANTIDAD DE CONSULTAS', 
-               x_title='Motivo de Consulta',
-               y_title='Cantidad de Consultas', 
-               title='Motivos de Consulta mas Frecuentes', 
-               color='TRIAGE',
-               mean = media)    
-    
+    mean = request.args.get('mean', default=None, type=bool)
+    fig = bar_chart(df=df_number_patients_date,
+                    x='MOTIVO DE CONSULTA',
+                    y='CANTIDAD DE CONSULTAS',
+                    x_title='Motivo de Consulta',
+                    y_title='Cantidad de Consultas',
+                    title='Motivos de Consulta mas Frecuentes',
+                    color='TRIAGE',
+                    mean=mean)
+
     return fig.to_html()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,9 +1,17 @@
+# DATA HANDLING
 numpy
 pandas
-plotly
+datetime
+
+# WEB APP
 flask
+
+# CHART
+plotly
+matplotlib # TO DEBUG .ipynb
+seaborn # TO DEBUG .ipynb
+
+# ML
 nltk
-matplotlib
-seaborn
 gensim
 scikit-learn
