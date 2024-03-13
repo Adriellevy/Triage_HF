@@ -29,6 +29,8 @@ __pycache__/
 *.njsproj
 *.sln
 *.sw?
-DataAnalysisAndReports/src/data/__pycache__/make_dataset.cpython-310.pyc
-DataAnalysisAndReports/src/features/__pycache__/build_features.cpython-310.pyc
-DataAnalysisAndReports/src/visualization/__pycache__/visualize.cpython-310.pyc
+
+DataAnalysisAndReports/src/data/__pycache__/
+DataAnalysisAndReports/src/features/__pycache__/
+DataAnalysisAndReports/src/models/__pycache__/
+DataAnalysisAndReports/src/visualization/__pycache__/

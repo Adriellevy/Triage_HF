@@ -19,7 +19,7 @@ def bar_chart(df, x, y, title, x_title, y_title, color, mean = None):
                  y = y, 
                  color = color, 
                  category_orders={x: df[x].unique()}, 
-                 color_discrete_map={'1': '#BDBEBE', '2': '#FA8162', '3': '#FAFB9F','4': '#A0C791'})
+                 color_discrete_map={'1': '#BDBEBE', '2': '#FA8162', '3': '#CCCC52','4': '#A0C791'})
     
     fig.update_layout(title = title, 
                       xaxis_title = x_title, 
@@ -46,7 +46,7 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean = None):
                   y = y,
                   color = color, 
                   markers = True,
-                  color_discrete_map={'1': '#BDBEBE', '2': '#FA8162', '3': '#FAFB9F','4': '#A0C791'})
+                  color_discrete_map={'1': '#BDBEBE', '2': '#FA8162', '3': '#CCCC52','4': '#A0C791'})
     fig.update_layout(title = title, 
                       xaxis_title = x_title, 
                       yaxis_title = y_title, 
