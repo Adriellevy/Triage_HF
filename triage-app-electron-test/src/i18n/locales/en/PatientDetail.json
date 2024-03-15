@@ -1,0 +1,16 @@
+{
+  "title": "Patient Details",
+  "NameLabel": "Name",
+  "DateOfBirthLabel": "Date of Birth",
+  "EntryTimeLabel": "Entry Time",
+  "TriageLevelLabel": "Triage Level",
+  "PatientMedication": "Medication",
+  "PatientProblem": "Problem",
+  "PatientBoxCodeLabel": "Box Code",
+  "DoctorNameLabel": "Doctor's Name",
+  "NurseNameLabel": "Nurse's Name",
+  "PatientStatusLabel": "Patient Status",
+  "QRLabel": "Scan QR Code for mobile",
+  "DischargeButton": "Discharge",
+  "BackButton": "Back"
+}

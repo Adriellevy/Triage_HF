@@ -1,9 +1,11 @@
-import NewPatientForm from '@/components/NewPatientForm'
+import PatientForm from '@/components/Forms/PatientForm'
+import Dashboard from '@/components/Dashboard/Dashboard'
 
 function GuidedEntry() {
   return (
     <div>
-      <NewPatientForm />
+      <PatientForm />
+      <Dashboard />
     </div>
   )
 }
