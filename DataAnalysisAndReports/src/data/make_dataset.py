@@ -1,34 +1,32 @@
 import pandas as pd
+import mysql.connector
 
-# using database
-# import mysql.connector
-# def connect():
-#     try:
-#         connection = mysql.connector.connect(
-#             host='localhost',
-#             user='root',
-#             password='admin',
-#             database='triage_db'
-#         )
-#     except mysql.connector.Error as e:
-#         return None
-#     return connection
+def connect():
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='admin',
+            database='triage_db'
+        )
+    except mysql.connector.Error:
+        return None
+    return connection
 
-# def get_df():
-#     connection = connect()
-#     if connection:
-#         query = 'SELECT * FROM patient'
-#         df = pd.read_sql(query, connection)
-#         connection.close()
-#         return df
-#     else:
-#         return None
+def get_table(table_name):
+    connection = connect()
+    if connection:
+        query = f'SELECT * FROM {table_name}'
+        df = pd.read_sql(query, connection)
+        connection.close()
+        return df
+    else:
+        return None
 
 # using csv locally
 
-
-def get_df():
-    return pd.read_csv('../dataset/raw/TRIAGE_2024.csv')
+# def get_df():
+#     return pd.read_csv('../dataset/raw/TRIAGE_2024.csv')
 
 # using csv from github
 # WARNING: you need the token

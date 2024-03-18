@@ -1,8 +1,8 @@
 from flask import Flask, request
 
-from data.make_dataset import get_df
+from data.make_dataset import get_table
 
-from features.build_features import build_features
+#from features.build_features import build_features
 
 from visualization.visualize import number_patients_date, top_queries_date
 from visualization.visualize import bar_chart, line_chart
@@ -30,15 +30,6 @@ from visualization.visualize import bar_chart, line_chart
 app = Flask(__name__)
 
 
-def initialize_data():
-    df = get_df()
-    df = build_features(df)
-    return df
-
-
-df = initialize_data()
-
-
 def get_args():
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
@@ -55,22 +46,23 @@ def get_args():
 
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
-    global df
-    df_number_patients_date = df.copy(deep=True)
-    df_number_patients_date = number_patients_date(
-        df_number_patients_date, **get_args())
+    df = get_table("PATIENT")
 
-    mean = request.args.get('mean', default=None, type=bool)
-    fig = line_chart(df=df_number_patients_date,
-                     x='FECHA DE INGRESO',
-                     y='CANTIDAD DE PACIENTES',
-                     x_title='Fecha de Ingreso',
-                     y_title='Cantidad de Pacientes',
-                     title='Cantidad de Pacientes por Fecha de Ingreso',
-                     color='TRIAGE',
-                     mean=mean)
+    df = number_patients_date(
+        df, **get_args())
 
-    return fig.to_html()
+    # mean = request.args.get('mean', default=None, type=bool)
+    # fig = line_chart(df=df_number_patients_date,
+    #                  x='FECHA DE INGRESO',
+    #                  y='CANTIDAD DE PACIENTES',
+    #                  x_title='Fecha de Ingreso',
+    #                  y_title='Cantidad de Pacientes',
+    #                  title='Cantidad de Pacientes por Fecha de Ingreso',
+    #                  color='TRIAGE',
+    #                  mean=mean)
+
+    # return fig.to_html()
+    return None
 
 
 @app.route('/top_queries_date/')
