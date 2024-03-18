@@ -68,78 +68,78 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
 
 
 def get_last_week(df):
-    to = df['FECHA DE INGRESO'].max()
+    to = df['ENTRY_TIME'].max()
     from_ = to - timedelta(days=7)
     return (from_, to)
 
 
-def filters(df, from_=None, to=None, name_lastname=None, consulting_reason=None, box=None, doctor=None, nurse=None, discharged=None, isolated=None):
+def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
     if (from_ == None and to == None):
         from_, to = get_last_week(df)
     else:
         from_ = pd.to_datetime(from_, format='%d-%m-%Y', errors='coerce')
         to = pd.to_datetime(to, format='%d-%m-%Y', errors='coerce')
 
-    df = df[(df['FECHA DE INGRESO'] >= from_) & (df['FECHA DE INGRESO'] <= to)]
-    df['FECHA DE INGRESO'] = df['FECHA DE INGRESO'].dt.strftime('%d-%m-%Y')
+    df = df[(df['ENTRY_TIME'] >= from_) & (df['ENTRY_TIME'] <= to)]
+    df['ENTRY_TIME'] = df['ENTRY_TIME'].dt.strftime('%d-%m-%Y')
 
 
-    if (name_lastname != None):
-        df = df[df['NOMBRE Y APELLIDO'] == name_lastname.upper()]
+    if (patient_name != None):
+        df = df[df['PATIENT_NAME'] == patient_name.upper()]
 
-    if (consulting_reason != None):
-        df = df[df['MOTIVO DE CONSULTA'] == consulting_reason.upper()]
+    if (patient_problem != None):
+        df = df[df['PATIENT_PROBLEM'] == patient_problem.upper()]
 
-    if (box != None):
-        df = df[df['BOX'] == box]
+    if (box_type != None):
+        df = df[df['BOX_TYPE'] == box_type]
 
-    if (doctor != None):
-        df = df[df['MEDICO'] == doctor.upper()]
+    if (doctor_username != None):
+        df = df[df['DOCTOR_USERNAME'] == doctor_username.upper()]
 
-    if (nurse != None):
-        df = df[df['ENFERMERO'] == nurse.upper()]
+    if (nurse_username != None):
+        df = df[df['NURSE_USERNAME'] == nurse_username.upper()]
 
     if (discharged != None):
-        df = df[df['ALTA'] == discharged.upper()]
+        df = df[df['DISCHARGED'] == discharged.upper()]
 
     if (isolated != None):
-        df = df[df['AISLADO'] == isolated]
+        df = df[df['ISOLATED'] == isolated]
 
     return df
 
 
-def number_patients_date(df, from_=None, to=None, name_lastname=None, consulting_reason=None, box=None, doctor=None, nurse=None, discharged=None, isolated=None):
-    df = filters(df, from_, to, name_lastname, consulting_reason,
-                 box, doctor, nurse, discharged, isolated)
+def number_patients_date(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
+    df = filters(df, from_, to, patient_name, patient_problem,
+                 box_type, doctor_username, nurse_username, discharged, isolated)
 
-    df = df.groupby(['FECHA DE INGRESO', 'TRIAGE'], sort=False).size(
-    ).reset_index(name='CANTIDAD DE PACIENTES')
+    df = df.groupby(['ENTRY_TIME', 'PATIENT_TRIAGE_LEVEL'], sort=False).size(
+    ).reset_index(name='NUMBER OF PATIENTS')
 
-    df['TRIAGE'] = df['TRIAGE'].apply(lambda x: str(int(float(x))))
-    df = df[df['TRIAGE'] != '0']
+    df['PATIENT_TRIAGE_LEVEL'] = df['PATIENT_TRIAGE_LEVEL'].apply(lambda x: str(int(float(x))))
+    df = df[df['PATIENT_TRIAGE_LEVEL'] != '0']
 
     return df
 
 
-def top_queries_date(df, top=10, order=None, from_=None, to=None, name_lastname=None, consulting_reason=None, box=None, doctor=None, nurse=None, discharged=None, isolated=None):
-    df = filters(df, from_, to, name_lastname, consulting_reason,
-                 box, doctor, nurse, discharged, isolated)
+def top_queries_date(df, top=10, order=None, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
+    df = filters(df, from_, to, patient_name, patient_problem,
+                 box_type, doctor_username, nurse_username, discharged, isolated)
 
-    df = df.groupby(['MOTIVO DE CONSULTA', 'TRIAGE']).size(
+    df = df.groupby(['PATIENT_PROBLEM', 'PATIENT_TRIAGE_LEVEL']).size(
     ).reset_index(name='CANTIDAD DE CONSULTAS')
 
-    top_reasons = df.groupby('MOTIVO DE CONSULTA')[
+    top_reasons = df.groupby('PATIENT_PROBLEM')[
         'CANTIDAD DE CONSULTAS'].sum().nlargest(top).index
-    count = count[count['MOTIVO DE CONSULTA'].isin(top_reasons)]
+    count = count[count['PATIENT_PROBLEM'].isin(top_reasons)]
 
     if (order == 'asc'):
-        count = count.sort_values(by=['MOTIVO DE CONSULTA', 'TRIAGE'], key=lambda x: x.map(
+        count = count.sort_values(by=['PATIENT_PROBLEM', 'PATIENT_TRIAGE_LEVEL'], key=lambda x: x.map(
             dict(zip(top_reasons, range(len(top_reasons))))))
 
-    count = count.sort_values(by=['MOTIVO DE CONSULTA', 'TRIAGE'], key=lambda x: x.map(
+    count = count.sort_values(by=['PATIENT_PROBLEM', 'PATIENT_TRIAGE_LEVEL'], key=lambda x: x.map(
         dict(zip(top_reasons[::-1], range(len(top_reasons))))))
 
-    count['TRIAGE'] = count['TRIAGE'].apply(lambda x: str(int(float(x))))
-    count = count[count['TRIAGE'] != '0']
+    count['PATIENT_TRIAGE_LEVEL'] = count['PATIENT_TRIAGE_LEVEL'].apply(lambda x: str(int(float(x))))
+    count = count[count['PATIENT_TRIAGE_LEVEL'] != '0']
 
     return count

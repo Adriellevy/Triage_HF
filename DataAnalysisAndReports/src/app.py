@@ -26,6 +26,14 @@ from visualization.visualize import bar_chart, line_chart
 # !ADAPTAR TODO A LA BASE DE DATOS
 # ?AGREGAR EVENTO DE CLIC EN GRAFICOS
 
+# FEATURES BUILDING
+# INNER JOIN PATIENT BOX ID PARA OBTENER BOX TYPE
+# INNER JOIN DOCTOR PARA OBTENER SU USERNAME
+# INNER JOIN NURSE PARA OBTENER SU USERNAME
+# DISCHARGED -> OBTENER PACIENTES CON STATUS ALTA
+# ISOLATED -> OBTENER PACIENTES CON STATUS AISLAMIENTO
+
+
 
 app = Flask(__name__)
 
@@ -33,11 +41,11 @@ app = Flask(__name__)
 def get_args():
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
-            'name_lastname': request.args.get('namelastname', default=None, type=str),
-            'consulting_reason': request.args.get('consultingreason', default=None, type=str),
-            'box': request.args.get('box', default=None, type=int),
-            'doctor': request.args.get('doctor', default=None, type=str),
-            'nurse': request.args.get('nurse', default=None, type=str),
+            'patient_name': request.args.get('patientname', default=None, type=str),
+            'patient_problem': request.args.get('patientproblem', default=None, type=str),
+            'box_type': request.args.get('boxtype', default=None, type=int),
+            'doctor_username': request.args.get('doctorusername', default=None, type=str),
+            'nurse_username': request.args.get('nurseusername', default=None, type=str),
             'discharged': request.args.get('discharged', default=None, type=str),
             'isolated': request.args.get('isolated', default=None, type=bool)
             }
