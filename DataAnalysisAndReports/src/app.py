@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-from data.make_dataset import get_table
+import data.make_dataset as md
 
 #from features.build_features import build_features
 
@@ -23,15 +23,8 @@ from visualization.visualize import bar_chart, line_chart
 
 # GENERAL
 # ACTUALIZAR JUPYTER NOTEBOOK
-# !ADAPTAR TODO A LA BASE DE DATOS
 # ?AGREGAR EVENTO DE CLIC EN GRAFICOS
-
-# FEATURES BUILDING
-# INNER JOIN PATIENT BOX ID PARA OBTENER BOX TYPE
-# INNER JOIN DOCTOR PARA OBTENER SU USERNAME
-# INNER JOIN NURSE PARA OBTENER SU USERNAME
-# DISCHARGED -> OBTENER PACIENTES CON STATUS ALTA
-# ISOLATED -> OBTENER PACIENTES CON STATUS AISLAMIENTO
+# !CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
 
 
 
@@ -54,23 +47,22 @@ def get_args():
 
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
-    df = get_table("PATIENT")
+    df = md.get_table('PATIENT')
 
     df = number_patients_date(
         df, **get_args())
 
-    # mean = request.args.get('mean', default=None, type=bool)
-    # fig = line_chart(df=df_number_patients_date,
-    #                  x='FECHA DE INGRESO',
-    #                  y='CANTIDAD DE PACIENTES',
-    #                  x_title='Fecha de Ingreso',
-    #                  y_title='Cantidad de Pacientes',
-    #                  title='Cantidad de Pacientes por Fecha de Ingreso',
-    #                  color='TRIAGE',
-    #                  mean=mean)
+    mean = request.args.get('mean', default=None, type=bool)
+    fig = line_chart(df=df,
+                     x='ENTRY_TIME',
+                     y='NUMBER_OF_PATIENTS',
+                     x_title='Fecha de Ingreso',
+                     y_title='Cantidad de Pacientes',
+                     title='Cantidad de Pacientes por Fecha de Ingreso',
+                     color='PATIENT_TRIAGE_LEVEL',
+                     mean=mean)
 
-    # return fig.to_html()
-    return None
+    return fig.to_html()
 
 
 @app.route('/top_queries_date/')

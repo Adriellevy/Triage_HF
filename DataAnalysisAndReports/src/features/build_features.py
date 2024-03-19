@@ -1,26 +1,26 @@
 import pandas as pd
 import numpy as np
 
-from data.make_dataset import get_table
+import data.make_dataset as md
 
-def getDischarged(df):
+def filter_discharged(df):
     return df[df['PATIENT_STATUS'] == 'ALTA']
 
-def getIsolated(df):
+def filter_isolated(df):
     return df[df['PATIENT_STATUS'] == 'AISLAMIENTO']
 
-def getBoxType(df, box_type):
-    df_box = get_table('BOX')
+def filter_box_type(df, box_type):
+    df_box = md.get_table('BOX')
     new_df = df.merge(df_box, on='BOX_ID')
     return new_df[new_df['BOX_TYPE'] == box_type]
 
-def getDoctorUsername(df, doctor_username):
-    df_user = get_table('USERS')
+def filter_doctor_username(df, doctor_username):
+    df_user = md.get_table('USERS')
     new_df = df.merge(df_user, left_on='DOCTOR_ID', right_on='USER_ID')
     return new_df[new_df['USER_NAME'] == doctor_username]
 
-def getNurseUsername(df, nurse_username):
-    df_user = get_table('USERS')
+def filter_nurse_username(df, nurse_username):
+    df_user = md.get_table('USERS')
     new_df = df.merge(df_user, left_on='NURSE_ID', right_on='USER_ID')
     return new_df[new_df['USER_NAME'] == nurse_username]
 

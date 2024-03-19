@@ -3,6 +3,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import timedelta
 
+import features.build_features as bf
+
 # AJUSTAR VALOR DE 'x'
 # fig.add_annotation(
 # xref = 'x', yref = 'y',
@@ -83,7 +85,6 @@ def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, bo
     df = df[(df['ENTRY_TIME'] >= from_) & (df['ENTRY_TIME'] <= to)]
     df['ENTRY_TIME'] = df['ENTRY_TIME'].dt.strftime('%d-%m-%Y')
 
-
     if (patient_name != None):
         df = df[df['PATIENT_NAME'] == patient_name.upper()]
 
@@ -91,19 +92,19 @@ def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, bo
         df = df[df['PATIENT_PROBLEM'] == patient_problem.upper()]
 
     if (box_type != None):
-        df = df[df['BOX_TYPE'] == box_type]
+        df = bf.filter_box_type(df, box_type)
 
     if (doctor_username != None):
-        df = df[df['DOCTOR_USERNAME'] == doctor_username.upper()]
+        df = bf.filter_doctor_username(df, box_type)
 
     if (nurse_username != None):
-        df = df[df['NURSE_USERNAME'] == nurse_username.upper()]
+        df = bf.filter_nurse_username(df, nurse_username)
 
     if (discharged != None):
-        df = df[df['DISCHARGED'] == discharged.upper()]
+        df = bf.filter_discharged(df)
 
     if (isolated != None):
-        df = df[df['ISOLATED'] == isolated]
+        df = bf.filter_isolated(df)
 
     return df
 
@@ -113,7 +114,7 @@ def number_patients_date(df, from_=None, to=None, patient_name=None, patient_pro
                  box_type, doctor_username, nurse_username, discharged, isolated)
 
     df = df.groupby(['ENTRY_TIME', 'PATIENT_TRIAGE_LEVEL'], sort=False).size(
-    ).reset_index(name='NUMBER OF PATIENTS')
+    ).reset_index(name='NUMBER_OF_PATIENTS')
 
     df['PATIENT_TRIAGE_LEVEL'] = df['PATIENT_TRIAGE_LEVEL'].apply(lambda x: str(int(float(x))))
     df = df[df['PATIENT_TRIAGE_LEVEL'] != '0']
