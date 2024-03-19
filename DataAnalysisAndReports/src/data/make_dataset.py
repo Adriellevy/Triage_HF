@@ -13,10 +13,12 @@ def connect():
         return None
     return connection
 
-def get_table(table_name):
+def get_table(table_name, condition=None):
     connection = connect()
     if connection:
         query = f'SELECT * FROM {table_name}'
+        if condition != None:
+            query += f'WHERE {condition}'
         df = pd.read_sql(query, connection)
         connection.close()
         return df

@@ -1,12 +1,28 @@
-# import pandas as pd
-# import numpy as np
+import pandas as pd
+import numpy as np
 
+from data.make_dataset import get_table
 
-# def cols_rename(df):
-#     cols_rename = {'3+-99999|a': 'NUMERO DE TURNO',
-#                    '[ñ_MJ': 'FECHA DE INGRESO',
-#                    'A': 'AISLADO'}
-#     return df.rename(columns=cols_rename)
+def getDischarged(df):
+    return df[df['PATIENT_STATUS'] == 'ALTA']
+
+def getIsolated(df):
+    return df[df['PATIENT_STATUS'] == 'AISLAMIENTO']
+
+def getBoxType(df, box_type):
+    df_box = get_table('BOX')
+    new_df = df.merge(df_box, on='BOX_ID')
+    return new_df[new_df['BOX_TYPE'] == box_type]
+
+def getDoctorUsername(df, doctor_username):
+    df_user = get_table('USERS')
+    new_df = df.merge(df_user, left_on='DOCTOR_ID', right_on='USER_ID')
+    return new_df[new_df['USER_NAME'] == doctor_username]
+
+def getNurseUsername(df, nurse_username):
+    df_user = get_table('USERS')
+    new_df = df.merge(df_user, left_on='NURSE_ID', right_on='USER_ID')
+    return new_df[new_df['USER_NAME'] == nurse_username]
 
 
 # def remove_headers(df):
