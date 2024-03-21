@@ -1,9 +1,18 @@
 import React from 'react'
 
-interface PropsSelect extends React.SelectHTMLAttributes<HTMLSelectElement> {}
+interface PropsSelect extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  error_active?: any
+}
 
 export function Select(props: PropsSelect) {
-  return <select className='w-full p-2 border rounded-md' {...props}></select>
+  const errorBorder = props.error_active?.value == true ? 'border-red-500' : ''
+  const errorMessage = props.error_active?.message
+  return (
+    <>
+      <select className={`w-full p-2 border rounded-md ${errorBorder}`} {...props}></select>
+      {errorBorder && <span className='text-red-500'>{errorMessage}</span>}
+    </>
+  )
 }
 
 export default Select

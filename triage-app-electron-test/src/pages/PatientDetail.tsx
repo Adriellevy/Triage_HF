@@ -1,25 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { NullablePatient, Patient, PatientStatus } from '@/interfaces/Patinet'
+import QRCode from 'react-qr-code'
+import { Patient, PatientStatus, PatientData } from '@/interfaces/Patinet'
+import { Button, Label } from '@/components/ui'
+import PatientHistory from '@/components/PatientHistory/PatientHistory'
+import PatientInformIA from '@/components/PatientInformIA'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
-import { consulta } from '@/services/openai-test'
-import { Button } from '@/components/ui'
+import { useTranslation } from 'react-i18next'
 
-const solicitud =
-  'Toma el rol de un médico cardiólogo que escribe de forma resumida las evoluciones de sus pacientes. Crea un resumen de 5 líneas en primera persona del singular. Muy resumido. Únicamente puntos importantes:  Paciente masculino 47 años Trabaja en comercio  Antec: IAM con SDST 2021. PTCA a ADA prox con un DES. FE 40%. Hipertensión arterial, Hipotiroidismo, Insulinoresistencia, Alergias: -, Tabaco: -  AAFF: Hermano IAM reciente  Medicamentos: AAS 100x1, Clop 75x1, Atorvastatina 20x4, Eutirox 75, bisoprolol 2.5x1, espironolactona 12.5x1, Metformina XR 750x1, Clotiazepam 5x1, Ezetimibe 10x1, Setralina 50x1,Hospitalizacion reciente por COVID Desde el alta con dolor torácico, constanteAl examen: EVA 0/10 PA 100/60 FC 80  Yug planas, sin soplos carotideos  RR2TSS  MP+SRA  Abd: BDI, no palpo masas ni visceromegalias, Ao impresiona de tamaño normal  Piel tibia a distal sin edema, pulsos simétricosPlan: Suspender clopidogrel Eco y test esfuerzo Control con resultado. Ahora cambia lo que creas necesario por la informacion de este paciente:'
 function PatientDetail() {
+  const { t } = useTranslation('PatientDetail')
   const { patient_id } = useParams()
   const navigate = useNavigate()
-  const [Patient, setPatient] = useState<NullablePatient>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [Patient, setPatient] = useState<PatientData | null>(null)
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
-  const [showRequestInfo, setShowRequestInfo] = useState<boolean>(false)
-  const [Inform, setInform] = useState<string | null>(null)
+  const isPatientStatusAlta = Patient?.patient_status !== PatientStatus.DISCHARGED
 
   const handleGoBack = () => {
     navigate(-1)
   }
+  //------------------------------------------- Our Api Get Patient  --------------------------------------------------------------------------------------
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +38,8 @@ function PatientDetail() {
     }
     fetchData()
   }, [patient_id])
+
+  //------------------------------------------------------  Formating Patient -----------------------------------------------------------------------------
 
   const getFormatEntryDate = (entry__time: string) => {
     const entryTimeOriginal = new Date(entry__time)
@@ -66,10 +69,29 @@ function PatientDetail() {
     return formatBirthDate
   }
 
+  interface Field {
+    label: string
+    key: keyof PatientData
+    format: ((value: string) => string) | null
+  }
+
+  const patientFields: Field[] = [
+    { label: t('NameLabel'), key: 'patient_name', format: null },
+    { label: t('DateOfBirthLabel'), key: 'date_of_birth', format: getFormatBirthDate },
+    { label: t('EntryTimeLabel'), key: 'entry_time', format: getFormatEntryDate },
+    { label: t('TriageLevelLabel'), key: 'patient_triage_level', format: null },
+    { label: t('PatientMedication'), key: 'patient_medication', format: null },
+    { label: t('PatientProblem'), key: 'patient_problem', format: null },
+    { label: t('PatientBoxCodeLabel'), key: 'box_code', format: null },
+    { label: t('DoctorNameLabel'), key: 'doctor_name', format: null },
+    { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
+    { label: t('PatientStatusLabel'), key: 'patient_status', format: null }
+  ]
+  //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
+
   const handlePatientStatus = (patientData: Patient | null) => {
     if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
       SetMedicalDischarge(true)
-      setShowRequestInfo(false)
     }
   }
 
@@ -82,127 +104,57 @@ function PatientDetail() {
       console.log('Error en dar de ALTA al paciente')
     }
   }
-  const handleRequestButtonClick = () => {
-    setShowRequestInfo(true)
-    setLoading(true)
-    const patientProvisional = { ...Patient }
-    if (patientProvisional) {
-      patientProvisional.doctor_name = ''
-      patientProvisional.patient_name = ''
-      patientProvisional.box_id = ''
-    }
-    const prompt = solicitud + patientProvisional
-    handleRequestOpenAi(prompt)
-  }
 
-  const handleRequestOpenAi = async (prompt: string) => {
-    const result = await consulta(prompt)
-    setLoading(false)
-    const requestInfo = result && result.message && result.message.content
-    console.log(requestInfo)
-    const requestInfoElement = document.getElementById('request-info') as HTMLElement
-    if (requestInfoElement) {
-      requestInfoElement.innerText = requestInfo || 'No information available'
-      setInform(requestInfo)
-    } else {
-      console.error('Element with class "text-gray-700" not found')
-    }
-  }
   return (
-    <div className='max-w-5xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
+    <div className='max-w-6xl mx-auto mt-5 mb-5 p-6 bg-white shadow-md rounded-md'>
       <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-2xl font-bold'>Patient Details </h2>
-        <Button color='green' onClick={handleGoBack}>
-          Back
+        <h2 className='text-2xl font-bold'>{t('title')}</h2>
+        <Button color='red' onClick={handleGoBack}>
+          {t('BackButton')}
         </Button>
       </div>
-      {Patient && (
-        <ul className='list-disc pl-4'>
-          <li>
-            <strong>Patient Name:</strong> {Patient.patient_name}
-          </li>
-          <li>
-            <strong>Date of Birth:</strong> {getFormatBirthDate(Patient.date_of_birth)}
-          </li>
-          <li>
-            <strong>Entry Time:</strong> {getFormatEntryDate(Patient.entry_time)}
-          </li>
-          <li>
-            <strong>Triage Level:</strong> {Patient.patient_triage_level}
-          </li>
-          <li>
-            <strong>Patient Medication:</strong> {Patient.patient_medication}
-          </li>
-          <li>
-            <strong>Patient Problem:</strong> {Patient.patient_problem}
-          </li>
-          <li>
-            <strong>Box ID:</strong> {Patient.box_id}
-          </li>
-          <li>
-            <strong>Doctor Name:</strong> {Patient.doctor_name}
-          </li>
-          <li>
-            <strong>Nurse Name:</strong> {Patient.nurse_name}
-          </li>
-          <li>
-            <strong>Patient Status:</strong> {Patient.patient_status}
-          </li>
-        </ul>
-      )}
-      <div className='flex justify-end'>
-        <Button color='red' onClick={handleMedicalDischarge}>
-          Medical Discharge
-        </Button>
-      </div>
-
-      {showMedicalDischarge && (
-        <>
-          <div className='mt-4'>
-            <Button color='red' onClick={handleRequestButtonClick}>
-              Request Inform
-            </Button>
-            {showRequestInfo && (
-              <div className='mt-4'>
-                <h3 className={`text-lg font-bold mb-2 ${loading ? 'hidden' : ''} `}>
-                  Requested Inform:
-                </h3>
-                <p className={`text-gray-700 ${loading ? 'hidden' : ''}`} id='request-info'>
-                  {loading ? 'Loading...' : Inform || 'Not able to charge the inform'}
-                </p>
-                <div className={`loader-container ${loading ? '' : 'hidden'}`}>
-                  <div className='loader' />
-                </div>
-              </div>
-            )}
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
+        <div>
+          <ul className='list-disc pl-4 space-y-2'>
+            {patientFields.map((field) => (
+              <li key={field.label} className='flex items-start'>
+                <span className='font-semibold mr-2'>{field.label}:</span>
+                <span className='flex-1'>
+                  {Patient
+                    ? field.format
+                      ? field.format(String(Patient[field.key]))
+                      : Patient[field.key]
+                    : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className='flex items-center'>
+          <div className='mx-auto w-full max-w-48 '>
+            <QRCode
+              size={256}
+              style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+              value={`${import.meta.env.VITE_NETWORK_APP_URL}/patients/${patient_id}`}
+              viewBox={`0 0 256 256`}
+            />
+            <div className='text-center mt-1'>
+              <Label>{t('QRLabel')}</Label>
+            </div>
           </div>
-          <style>
-            {`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        .loader-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .loader {
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #3498db;
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          animation: spin 1s linear infinite;
-        }
+        </div>
+      </div>
+      {isPatientStatusAlta ? (
+        <div className='mt-4 mb-4 justify-end flex'>
+          <Button color='red' onClick={handleMedicalDischarge}>
+            {t('DischargeButton')}
+          </Button>
+        </div>
+      ) : null}
 
-        .hidden {
-          display: none;
-        }
-      `}
-          </style>
-        </>
-      )}
+      {showMedicalDischarge && <PatientInformIA Patient={Patient} />}
+
+      <PatientHistory patient_id={patient_id} />
     </div>
   )
 }

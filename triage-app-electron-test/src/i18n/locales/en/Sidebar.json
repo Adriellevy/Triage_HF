@@ -1,0 +1,13 @@
+{
+  "GuidedEntry": "Guided Entry",
+  "Boxes": "Boxes",
+  "Patients": "Patients",
+  "Stats": "Stats",
+  "StatsPatientsDate": "Number of patients by date",
+  "StatsPatientsTriage": "Number of patients by triage",
+  "StatsReasons": "Reasons for consultation by date",
+  "Settings": "Settings",
+  "UsersSettings": "Users Settings",
+  "BoxSettings": "Box Settings",
+  "LogoutButton": "Logout"
+}
