@@ -130,7 +130,7 @@ def top_queries_date(df, top=10, order=None, from_=None, to=None, name_lastname=
 
     top_reasons = df.groupby('MOTIVO DE CONSULTA')[
         'CANTIDAD DE CONSULTAS'].sum().nlargest(top).index
-    count = count[count['MOTIVO DE CONSULTA'].isin(top_reasons)]
+    count = df[df['MOTIVO DE CONSULTA'].isin(top_reasons)]
 
     if (order == 'asc'):
         count = count.sort_values(by=['MOTIVO DE CONSULTA', 'TRIAGE'], key=lambda x: x.map(
