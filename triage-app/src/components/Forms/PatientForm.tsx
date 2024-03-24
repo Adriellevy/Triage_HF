@@ -427,7 +427,9 @@ function PatientForm() {
         <div>
           <Label htmlFor='date_of_birth'>{t('DateOfBirthLabel')}</Label>
           <DatePickerMUI
+            //@ts-expect-error no se handlea el vento
             onChangeExt={handleDateChange}
+            //@ts-expect-error no se handlea el vento
             selectedDateExt={selectedDate}
             error_active={ErrorsForm.date_of_birth}
           />

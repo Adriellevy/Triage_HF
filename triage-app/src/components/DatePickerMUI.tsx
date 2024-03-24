@@ -36,7 +36,7 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({
 
   const handleChange = (newDate: dayjs.Dayjs | null) => {
     setSelectedDate(newDate)
-    onChangeExt(getFormatTime(newDate))
+    onChangeExt(newDate ? getFormatTime(newDate) : null)
   }
 
   const yesterday = dayjs().subtract(130, 'year')
