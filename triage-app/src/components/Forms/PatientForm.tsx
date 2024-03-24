@@ -77,7 +77,8 @@ function PatientForm() {
       formData.patient_problem = edditingPatient.patient_problem || ''
       formData.patient_medication = edditingPatient.patient_medication || ''
       asFun()
-      const newDate = dayjs(edditingPatient.date_of_birth).toDate()
+
+      const newDate = dayjs(edditingPatient.date_of_birth)
 
       setSelectedDate(newDate)
     }
