@@ -211,7 +211,7 @@ function PatientForm() {
     console.log(newDate)
   }
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | dayjs.Dayjs | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
