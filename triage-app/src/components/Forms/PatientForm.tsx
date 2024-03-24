@@ -370,7 +370,9 @@ function PatientForm() {
   }
 
   // Errors
-  const [ErrorsForm, setErrorsForm] = useState<any>({
+  const [ErrorsForm, setErrorsForm] = useState<{
+    [key: string]: { value: boolean | null; message: string }
+  }>({
     patient_name: { value: null, message: 'Escriba un nombre válido' },
     date_of_birth: { value: null, message: 'Seleccione una fecha válida' },
     patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },

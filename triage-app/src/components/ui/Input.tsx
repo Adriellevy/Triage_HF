@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface PropsInput extends React.InputHTMLAttributes<HTMLInputElement> {
-  error_active?: any
+  error_active?: { value: boolean | null; message: string }
 }
 
 export function Input(props: PropsInput) {
