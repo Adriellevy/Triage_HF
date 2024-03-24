@@ -14,9 +14,10 @@ import { ErrorActive } from '@/interfaces/Errors'
 
 interface DatePickerMUIProps {
   onChangeExt: (newDate: Date | null) => void
-  selectedDateExt: Date | null
-  error_active: ErrorActive
+  selectedDateExt: Date | null;
+  error_active:any
 }
+
 
 export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({
   onChangeExt,
@@ -47,15 +48,27 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({
     onChangeExt(getFormatTime(newDate))
   }
 
-  const yesterday = dayjs().subtract(130, 'year').toDate()
-  const today = dayjs().toDate()
+  const yesterday = dayjs().subtract(130, 'year');
+  const today = dayjs()
 
   const errorBorder = error_active?.value == true ? 'border-red-500' : ''
   const errorMessage = error_active?.message
 
+
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className={`${errorBorder ? 'redBorderDataPick' : ''}`}>
+          <DatePicker
+            // label="Seleccionar fecha"
+            views={['year', 'month', 'day']}
+            openTo='year'
+            minDate={yesterday}
+            maxDate={today}
+            value={selectedDate}
+            onChange={handleChange}
+            format='DD/MM/YYYY'
+            className={`w-full h-0 m-0 p-0 text-sm datePick`}
         <div className={`${errorBorder ? 'redBorderDataPick' : ''}`}>
           <DatePicker
             // label="Seleccionar fecha"

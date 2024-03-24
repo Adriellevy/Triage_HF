@@ -77,7 +77,9 @@ function PatientForm() {
       formData.patient_problem = edditingPatient.patient_problem || ''
       formData.patient_medication = edditingPatient.patient_medication || ''
       asFun()
+
       const newDate = dayjs(edditingPatient.date_of_birth)
+
       setSelectedDate(newDate)
     }
   }, [edditingPatient])
@@ -159,7 +161,7 @@ function PatientForm() {
     return formattedTime
   }
 
-  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     formData.patient_triage_time = getCurrentTime()
     formData.patient_box = formData.box_id
   }
@@ -308,7 +310,7 @@ function PatientForm() {
       if (token) {
         if (edditingPatient) {
           try {
-            const data = await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
+            await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
             toast.success('Paciente actualizado', {
               duration: 2000
             })
@@ -326,6 +328,7 @@ function PatientForm() {
               duration: 2000
             })
             resetErrors()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setErrorsForm((prevErrorsForm: any) => {
               let updatedErrorsForm = { ...prevErrorsForm }
               errors.forEach((error) => {
@@ -370,7 +373,9 @@ function PatientForm() {
   }
 
   // Errors
-  const [ErrorsForm, setErrorsForm] = useState<any>({
+  const [ErrorsForm, setErrorsForm] = useState<{
+    [key: string]: { value: boolean | null; message: string }
+  }>({
     patient_name: { value: null, message: 'Escriba un nombre válido' },
     date_of_birth: { value: null, message: 'Seleccione una fecha válida' },
     patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
