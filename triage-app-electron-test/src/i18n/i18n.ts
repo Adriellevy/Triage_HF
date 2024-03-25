@@ -32,7 +32,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'es',
-    lng: 'es',
+    lng: 'en',
     debug: true,
     supportedLngs: ['en', 'es'],
     interpolation: {
