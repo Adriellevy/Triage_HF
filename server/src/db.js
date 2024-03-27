@@ -9,6 +9,7 @@ const DATABASE_CONFIG = {
   password: process.env.DB_PASSWORD || 'AVNS_9cEW9B2nxM2t4YydzWh',
   database: process.env.DB_NAME || 'Triage_db',
   ssl: {
+    rejectUnauthorized: false,
     cert: fs.readFileSync('./src/certs/ca.pem'),
   },
 }
