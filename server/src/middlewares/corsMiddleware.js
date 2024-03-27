@@ -8,7 +8,11 @@ const ACCEPTED_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://192.168.100.238:5173',
-  'http://192.168.0.99:5173'
+  'http://192.168.0.99:5173',
+  'https://w6rv79d1-5173.brs.devtunnels.ms',
+  'https://w6rv79d1-5173.brs.devtunnels.ms',
+  'https://w6rv79d1-3000.brs.devtunnels.ms',
+  'https://w6rv79d1-5173.brs.devtunnels.ms',
 ]
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) =>
