@@ -13,6 +13,9 @@ const ACCEPTED_ORIGINS = [
   'https://w6rv79d1-5173.brs.devtunnels.ms',
   'https://w6rv79d1-3000.brs.devtunnels.ms',
   'https://w6rv79d1-5173.brs.devtunnels.ms',
+  'https://6604828b05248453503b8d33--sparkly-centaur-35769d.netlify.app',
+  'https://sparkly-centaur-35769d.netlify.app',
+  'https://triage-app.netlify.app',
 ]
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) =>
