@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable camelcase */
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
@@ -144,6 +145,37 @@ export class PatientController {
     }
     try {
       const { id } = req.params
+
+      const [UserAntiguo] = await PatientsModel.getPatientById({ id })
+
+      const UserNuevo = result.data
+
+      const cambios = []
+      const tiempoActual = new Date()
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in UserNuevo) {
+        if (
+          // eslint-disable-next-line no-prototype-builtins
+          UserAntiguo.hasOwnProperty(key) &&
+          UserAntiguo[key] !== UserNuevo[key]
+        ) {
+          cambios.push({
+            patient_id: UserAntiguo.patient_id,
+            updated_column: key,
+            old_value: UserAntiguo[key],
+            new_value: UserNuevo[key],
+            update_date: tiempoActual.toISOString(),
+            user_id: userID,
+          })
+        }
+      }
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of cambios) {
+        // eslint-disable-next-line no-await-in-loop
+        await PatientsModel.AddUpdateHistory({ data: item })
+      }
       const updatedUser = await PatientsModel.updatePatient({
         id,
         data: result.data,

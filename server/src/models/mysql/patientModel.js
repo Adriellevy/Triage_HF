@@ -229,15 +229,46 @@ export class PatientsModel {
 
   static async getPatientUpdateHistory({ id }) {
     // TODO: PatientUpdateHistoryQuery
+
     const PatientUpdateHistoryQuery = ` 
-    SELECT PatientUpdateHistory.*FROM PatientUpdateHistory
-    WHERE PatientUpdateHistory.patient_id = UUID_TO_BIN(?);
+    SELECT 
+    BIN_TO_UUID(PUH.update_id) AS update_id,
+    PUH.updated_column,
+    PUH.old_value,
+    PUH.new_value,
+    PUH.update_date,
+    U.user_name 
+    FROM PatientUpdateHistory PUH
+    JOIN Users U ON PUH.user_id = U.user_id
+    WHERE PUH.patient_id = UUID_TO_BIN(?);
     `
     const [PatientUpdateHistory] = await connection.query(
       PatientUpdateHistoryQuery,
       [id],
     )
     return PatientUpdateHistory
+  }
+
+  static async AddUpdateHistory({ data }) {
+    const [uuidResult] = await connection.query('SELECT UUID() uuid;')
+    const [{ uuid }] = uuidResult
+    // eslint-disable-next-line object-curly-newline
+    const { patient_id, updated_column, old_value, new_value, user_id } = data
+
+    console.log(data)
+    const insertQuery = `
+        INSERT INTO PatientUpdateHistory (update_id, patient_id, updated_column, old_value, new_value, user_id)
+        VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, ?);
+      `
+    await connection.query(insertQuery, [
+      uuid,
+      patient_id,
+      updated_column,
+      old_value,
+      new_value,
+      user_id,
+    ])
+    return 1
   }
 
   static async getPatientsCount() {

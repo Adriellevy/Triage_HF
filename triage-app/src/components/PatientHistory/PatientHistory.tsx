@@ -46,7 +46,7 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
                 <th className='border p-2 '>{t('EditByLabel')}</th>
               </tr>
             </thead>
-            <tbody className='text-center'>
+            <tbody className='text-center text-black'>
               {PatientHistoryData.map(
                 (HistoryItem, index) =>
                   HistoryItem && (
