@@ -1,7 +1,6 @@
 # DATA HANDLING
 numpy
 pandas
-datetime
 
 # WEB APP
 flask
