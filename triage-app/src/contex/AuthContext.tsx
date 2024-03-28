@@ -20,9 +20,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Store the token in a cookie token: string
     //document.cookie = `authToken=${token}; path=/`;
     //aqui se podría hacer la request o el authservice hablarlo con luquitas
-    if (_token) {
-      setAuthenticated(true)
-    }
+    setAuthenticated(true)
   }
 
   const logout = () => {
