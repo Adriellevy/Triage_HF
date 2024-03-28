@@ -10,6 +10,7 @@ import { authRouter } from './src/routes/authRoutes.js'
 import { userRouter } from './src/routes/userRoutes.js'
 import { settingsRouter } from './src/routes/settingRoutes.js'
 import { dashboardRouter } from './src/routes/dashboardRoutes.js'
+// import cors from 'cors' Linea de emergencia + comentar corsMiddleware
 
 const PORT = process.env.PORTAPI ?? 3000
 
