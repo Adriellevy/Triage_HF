@@ -3,10 +3,10 @@ import 'dotenv/config'
 import fs from 'fs'
 
 const DATABASE_CONFIG = {
-  host: process.env.DB_HOST || 'mysql-308b7b2b-triage.a.aivencloud.com',
-  user: process.env.DB_USER || 'avnadmin',
-  port: process.env.DB_PORT || 21005,
-  password: process.env.DB_PASSWORD || 'AVNS_9cEW9B2nxM2t4YydzWh',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  port: process.env.DB_PORT || 3000,
+  password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'Triage_db',
   ssl: {
     rejectUnauthorized: false,
