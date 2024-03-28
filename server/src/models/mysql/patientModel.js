@@ -254,8 +254,6 @@ export class PatientsModel {
     const [{ uuid }] = uuidResult
     // eslint-disable-next-line object-curly-newline
     const { patient_id, updated_column, old_value, new_value, user_id } = data
-
-    console.log(data)
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (update_id, patient_id, updated_column, old_value, new_value, user_id)
         VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, ?);
