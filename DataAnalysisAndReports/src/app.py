@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 
 import data.make_dataset as md
 
@@ -10,12 +10,12 @@ from visualization.visualize import bar_chart, line_chart
 
 # TOD0S LOS CHARTS
 # ANIMACIONES AL APARACER LOS GRAFICOS
-# LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TODO EL GRAFICO
+# LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TOD0 EL GRAFICO
 # AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
 
 # BARCHARTS
 # ORDENAR CORRECTAMENTE LOS NIVELES DE TRIAGE PARA CUALQUIER FECHA
-# AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
+# AL EGIR QULEE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
 
 # LINECHARTS
@@ -23,8 +23,8 @@ from visualization.visualize import bar_chart, line_chart
 
 # GENERAL
 # ACTUALIZAR JUPYTER NOTEBOOK
-# ?AGREGAR EVENTO DE CLIC EN GRAFICOS
-# !CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
+# -AGREGAR EVENTO DE CLIC EN GRAFICOS
+# CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
 
 
 
@@ -47,19 +47,23 @@ def get_args():
 
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
-    df = md.get_table('PATIENT')
+    df = md.get_table('Patient')
 
+    if (df.empty):
+        return Response(status=204)
+    
     df = number_patients_date(
         df, **get_args())
 
     mean = request.args.get('mean', default=None, type=bool)
+    
     fig = line_chart(df=df,
-                     x='ENTRY_TIME',
-                     y='NUMBER_OF_PATIENTS',
+                     x='entry_time',
+                     y='number_of_patients',
                      x_title='Fecha de Ingreso',
                      y_title='Cantidad de Pacientes',
                      title='Cantidad de Pacientes por Fecha de Ingreso',
-                     color='PATIENT_TRIAGE_LEVEL',
+                     color='patient_triage_level',
                      mean=mean)
 
     return fig.to_html()
