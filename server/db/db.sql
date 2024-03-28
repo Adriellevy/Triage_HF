@@ -85,3 +85,12 @@ VALUES
   (UUID_TO_BIN(UUID()),'10','INTERNACION'),
   (UUID_TO_BIN(UUID()),'11','INTERNACION'),
   (UUID_TO_BIN(UUID()),'12','INTERNACION');
+
+  -- Insertar datos de ejemplo en la tabla Patient
+  INSERT INTO Patient (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id) 
+  VALUES 
+    (UUID_TO_BIN(UUID()), 'Alaine Lorait', '1982-10-13', TIMESTAMP('2023-09-25', '23:13:49'), TIMESTAMP('2023-09-25','23:18:49'), TIMESTAMP('2023-09-25','15:24:49'), 3, 2, 'ALTA', 'Cough', 'Medication2', 1, 2),
+    (UUID_TO_BIN(UUID()), 'Cordie Archdeckne', '2012-04-09', TIMESTAMP('2023-09-27','00:19:19'), TIMESTAMP('2023-09-27','2:19:19'), TIMESTAMP('2023-09-27','3:30:45'), 1, 3, 'EN ESPERA DE INTERNACION', 'Fever', 'Medication4', 3, 2),
+    (UUID_TO_BIN(UUID()), 'Davidson Harm', '2023-01-28', TIMESTAMP('2023-01-28','08:32:23'), TIMESTAMP('2023-01-28','11:22:37'), TIMESTAMP('2023-01-28','2:03:12'), 4, 2, 'INTERNADO', 'Diarrhea', 'Medication5', 1, 4),
+    (UUID_TO_BIN(UUID()), 'Ulberto Haslehurst', '2023-10-05', TIMESTAMP('2023-10-05','07:30:12'), TIMESTAMP('2023-10-05','10:21:12'), TIMESTAMP('2023-10-05','15:01:47'), 3, 3, 'INTERNADO', 'Joint pain', 'Medication2', 3, 2),
+    (UUID_TO_BIN(UUID()), 'Carmela Roddell', '2007-07-29', TIMESTAMP('2023-10-05','9:22:42'), TIMESTAMP('2023-10-05','15:31:27'), TIMESTAMP('2023-10-05','18:32:23'), 3, 1, 'EN ESPERA', 'Shortness of breath', 'Medication5', 1, 2);
