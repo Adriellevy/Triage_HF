@@ -80,6 +80,7 @@ export const updateAnyPatient = async (
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
     // console.log('api ' + apiUrl)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: any = {} // Initialize an empty object for the request body
 
     // Loop through each key in updatedData

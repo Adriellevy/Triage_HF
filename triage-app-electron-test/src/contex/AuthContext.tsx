@@ -15,7 +15,8 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState(false)
 
-  const login = (token: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const login = (_token: string) => {
     // Store the token in a cookie token: string
     //document.cookie = `authToken=${token}; path=/`;
     //aqui se podría hacer la request o el authservice hablarlo con luquitas
