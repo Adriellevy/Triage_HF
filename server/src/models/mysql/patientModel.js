@@ -166,9 +166,7 @@ export class PatientsModel {
         'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
         [id],
       )
-      console.log(data)
       const prevBox = Box.box_id
-
       const updateFields = Object.entries(data)
         .filter(([key, value]) => value !== null && value !== undefined)
         .map(([key, value]) => {

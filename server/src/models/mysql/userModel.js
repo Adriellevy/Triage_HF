@@ -1,10 +1,8 @@
-/* eslint-disable no-console */
 /* eslint-disable camelcase */
 import { connection } from '../../db.js'
 
 export class UserModel {
   static async getUserByUserName(user_name) {
-    console.log(user_name)
     try {
       const usersQuery = `
         SELECT 
@@ -25,7 +23,6 @@ export class UserModel {
   }
 
   static async getUserByID({ id }) {
-    console.log(id)
     try {
       const usersQuery = `
         SELECT 
