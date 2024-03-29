@@ -25,9 +25,6 @@ import visualization.visualize as vl
 # -AGREGAR EVENTO DE CLIC EN GRAFICOS
 # CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
 
-# DB
-# mantener el SELECT * en la query, pero quitar la columna id siempre (hacerlo en build_features)
-# ordenar por entry time (build_features)
 
 
 
@@ -77,27 +74,32 @@ def chart_number_patients_date():
     return fig.to_html()
 
 
-# @app.route('/top_queries_date/')
-# def chart_top_queries_date():
-#     global df
-#     df_number_patients_date = df.copy(deep=True)
+@app.route('/top_queries_date/')
+def chart_top_queries_date():
+    df = md.get_table('Patient')
 
-#     top = request.args.get('top', default=10, type=int)
-#     order = request.args.get('order', default=None, type=str)
-#     df_number_patients_date = top_queries_date(
-#         df_number_patients_date, top, order, **get_args())
+    if (df.empty):
+        return Response(status=204)
+    
+    df = bf.build_features(df, **get_args())
+    
+    top = request.args.get('top', default=10, type=int)
+    order = request.args.get('order', default=None, type=str)   
+     
+    df = bf.build_top_queries_date(df, top, order)
+    
+    mean = request.args.get('mean', default=None, type=bool)
+    
+    fig = vl.bar_chart(df=df,
+                    x='patient_problem',
+                    y='problem_count',
+                    x_title='Motivo de Consulta',
+                    y_title='Cantidad de Consultas',
+                    title='Motivos de Consulta mas Frecuentes',
+                    color='patient_triage_level',
+                    mean=mean)
 
-#     mean = request.args.get('mean', default=None, type=bool)
-#     fig = bar_chart(df=df_number_patients_date,
-#                     x='MOTIVO DE CONSULTA',
-#                     y='CANTIDAD DE CONSULTAS',
-#                     x_title='Motivo de Consulta',
-#                     y_title='Cantidad de Consultas',
-#                     title='Motivos de Consulta mas Frecuentes',
-#                     color='TRIAGE',
-#                     mean=mean)
-
-#     return fig.to_html()
+    return fig.to_html()
 
 
 if __name__ == '__main__':

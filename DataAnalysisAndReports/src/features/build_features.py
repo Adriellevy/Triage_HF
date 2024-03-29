@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from datetime import timedelta
 import data.make_dataset as md
 
@@ -76,9 +75,31 @@ def build_number_patients_date(df):
     df.sort_values(by='entry_time', inplace=True)
     return df
 
+def build_top_queries_date(df, top=10, order=None):
+    df = df.groupby(['patient_problem', 'patient_triage_level']).size(
+    ).reset_index(name='problem_count')
+
+    top_reasons = df.groupby('patient_problem')[
+        'problem_count'].sum().nlargest(top).index
+    count = df[df['patient_problem'].isin(top_reasons)]
+
+    if (order == 'asc'):
+        count = count.sort_values(by=['patient_problem', 'patient_triage_level'], key=lambda x: x.map(
+            dict(zip(top_reasons, range(len(top_reasons))))))
+
+    count = count.sort_values(by=['patient_problem', 'patient_triage_level'], key=lambda x: x.map(
+        dict(zip(top_reasons[::-1], range(len(top_reasons))))))
+
+    count['patient_triage_level'] = count['patient_triage_level'].apply(lambda x: str(int(float(x))))
+    count = count[count['patient_triage_level'] != '0']
+
+    return count
+
 def build_features(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
     df = drop_id_feature(df)
     
     df = filters(df, from_, to, patient_name, patient_problem,
                  box_type, doctor_username, nurse_username, discharged, isolated)
+    
+    
     return df
