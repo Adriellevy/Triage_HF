@@ -24,13 +24,3 @@ def get_table(table_name, condition=None):
         return df
     else:
         return None
-
-# using csv locally
-
-# def get_df():
-#     return pd.read_csv('../dataset/raw/TRIAGE_2024.csv')
-
-# using csv from github
-# WARNING: you need the token
-# def get_df():
-#     train_df = pd.read_csv('https://raw.githubusercontent.com/Adriellevy/Triage_HF/main/Data%20Analysis%20and%20Reports/dataset/raw/TRIAGE%202024.csv?token=GHSAT0AAAAAACLM5VZGUTNJJPTGADJMMUKEZOQ3JLA')

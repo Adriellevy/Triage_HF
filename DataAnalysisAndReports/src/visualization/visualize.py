@@ -69,64 +69,8 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
     return fig
 
 
-def get_last_week(df):
-    to = df['entry_time'].max()
-    from_ = to - timedelta(days=7)
-    return (from_, to)
-
-
-def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
-    if (from_ == None and to == None):
-        from_, to = get_last_week(df)
-    else:
-        # from_ = pd.to_datetime(from_, format='%d-%m-%Y', errors='coerce')
-        # to = pd.to_datetime(to, format='%d-%m-%Y', errors='coerce')
-        from_ = pd.to_datetime(from_, format='%Y-%m-%d', errors='coerce')
-        to = pd.to_datetime(to, format='%Y-%m-%d', errors='coerce')
-
-    df = df[(df['entry_time'] >= from_) & (df['entry_time'] <= to)]
-    df['entry_time'] = df['entry_time'].dt.strftime('%d-%m-%Y')
-
-    if (patient_name != None):
-        df = df[df['patient_name'] == patient_name.upper()]
-
-    if (patient_problem != None):
-        df = df[df['patient_problem'] == patient_problem.upper()]
-
-    if (box_type != None):
-        df = bf.filter_box_type(df, box_type)
-
-    if (doctor_username != None):
-        df = bf.filter_doctor_username(df, box_type)
-
-    if (nurse_username != None):
-        df = bf.filter_nurse_username(df, nurse_username)
-
-    if (discharged != None):
-        df = bf.filter_discharged(df)
-
-    if (isolated != None):
-        df = bf.filter_isolated(df)
-
-    return df
-
-
-def number_patients_date(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
-    df = filters(df, from_, to, patient_name, patient_problem,
-                 box_type, doctor_username, nurse_username, discharged, isolated)
-    
-    df = df.groupby(['entry_time', 'patient_triage_level'], sort=False).size(
-    ).reset_index(name='number_of_patients')
-    
-
-    df['patient_triage_level'] = df['patient_triage_level'].apply(lambda x: str(int(float(x))))
-    df = df[df['patient_triage_level'] != '0']
-
-    return df
-
-
 def top_queries_date(df, top=10, order=None, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
-    df = filters(df, from_, to, patient_name, patient_problem,
+    df = bf.filters(df, from_, to, patient_name, patient_problem,
                  box_type, doctor_username, nurse_username, discharged, isolated)
 
     df = df.groupby(['patient_problem', 'patient_triage_level']).size(

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from datetime import timedelta
 import data.make_dataset as md
 
 def filter_discharged(df):
@@ -24,57 +24,61 @@ def filter_nurse_username(df, nurse_username):
     new_df = df.merge(df_user, left_on='NURSE_ID', right_on='USER_ID')
     return new_df[new_df['USER_NAME'] == nurse_username]
 
+def drop_id_feature(df):
+    return df.iloc[:, 1:]
 
-# def remove_headers(df):
-#     return df[df['NUMERO DE TURNO'].str.contains('FECHA|N°') == False]
-
-
-# def remove_null_rows(df):
-#     return df[df['NOMBRE Y APELLIDO'].notnull()]
-
-
-# def triage_level_to_integer(df):
-#     new_values = {'I': 1, 'II': 2, 'III': 3, 'IV': 4}
-#     df['TRIAGE'] = df['TRIAGE'].replace(new_values)
-#     return pd.to_numeric(df['TRIAGE'], downcast='signed', errors='coerce')
+def get_last_week(df):
+    to = df['entry_time'].max()
+    from_ = to - timedelta(days=7)
+    return (from_, to)
 
 
-# def entry_date_to_datetime(df):
-#     df['FECHA DE INGRESO'] = df['FECHA DE INGRESO'] + '-2024'
-#     return pd.to_datetime(df['FECHA DE INGRESO'], format='%d-%m-%Y', errors='coerce')
+def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
+    if (from_ == None and to == None):
+        from_, to = get_last_week(df)
+    else:
+        from_ = pd.to_datetime(from_, format='%Y-%m-%d', errors='coerce')
+        to = pd.to_datetime(to, format='%Y-%m-%d', errors='coerce')
 
+    df = df[(df['entry_time'] >= from_) & (df['entry_time'] <= to)]
 
-# def isolated_to_boolean(df):
-#     new_values = {np.nan: False, 'NO': False, 'No': False, 'KPC': True,
-#                   'ECOLI METALO': True, 'SI': True, 'Si': True, 'A': True}
-#     df['AISLADO'] = df['AISLADO'].map(new_values)
-#     df = df[df['AISLADO'] != '724']
-#     return df['AISLADO'].astype(bool)
+    if (patient_name != None):
+        df = df[df['patient_name'] == patient_name.upper()]
 
+    if (patient_problem != None):
+        df = df[df['patient_problem'] == patient_problem.upper()]
 
-# def generating_alta_col(df):
-#     df = df[~df['DESTINO'].isin(
-#         ['?', 'INT', 'HMD/ 315', 'HMD', ' ', '    ', '  ', ])]
-#     df['ALTA'] = df['DESTINO'].str.contains(
-#         'alta|obito|traslado|derivacion|AL. VOL|DERIVAC',
-#         case=False,
-#         regex=True)
-#     return df['ALTA'].fillna(False)
+    if (box_type != None):
+        df = filter_box_type(df, box_type)
 
+    if (doctor_username != None):
+        df = filter_doctor_username(df, box_type)
 
-# def remove_colums(df):
-#     cols_to_keep = ['NUMERO DE TURNO', 'FECHA DE INGRESO', 'NOMBRE Y APELLIDO',
-#                     'MOTIVO DE CONSULTA', 'BOX', 'TRIAGE', 'ENFERMERO', 'MEDICO', 'DESTINO', 'ALTA', 'AISLADO']
-#     return df[cols_to_keep]
+    if (nurse_username != None):
+        df = filter_nurse_username(df, nurse_username)
 
+    if (discharged != None):
+        df = filter_discharged(df)
 
-# def build_features(df):
-#     df = cols_rename(df)
-#     df = remove_headers(df)
-#     df = remove_null_rows(df)
-#     df['TRIAGE'] = triage_level_to_integer(df)
-#     df['FECHA DE INGRESO'] = entry_date_to_datetime(df)
-#     df['AISLADO'] = isolated_to_boolean(df)
-#     df['ALTA'] = generating_alta_col(df)
-#     df = remove_colums(df)
-#     return df
+    if (isolated != None):
+        df = filter_isolated(df)
+
+    return df
+
+def build_number_patients_date(df):
+    
+    df = df.groupby(['entry_time', 'patient_triage_level'], sort=False).size(
+    ).reset_index(name='number_of_patients')
+    
+
+    df['patient_triage_level'] = df['patient_triage_level'].apply(lambda x: str(int(float(x))))
+    df = df[df['patient_triage_level'] != '0']
+
+    df.sort_values(by='entry_time', inplace=True)
+    return df
+
+def build_features(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
+    drop_id_feature(df)
+    df = filters(df, from_, to, patient_name, patient_problem,
+                 box_type, doctor_username, nurse_username, discharged, isolated)
+    return df

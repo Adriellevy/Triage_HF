@@ -2,10 +2,9 @@ from flask import Flask, request, Response
 
 import data.make_dataset as md
 
-#from features.build_features import build_features
+import features.build_features as bf
 
-from visualization.visualize import number_patients_date, top_queries_date
-from visualization.visualize import bar_chart, line_chart
+import visualization.visualize as vl
 
 
 # TOD0S LOS CHARTS
@@ -26,12 +25,20 @@ from visualization.visualize import bar_chart, line_chart
 # -AGREGAR EVENTO DE CLIC EN GRAFICOS
 # CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
 
+# DB
+# mantener el SELECT * en la query, pero quitar la columna id siempre (hacerlo en build_features)
+# ordenar por entry time (build_features)
+
 
 
 app = Flask(__name__)
 
 
 def get_args():
+    """
+    from_ format: yyyy-mm-dd
+    to format: yyyy-mm-dd
+    """
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
             'patient_name': request.args.get('patientname', default=None, type=str),
@@ -52,12 +59,13 @@ def chart_number_patients_date():
     if (df.empty):
         return Response(status=204)
     
-    df = number_patients_date(
-        df, **get_args())
+    df = bf.build_features(df, **get_args())
+    
+    df = bf.build_number_patients_date(df)
 
     mean = request.args.get('mean', default=None, type=bool)
     
-    fig = line_chart(df=df,
+    fig = vl.line_chart(df=df,
                      x='entry_time',
                      y='number_of_patients',
                      x_title='Fecha de Ingreso',
@@ -69,27 +77,27 @@ def chart_number_patients_date():
     return fig.to_html()
 
 
-@app.route('/top_queries_date/')
-def chart_top_queries_date():
-    global df
-    df_number_patients_date = df.copy(deep=True)
+# @app.route('/top_queries_date/')
+# def chart_top_queries_date():
+#     global df
+#     df_number_patients_date = df.copy(deep=True)
 
-    top = request.args.get('top', default=10, type=int)
-    order = request.args.get('order', default=None, type=str)
-    df_number_patients_date = top_queries_date(
-        df_number_patients_date, top, order, **get_args())
+#     top = request.args.get('top', default=10, type=int)
+#     order = request.args.get('order', default=None, type=str)
+#     df_number_patients_date = top_queries_date(
+#         df_number_patients_date, top, order, **get_args())
 
-    mean = request.args.get('mean', default=None, type=bool)
-    fig = bar_chart(df=df_number_patients_date,
-                    x='MOTIVO DE CONSULTA',
-                    y='CANTIDAD DE CONSULTAS',
-                    x_title='Motivo de Consulta',
-                    y_title='Cantidad de Consultas',
-                    title='Motivos de Consulta mas Frecuentes',
-                    color='TRIAGE',
-                    mean=mean)
+#     mean = request.args.get('mean', default=None, type=bool)
+#     fig = bar_chart(df=df_number_patients_date,
+#                     x='MOTIVO DE CONSULTA',
+#                     y='CANTIDAD DE CONSULTAS',
+#                     x_title='Motivo de Consulta',
+#                     y_title='Cantidad de Consultas',
+#                     title='Motivos de Consulta mas Frecuentes',
+#                     color='TRIAGE',
+#                     mean=mean)
 
-    return fig.to_html()
+#     return fig.to_html()
 
 
 if __name__ == '__main__':
