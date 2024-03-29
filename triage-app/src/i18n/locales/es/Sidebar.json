@@ -2,12 +2,12 @@
   "GuidedEntry": "Entrada Guiada",
   "Boxes": "Boxes",
   "Patients": "Pacientes",
-  "Stats": "Estadisticas",
-  "StatsPatientsDate": "Cantidad de pacientes por fecha",
-  "StatsPatientsTriage": "Cantidad de pacientes por triage",
-  "StatsReasons": "Motivos de consulta por fecha",
-  "Settings": "Configuracion",
+  "Stats": "Estadísticas",
+  "StatsPatientsDate": "Cantidad de pacientes",
+  "StatsPatientsTriage": "Cantidad de pacientes",
+  "StatsReasons": "Motivos de consulta",
+  "Settings": "Configuración",
   "UsersSettings": "Configuración de usuarios",
-  "BoxesSettings": "Configuración de boxes",
+  "BoxesSettings": "Configuración de cajas",
   "LogoutButton": "Cerrar Sesión"
 }
