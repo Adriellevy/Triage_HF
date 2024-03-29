@@ -1,21 +1,20 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 
-from data.make_dataset import get_df
+import data.make_dataset as md
 
-from features.build_features import build_features
+import features.build_features as bf
 
-from visualization.visualize import number_patients_date, top_queries_date
-from visualization.visualize import bar_chart, line_chart
+import visualization.visualize as vl
 
 
 # TOD0S LOS CHARTS
 # ANIMACIONES AL APARACER LOS GRAFICOS
-# LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TODO EL GRAFICO
+# LAS LINEAS PUNTEADAS DE LA MEDIA DEBEN OCUPAR TOD0 EL GRAFICO
 # AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
 
 # BARCHARTS
 # ORDENAR CORRECTAMENTE LOS NIVELES DE TRIAGE PARA CUALQUIER FECHA
-# AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
+# AL EGIR QULEE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
 
 # LINECHARTS
@@ -23,30 +22,27 @@ from visualization.visualize import bar_chart, line_chart
 
 # GENERAL
 # ACTUALIZAR JUPYTER NOTEBOOK
-# !ADAPTAR TODO A LA BASE DE DATOS
-# ?AGREGAR EVENTO DE CLIC EN GRAFICOS
+# -AGREGAR EVENTO DE CLIC EN GRAFICOS
+# CONTEMPLAR QUE PASA CUANDO LA BD ESTA VACIA
+
+
 
 
 app = Flask(__name__)
 
 
-def initialize_data():
-    df = get_df()
-    df = build_features(df)
-    return df
-
-
-df = initialize_data()
-
-
 def get_args():
+    """
+    from_ format: yyyy-mm-dd
+    to format: yyyy-mm-dd
+    """
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
-            'name_lastname': request.args.get('namelastname', default=None, type=str),
-            'consulting_reason': request.args.get('consultingreason', default=None, type=str),
-            'box': request.args.get('box', default=None, type=int),
-            'doctor': request.args.get('doctor', default=None, type=str),
-            'nurse': request.args.get('nurse', default=None, type=str),
+            'patient_name': request.args.get('patientname', default=None, type=str),
+            'patient_problem': request.args.get('patientproblem', default=None, type=str),
+            'box_type': request.args.get('boxtype', default=None, type=int),
+            'doctor_username': request.args.get('doctorusername', default=None, type=str),
+            'nurse_username': request.args.get('nurseusername', default=None, type=str),
             'discharged': request.args.get('discharged', default=None, type=str),
             'isolated': request.args.get('isolated', default=None, type=bool)
             }
@@ -55,19 +51,24 @@ def get_args():
 
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
-    global df
-    df_number_patients_date = df.copy(deep=True)
-    df_number_patients_date = number_patients_date(
-        df_number_patients_date, **get_args())
+    df = md.get_table('Patient')
+
+    if (df.empty):
+        return Response(status=204)
+    
+    df = bf.build_features(df, **get_args())
+    
+    df = bf.build_number_patients_date(df)
 
     mean = request.args.get('mean', default=None, type=bool)
-    fig = line_chart(df=df_number_patients_date,
-                     x='FECHA DE INGRESO',
-                     y='CANTIDAD DE PACIENTES',
+    
+    fig = vl.line_chart(df=df,
+                     x='entry_time',
+                     y='number_of_patients',
                      x_title='Fecha de Ingreso',
                      y_title='Cantidad de Pacientes',
                      title='Cantidad de Pacientes por Fecha de Ingreso',
-                     color='TRIAGE',
+                     color='patient_triage_level',
                      mean=mean)
 
     return fig.to_html()
@@ -75,22 +76,27 @@ def chart_number_patients_date():
 
 @app.route('/top_queries_date/')
 def chart_top_queries_date():
-    global df
-    df_number_patients_date = df.copy(deep=True)
+    df = md.get_table('Patient')
 
+    if (df.empty):
+        return Response(status=204)
+    
+    df = bf.build_features(df, **get_args())
+    
     top = request.args.get('top', default=10, type=int)
-    order = request.args.get('order', default=None, type=str)
-    df_number_patients_date = top_queries_date(
-        df_number_patients_date, top, order, **get_args())
-
+    order = request.args.get('order', default=None, type=str)   
+     
+    df = bf.build_top_queries_date(df, top, order)
+    
     mean = request.args.get('mean', default=None, type=bool)
-    fig = bar_chart(df=df_number_patients_date,
-                    x='MOTIVO DE CONSULTA',
-                    y='CANTIDAD DE CONSULTAS',
+    
+    fig = vl.bar_chart(df=df,
+                    x='patient_problem',
+                    y='problem_count',
                     x_title='Motivo de Consulta',
                     y_title='Cantidad de Consultas',
                     title='Motivos de Consulta mas Frecuentes',
-                    color='TRIAGE',
+                    color='patient_triage_level',
                     mean=mean)
 
     return fig.to_html()
