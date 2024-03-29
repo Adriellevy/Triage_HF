@@ -65,8 +65,7 @@ def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, bo
 
     return df
 
-def build_number_patients_date(df):
-    
+def build_number_patients_date(df):    
     df = df.groupby(['entry_time', 'patient_triage_level'], sort=False).size(
     ).reset_index(name='number_of_patients')
     
@@ -78,7 +77,8 @@ def build_number_patients_date(df):
     return df
 
 def build_features(df, from_=None, to=None, patient_name=None, patient_problem=None, box_type=None, doctor_username=None, nurse_username=None, discharged=None, isolated=None):
-    drop_id_feature(df)
+    df = drop_id_feature(df)
+    
     df = filters(df, from_, to, patient_name, patient_problem,
                  box_type, doctor_username, nurse_username, discharged, isolated)
     return df
