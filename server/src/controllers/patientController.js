@@ -139,7 +139,7 @@ export class PatientController {
       req.headers.authorization && req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const userID = decoded.id
-
+    console.log(userID)
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }

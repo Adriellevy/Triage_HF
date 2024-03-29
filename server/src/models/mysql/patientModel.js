@@ -46,12 +46,14 @@ export class PatientsModel {
         patient.patient_status,
         patient.patient_problem,
         patient.patient_medication,
+        BIN_TO_UUID(Doctor.user_id) AS doctor_id,
+        BIN_TO_UUID(Nurse.user_id) AS nurse_id,
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name
         FROM Patient
         LEFT JOIN Users AS Doctor ON patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN Users AS Nurse ON patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-        LEFT JOIN Box ON patient.box_id = Box.box_id  -- Agregar LEFT JOIN con la tabla Box
+        LEFT JOIN Box ON patient.box_id = Box.box_id 
         WHERE patient.patient_id = UUID_TO_BIN(?);
     `
     const [patients] = await connection.query(patientsQuery, [id])
@@ -117,7 +119,7 @@ export class PatientsModel {
             INSERT INTO Patient 
                 (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, 
                 patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id, box_id) 
-            VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UUID_TO_BIN(?))
+            VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?), UUID_TO_BIN(?))
         `
       const [result] = await connection.query(patientsQuery, [
         uuid,
@@ -164,13 +166,13 @@ export class PatientsModel {
         'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
         [id],
       )
-
+      console.log(data)
       const prevBox = Box.box_id
 
       const updateFields = Object.entries(data)
         .filter(([key, value]) => value !== null && value !== undefined)
         .map(([key, value]) => {
-          if (key === 'box_id') {
+          if (key === 'box_id' || key === 'nurse_id' || key === 'doctor_id') {
             return `${key} = UUID_TO_BIN(?)`
           } else {
             return `${key} = ?`
@@ -256,7 +258,7 @@ export class PatientsModel {
     const { patient_id, updated_column, old_value, new_value, user_id } = data
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (update_id, patient_id, updated_column, old_value, new_value, user_id)
-        VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, ?);
+        VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, UUID_TO_BIN(?));
       `
     await connection.query(insertQuery, [
       uuid,
