@@ -73,6 +73,9 @@ def build_number_patients_date(df):
     df = df[df['patient_triage_level'] != '0']
 
     df.sort_values(by='entry_time', inplace=True)
+    
+    df = df.sort_values(by=['patient_triage_level', 'entry_time', 'number_of_patients'])
+    
     return df
 
 def build_top_queries_date(df, top=10, order=None):
@@ -92,6 +95,8 @@ def build_top_queries_date(df, top=10, order=None):
 
     count['patient_triage_level'] = count['patient_triage_level'].apply(lambda x: str(int(float(x))))
     count = count[count['patient_triage_level'] != '0']
+    
+    count = count.sort_values(by=['patient_triage_level', 'patient_problem', 'problem_count'])
 
     return count
 

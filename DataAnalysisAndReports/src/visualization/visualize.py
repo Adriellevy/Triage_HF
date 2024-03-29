@@ -17,7 +17,6 @@ def bar_chart(df, x, y, title, x_title, y_title, color, mean=None):
                  x=x,
                  y=y,
                  color=color,
-                 category_orders={x: df[x].unique()},
                  color_discrete_map={'1': '#BDBEBE', '2': '#FA8162', '3': '#CCCC52', '4': '#A0C791'})
 
     fig.update_layout(title=title,
@@ -27,7 +26,7 @@ def bar_chart(df, x, y, title, x_title, y_title, color, mean=None):
                       plot_bgcolor='white',
                       xaxis=dict(linecolor='black', showgrid=True),
                       yaxis=dict(linecolor='black', showgrid=True),
-                      legend=dict(traceorder='reversed'))
+                      legend=dict(title='Nivel de Triage'))
     if (mean):
         mean = df_sum[y].mean()
         fig.add_trace(go.Scatter(x=df_sum[x],
@@ -53,7 +52,8 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
                       title_x=0.5,
                       plot_bgcolor='white',
                       xaxis=dict(linecolor='black', showgrid=True),
-                      yaxis=dict(linecolor='black', showgrid=True))
+                      yaxis=dict(linecolor='black', showgrid=True),
+                      legend=dict(title='Nivel de Triage'))
     if (mean):
         mean = df_sum[y].mean()
         fig.add_trace(go.Scatter(x=df_sum[x],
