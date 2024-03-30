@@ -22,7 +22,7 @@ function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
-  const [checked, setChecked] = React.useState(true)
+  const [checked, setChecked] = React.useState(false)
   const { t } = useTranslation('PatientForm')
 
   const navigate = useNavigate()
@@ -68,7 +68,6 @@ function PatientForm() {
         console.log(error)
       }
     }
-    // TODO: cambiar elementos aca en el editar paciente
     if (edditingPatient) {
       formInterfaz.patient_name = edditingPatient.patient_name || ''
       formInterfaz.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
@@ -76,13 +75,14 @@ function PatientForm() {
       formInterfaz.patient_exit_time = edditingPatient.patient_exit_time || null
       formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
       formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formInterfaz.patient_isolated = edditingPatient.patient_isolated || 'false'
       formInterfaz.patient_status = edditingPatient.patient_status || ''
       formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
       //formInterfaz.patient_medication = edditingPatient.patient_medication || ''
       asFun()
 
       const newDate = dayjs(edditingPatient.patient_age)
-
+      setChecked(Boolean(edditingPatient.patient_isolated))
       setSelectedDate(newDate.toDate())
     }
   }, [edditingPatient])
@@ -121,7 +121,6 @@ function PatientForm() {
   //TODO estas 3 const deberian traerse desde api
   const StateOptions = [
     { state_id: 1, state_name: 'EN OBSERVACION' },
-    { state_id: 4, state_name: 'ALTA' },
     { state_id: 5, state_name: 'AFUERA' }
   ]
   const PatientProblems = [
@@ -172,7 +171,7 @@ function PatientForm() {
     patient_exit_time: null,
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
-    patient_isolated: null,
+    patient_isolated: false,
     patient_status: '',
     patient_symptom: '',
     //patient_medication: '',
@@ -188,7 +187,7 @@ function PatientForm() {
     patient_exit_time: null,
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
-    patient_isolated: null,
+    patient_isolated: false,
     patient_status: '',
     patient_symptom: '',
     patient_healthcare_system: 'default',
