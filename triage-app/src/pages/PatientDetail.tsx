@@ -77,16 +77,16 @@ function PatientDetail() {
 
   const patientFields: Field[] = [
     { label: t('NameLabel'), key: 'patient_name', format: null },
-    { label: t('DateOfBirthLabel'), key: 'date_of_birth', format: getFormatBirthDate },
-    { label: t('EntryTimeLabel'), key: 'entry_time', format: getFormatEntryDate },
+    { label: t('DateOfBirthLabel'), key: 'patient_age', format: getFormatBirthDate },
+    { label: t('EntryTimeLabel'), key: 'patient_entry_time', format: getFormatEntryDate },
     { label: t('TriageLevelLabel'), key: 'patient_triage_level', format: null },
-    { label: t('PatientMedication'), key: 'patient_medication', format: null },
-    { label: t('PatientProblem'), key: 'patient_problem', format: null },
+    { label: t('PatientProblem'), key: 'patient_symptom', format: null },
     { label: t('PatientBoxCodeLabel'), key: 'box_code', format: null },
     { label: t('DoctorNameLabel'), key: 'doctor_name', format: null },
     { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
     { label: t('PatientStatusLabel'), key: 'patient_status', format: null }
   ]
+
   //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
 
   const handlePatientStatus = (patientData: Patient | null) => {

@@ -23,12 +23,6 @@ function PatientsList({ patients }: PropsPatientsList) {
       showOnLargeScreen: true
     },
     {
-      label: t('PatientMedication'),
-      field: 'patient_medication',
-      sortable: true,
-      showOnLargeScreen: false
-    },
-    {
       label: t('PatientProblem'),
       field: 'patient_problem',
       sortable: true,

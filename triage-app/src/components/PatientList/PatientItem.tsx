@@ -16,17 +16,16 @@ function PatientItem({ patient, index }: PropsPatientItem) {
   const [entryTime, setEntryTime] = useState<string | null>(null)
 
   const {
-    patient_name,
     patient_id,
-    date_of_birth,
-    entry_time,
+    patient_name,
+    patient_age,
+    patient_entry_time,
     patient_triage_level,
-    patient_medication,
-    patient_problem,
     box_code,
+    patient_status,
+    patient_symptom,
     doctor_name,
-    nurse_name,
-    patient_status
+    nurse_name
   } = patient
 
   const isOdd = index % 2 !== 0
@@ -46,10 +45,10 @@ function PatientItem({ patient, index }: PropsPatientItem) {
   }
 
   useEffect(() => {
-    const birthDate = new Date(date_of_birth)
+    const birthDate = new Date(patient_age)
     const actualDate = new Date()
     setAge(actualDate.getFullYear() - birthDate.getFullYear())
-    const fechaOriginal = new Date(entry_time)
+    const fechaOriginal = new Date(patient_entry_time)
     const dateFormat: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -75,8 +74,7 @@ function PatientItem({ patient, index }: PropsPatientItem) {
       >
         {patient_triage_level}
       </td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{patient_medication}</td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{patient_problem}</td>
+      <td className='border p-2 hidden lg:table-cell text-center'>{patient_symptom}</td>
       <td className='border md:p-2 text-center'>{box_code}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name}</td>
       <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>

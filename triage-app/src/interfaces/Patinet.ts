@@ -8,54 +8,59 @@ export enum PatientStatus {
 }
 
 export interface Patient {
-  patient_name: string
   patient_id: string
-  date_of_birth: string
-  entry_time: string
-  exit_time: string
+  patient_name: string
+  patient_age: Date
+  patient_entry_time: Date
+  patient_exit_time: Date | null
+  patient_triage_time: Date
   patient_triage_level: number
-  patient_triage_time: string
-  patient_medication: string
-  patient_problem: string
+  patient_isolated: number
   box_id: string
   box_code: string
+  patient_status: string
+  patient_symptom: string
   doctor_name: string
   nurse_name: string
-  patient_status: string
   [Symbol.iterator](): IterableIterator<Patient>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any; // Add this line
+  [key: string]: any // Add this line
 }
 
 export interface PatientData {
-  patient_name: string
   patient_id: string
-  date_of_birth: string
-  entry_time: string
+  patient_name: string
+  patient_age: Date
+  patient_entry_time: Date
+  patient_exit_time: Date | null
+  patient_triage_time: Date
   patient_triage_level: number
-  patient_medication: string
-  patient_problem: string
+  patient_isolated: number
   box_id: string
   box_code: string
+  patient_status: string
+  patient_symptom: string
   doctor_name: string
   nurse_name: string
-  patient_status: string
 }
 
 export type NullablePatient = Patient | null
 
 export interface PartialPatient {
-  patient_name?: string
   patient_id?: string
-  date_of_birth?: string
-  entry_time?: string
-  patient_triage_level?: string
-  patient_medication?: string
-  patient_problem?: string
+  patient_name?: string
+  patient_age?: Date
+  patient_entry_time?: Date
+  patient_exit_time?: Date | null
+  patient_triage_time?: Date
+  patient_triage_level?: number
+  patient_isolated?: number
   box_id?: string
+  box_code?: string
+  patient_status?: string
+  patient_symptom?: string
   doctor_name?: string
   nurse_name?: string
-  patient_status?: string
 }
 
 export interface PatientHistoryItem {
