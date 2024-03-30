@@ -25,3 +25,13 @@ def get_table(table_name, condition=None):
         return df
     else:
         return None
+    
+# def get_id(table_name):
+#     connection = connect()
+#     if connection:
+#         query = f'SELECT BIN_TO_UUID(box_id) FROM {table_name}'
+#         df = pd.read_sql(query, connection)
+#         connection.close()
+#         return df
+#     else:
+#         return None
