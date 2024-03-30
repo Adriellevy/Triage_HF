@@ -29,6 +29,7 @@ export class PatientController {
     if (!result.success) {
       return res.status(500).json({ error: JSON.parse(result.error) })
     }
+    console.log(result.data)
     try {
       const newPatientId = await PatientsModel.createNewPatient({
         data: result.data,
@@ -80,51 +81,6 @@ export class PatientController {
       const { id } = req.params
       const User = await PatientsModel.getPatientById({ id })
       if (User) return res.json(User)
-      return res.status(404).json({ message: 'Patient not found' })
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' })
-    }
-  }
-
-  static async addBoxPatient(req, res) {
-    // TODO
-    try {
-      const users = await PatientsModel.getPatientByNameOrDate()
-      if (users) return res.json(users)
-      return res.status(404).json({ message: 'Patient not found' })
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' })
-    }
-  }
-
-  static async getPatientByNameOrDate(req, res) {
-    const { user_name, date } = req.query
-    try {
-      const users = await PatientsModel.getPatientByNameOrDate({
-        user_name,
-        date,
-      })
-      if (users) return res.json(users)
-      return res.status(404).json({ message: 'Patient not found' })
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' })
-    }
-  }
-
-  static async getPatientsAwaitingAdmission(req, res) {
-    try {
-      const users = await PatientsModel.getPatientsAwaitingAdmission()
-      if (users) return res.json(users)
-      return res.status(404).json({ message: 'Patient not found' })
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' })
-    }
-  }
-
-  static async getPatientsAwaitingInternation(req, res) {
-    try {
-      const users = await PatientsModel.getPatientsAwaitingInternation()
-      if (users) return res.json(users)
       return res.status(404).json({ message: 'Patient not found' })
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })
@@ -231,9 +187,5 @@ export class PatientController {
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' })
     }
-  }
-
-  static async deletePatient(req, res) {
-    // TODO
   }
 }

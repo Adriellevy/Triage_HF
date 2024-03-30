@@ -6,12 +6,12 @@ export class UserModel {
     try {
       const usersQuery = `
         SELECT 
-        BIN_TO_UUID(Users.user_id) AS user_id,
-        Users.user_name,
-        Users.user_password,
-        Users.user_email,
-        Users.user_type
-        FROM Users WHERE Users.user_name = ?;
+        BIN_TO_UUID(User.user_id) AS user_id,
+        User.user_name,
+        User.user_password,
+        User.user_email,
+        User.user_type
+        FROM User WHERE User.user_name = ?;
       `
       const [[user]] = await connection.query(usersQuery, [user_name])
       if (user.length === 0) return false
@@ -26,10 +26,10 @@ export class UserModel {
     try {
       const usersQuery = `
         SELECT 
-        BIN_TO_UUID(Users.user_id) AS user_id,
-        Users.user_name,
-        Users.user_type
-        FROM Users WHERE user_id = UUID_TO_BIN(?);
+        BIN_TO_UUID(User.user_id) AS user_id,
+        User.user_name,
+        User.user_type
+        FROM User WHERE user_id = UUID_TO_BIN(?);
       `
       const [[user]] = await connection.query(usersQuery, [id])
       if (user.length === 0) return false
@@ -50,10 +50,10 @@ export class UserModel {
     try {
       const usersQuery = `
         SELECT 
-        BIN_TO_UUID(Users.user_id) AS user_id,
-        Users.user_name,
-        Users.user_type
-        FROM Users WHERE user_type = ?;
+        BIN_TO_UUID(User.user_id) AS user_id,
+        User.user_name,
+        User.user_type
+        FROM User WHERE user_type = ?;
       `
       const [user] = await connection.query(usersQuery, ['DOCTOR'])
       if (user.length === 0) return false
@@ -68,10 +68,10 @@ export class UserModel {
     try {
       const usersQuery = `
         SELECT 
-        BIN_TO_UUID(Users.user_id) AS user_id,
-        Users.user_name,
-        Users.user_type 
-        FROM Users WHERE user_type = ?;
+        BIN_TO_UUID(User.user_id) AS user_id,
+        User.user_name,
+        User.user_type 
+        FROM User WHERE user_type = ?;
       `
       const [user] = await connection.query(usersQuery, ['NURSE'])
       if (user.length === 0) return false

@@ -10,21 +10,21 @@ export class PatientsModel {
     SELECT 
     BIN_TO_UUID(patient_id) AS patient_id,
     patient_name,
-    date_of_birth,
-    entry_time,
-    exit_time,
+    patient_age,
+    patient_entry_time,
+    patient_exit_time,
     patient_triage_time,
     patient_triage_level,
+    patient_isolated,
     BIN_TO_UUID(patient.box_id) AS box_id,
     box.box_code,
     patient_status,
-    patient_problem,
-    patient_medication,
+    patient_symptom,
     Doctor.user_name AS doctor_name,
     Nurse.user_name AS nurse_name
     FROM Patient
-    LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+    LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+    LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
     LEFT JOIN Box ON patient.box_id = Box.box_id;
     `
     const [patients] = await connection.query(patientsQuery)
@@ -34,77 +34,27 @@ export class PatientsModel {
   static async getPatientById({ id }) {
     const patientsQuery = `
         SELECT 
-        BIN_TO_UUID(patient.patient_id) AS patient_id,
-        patient.patient_name,
-        patient.date_of_birth,
-        patient.entry_time,
-        patient.exit_time,
-        patient.patient_triage_time,
-        patient.patient_triage_level,
+        BIN_TO_UUID(patient_id) AS patient_id,
+        patient_name,
+        patient_age,
+        patient_entry_time,
+        patient_exit_time,
+        patient_triage_time,
+        patient_triage_level,
+        patient_isolated,
         BIN_TO_UUID(patient.box_id) AS box_id,
         box.box_code,
-        patient.patient_status,
-        patient.patient_problem,
-        patient.patient_medication,
-        BIN_TO_UUID(Doctor.user_id) AS doctor_id,
-        BIN_TO_UUID(Nurse.user_id) AS nurse_id,
+        patient_status,
+        patient_symptom,
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name
         FROM Patient
-        LEFT JOIN Users AS Doctor ON patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-        LEFT JOIN Users AS Nurse ON patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-        LEFT JOIN Box ON patient.box_id = Box.box_id 
+        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        LEFT JOIN Box ON patient.box_id = Box.box_id
         WHERE patient.patient_id = UUID_TO_BIN(?);
     `
     const [patients] = await connection.query(patientsQuery, [id])
-    if (patients.length === 0) return false
-    return patients
-  }
-
-  static async getPatientByNameOrDate({ user_name, date }) {
-    const patientsQuery = `
-    SELECT Patient.*, 
-    Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name,
-    BIN_TO_UUID(patient_id) patient_id 
-    FROM Patient
-    LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    WHERE Patient.patient_name = ? OR Patient.date_of_birth = ?;
-    `
-    const [patients] = await connection.query(patientsQuery, [user_name, date])
-    if (patients.length === 0) return false
-    return patients
-  }
-
-  static async getPatientsAwaitingAdmission() {
-    const patientsQuery = `
-    SELECT Patient.*, 
-    Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name,
-    BIN_TO_UUID(patient_id) patient_id 
-    FROM Patient
-    LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    WHERE Patient.patient_status = 'EN ESPERA';
-    `
-    const [patients] = await connection.query(patientsQuery)
-    if (patients.length === 0) return false
-    return patients
-  }
-
-  static async getPatientsAwaitingInternation() {
-    const patientsQuery = `
-    SELECT Patient.*, 
-    Doctor.user_name AS doctor_name,
-    Nurse.user_name AS nurse_name,
-    BIN_TO_UUID(patient_id) patient_id 
-    FROM Patient
-    LEFT JOIN Users AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-    LEFT JOIN Users AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    WHERE Patient.patient_status = 'EN ESPERA DE INTERNACION';
-    `
-    const [patients] = await connection.query(patientsQuery)
     if (patients.length === 0) return false
     return patients
   }
@@ -117,22 +67,50 @@ export class PatientsModel {
 
       const patientsQuery = `
             INSERT INTO Patient 
-                (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, 
-                patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id, box_id) 
-            VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?), UUID_TO_BIN(?))
-        `
+                (
+                patient_id, 
+                patient_name, 
+                patient_age, 
+                patient_entry_time, 
+                patient_exit_time, 
+                patient_triage_time, 
+                patient_triage_level,
+                patient_isolated, 
+                patient_status, 
+                patient_symptom,
+                patient_healthcare_system,  
+                doctor_id, 
+                nurse_id, 
+                box_id
+                ) 
+            VALUES (
+                    UUID_TO_BIN(?), 
+                    ?,
+                    ?, 
+                    ?, 
+                    ?,
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?, 
+                    ?,
+                    ?,
+                    UUID_TO_BIN(?), 
+                    UUID_TO_BIN(?), 
+                    UUID_TO_BIN(?)  
+                  )`
       const [result] = await connection.query(patientsQuery, [
         uuid,
         data.patient_name,
-        data.date_of_birth,
-        data.entry_time,
-        data.exit_time,
+        data.patient_age,
+        data.patient_entry_time,
+        data.patient_exit_time,
         data.patient_triage_time,
         data.patient_triage_level,
-        data.patient_box,
+        data.patient_isolated,
         data.patient_status,
-        data.patient_problem,
-        data.patient_medication,
+        data.patient_symptom,
+        data.patient_healthcare_system,
         data.doctor_id,
         data.nurse_id,
         data.box_id,
@@ -148,16 +126,11 @@ export class PatientsModel {
                 WHERE box_id = UUID_TO_BIN(?);
             `
         await connection.query(updateBoxStatusQuery, [now, data.box_id])
-
         return uuid
       }
     } catch (error) {
-      throw error
+      console.error(error)
     }
-  }
-
-  static async deletePatient({ id }) {
-    // TODO
   }
 
   static async updatePatient({ id, data }) {
@@ -228,18 +201,16 @@ export class PatientsModel {
   }
 
   static async getPatientUpdateHistory({ id }) {
-    // TODO: PatientUpdateHistoryQuery
-
     const PatientUpdateHistoryQuery = ` 
     SELECT 
-    BIN_TO_UUID(PUH.update_id) AS update_id,
-    PUH.updated_column,
-    PUH.old_value,
-    PUH.new_value,
-    PUH.update_date,
+    BIN_TO_UUID(PUH.updated_id) AS updated_id,
+    PUH.patient_updated_column,
+    PUH.patient_old_value,
+    PUH.patient_new_value,
+    PUH.patient_updated_date,
     U.user_name 
     FROM PatientUpdateHistory PUH
-    JOIN Users U ON PUH.user_id = U.user_id
+    JOIN User U ON PUH.user_id = U.user_id
     WHERE PUH.patient_id = UUID_TO_BIN(?);
     `
     const [PatientUpdateHistory] = await connection.query(
@@ -255,7 +226,13 @@ export class PatientsModel {
     // eslint-disable-next-line object-curly-newline
     const { patient_id, updated_column, old_value, new_value, user_id } = data
     const insertQuery = `
-        INSERT INTO PatientUpdateHistory (update_id, patient_id, updated_column, old_value, new_value, user_id)
+        INSERT INTO PatientUpdateHistory (
+          updated_id, 
+          patient_id, 
+          patient_updated_column, 
+          patient_old_value, 
+          patient_new_value, 
+          user_id)
         VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, UUID_TO_BIN(?));
       `
     await connection.query(insertQuery, [

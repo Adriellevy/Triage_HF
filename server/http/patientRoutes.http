@@ -10,22 +10,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 GET http://localhost:3000/patient/search?user_name=John%20Doe
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
-### Search Case 2: Search by date of birth
-GET http://localhost:3000/patient/search?date=1990-01-15
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
-
-### Search Case 3: Search by name and date of birth
-GET http://localhost:3000/patient/search?user_name=John%20Doe&date=1990-01-15
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
-
-### Get all patients awaiting admission
-GET http://localhost:3000/patient/search/awaiting-admission
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
-
-### Get all patients awaiting internation
-GET http://localhost:3000/patient/search/awaiting-internation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNzU0OX0.5G62eIrm8PkN0RyS_6lgKzP4vSd_YUT0cJINxxF9FMo
-
 ### Post a new patient
 POST http://localhost:3000/patient
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
@@ -33,28 +17,23 @@ content-type: application/json
 
 {
   "patient_name": "Nuevo Paciente",
-  "date_of_birth": "2000-01-01",
-  "entry_time": "2023-01-01 10:00:00",
-  "exit_time": null,
+  "patient_age": "2000-01-01",
+  "patient_entry_time": "2023-01-01 10:00:00",
+  "patient_exit_time": null,
   "patient_triage_time": "2023-01-01 10:15:00",
   "patient_triage_level": 2,
-  "patient_box": "CONSULTORIO",
-  "patient_status": "EN ESPERA",
-  "patient_problem": "Síntomas generales",
-  "patient_medication": "Paracetamol",
-  "doctor_id": 1,
-  "nurse_id": 2,
-  "box_id": 1,
+  "patient_isolated": false,
+  "patient_status": "EN OBSERVACION",
+  "patient_symptom": "Síntomas generales",
+  "patient_healthcare_system":"Test",
+  "doctor_id": "4e5fb7c0-eebe-11ee-9e2b-8541b9dc2523",
+  "nurse_id": "4e5fba72-eebe-11ee-9e2b-8541b9dc2523",
+  "box_id": "4e60151c-eebe-11ee-9e2b-8541b9dc2523"
 }
-
-
-### Delete a patient (TODO)
-DELETE http://localhost:3000/patient/2
 
 ### Get patient 
 GET http://localhost:3000/patient/3d8b8e82-a07c-11ee-a471-c305cdf56517
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
-
 
 ### Update a patient
 PATCH http://localhost:3000/patient/2223770e-d1aa-11ee-844e-48342d46d868

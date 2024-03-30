@@ -9,6 +9,7 @@ export class DashboardController {
       const AvailableBoxesCount = await BoxModel.getAvailableBoxesCount()
       const PatientsCount = await PatientsModel.getPatientsCount()
       const OutsidePatientsCount = await PatientsModel.getOutsidePatientsCount()
+      // eslint-disable-next-line operator-linebreak
       const TriageIIPatientsCount =
         await PatientsModel.getTriageIIPatientsCount()
       return res.status(200).json({
