@@ -64,35 +64,35 @@ CREATE TABLE PatientUpdateHistory (
 );
 
 -- Insertar datos de ejemplo en la tabla User
-INSERT INTO User (user_id, user_name, user_email, user_password, user_type)
-VALUES
-  (UUID_TO_BIN(UUID()),'Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'Dr. Smith2', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'Hospital Admin', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'HOSPITAL'),
-  (UUID_TO_BIN(UUID()),'GIMENEZ, ALEXIS', 'gimenez.alexis@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'VARGAS ROTELA MALENA ELIZABETH', 'vargas.rotela.malena@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'CARDOZO FACUNDO MAXIMILIANO', 'cardozo.facundo@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'POLO LEONARDO JAVIER', 'polo.leonardo@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'VARGAS JOSE ARMANDO', 'vargas.jose@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'VILA HUAJLLIRI ROLY ROLANDO', 'vila.rolando@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'MEZA ERIKA FATIMA', 'meza.erika@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'GONZALEZ SOLEDAD', 'gonzalez.soledad@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'VARELA MANUELA CELESTE', 'varela.manuela@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'CAMPOS MARIANA EVANGELINA', 'campos.mariana@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'DEMINGE MARIA JOSE', 'deminge.maria@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'DIAS SILVIA DEL VALLE', 'dias.silvia@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'LEIVA LUCAS LEANDRO', 'leiva.lucas@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'MOGNI EMILIO ANGEL', 'mogni.emilio@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'AVANCINI MARICRUZ', 'avancini.maricruz@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'GONZALES GALARZA CARLA BETIANA', 'gonzales.carla@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'ZACARIAS CECILIA BEATRIZ', 'zacarias.cecilia@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'VALLEJOS SABRINA PAOLA', 'vallejos.sabrina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  (UUID_TO_BIN(UUID()),'MESSINA NAHUEL', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'AVILA VALENTIN', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'AMAYA ANALIA', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'RIVAS PAULA', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  (UUID_TO_BIN(UUID()),'RESIDENTES', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR');
+INSERT INTO User (user_id, user_name, user_full_name, user_email, user_password, user_type) 
+VALUES 
+(UUID_TO_BIN(UUID()),'Dr. Smith', 'Doctor Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'Nurse Brown', 'Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'Dr. Smith2', 'Doctor Smith 2', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'Hospital Admin', 'Hospital Admin', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'HOSPITAL'), 
+(UUID_TO_BIN(UUID()),'GIMENEZ, ALEXIS', 'Gimenez Alexis', 'gimenez.alexis@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'VARGAS ROTELA MALENA ELIZABETH', 'Vargas Rotela Malena Elizabeth', 'vargas.rotela.malena@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'CARDOZO FACUNDO MAXIMILIANO', 'Cardozo Facundo Maximiliano', 'cardozo.facundo@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'POLO LEONARDO JAVIER', 'Polo Leonardo Javier', 'polo.leonardo@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'VARGAS JOSE ARMANDO', 'Vargas Jose Armando', 'vargas.jose@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'VILA HUAJLLIRI ROLY ROLANDO', 'Vila Huajlliri Roly Rolando', 'vila.rolando@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'MEZA ERIKA FATIMA', 'Meza Erika Fatima', 'meza.erika@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'GONZALEZ SOLEDAD', 'Gonzalez Soledad', 'gonzalez.soledad@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'VARELA MANUELA CELESTE', 'Varela Manuela Celeste', 'varela.manuela@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'CAMPOS MARIANA EVANGELINA', 'Campos Mariana Evangelina', 'campos.mariana@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'DEMINGE MARIA JOSE', 'Deminge Maria Jose', 'deminge.maria@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'DIAS SILVIA DEL VALLE', 'Dias Silvia Del Valle', 'dias.silvia@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'LEIVA LUCAS LEANDRO', 'Leiva Lucas Leandro', 'leiva.lucas@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'MOGNI EMILIO ANGEL', 'Mogni Emilio Angel', 'mogni.emilio@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'AVANCINI MARICRUZ', 'Avancini Maricruz', 'avancini.maricruz@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'GONZALES GALARZA CARLA BETIANA', 'Gonzales Galarza Carla Betiana', 'gonzales.carla@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'ZACARIAS CECILIA BEATRIZ', 'Zacarias Cecilia Beatriz', 'zacarias.cecilia@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'VALLEJOS SABRINA PAOLA', 'Vallejos Sabrina Paola', 'vallejos.sabrina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'), 
+(UUID_TO_BIN(UUID()),'MESSINA NAHUEL', 'Messina Nahuel', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'AVILA VALENTIN', 'Avila Valentin', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'AMAYA ANALIA', 'Amaya Analia', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'RIVAS PAULA', 'Rivas Paula', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'), 
+(UUID_TO_BIN(UUID()),'RESIDENTES', 'Residentes', 'messina@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR');
 
 -- Insertar datos de ejemplo en la tabla Box
 INSERT INTO Box (box_id, box_code, box_type)
