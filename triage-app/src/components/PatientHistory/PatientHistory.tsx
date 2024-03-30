@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PatientHistoryItem } from '@/interfaces/Patinet'
-import PatientHystoryItem from '@/components/PatientHistory/PatientHystoryItem'
+import PatientHystoryItem from '@/components/PatientHistory/PatientHistoryItem'
 import { getPatientHistory } from '@/services/patientService'
 import LoaderSpin from '../LoaderSpin'
 import { useTranslation } from 'react-i18next'

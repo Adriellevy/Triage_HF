@@ -83,11 +83,6 @@ function Sidebar() {
         },
         {
           icon: StatsIcon,
-          title: t('StatsPatientsTriage'),
-          linkUrl: '/stats/cant_pacientes_triage'
-        },
-        {
-          icon: StatsIcon,
           title: t('StatsReasons'),
           linkUrl: '/stats/top_consultas_fecha'
         }

@@ -13,6 +13,8 @@ import PatientList_es from './locales/es/PatientList.json'
 import PatientList_en from './locales/en/PatientList.json'
 import PatientHistory_es from './locales/es/PatientHistory.json'
 import PatientHistory_en from './locales/en/PatientHistory.json'
+import PatientHistoryItem_es from './locales/es/PatientHistoryItem.json'
+import PatientHistoryItem_en from './locales/en/PatientHistoryItem.json'
 import PatientForm_es from './locales/es/PatientForm.json'
 import PatientForm_en from './locales/en/PatientForm.json'
 import PatientDetail_es from './locales/es/PatientDetail.json'
@@ -32,7 +34,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'es',
-    lng: 'en',
+    lng: 'es',
     debug: true,
     supportedLngs: ['en', 'es'],
     interpolation: {
@@ -45,6 +47,7 @@ i18n
         Search: Search_es,
         PatientList: PatientList_es,
         PatientHistory: PatientHistory_es,
+        PatientHistoryItem: PatientHistoryItem_es,
         PatientForm: PatientForm_es,
         PatientDetail: PatientDetail_es,
         PatientInform: PatientInform_es,
@@ -58,6 +61,7 @@ i18n
         Search: Search_en,
         PatientList: PatientList_en,
         PatientHistory: PatientHistory_en,
+        PatientHistoryItem: PatientHistoryItem_en,
         PatientForm: PatientForm_en,
         PatientDetail: PatientDetail_en,
         PatientInform: PatientInform_en,

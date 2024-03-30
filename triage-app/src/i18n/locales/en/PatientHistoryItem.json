@@ -1,0 +1,13 @@
+{
+  "NameLabel": "Name",
+  "AgeLabel": "Age",
+  "EntryTimeLabel": "Entry Time",
+  "TriageLevelLabel": "Triage Level",
+  "TriageTimeLabel": "Triage Time",
+  "PatientMedication": "Medication",
+  "PatientProblem": "Problem",
+  "PatientBoxLabel": "Box Code",
+  "DoctorNameLabel": "Doctor's Name",
+  "NurseNameLabel": "Nurse's Name",
+  "PatientStatusLabel": "Status"
+}

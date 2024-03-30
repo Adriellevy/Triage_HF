@@ -22,8 +22,8 @@ const patientSchema = z.object({
   ]),
   patient_problem: z.string().min(1).max(500),
   patient_medication: z.string().min(1).max(500),
-  doctor_id: z.number().int().nullable(),
-  nurse_id: z.number().int().nullable(),
+  doctor_id: z.string(),
+  nurse_id: z.string(),
   box_id: z.string(),
 })
 

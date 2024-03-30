@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable camelcase */
 import { connection } from '../../db.js'
 
@@ -6,7 +5,13 @@ export class UserModel {
   static async getUserByUserName(user_name) {
     try {
       const usersQuery = `
-        SELECT * FROM Users WHERE user_name = ?;
+        SELECT 
+        BIN_TO_UUID(Users.user_id) AS user_id,
+        Users.user_name,
+        Users.user_password,
+        Users.user_email,
+        Users.user_type
+        FROM Users WHERE Users.user_name = ?;
       `
       const [[user]] = await connection.query(usersQuery, [user_name])
       if (user.length === 0) return false
@@ -20,7 +25,11 @@ export class UserModel {
   static async getUserByID({ id }) {
     try {
       const usersQuery = `
-        SELECT * FROM Users WHERE user_id = ?;
+        SELECT 
+        BIN_TO_UUID(Users.user_id) AS user_id,
+        Users.user_name,
+        Users.user_type
+        FROM Users WHERE user_id = UUID_TO_BIN(?);
       `
       const [[user]] = await connection.query(usersQuery, [id])
       if (user.length === 0) return false
@@ -40,7 +49,11 @@ export class UserModel {
   static async getAllDoctors() {
     try {
       const usersQuery = `
-        SELECT * FROM Users WHERE user_type = ?;
+        SELECT 
+        BIN_TO_UUID(Users.user_id) AS user_id,
+        Users.user_name,
+        Users.user_type
+        FROM Users WHERE user_type = ?;
       `
       const [user] = await connection.query(usersQuery, ['DOCTOR'])
       if (user.length === 0) return false
@@ -54,7 +67,11 @@ export class UserModel {
   static async getAllNurse() {
     try {
       const usersQuery = `
-        SELECT * FROM Users WHERE user_type = ?;
+        SELECT 
+        BIN_TO_UUID(Users.user_id) AS user_id,
+        Users.user_name,
+        Users.user_type 
+        FROM Users WHERE user_type = ?;
       `
       const [user] = await connection.query(usersQuery, ['NURSE'])
       if (user.length === 0) return false

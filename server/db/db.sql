@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS PatientUpdateHistory;
 
 CREATE TABLE Users (
-  user_id INT NOT NULL AUTO_INCREMENT,
+  user_id BINARY(16) NOT NULL,
   user_name VARCHAR(50) NOT NULL,
   user_email VARCHAR(50) NOT NULL,
   user_password VARCHAR(100) NOT NULL,
@@ -40,8 +40,8 @@ CREATE TABLE Patient (
   patient_status ENUM('ALTA', 'EN ESPERA', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA', 'EN AISLAMIENTO'),
   patient_problem VARCHAR(500) NOT NULL,
   patient_medication VARCHAR(500) NOT NULL,
-  doctor_id INT,
-  nurse_id INT,
+  doctor_id BINARY(16),
+  nurse_id BINARY(16),
   box_id BINARY(16),
   FOREIGN KEY (box_id) REFERENCES Box(box_id),
   FOREIGN KEY (doctor_id) REFERENCES Users(user_id),
@@ -56,19 +56,19 @@ CREATE TABLE PatientUpdateHistory (
   old_value VARCHAR(500) NOT NULL,
   new_value VARCHAR(500) NOT NULL,
   update_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  user_id INT NOT NULL,
+  user_id BINARY(16) NOT NULL,
   PRIMARY KEY(update_id),
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
   FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 -- Insertar datos de ejemplo en la tabla Users
-INSERT INTO Users (user_name, user_email, user_password, user_type)
+INSERT INTO Users (user_id, user_name, user_email, user_password, user_type)
 VALUES
-  ('Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  ('Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
-  ('Dr. Smith2', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
-  ('Hospital Admin', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'HOSPITAL');
+  (UUID_TO_BIN(UUID()),'Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
+  (UUID_TO_BIN(UUID()),'Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
+  (UUID_TO_BIN(UUID()),'Dr. Smith2', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
+  (UUID_TO_BIN(UUID()),'Hospital Admin', 'admin@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'HOSPITAL');
 
 -- Insertar datos de ejemplo en la tabla Box
 INSERT INTO Box (box_id, box_code, box_type)
@@ -85,12 +85,3 @@ VALUES
   (UUID_TO_BIN(UUID()),'10','INTERNACION'),
   (UUID_TO_BIN(UUID()),'11','INTERNACION'),
   (UUID_TO_BIN(UUID()),'12','INTERNACION');
-
-  -- Insertar datos de ejemplo en la tabla Patient
-  INSERT INTO Patient (patient_id, patient_name, date_of_birth, entry_time, exit_time, patient_triage_time, patient_triage_level, patient_box, patient_status, patient_problem, patient_medication, doctor_id, nurse_id) 
-  VALUES 
-    (UUID_TO_BIN(UUID()), 'Alaine Lorait', '1982-10-13', TIMESTAMP('2023-09-25', '23:13:49'), TIMESTAMP('2023-09-25','23:18:49'), TIMESTAMP('2023-09-25','15:24:49'), 3, 2, 'ALTA', 'Cough', 'Medication2', 1, 2),
-    (UUID_TO_BIN(UUID()), 'Cordie Archdeckne', '2012-04-09', TIMESTAMP('2023-09-27','00:19:19'), TIMESTAMP('2023-09-27','2:19:19'), TIMESTAMP('2023-09-27','3:30:45'), 1, 3, 'EN ESPERA DE INTERNACION', 'Fever', 'Medication4', 3, 2),
-    (UUID_TO_BIN(UUID()), 'Davidson Harm', '2023-01-28', TIMESTAMP('2023-01-28','08:32:23'), TIMESTAMP('2023-01-28','11:22:37'), TIMESTAMP('2023-01-28','2:03:12'), 4, 2, 'INTERNADO', 'Diarrhea', 'Medication5', 1, 4),
-    (UUID_TO_BIN(UUID()), 'Ulberto Haslehurst', '2023-10-05', TIMESTAMP('2023-10-05','07:30:12'), TIMESTAMP('2023-10-05','10:21:12'), TIMESTAMP('2023-10-05','15:01:47'), 3, 3, 'INTERNADO', 'Joint pain', 'Medication2', 3, 2),
-    (UUID_TO_BIN(UUID()), 'Carmela Roddell', '2007-07-29', TIMESTAMP('2023-10-05','9:22:42'), TIMESTAMP('2023-10-05','15:31:27'), TIMESTAMP('2023-10-05','18:32:23'), 3, 1, 'EN ESPERA', 'Shortness of breath', 'Medication5', 1, 2);
