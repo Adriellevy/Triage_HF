@@ -27,7 +27,7 @@ def drop_id_feature(df):
     return df.iloc[:, 1:]
 
 def get_last_week(df):
-    to = df['entry_time'].max()
+    to = df['patient_entry_time'].max()
     from_ = to - timedelta(days=7)
     return (from_, to)
 
@@ -39,7 +39,7 @@ def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, bo
         from_ = pd.to_datetime(from_, format='%Y-%m-%d', errors='coerce')
         to = pd.to_datetime(to, format='%Y-%m-%d', errors='coerce')
 
-    df = df[(df['entry_time'] >= from_) & (df['entry_time'] <= to)]
+    df = df[(df['patient_entry_time'] >= from_) & (df['patient_entry_time'] <= to)]
 
     if (patient_name != None):
         df = df[df['patient_name'] == patient_name.upper()]
@@ -65,16 +65,18 @@ def filters(df, from_=None, to=None, patient_name=None, patient_problem=None, bo
     return df
 
 def build_number_patients_date(df):    
-    df = df.groupby(['entry_time', 'patient_triage_level'], sort=False).size(
+    df['patient_entry_time'] = df['patient_entry_time'].dt.date
+    
+    df = df.groupby(['patient_entry_time', 'patient_triage_level'], sort=False).size(
     ).reset_index(name='number_of_patients')
     
 
     df['patient_triage_level'] = df['patient_triage_level'].apply(lambda x: str(int(float(x))))
     df = df[df['patient_triage_level'] != '0']
 
-    df.sort_values(by='entry_time', inplace=True)
+    df.sort_values(by='patient_entry_time', inplace=True)
     
-    df = df.sort_values(by=['patient_triage_level', 'entry_time', 'number_of_patients'])
+    df = df.sort_values(by=['patient_triage_level', 'patient_entry_time', 'number_of_patients'])
     
     return df
 

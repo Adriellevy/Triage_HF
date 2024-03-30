@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 
 import data.make_dataset as md
 
@@ -28,6 +28,7 @@ import visualization.metrics as mt
 
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 
 def get_args():
@@ -47,7 +48,6 @@ def get_args():
             }
     return args
 
-
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
     df = md.get_table('Patient')
@@ -58,11 +58,11 @@ def chart_number_patients_date():
     df = bf.build_features(df, **get_args())
     
     df = bf.build_number_patients_date(df)
-
+    
     mean = request.args.get('mean', default=None, type=bool)
     
     fig = vl.line_chart(df=df,
-                     x='entry_time',
+                     x='patient_entry_time',
                      y='number_of_patients',
                      x_title='Fecha de Ingreso',
                      y_title='Cantidad de Pacientes',
@@ -71,6 +71,25 @@ def chart_number_patients_date():
                      mean=mean)
 
     return fig.to_html()
+
+@app.route('/number_patients_date/metrics/')
+def metrics_number_patients_date():
+    df = md.get_table('Patient')
+
+    if (df.empty):
+        return Response(status=204)
+    
+    df = bf.build_features(df, **get_args())
+    
+    df = bf.build_number_patients_date(df)
+    
+    data = mt.metrics_data(df=df,
+                          x='patient_entry_time',
+                          y='number_of_patients',
+                          txt_x='fecha de ingreso',
+                          txt_y='pacientes'
+                          )
+    return jsonify(data)
 
 
 @app.route('/top_queries_date/')
