@@ -57,25 +57,25 @@ function PatientForm() {
         setNurseOptions(nurses)
         setBoxesOptions(boxes)
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
-        formData.doctor_id = doctor ? doctor.user_id : ''
+        formInterfaz.doctor_id = doctor ? doctor.user_id : ''
         const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
-        formData.nurse_id = nurse ? nurse.user_id : ''
+        formInterfaz.nurse_id = nurse ? nurse.user_id : ''
         const box = allBoxes?.find((box) => box.box_code === edditingPatient?.box_code)
-        formData.box_id = box ? box.box_id : ''
+        formInterfaz.box_id = box ? box.box_id : ''
       } catch (error) {
         console.log(error)
       }
     }
     if (edditingPatient) {
-      formData.patient_name = edditingPatient.patient_name || ''
-      formData.date_of_birth = edditingPatient.date_of_birth.slice(0, 10) || ''
-      formData.entry_time = edditingPatient.entry_time || ''
-      formData.exit_time = edditingPatient.exit_time || null
-      formData.patient_triage_time = edditingPatient.patient_triage_time || ''
-      formData.patient_triage_level = edditingPatient.patient_triage_level || ''
-      formData.patient_status = edditingPatient.patient_status || ''
-      formData.patient_problem = edditingPatient.patient_problem || ''
-      formData.patient_medication = edditingPatient.patient_medication || ''
+      formInterfaz.patient_name = edditingPatient.patient_name || ''
+      formInterfaz.date_of_birth = edditingPatient.date_of_birth.slice(0, 10) || ''
+      formInterfaz.entry_time = edditingPatient.entry_time || ''
+      formInterfaz.exit_time = edditingPatient.exit_time || null
+      formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
+      formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formInterfaz.patient_status = edditingPatient.patient_status || ''
+      formInterfaz.patient_problem = edditingPatient.patient_problem || ''
+      formInterfaz.patient_medication = edditingPatient.patient_medication || ''
       asFun()
 
       const newDate = dayjs(edditingPatient.date_of_birth)
@@ -162,9 +162,25 @@ function PatientForm() {
   }
 
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
-    formData.patient_triage_time = getCurrentTime()
-    formData.patient_box = formData.box_id
+    formInterfaz.patient_triage_time = getCurrentTime()
+    formInterfaz.patient_box = formInterfaz.box_id
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formInterfaz, setformInterfaz] = useState<any>({
+    patient_name: '',
+    date_of_birth: null,
+    entry_time: '',
+    exit_time: null,
+    patient_triage_time: getCurrentTime(),
+    patient_triage_level: '',
+    patient_box: '',
+    patient_status: '',
+    patient_problem: '',
+    patient_medication: '',
+    doctor_id: '',
+    nurse_id: '',
+    box_id: null
+  })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
     patient_name: '',
@@ -181,9 +197,12 @@ function PatientForm() {
     nurse_id: '',
     box_id: null
   })
-
   //Triage level buttons
   const handleTriageLevelClick = (level: number) => {
+    setformInterfaz({
+      ...formInterfaz,
+      patient_triage_level: level
+    })
     setFormData({
       ...formData,
       patient_triage_level: level
@@ -199,6 +218,7 @@ function PatientForm() {
 
   //Date Picker
   const handleDateChange = (newDate: Date | null) => {
+    setformInterfaz({ ...formInterfaz, date_of_birth: newDate })
     setFormData({ ...formData, date_of_birth: newDate })
     setErrorsForm({
       ...ErrorsForm,
@@ -218,13 +238,22 @@ function PatientForm() {
     // Get the selected option based on the entered value
     // Check if it's the hidden input
     if (name === 'doctor_id') {
+      const itemValue = DoctorOptions
+        ? DoctorOptions.find((option) => option.user_name === value)?.user_name
+        : null
       const itemId = DoctorOptions
         ? DoctorOptions.find((option) => option.user_name === value)?.user_id
         : null
+
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: itemValue
+      })
       setFormData({
         ...formData,
         [name]: itemId
       })
+
       setErrorsForm({
         ...ErrorsForm,
         [name]: {
@@ -233,9 +262,16 @@ function PatientForm() {
         }
       })
     } else if (name === 'nurse_id') {
+      const itemValue = NurseOptions
+        ? NurseOptions.find((option) => option.user_name === value)?.user_name
+        : null
       const itemId = NurseOptions
         ? NurseOptions.find((option) => option.user_name === value)?.user_id
         : null
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: itemValue
+      })
       setFormData({
         ...formData,
         [name]: itemId
@@ -249,6 +285,10 @@ function PatientForm() {
       })
     } else if (name === 'box_id') {
       const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: itemId
+      })
       setFormData({
         ...formData,
         [name]: itemId
@@ -261,8 +301,12 @@ function PatientForm() {
         }
       })
     } else if (name === 'patient_triage_level') {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: Number(value)
+      })
       setFormData({
-        ...formData,
+        ...formInterfaz,
         [name]: Number(value)
       })
       setErrorsForm({
@@ -273,6 +317,10 @@ function PatientForm() {
         }
       })
     } else {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: value
+      })
       setFormData({
         ...formData,
         [name]: value
@@ -300,11 +348,11 @@ function PatientForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     //Update entry_time
-    const FormDataNow = formData
-    FormDataNow.entry_time = getCurrentTime()
+    const formDataNow = formData
+    formDataNow.entry_time = getCurrentTime()
     try {
       //Delete Id
-      const formDataNoID = FormDataNow
+      const formDataNoID = formDataNow
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
       if (token) {
@@ -321,7 +369,7 @@ function PatientForm() {
             })
           }
         } else {
-          const { data, errors } = await addNewPatient(FormDataNow)
+          const { data, errors } = await addNewPatient(formDataNow)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
             toast.error('Error al intentar agregar un nuevo paciente', {
@@ -345,6 +393,21 @@ function PatientForm() {
               duration: 2000
             })
 
+            setformInterfaz({
+              patient_name: '',
+              date_of_birth: '2000-01-01',
+              entry_time: null,
+              exit_time: null,
+              patient_triage_time: getCurrentTime(),
+              patient_triage_level: '',
+              patient_box: '',
+              patient_status: '',
+              patient_problem: '',
+              patient_medication: '',
+              doctor_id: '',
+              nurse_id: '',
+              box_id: ''
+            })
             setFormData({
               patient_name: '',
               date_of_birth: '2000-01-01',
@@ -418,7 +481,7 @@ function PatientForm() {
             type='text'
             id='patient_name'
             name='patient_name'
-            value={formData.patient_name}
+            value={formInterfaz.patient_name}
             onChange={handleInputChange}
             // required
           />
@@ -447,7 +510,7 @@ function PatientForm() {
                 onClick={() => handleTriageLevelClick(level._id)}
                 type='button'
                 className={`py-1  flex-grow border-4 ${
-                  formData.patient_triage_level == level._id
+                  formInterfaz.patient_triage_level == level._id
                     ? ' border-black'
                     : 'border-transparent'
                 }`}
@@ -471,7 +534,7 @@ function PatientForm() {
             type='text'
             id='patient_medication'
             name='patient_medication'
-            value={formData.patient_medication}
+            value={formInterfaz.patient_medication}
             onChange={handleInputChange}
           />
         </div>
@@ -483,7 +546,7 @@ function PatientForm() {
             type='text'
             id='patient_problem'
             name='patient_problem'
-            value={formData.patient_problem}
+            value={formInterfaz.patient_problem}
             onChange={handleInputChange}
             autoComplete='off'
             list='patientProblems'
@@ -504,7 +567,7 @@ function PatientForm() {
             error_active={ErrorsForm.box_id}
             id='box_id'
             name='box_id'
-            value={formData.box_id ? formData.box_id : ''}
+            value={formInterfaz.box_id ? formInterfaz.box_id : ''}
             onChange={handleInputChange}
           >
             <option value='' disabled>
@@ -524,7 +587,7 @@ function PatientForm() {
             error_active={ErrorsForm.doctor_id}
             id='doctor_id'
             name='doctor_id'
-            value={formData.doctor_id}
+            value={formInterfaz.doctor_id}
             onChange={handleInputChange}
           >
             <option value='' disabled>
@@ -544,7 +607,7 @@ function PatientForm() {
             error_active={ErrorsForm.nurse_id}
             id='nurse_id'
             name='nurse_id'
-            value={formData.nurse_id}
+            value={formInterfaz.nurse_id}
             onChange={handleInputChange}
           >
             <option value='' disabled>
@@ -564,7 +627,7 @@ function PatientForm() {
             error_active={ErrorsForm.patient_status}
             id='patient_status'
             name='patient_status'
-            value={formData.patient_status}
+            value={formInterfaz.patient_status}
             onChange={handleInputChange}
           >
             <option value='' disabled>
