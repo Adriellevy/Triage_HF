@@ -4,24 +4,26 @@ CREATE DATABASE Triage_db;
 
 USE Triage_db;
 
-DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Box;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS PatientUpdateHistory;
 
-CREATE TABLE Users (
+CREATE TABLE User (
   user_id BINARY(16) NOT NULL,
   user_name VARCHAR(50) NOT NULL,
+  user_full_name VARCHAR(50) NOT NULL,
   user_email VARCHAR(50) NOT NULL,
+  user_specialization VARCHAR(50),
   user_password VARCHAR(100) NOT NULL,
-  user_type ENUM('DOCTOR', 'NURSE', 'HOSPITAL'),
+  user_type ENUM('DOCTOR', 'NURSE', 'HOSPITAL') DEFAULT 'DOCTOR',
   PRIMARY KEY(user_id)
 );
 
 CREATE TABLE Box (
   box_id BINARY(16) NOT NULL,
   box_code VARCHAR(50) NOT NULL,
-  box_type ENUM('CONSULTORIO', 'SHOOCK ROOM', 'INTERNACION','OBSERVACION'),
+  box_type ENUM('CONSULTORIO', 'SHOCK ROOM', 'INTERNACION','OBSERVACION'),
   box_time TIMESTAMP,
   box_status ENUM('DISPONIBLE', 'OCUPADO') DEFAULT 'DISPONIBLE',
   PRIMARY KEY(box_id)
@@ -29,41 +31,40 @@ CREATE TABLE Box (
 
 CREATE TABLE Patient (
   patient_id BINARY(16) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_name VARCHAR(50) NOT NULL,
-  date_of_birth TIMESTAMP NOT NULL,
-  entry_time TIMESTAMP NOT NULL,
-  exit_time TIMESTAMP,
+  patient_age INT NOT NULL,
+  patient_entry_time TIMESTAMP NOT NULL,
+  patient_exit_time TIMESTAMP,
   patient_triage_time TIMESTAMP NOT NULL,
-  patient_triage_level INT,
-  patient_box VARCHAR(50) DEFAULT NULL,
-  patient_status ENUM('ALTA', 'EN ESPERA', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA', 'EN AISLAMIENTO'),
-  patient_problem VARCHAR(500) NOT NULL,
-  patient_medication VARCHAR(500) NOT NULL,
+  patient_triage_level INT NOT NULL,
+  patient_isolated BOOLEAN NOT NULL,
+  patient_status ENUM('ALTA', 'EN OBSERVACION', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA'),
+  patient_symptom VARCHAR(500) NOT NULL,
+  patient_healthcare_system VARCHAR(50),
   doctor_id BINARY(16),
   nurse_id BINARY(16),
   box_id BINARY(16),
   FOREIGN KEY (box_id) REFERENCES Box(box_id),
-  FOREIGN KEY (doctor_id) REFERENCES Users(user_id),
-  FOREIGN KEY (nurse_id) REFERENCES Users(user_id),
+  FOREIGN KEY (doctor_id) REFERENCES User(user_id),
+  FOREIGN KEY (nurse_id) REFERENCES User(user_id),
   PRIMARY KEY(patient_id)
 );
 
 CREATE TABLE PatientUpdateHistory (
-  update_id BINARY(16) NOT NULL,
+  updated_id BINARY(16) NOT NULL,
+  patient_updated_column VARCHAR(50) NOT NULL,
+  patient_old_value VARCHAR(500) NOT NULL,
+  patient_new_value VARCHAR(500) NOT NULL,
+  patient_updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_id BINARY(16) NOT NULL,
-  updated_column VARCHAR(50) NOT NULL,
-  old_value VARCHAR(500) NOT NULL,
-  new_value VARCHAR(500) NOT NULL,
-  update_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_id BINARY(16) NOT NULL,
-  PRIMARY KEY(update_id),
+  PRIMARY KEY(updated_id),
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
 
--- Insertar datos de ejemplo en la tabla Users
-INSERT INTO Users (user_id, user_name, user_email, user_password, user_type)
+-- Insertar datos de ejemplo en la tabla User
+INSERT INTO User (user_id, user_name, user_email, user_password, user_type)
 VALUES
   (UUID_TO_BIN(UUID()),'Dr. Smith', 'dr.smith@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'DOCTOR'),
   (UUID_TO_BIN(UUID()),'Nurse Brown', 'nurse.brown@example.com', '$2b$10$9CPX0vCMdisdoqZ9tbmnQuht/ojUcTk9qpVbXrWdETcb.p96iQBIO', 'NURSE'),
@@ -99,10 +100,10 @@ VALUES
   (UUID_TO_BIN(UUID()),'C1','CONSULTORIO'),
   (UUID_TO_BIN(UUID()),'C2','CONSULTORIO'),
   (UUID_TO_BIN(UUID()),'C3','CONSULTORIO'),
-  (UUID_TO_BIN(UUID()),'01','SHOOCK ROOM'),
-  (UUID_TO_BIN(UUID()),'02','SHOOCK ROOM'),
-  (UUID_TO_BIN(UUID()),'03','SHOOCK ROOM'),
-  (UUID_TO_BIN(UUID()),'04','SHOOCK ROOM'),
+  (UUID_TO_BIN(UUID()),'01','SHOCK ROOM'),
+  (UUID_TO_BIN(UUID()),'02','SHOCK ROOM'),
+  (UUID_TO_BIN(UUID()),'03','SHOCK ROOM'),
+  (UUID_TO_BIN(UUID()),'04','SHOCK ROOM'),
   (UUID_TO_BIN(UUID()),'05','INTERNACION'),
   (UUID_TO_BIN(UUID()),'06','INTERNACION'),
   (UUID_TO_BIN(UUID()),'07','INTERNACION'),
