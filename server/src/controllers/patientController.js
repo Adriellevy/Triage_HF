@@ -132,10 +132,15 @@ export class PatientController {
         // eslint-disable-next-line no-await-in-loop
         await PatientsModel.AddUpdateHistory({ data: item })
       }
+      console.log(id)
+      console.log(result.data)
+
       const updatedUser = await PatientsModel.updatePatient({
         id,
         data: result.data,
       })
+      console.log(updatedUser)
+
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
       }

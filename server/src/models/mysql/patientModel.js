@@ -145,11 +145,14 @@ export class PatientsModel {
         .map(([key, value]) => {
           if (key === 'box_id' || key === 'nurse_id' || key === 'doctor_id') {
             return `${key} = UUID_TO_BIN(?)`
+          } else if (key === 'patient_triage_time') {
+            return `${key} = STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ')`
           } else {
             return `${key} = ?`
           }
         })
         .join(', ')
+      console.log(updateFields)
       const patientsUpdateQuery = `
         UPDATE Patient
         SET ${updateFields}
@@ -159,12 +162,16 @@ export class PatientsModel {
         (value) => value !== null && value !== undefined,
       )
       updateValues.push(id)
+      console.log(patientsUpdateQuery)
+      console.log(updateValues)
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
+      console.log(result)
 
       if (result.affectedRows > 0) {
         if (data.patient_status === 'ALTA' && data.box_id !== null) {
           await connection.query(
-            `UPDATE Patient
+            `
+            UPDATE Patient
             SET box_id = null
             WHERE patient_id = UUID_TO_BIN(?);`,
             [id],
@@ -184,7 +191,8 @@ export class PatientsModel {
             [prevBox],
           )
           await connection.query(
-            `UPDATE Box
+            `
+            UPDATE Box
             SET box_time = ?,
             box_status = 'OCUPADO'
             WHERE box_id = UUID_TO_BIN(?)`,
@@ -196,6 +204,7 @@ export class PatientsModel {
         return { error: 'Error updating the patient' }
       }
     } catch (error) {
+      console.error(error)
       return { error: 'An error occurred during the update' }
     }
   }
