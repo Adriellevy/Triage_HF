@@ -152,7 +152,6 @@ export class PatientsModel {
           }
         })
         .join(', ')
-      console.log(updateFields)
       const patientsUpdateQuery = `
         UPDATE Patient
         SET ${updateFields}
@@ -162,10 +161,8 @@ export class PatientsModel {
         (value) => value !== null && value !== undefined,
       )
       updateValues.push(id)
-      console.log(patientsUpdateQuery)
-      console.log(updateValues)
+
       const [result] = await connection.query(patientsUpdateQuery, updateValues)
-      console.log(result)
 
       if (result.affectedRows > 0) {
         if (data.patient_status === 'ALTA' && data.box_id !== null) {
