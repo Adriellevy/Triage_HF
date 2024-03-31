@@ -22,12 +22,14 @@ function PatientHistoryItem({ item, index }: PropsPatientHystoryItem) {
 
   const columns: Columns = {
     patient_name: t('NameLabel'),
-    date_of_birth: t('AgeLabel'),
-    entry_time: t('EntryTimeLabel'),
+    patient_age: t('AgeLabel'),
+    patient_entry_time: t('EntryTimeLabel'),
     patient_triage_level: t('TriageLevelLabel'),
     patient_triage_time: t('TriageTimeLabel'),
     patient_medication: t('PatientMedication'),
-    patient_problem: t('PatientProblem'),
+    patient_isolated: t('PatientIsolatedLabel'),
+    patient_symptom: t('PatientProblem'),
+    patient_healthcare_system: t('PatientHealthcareSystem'),
     box_code: t('PatientBoxLabel'),
     doctor_name: t('DoctorNameLabel'),
     nurse_name: t('NurseNameLabel'),
