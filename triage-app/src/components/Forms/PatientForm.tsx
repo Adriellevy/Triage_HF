@@ -60,15 +60,19 @@ function PatientForm() {
         setBoxesOptions(boxes)
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
         formInterfaz.doctor_id = doctor ? doctor.user_id : ''
+        formData.doctor_id = doctor ? doctor.user_id : ''
         const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
         formInterfaz.nurse_id = nurse ? nurse.user_id : ''
+        formData.nurse_id = nurse ? nurse.user_id : ''
         const box = allBoxes?.find((box) => box.box_code === edditingPatient?.box_code)
         formInterfaz.box_id = box ? box.box_id : ''
+        formData.box_id = box ? box.box_id : ''
       } catch (error) {
         console.log(error)
       }
     }
     if (edditingPatient) {
+      setChecked(Boolean(edditingPatient.patient_isolated))
       formInterfaz.patient_name = edditingPatient.patient_name || ''
       formInterfaz.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
       formInterfaz.patient_entry_time = edditingPatient.patient_entry_time || ''
@@ -78,11 +82,26 @@ function PatientForm() {
       formInterfaz.patient_isolated = edditingPatient.patient_isolated || 'false'
       formInterfaz.patient_status = edditingPatient.patient_status || ''
       formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
+      formInterfaz.box_id = edditingPatient.box_id || ''
+      formInterfaz.nurse_id = edditingPatient.nurse_id || ''
+      formInterfaz.doctor_id = edditingPatient.doctor_id || ''
+      //
+      formData.patient_name = edditingPatient.patient_name || ''
+      formData.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
+      formData.patient_entry_time = edditingPatient.patient_entry_time || ''
+      formData.patient_exit_time = edditingPatient.patient_exit_time || null
+      formData.patient_triage_time = edditingPatient.patient_triage_time || ''
+      formData.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formData.patient_isolated = edditingPatient.patient_isolated || 'false'
+      formData.patient_status = edditingPatient.patient_status || ''
+      formData.patient_symptom = edditingPatient.patient_symptom || ''
+      formData.box_id = edditingPatient.box_id || ''
+      formData.nurse_id = edditingPatient.nurse_id || ''
+      formData.doctor_id = edditingPatient.doctor_id || ''
       //formInterfaz.patient_medication = edditingPatient.patient_medication || ''
       asFun()
 
       const newDate = dayjs(edditingPatient.patient_age)
-      setChecked(Boolean(edditingPatient.patient_isolated))
       setSelectedDate(newDate.toDate())
     }
   }, [edditingPatient])
@@ -199,8 +218,8 @@ function PatientForm() {
 
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked)
-    setformInterfaz({ ...formInterfaz, patient_isolated: checked })
-    setFormData({ ...formData, patient_isolated: checked })
+    setformInterfaz({ ...formInterfaz, patient_isolated: Boolean(checked) })
+    setFormData({ ...formData, patient_isolated: Boolean(checked) })
     setErrorsForm({
       ...ErrorsForm,
       patient_isolated: {
@@ -258,7 +277,7 @@ function PatientForm() {
       const itemId = DoctorOptions
         ? DoctorOptions.find((option) => option.user_name === value)?.user_id
         : null
-
+      console.log('user id del doc: ' + itemId)
       setformInterfaz({
         ...formInterfaz,
         [name]: itemValue
@@ -367,6 +386,8 @@ function PatientForm() {
     try {
       //Delete Id
       const formDataNoID = formDataNow
+      console.log(formDataNoID)
+      formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
       if (token) {
