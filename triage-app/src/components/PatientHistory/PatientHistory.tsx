@@ -51,7 +51,7 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
                 (HistoryItem, index) =>
                   HistoryItem && (
                     <PatientHystoryItem
-                      key={HistoryItem.update_id}
+                      key={HistoryItem.updated_id}
                       item={HistoryItem}
                       index={index}
                     />

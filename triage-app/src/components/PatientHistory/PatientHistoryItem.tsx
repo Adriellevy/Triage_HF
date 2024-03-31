@@ -12,7 +12,13 @@ interface Columns {
 
 function PatientHistoryItem({ item, index }: PropsPatientHystoryItem) {
   const { t } = useTranslation('PatientHistoryItem')
-  const { update_date, updated_column, old_value, new_value, user_name } = item
+  const {
+    patient_updated_date,
+    patient_updated_column,
+    patient_old_value,
+    patient_new_value,
+    user_name
+  } = item
 
   const columns: Columns = {
     patient_name: t('NameLabel'),
@@ -34,10 +40,10 @@ function PatientHistoryItem({ item, index }: PropsPatientHystoryItem) {
 
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{update_date}</td>
-      <td className='border p-2 '>{columns[String(updated_column)]}</td>
-      <td className='border p-2 '>{old_value}</td>
-      <td className='border p-2 '>{new_value}</td>
+      <td className='border p-2 '>{patient_updated_date}</td>
+      <td className='border p-2 '>{columns[String(patient_updated_column)]}</td>
+      <td className='border p-2 '>{patient_old_value}</td>
+      <td className='border p-2 '>{patient_new_value}</td>
       <td className='border p-2 '>{user_name}</td>
     </tr>
   )
