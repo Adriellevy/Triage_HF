@@ -70,7 +70,7 @@ function PatientForm() {
     }
     if (edditingPatient) {
       formInterfaz.patient_name = edditingPatient.patient_name || ''
-      formInterfaz.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
+      formInterfaz.patient_age = String(edditingPatient.patient_age).slice(0, 10) || ''
       formInterfaz.patient_entry_time = edditingPatient.patient_entry_time || ''
       formInterfaz.patient_exit_time = edditingPatient.patient_exit_time || null
       formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
@@ -241,10 +241,19 @@ function PatientForm() {
       }
     })
     setSelectedDate(newDate)
-    console.log(newDate)
   }
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+
+  // only Age
+  const getBirthDate = (edad: number) => {
+    if (edad) {
+      const hoy = new Date()
+      const añoActual = hoy.getFullYear()
+      const añoNacimiento = añoActual - edad
+      return añoNacimiento + '-01-01'
+    }
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -320,7 +329,7 @@ function PatientForm() {
         [name]: Number(value)
       })
       setFormData({
-        ...formInterfaz,
+        ...formData,
         [name]: Number(value)
       })
       setErrorsForm({
@@ -330,6 +339,27 @@ function PatientForm() {
           value: false
         }
       })
+    } else if (name === 'patient_age') {
+      if (edditingPatient) {
+        console.log('revisar error')
+      } else {
+        getBirthDate(Number(value))
+        setformInterfaz({
+          ...formInterfaz,
+          [name]: Number(value)
+        })
+        setFormData({
+          ...formData,
+          [name]: getBirthDate(Number(value))
+        })
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      }
     } else {
       setformInterfaz({
         ...formInterfaz,
@@ -455,7 +485,7 @@ function PatientForm() {
     [key: string]: { value: boolean | null; message: string }
   }>({
     patient_name: { value: null, message: 'Escriba un nombre válido' },
-    patient_age: { value: null, message: 'Seleccione una fecha válida' },
+    patient_age: { value: null, message: `${edditingPatient?'Seleccione una fecha válida':'Seleccione una edad válida'}` },
     patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
     patient_status: { value: null, message: 'Seleccione un estado válido' },
     patient_symptom: { value: null, message: 'Escriba el sintoma  del paciente' },
@@ -468,7 +498,7 @@ function PatientForm() {
   const resetErrors = () => {
     setErrorsForm({
       patient_name: { value: null, message: 'Escriba un nombre válido' },
-      patient_age: { value: null, message: 'Seleccione una fecha válida' },
+      patient_age: { value: null, message: `${edditingPatient?'Seleccione una fecha válida':'Seleccione una edad válida'}` },
       patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
       patient_status: { value: null, message: 'Seleccione un estado válido' },
       patient_symptom: { value: null, message: 'Escriba el sintoma del paciente' },
@@ -479,6 +509,7 @@ function PatientForm() {
       box_id: { value: null, message: 'Seleccione un box válido' }
     })
   }
+
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -505,14 +536,35 @@ function PatientForm() {
         </div>
 
         <div>
-          <Label htmlFor='patient_age'>{t('DateOfBirthLabel')}</Label>
-          <DatePickerMUI
+          <Label htmlFor='patient_age'>
+            {edditingPatient ? t('DateOfBirthLabel') : t('AgeLabel')}
+          </Label>
+          {/* <DatePickerMUI
             //@ts-expect-error no se handlea el vento
             onChangeExt={handleDateChange}
             //@ts-expect-error no se handlea el vento
             selectedDateExt={selectedDate}
             error_active={ErrorsForm.patient_age}
-          />
+          /> */}
+          {edditingPatient ? (
+            <DatePickerMUI
+              //@ts-expect-error no se handlea el vento
+              onChangeExt={handleDateChange}
+              //@ts-expect-error no se handlea el vento
+              selectedDateExt={selectedDate}
+              error_active={ErrorsForm.patient_age}
+            />
+          ) : (
+            <Input
+              error_active={ErrorsForm.patient_age}
+              type='number'
+              id='patient_age'
+              name='patient_age'
+              value={formInterfaz.patient_age}
+              onChange={handleInputChange}
+              // required
+            />
+          )}
         </div>
         <div>
           <Label htmlFor='patient_triage_level'>{t('TriageLevelLabel')}</Label>

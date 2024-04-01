@@ -2,6 +2,7 @@
   "title": { "AddMode": "Agregar un nuevo paciente", "EditMode": "Editar paciente" },
   "NameLabel": "Nombre del paciente",
   "DateOfBirthLabel": "Fecha de nacimiento",
+  "AgeLabel": "Edad del Paciente",
   "TriageLevelLabel": "Nivel de Triage",
   "PatientIsolation": "Paciente con Aisalmiento",
   "PatientSymptom": "Sintoma del paciente",
