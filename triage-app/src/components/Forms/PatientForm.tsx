@@ -90,7 +90,7 @@ function PatientForm() {
       formInterfaz.doctor_id = edditingPatient.doctor_id || ''
       //
       formData.patient_name = edditingPatient.patient_name || ''
-      formData.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
+      formData.patient_age = edditingPatient.patient_age || ''
       formData.patient_entry_time = edditingPatient.patient_entry_time || ''
       formData.patient_exit_time = edditingPatient.patient_exit_time || null
       formData.patient_triage_time = edditingPatient.patient_triage_time || ''
