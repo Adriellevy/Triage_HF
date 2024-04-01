@@ -39,7 +39,7 @@ def get_args():
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
             'patient_name': request.args.get('patientname', default=None, type=str),
-            'patient_problem': request.args.get('patientproblem', default=None, type=str),
+            'patient_symptom': request.args.get('patientsymptom', default=None, type=str),
             'box_type': request.args.get('boxtype', default=None, type=int),
             'doctor_username': request.args.get('doctorusername', default=None, type=str),
             'nurse_username': request.args.get('nurseusername', default=None, type=str),
@@ -87,8 +87,7 @@ def metrics_number_patients_date():
                           x='patient_entry_time',
                           y='number_of_patients',
                           txt_x='fecha de ingreso',
-                          txt_y='pacientes'
-                          )
+                          txt_y='pacientes')
     return jsonify(data)
 
 
@@ -109,8 +108,8 @@ def chart_top_queries_date():
     mean = request.args.get('mean', default=None, type=bool)
     
     fig = vl.bar_chart(df=df,
-                    x='patient_problem',
-                    y='problem_count',
+                    x='patient_symptom',
+                    y='symptom_count',
                     x_title='Motivo de Consulta',
                     y_title='Cantidad de Consultas',
                     title='Motivos de Consulta mas Frecuentes',

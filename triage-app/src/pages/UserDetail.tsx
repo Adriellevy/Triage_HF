@@ -12,7 +12,9 @@ function UserDetail() {
   const [User, setUser] = useState<PartialUser>({
     user_id: '',
     user_name: '',
+    user_full_name: '',
     user_email: '',
+    user_specialization: '',
     user_password: '',
     user_type: role
   })
@@ -21,6 +23,7 @@ function UserDetail() {
     const fetchData = async () => {
       try {
         const data = await getUserById(user_id)
+        console.log(data)
         setUser(data)
       } catch (error) {
         if (error instanceof Error) {
@@ -44,6 +47,15 @@ function UserDetail() {
       <div>
         <div className='mb-2'>
           <span className='font-semibold'>User ID:</span> {User.user_id}
+        </div>
+        <div className='mb-2'>
+          <span className='font-semibold'>User Name:</span> {User.user_name}
+        </div>
+        <div className='mb-2'>
+          <span className='font-semibold'>User Name full name:</span> {User.user_full_name}
+        </div>
+        <div className='mb-2'>
+          <span className='font-semibold'>User Specialization:</span> {User.user_specialization}
         </div>
         <div className='mb-2'>
           <span className='font-semibold'>User Type:</span> {User.user_type}

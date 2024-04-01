@@ -26,9 +26,9 @@ content-type: application/json
   "patient_status": "EN OBSERVACION",
   "patient_symptom": "Síntomas generales",
   "patient_healthcare_system":"Test",
-  "doctor_id": "4e5fb7c0-eebe-11ee-9e2b-8541b9dc2523",
-  "nurse_id": "4e5fba72-eebe-11ee-9e2b-8541b9dc2523",
-  "box_id": "4e60151c-eebe-11ee-9e2b-8541b9dc2523"
+  "doctor_id": "c2d9a8ea-eec4-11ee-9c74-d85ed3d87921",
+  "nurse_id": "c2d9a8ea-eec4-11ee-9c74-d85ed3d87921",
+  "box_id": "c2da3d26-eec4-11ee-9c74-d85ed3d87921"
 }
 
 ### Get patient 
@@ -36,10 +36,22 @@ GET http://localhost:3000/patient/3d8b8e82-a07c-11ee-a471-c305cdf56517
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 
 ### Update a patient
-PATCH http://localhost:3000/patient/2223770e-d1aa-11ee-844e-48342d46d868
+PATCH http://localhost:3000/patient/8b29fdec-eeeb-11ee-9c74-d85ed3d87921
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkRyLiBTbWl0aCIsImlhdCI6MTcwMzIwNjE1N30.TNYMTte4XaVExpZmUMgcoX_dzpBbt84QnyN81RsExiw
 Content-Type: application/json
 
 {
-   "patient_status": "ALTA"
+  "patient_name": "test5",
+  "patient_age": "2000-01-01",
+  "patient_entry_time": "2023-01-01 10:00:00",
+  "patient_exit_time": null,
+  "patient_triage_time": "2023-01-01 10:15:00",
+  "patient_triage_level": 2,
+  "patient_isolated": "false",
+  "patient_status": "EN OBSERVACION",
+  "patient_symptom": "Síntomas generales",
+  "patient_healthcare_system":"Test",
+  "doctor_id": "c2d9a8ea-eec4-11ee-9c74-d85ed3d87921",
+  "nurse_id": "c2d9a8ea-eec4-11ee-9c74-d85ed3d87921",
+  "box_id": "c2da3d26-eec4-11ee-9c74-d85ed3d87921"
 }
