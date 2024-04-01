@@ -2,6 +2,7 @@
   "title": { "AddMode": "Add New Patient", "EditMode": "Edit Patient" },
   "NameLabel": "Patient Name",
   "DateOfBirthLabel": "Date of Birth",
+  "AgeLabel": "Patient Age",
   "TriageLevelLabel": "Triage Level",
   "PatientIsolation": "Patient in isolation",
   "PatientSymptom": "Patient's Simtom",
