@@ -12,6 +12,7 @@ import { settingsRouter } from './src/routes/settingRoutes.js'
 import { dashboardRouter } from './src/routes/dashboardRoutes.js'
 // import cors from 'cors' Linea de emergencia + comentar corsMiddleware
 
+process.env.TZ = 'America/Argentina/Buenos_Aires'
 const PORT = process.env.PORTAPI ?? 3000
 
 const app = express()

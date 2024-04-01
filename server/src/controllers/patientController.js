@@ -102,28 +102,39 @@ export class PatientController {
 
       const [UserAntiguo] = await PatientsModel.getPatientById({ id })
 
-      const UserNuevo = result.data
+      result.data.patient_age = new Date(result.data.patient_age)
+      result.data.patient_triage_time = new Date(result.data.patient_triage_time)
+      result.data.patient_entry_time = new Date(result.data.patient_entry_time)
 
+      const UserNuevo = result.data
       const cambios = []
       const tiempoActual = new Date()
 
       // eslint-disable-next-line no-restricted-syntax
       for (const key in UserNuevo) {
-        if (
-          // eslint-disable-next-line no-prototype-builtins
-          UserAntiguo.hasOwnProperty(key) &&
-          UserAntiguo[key] !== UserNuevo[key]
-        ) {
+        if (key === 'patient_triage_time' || key === 'patient_entry_time' || key === 'patient_age') {
+          if (UserAntiguo[key].getTime() !== UserNuevo[key].getTime()) {
+            cambios.push({
+              patient_id: UserAntiguo.patient_id,
+              updated_column: key,
+              old_value: UserAntiguo[key],
+              new_value: UserNuevo[key],
+              update_date: tiempoActual,
+              user_id: userID,
+            })
+          }
+        } else if (UserAntiguo.hasOwnProperty(key) && UserAntiguo[key] !== UserNuevo[key]) {
           cambios.push({
             patient_id: UserAntiguo.patient_id,
             updated_column: key,
             old_value: UserAntiguo[key],
             new_value: UserNuevo[key],
-            update_date: tiempoActual.toISOString(),
+            update_date: tiempoActual,
             user_id: userID,
           })
         }
       }
+      console.log(cambios)
 
       // eslint-disable-next-line no-restricted-syntax
       for (const item of cambios) {
