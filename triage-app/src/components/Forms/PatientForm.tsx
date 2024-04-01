@@ -191,7 +191,7 @@ function PatientForm() {
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
     patient_isolated: false,
-    patient_status: '',
+    patient_status: 'AFUERA',
     patient_symptom: '',
     //patient_medication: '',
     doctor_id: '',
@@ -207,7 +207,7 @@ function PatientForm() {
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
     patient_isolated: false,
-    patient_status: '',
+    patient_status: 'AFUERA',
     patient_symptom: '',
     patient_healthcare_system: 'default',
     //patient_medication: '',
@@ -326,7 +326,7 @@ function PatientForm() {
         }
       })
     } else if (name === 'box_id') {
-      if (value == '') {
+      if (value === '' || value === 'AFUERA') {
         setformInterfaz({
           ...formInterfaz,
           [name]: null,
@@ -428,8 +428,6 @@ function PatientForm() {
         })
       }
     }
-
-    console.log(formData)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -443,6 +441,8 @@ function PatientForm() {
       formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
+
+      console.log(formDataNoID)
       if (token) {
         if (edditingPatient) {
           try {
