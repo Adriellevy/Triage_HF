@@ -11,8 +11,6 @@ const patientSchema = z.object({
   patient_status: z.enum([
     'ALTA',
     'EN OBSERVACION',
-    'EN ESPERA DE INTERNACION',
-    'INTERNADO',
     'AFUERA',
   ]),
   patient_symptom: z.string().min(1).max(500),
