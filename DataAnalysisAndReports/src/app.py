@@ -66,7 +66,7 @@ def chart_number_patients_date():
     
     df = bf.build_features('Patient', dic)
     
-    if not df:
+    if df is None:
         return Response(status=204)
     
     df = bf.build_number_patients_date(df)

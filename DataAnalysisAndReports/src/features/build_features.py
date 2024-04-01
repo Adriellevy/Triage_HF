@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime as dt
+from datetime import datetime
 import data.make_dataset as md
 
 # def filter_isolated(df):
@@ -19,6 +20,9 @@ import data.make_dataset as md
 #     df_user = md.get_table('USERS')
 #     new_df = df.merge(df_user, left_on='NURSE_ID', right_on='USER_ID')
 #     return new_df[new_df['USER_NAME'] == nurse_username]
+    
+def filter_dictionary(dictionary, keys):
+    return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
 
 def date_filters(df, dictionary):
     if ( dictionary['from_'] == None and dictionary['to'] == None):
@@ -26,8 +30,6 @@ def date_filters(df, dictionary):
     else:
         dictionary['from_'] = pd.to_datetime(dictionary['from_'], format='%Y-%m-%d', errors='coerce')
         dictionary['to'] = pd.to_datetime(dictionary['to'], format='%Y-%m-%d', errors='coerce')
-    
-    #print(from_)
     
     df = df[(df['patient_entry_time'] >= dictionary['from_']) & (df['patient_entry_time'] <= dictionary['to'])]
     
@@ -45,24 +47,36 @@ def triage_level_style(df):
 
 def get_last_week(df):
     to = df['patient_entry_time'].max()
-    from_ = to - dt.timedelta(days=6)
+    from_ = to.replace(hour=0, minute=0) - dt.timedelta(days=6)
     return (from_, to)
 
 
-def filters(dictionary):
+def where_filters(dictionary):
     query = ''
     for key, value in dictionary.items():
-        if value != None and key != 'patient_isolated' and key != 'from_' and key != 'to':
+        if value != None and key != 'patient_isolated':
             query += f'{key}=\'{value}\' AND '
-        elif key == 'patient_isolated' and value != None:
+        elif value != None and key == 'patient_isolated':
             query += f'{key}={value} AND '
-     
-    print(dictionary)
     
     if query == '':
         return None
     else:
         return query[:-5]
+    
+def join_filters(dictionary):
+    query = ''
+    for key, value in dictionary.items():
+        if value != None:
+            if key == 'doctor_full_name':
+                query += 'User ON user_id'
+            if key == 'nurse_full_name':
+                query += 'User ON user_id'
+            if key == 'box_type':
+                query += 'Box ON box_id'
+    return query
+        
+    
 
 def build_number_patients_date(df):    
     df['patient_entry_time'] = df['patient_entry_time'].dt.date
@@ -93,13 +107,15 @@ def build_top_queries_date(df, top=10, order=None):
     return count
 
 def build_features(table_name, dictionary):
+    where_dictionary = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])    
+    join_dictionary = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type']) 
     
-    query = filters(dictionary)
+    #query = join_filters(join_dictionary) + where_filters(where_dictionary)
     
-    df = md.get_table(table_name, query)
+    df = md.get_table(table_name, None)
     
-    if df.empty:
-        return df
+    if df.empty == True:
+        return None
     
     df = date_filters(df, dictionary)
 
