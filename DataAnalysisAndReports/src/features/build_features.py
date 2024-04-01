@@ -2,24 +2,6 @@ import pandas as pd
 import datetime as dt
 from datetime import datetime
 import data.make_dataset as md
-
-# def filter_isolated(df):
-#     return df[df['patient_isolated'] == True]
-
-# def filter_box_type(df, box_type):
-#     df_box = md.get_table('BOX')
-#     new_df = df.merge(df_box, on='BOX_ID')
-#     return new_df[new_df['BOX_TYPE'] == box_type]
-
-# def filter_doctor_username(df, doctor_username):
-#     df_user = md.get_table('USERS')
-#     new_df = df.merge(df_user, left_on='DOCTOR_ID', right_on='USER_ID')
-#     return new_df[new_df['USER_NAME'] == doctor_username]
-
-# def filter_nurse_username(df, nurse_username):
-#     df_user = md.get_table('USERS')
-#     new_df = df.merge(df_user, left_on='NURSE_ID', right_on='USER_ID')
-#     return new_df[new_df['USER_NAME'] == nurse_username]
     
 def filter_dictionary(dictionary, keys):
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -50,34 +32,39 @@ def get_last_week(df):
     from_ = to.replace(hour=0, minute=0) - dt.timedelta(days=6)
     return (from_, to)
 
-
 def where_filters(dictionary):
-    query = ''
+    query = ' WHERE '
     for key, value in dictionary.items():
-        if value != None and key != 'patient_isolated':
-            query += f'{key}=\'{value}\' AND '
-        elif value != None and key == 'patient_isolated':
+        if value != None and key == 'patient_isolated':
             query += f'{key}={value} AND '
+        elif value != None and key == 'doctor_full_name':
+            query += f'user_full_name=\'{value}\' AND '
+        elif value != None and key == 'nurse_full_name':
+            query += f'user_full_name=\'{value}\' AND '
+        elif value != None and key != 'patient_isolated':
+            query += f'{key}=\'{value}\' AND '
     
-    if query == '':
-        return None
+    if query == ' WHERE ':
+        return ''
     else:
-        return query[:-5]
+        return query[:-4]
     
 def join_filters(dictionary):
     query = ''
+    print(dictionary)
     for key, value in dictionary.items():
         if value != None:
             if key == 'doctor_full_name':
-                query += 'User ON user_id'
+                query += 'JOIN User ON User.user_id '
             if key == 'nurse_full_name':
-                query += 'User ON user_id'
+                query += 'JOIN User ON User.user_id '
             if key == 'box_type':
-                query += 'Box ON box_id'
-    return query
+                query += 'JOIN Box ON Box.box_id '
+    if query == '':
+        return ''
+    else:
+        return query[:-1]
         
-    
-
 def build_number_patients_date(df):    
     df['patient_entry_time'] = df['patient_entry_time'].dt.date
     df = df.groupby(['patient_entry_time', 'patient_triage_level'], sort=False).size(
@@ -110,9 +97,9 @@ def build_features(table_name, dictionary):
     where_dictionary = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])    
     join_dictionary = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type']) 
     
-    #query = join_filters(join_dictionary) + where_filters(where_dictionary)
+    condition = join_filters(join_dictionary) + where_filters(where_dictionary)
     
-    df = md.get_table(table_name, None)
+    df = md.get_table(table_name, condition)
     
     if df.empty == True:
         return None
@@ -122,5 +109,5 @@ def build_features(table_name, dictionary):
     df = drop_id_feature(df)
     
     df['patient_triage_level'] = triage_level_style(df)
-    
+
     return df

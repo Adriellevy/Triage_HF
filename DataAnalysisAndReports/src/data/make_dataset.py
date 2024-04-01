@@ -14,14 +14,12 @@ def connect():
         return None
     return connection
 
-def get_table(table_name, condition=None, table_join=None, on=None):
+def get_table(table_name, condition=None):
     connection = connect()
     if connection:
         query = f'SELECT * FROM {table_name}'
-        if table_join != None:
-            query += f'INNER JOIN {table_join} ON {on}'
         if condition != None:
-            query += f' WHERE {condition}'
+            query += f' {condition}'
         print(query)
         df = pd.read_sql(query, connection)
         connection.close()
