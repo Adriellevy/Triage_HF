@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 # showarrow = False,
 # font = dict(color = 'red'))
 
-color_discrete_map = {'Nivel 1': '#BDBEBE', 
+color_discrete_map = {'Nivel I': '#BDBEBE', 
                       'Nivel II': '#FA8162', 
                       'Nivel III': '#CCCC52', 
                       'Nivel IV': '#A0C791'}
