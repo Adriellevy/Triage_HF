@@ -89,13 +89,11 @@ export class PatientController {
 
   static async updatePatient(req, res) {
     const result = validatePartialPatient(req.body)
-
     // eslint-disable-next-line operator-linebreak
     const token =
       req.headers.authorization && req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const userID = decoded.id
-    console.log(userID)
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
@@ -132,14 +130,11 @@ export class PatientController {
         // eslint-disable-next-line no-await-in-loop
         await PatientsModel.AddUpdateHistory({ data: item })
       }
-      console.log(id)
-      console.log(result.data)
 
       const updatedUser = await PatientsModel.updatePatient({
         id,
         data: result.data,
       })
-      console.log(updatedUser)
 
       if (updatedUser === false) {
         return res.status(404).json({ message: 'Patient not found' })
