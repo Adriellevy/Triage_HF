@@ -4,6 +4,7 @@ import { Patient } from '../../interfaces/Patinet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui'
 
 interface PropsPatientItem {
@@ -80,19 +81,26 @@ function PatientItem({ patient, index }: PropsPatientItem) {
       <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>
       <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
       <td className='border p-2'>
-        <div className='mb-2'>
-          <Link to={`/edit_patient/${patient_id}`}>
-            <Button wfull color='green'>
-              <FontAwesomeIcon icon={faPenToSquare} />
-            </Button>
-          </Link>
-        </div>
-        <div>
-          <Link to={`/patients/${patient_id}`}>
-            <Button wfull color='green'>
-              <FontAwesomeIcon icon={faCircleInfo} />
-            </Button>
-          </Link>
+        <div className='flex gap-2'>
+          <div>
+            <div className='mb-2'>
+              <Link to={`/edit_patient/${patient_id}`}>
+                <Button wfull color='green'>
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                </Button>
+              </Link>
+            </div>
+            <div>
+              <Link to={`/patients/${patient_id}`}>
+                <Button wfull color='green'>
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <Button wfull color='red'>
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </Button>
         </div>
       </td>
     </tr>
