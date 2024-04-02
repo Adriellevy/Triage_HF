@@ -126,7 +126,9 @@ function PatientItem({ patient, index }: PropsPatientItem) {
         {patientToDischarge?.patient_id === patient_id && (
           <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
             <div className='bg-white p-8 rounded-lg'>
-              <div className='text-center'>{`Confirmar alta de paciente ${patientToDischarge.patient_name} ?`}</div>
+              <div className='text-center'>
+                Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong> ?
+              </div>
               {/* Botones de confirmación */}
               <div className='flex justify-center mt-4 gap-2'>
                 <Button color='red' onClick={handleConfirmFastDischarge}>
