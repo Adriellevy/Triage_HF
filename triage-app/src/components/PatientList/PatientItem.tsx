@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Patient } from '../../interfaces/Patinet'
+import { Patient, PatientStatus } from '../../interfaces/Patinet'
+import { updatePatient } from '@/services/patientService'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
@@ -64,6 +65,24 @@ function PatientItem({ patient, index }: PropsPatientItem) {
     setEntryTime(fechaFormateada)
   }, [])
 
+  const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null)
+  const handleFastDischarge = (id: any) => {
+    console.log('fast Discharge in process ' + id)
+    setPatientToDischarge(patient)
+  }
+
+  const handleConfirmFastDischarge = () => {
+    console.log('alta confirmada')
+    setPatientToDischarge(null)
+    if (patient) {
+      console.log(patient)
+      patient.patient_status = PatientStatus.DISCHARGED
+      updatePatient(patient.patient_id, patient)
+    } else {
+      console.log('Error en dar de ALTA al paciente')
+    }
+  }
+
   return (
     <tr className={bgClass}>
       <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
@@ -98,10 +117,30 @@ function PatientItem({ patient, index }: PropsPatientItem) {
               </Link>
             </div>
           </div>
-          <Button wfull color='red'>
-            <FontAwesomeIcon icon={faRightFromBracket} />
-          </Button>
+          {patient_status !== 'ALTA' && (
+            <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </Button>
+          )}
         </div>
+        {patientToDischarge?.patient_id === patient_id && (
+          <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
+            <div className='bg-white p-8 rounded-lg'>
+              <div className='text-center'>
+                Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong> ?
+              </div>
+              {/* Botones de confirmación */}
+              <div className='flex justify-center mt-4 gap-2'>
+                <Button color='red' onClick={handleConfirmFastDischarge}>
+                  Confirmar
+                </Button>
+                <Button color='grey' onClick={() => setPatientToDischarge(null)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </td>
     </tr>
   )
