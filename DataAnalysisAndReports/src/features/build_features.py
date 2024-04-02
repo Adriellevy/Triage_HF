@@ -1,7 +1,38 @@
 import pandas as pd
 import datetime as dt
-from datetime import datetime
 import data.make_dataset as md
+
+def order_triage_top_queries_date(df):
+    first_rows = df.head(4)
+    values = ['Nivel I', 'Nivel II', 'Nivel III', 'Nivel IV']
+    i = 0
+    for value in values:
+        if not first_rows['patient_triage_level'].str.contains(value).all():
+            
+            insert = {
+                'patient_symptom': df.loc[df['patient_triage_level'] == value, 'patient_symptom'].values[0],
+                'patient_triage_level': value,
+                'symptom_count': 0
+            }
+            
+            df = insert_row(i, df, insert)   
+        i=i+1       
+            
+    return df
+
+def insert_row(row_number, df, row_value):
+    start_upper = 0
+    end_upper = row_number
+    start_lower = row_number
+    end_lower = df.shape[0]
+    upper_half = [*range(start_upper, end_upper, 1)]
+    lower_half = [*range(start_lower, end_lower, 1)]
+    lower_half = [x.__add__(1) for x in lower_half]
+    index_ = upper_half + lower_half
+    df.index = index_
+    df.loc[row_number] = row_value
+    df = df.sort_index()
+    return df
     
 def filter_dictionary(dictionary, keys):
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -51,7 +82,6 @@ def where_filters(dictionary):
     
 def join_filters(dictionary):
     query = ''
-    print(dictionary)
     for key, value in dictionary.items():
         if value != None:
             if key == 'doctor_full_name':
@@ -90,6 +120,9 @@ def build_top_queries_date(df, top=10, order=None):
 
     count = count.sort_values(by=['patient_symptom', 'patient_triage_level'], key=lambda x: x.map(
         dict(zip(top_reasons[::-1], range(len(top_reasons)))))).reset_index(drop=True)
+    
+    count = order_triage_top_queries_date(count)
+    
 
     return count
 

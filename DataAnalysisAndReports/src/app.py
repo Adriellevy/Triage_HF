@@ -1,7 +1,5 @@
 from flask import Flask, request, Response, jsonify
 
-import data.make_dataset as md
-
 import features.build_features as bf
 
 import visualization.visualize as vl
@@ -11,9 +9,8 @@ import visualization.metrics as mt
 # TOD0S LOS CHARTS
 # ANIMACIONES AL APARACER LOS GRAFICOS
 # AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
-
+#
 # BARCHARTS
-# ORDENAR CORRECTAMENTE LOS NIVELES DE TRIAGE PARA CUALQUIER FECHA -- SOLUCIONADO (EN TEORIA)
 # AL EGIR QULEE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
 
@@ -54,9 +51,9 @@ def index():
             <p>
             No deberias estar aca :( <br> 
             Accede a algun grafico mediante las siguientes URL: <br>
-            127.0.0.1:5000/number_patients_date/ <br>
-            127.0.0.1:5000/number_patients_date/metrics/ <br>
-            127.0.0.1:5000/top_queries_date/ <br>
+            http://127.0.0.1:5000/number_patients_date/ <br>
+            http://127.0.0.1:5000/number_patients_date/metrics/ <br>
+            http://127.0.0.1:5000/top_queries_date/ <br>
             </p>
            """
 
@@ -105,12 +102,12 @@ def metrics_number_patients_date():
 
 @app.route('/top_queries_date/')
 def chart_top_queries_date():
-    df = md.get_table('Patient')
+    dic = get_args()
 
-    if (df.empty):
+    df = bf.build_features('Patient', dic)
+
+    if df is None:
         return Response(status=204)
-    
-    df = bf.build_features(df, **get_args())
     
     top = request.args.get('top', default=10, type=int)
     order = request.args.get('order', default=None, type=str)   
@@ -129,6 +126,29 @@ def chart_top_queries_date():
                     mean=mean)
 
     return fig.to_html()
+
+@app.route('/top_queries_date/metrics/')
+def metrics_top_queries_date():
+    dic = get_args()
+    
+    df = bf.build_features('Patient', dic)
+    
+    if (df.empty):
+        return Response(status=204)
+    
+    top = request.args.get('top', default=10, type=int)
+    order = request.args.get('order', default=None, type=str)   
+    
+    df = bf.build_top_queries_date(df, top, order)
+    
+    
+    
+    data = mt.metrics_data(df=df,
+                          x='patient_symptom',
+                          y='symptom_count',
+                          txt_x='sintoma',
+                          txt_y='cantidad de sintomas')
+    return jsonify(data)
 
 
 if __name__ == '__main__':

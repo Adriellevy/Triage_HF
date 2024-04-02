@@ -34,7 +34,7 @@ def max(txt_x, txt_y, df, x, y):
     return f'La {txt_x} que más {txt_y} se ingresaron fue el {calculate_max_x(df, x, y)} con {calculate_max(df, y)} {txt_y}'
 
 def metrics_data(df, x, y, txt_x, txt_y):
-    df_sum = df.groupby(df[x])[y].sum().reset_index(name='number_of_patients')
+    df_sum = df.groupby(df[x])[y].sum().reset_index(name=y)
     return {
         'total': total(txt_y, df_sum, y),
         'mean': mean(txt_y, df_sum, y),
