@@ -9,10 +9,10 @@ export enum PatientStatus {
 export interface Patient {
   patient_id: string
   patient_name: string
-  patient_age: string
-  patient_entry_time: string
-  patient_exit_time: string
-  patient_triage_time: string
+  patient_age: Date
+  patient_entry_time: Date
+  patient_exit_time: Date
+  patient_triage_time: Date
   patient_triage_level: number
   patient_isolated: number
   box_id: string
@@ -29,10 +29,10 @@ export interface Patient {
 export interface PatientData {
   patient_id: string
   patient_name: string
-  patient_age: string
-  patient_entry_time: string
-  patient_exit_time: string
-  patient_triage_time: string
+  patient_age: Date
+  patient_entry_time: Date
+  patient_exit_time: Date
+  patient_triage_time: Date
   patient_triage_level: number
   patient_isolated: number
   box_id: string
@@ -48,10 +48,10 @@ export type NullablePatient = Patient | null
 export interface PartialPatient {
   patient_id?: string
   patient_name?: string
-  patient_age?: string
-  patient_entry_time?: string
-  patient_exit_time?: string
-  patient_triage_time?: string
+  patient_age?: Date
+  patient_entry_time?: Date
+  patient_exit_time?: Date
+  patient_triage_time?: Date
   patient_triage_level?: number
   patient_isolated?: number
   box_id?: string
