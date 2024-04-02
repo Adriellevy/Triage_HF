@@ -75,6 +75,9 @@ function PatientForm() {
       }
     }
     if (edditingPatient) {
+      console.log(
+        'edditingPatient.patient_isolated al cargar los datos: ' + edditingPatient.patient_isolated
+      )
       setChecked(Boolean(edditingPatient.patient_isolated))
       formInterfaz.patient_name = edditingPatient.patient_name || ''
       formInterfaz.patient_age = String(edditingPatient.patient_age).slice(0, 10) || ''
@@ -82,7 +85,7 @@ function PatientForm() {
       formInterfaz.patient_exit_time = edditingPatient.patient_exit_time || null
       formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
       formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
-      formInterfaz.patient_isolated = edditingPatient.patient_isolated || 'false'
+      formInterfaz.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formInterfaz.patient_status = edditingPatient.patient_status || ''
       formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
       formInterfaz.box_id = edditingPatient.box_id || ''
@@ -95,7 +98,7 @@ function PatientForm() {
       formData.patient_exit_time = edditingPatient.patient_exit_time || null
       formData.patient_triage_time = edditingPatient.patient_triage_time || ''
       formData.patient_triage_level = edditingPatient.patient_triage_level || ''
-      formData.patient_isolated = edditingPatient.patient_isolated || 'false'
+      formData.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formData.patient_status = edditingPatient.patient_status || ''
       formData.patient_symptom = edditingPatient.patient_symptom || ''
       formData.box_id = edditingPatient.box_id || ''
@@ -210,10 +213,11 @@ function PatientForm() {
     box_id: null
   })
 
-  const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked)
-    setformInterfaz({ ...formInterfaz, patient_isolated: Boolean(checked) })
-    setFormData({ ...formData, patient_isolated: Boolean(checked) })
+  const handleCheckbox = () => {
+    setChecked(!checked)
+
+    setformInterfaz({ ...formInterfaz, patient_isolated: Boolean(!checked) })
+    setFormData({ ...formData, patient_isolated: Boolean(!checked) })
     setErrorsForm({
       ...ErrorsForm,
       patient_isolated: {
@@ -221,6 +225,7 @@ function PatientForm() {
         value: false
       }
     })
+    console.log('Chequed: ' + !checked)
   }
 
   //Triage level buttons
@@ -431,7 +436,12 @@ function PatientForm() {
     try {
       //Delete Id
       const formDataNoID = formDataNow
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
       formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
+      formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
+      formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
+      formDataNoID.patient_age = new Date(formDataNoID.patient_age)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
 
@@ -441,10 +451,6 @@ function PatientForm() {
           console.log('Editing patch')
           console.log(formDataNoID)
           try {
-            formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
-            formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
-            formDataNoID.patient_age = new Date(formDataNoID.patient_age)
-            console.log(formDataNoID)
             await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
             toast.success('Paciente actualizado', {
               duration: 2000
@@ -457,7 +463,6 @@ function PatientForm() {
           }
         } else {
           formDataNow.patient_entry_time = getCurrentTime()
-          console.log(formDataNoID)
           const { data, errors } = await addNewPatient(formDataNow)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
