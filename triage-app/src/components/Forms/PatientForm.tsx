@@ -35,6 +35,9 @@ function PatientForm() {
     const fetchData = async () => {
       try {
         const [data] = await getPatientById(edditingPatientID)
+
+        console.log('getting patient')
+        console.log(data)
         setedditingPatient(data)
       } catch (error) {
         if (error instanceof Error) {
@@ -87,7 +90,7 @@ function PatientForm() {
       formInterfaz.doctor_id = edditingPatient.doctor_id || ''
       //
       formData.patient_name = edditingPatient.patient_name || ''
-      formData.patient_age = edditingPatient.patient_age.slice(0, 10) || ''
+      formData.patient_age = edditingPatient.patient_age || ''
       formData.patient_entry_time = edditingPatient.patient_entry_time || ''
       formData.patient_exit_time = edditingPatient.patient_exit_time || null
       formData.patient_triage_time = edditingPatient.patient_triage_time || ''
@@ -167,16 +170,7 @@ function PatientForm() {
   // Function to get the current time in the desired format
   const getCurrentTime = () => {
     const now = new Date()
-    const formattedTime = `${now.getFullYear()}-${(now.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now
-      .getHours()
-      .toString()
-      .padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now
-      .getSeconds()
-      .toString()
-      .padStart(2, '0')}`
-    return formattedTime
+    return now
   }
 
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
@@ -191,7 +185,7 @@ function PatientForm() {
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
     patient_isolated: false,
-    patient_status: '',
+    patient_status: 'AFUERA',
     patient_symptom: '',
     //patient_medication: '',
     doctor_id: '',
@@ -207,7 +201,7 @@ function PatientForm() {
     patient_triage_time: getCurrentTime(),
     patient_triage_level: '',
     patient_isolated: false,
-    patient_status: '',
+    patient_status: 'AFUERA',
     patient_symptom: '',
     patient_healthcare_system: 'default',
     //patient_medication: '',
@@ -270,7 +264,7 @@ function PatientForm() {
       const hoy = new Date()
       const añoActual = hoy.getFullYear()
       const añoNacimiento = añoActual - edad
-      return añoNacimiento + '-01-01'
+      return new Date(añoNacimiento + '-01-01')
     }
   }
 
@@ -326,22 +320,44 @@ function PatientForm() {
         }
       })
     } else if (name === 'box_id') {
-      const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
-      setformInterfaz({
-        ...formInterfaz,
-        [name]: itemId
-      })
-      setFormData({
-        ...formData,
-        [name]: itemId
-      })
-      setErrorsForm({
-        ...ErrorsForm,
-        [name]: {
-          ...ErrorsForm[name],
-          value: false
-        }
-      })
+      if (value === '' || value === 'AFUERA') {
+        setformInterfaz({
+          ...formInterfaz,
+          [name]: null,
+          patient_status: 'AFUERA'
+        })
+        setFormData({
+          ...formData,
+          [name]: null,
+          patient_status: 'AFUERA'
+        })
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      } else {
+        const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
+        setformInterfaz({
+          ...formInterfaz,
+          [name]: itemId,
+          patient_status: 'EN OBSERVACION'
+        })
+        setFormData({
+          ...formData,
+          [name]: itemId,
+          patient_status: 'EN OBSERVACION'
+        })
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      }
     } else if (name === 'patient_triage_level') {
       setformInterfaz({
         ...formInterfaz,
@@ -412,17 +428,23 @@ function PatientForm() {
     e.preventDefault()
     //Update patient_entry_time
     const formDataNow = formData
-    formDataNow.patient_entry_time = getCurrentTime()
     try {
       //Delete Id
       const formDataNoID = formDataNow
-      console.log(formDataNoID)
       formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
+
+      console.log(formDataNoID)
       if (token) {
         if (edditingPatient) {
+          console.log('Editing patch')
+          console.log(formDataNoID)
           try {
+            formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
+            formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
+            formDataNoID.patient_age = new Date(formDataNoID.patient_age)
+            console.log(formDataNoID)
             await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
             toast.success('Paciente actualizado', {
               duration: 2000
@@ -434,6 +456,8 @@ function PatientForm() {
             })
           }
         } else {
+          formDataNow.patient_entry_time = getCurrentTime()
+          console.log(formDataNoID)
           const { data, errors } = await addNewPatient(formDataNow)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
@@ -506,7 +530,10 @@ function PatientForm() {
     [key: string]: { value: boolean | null; message: string }
   }>({
     patient_name: { value: null, message: 'Escriba un nombre válido' },
-    patient_age: { value: null, message: `${edditingPatient?'Seleccione una fecha válida':'Seleccione una edad válida'}` },
+    patient_age: {
+      value: null,
+      message: `${edditingPatient ? 'Seleccione una fecha válida' : 'Seleccione una edad válida'}`
+    },
     patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
     patient_status: { value: null, message: 'Seleccione un estado válido' },
     patient_symptom: { value: null, message: 'Escriba el sintoma  del paciente' },
@@ -519,7 +546,10 @@ function PatientForm() {
   const resetErrors = () => {
     setErrorsForm({
       patient_name: { value: null, message: 'Escriba un nombre válido' },
-      patient_age: { value: null, message: `${edditingPatient?'Seleccione una fecha válida':'Seleccione una edad válida'}` },
+      patient_age: {
+        value: null,
+        message: `${edditingPatient ? 'Seleccione una fecha válida' : 'Seleccione una edad válida'}`
+      },
       patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
       patient_status: { value: null, message: 'Seleccione un estado válido' },
       patient_symptom: { value: null, message: 'Escriba el sintoma del paciente' },
@@ -530,7 +560,6 @@ function PatientForm() {
       box_id: { value: null, message: 'Seleccione un box válido' }
     })
   }
-
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -663,6 +692,7 @@ function PatientForm() {
             <option value='' disabled>
               Seleccionar box
             </option>
+            <option value=''>AFUERA</option>
             {BoxesOptions?.map((option) => (
               <option key={option.box_id} value={option.box_id}>
                 {option.box_code + ': ' + option.box_type}
@@ -706,26 +736,6 @@ function PatientForm() {
             {NurseOptions?.map((option) => (
               <option key={option.user_id} value={option.user_name}>
                 {option.user_name}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor='patient_status'>{t('PatientStatusLabel')}</Label>
-          <Select
-            error_active={ErrorsForm.patient_status}
-            id='patient_status'
-            name='patient_status'
-            value={formInterfaz.patient_status}
-            onChange={handleInputChange}
-          >
-            <option value='' disabled>
-              Seleccionar estado
-            </option>
-            {StateOptions.map((option) => (
-              <option key={option.state_id} value={option.state_name}>
-                {option.state_name}
               </option>
             ))}
           </Select>

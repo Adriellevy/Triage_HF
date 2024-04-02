@@ -32,7 +32,7 @@ CREATE TABLE Box (
 CREATE TABLE Patient (
   patient_id BINARY(16) NOT NULL,
   patient_name VARCHAR(50) NOT NULL,
-  patient_age TIMESTAMP NOT NULL,
+  patient_age DATETIME NOT NULL,
   patient_entry_time TIMESTAMP NOT NULL,
   patient_exit_time TIMESTAMP,
   patient_triage_time TIMESTAMP NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE Patient (
 CREATE TABLE PatientUpdateHistory (
   updated_id BINARY(16) NOT NULL,
   patient_updated_column VARCHAR(50) NOT NULL,
-  patient_old_value VARCHAR(500) NOT NULL,
+  patient_old_value VARCHAR(500),
   patient_new_value VARCHAR(500) NOT NULL,
   patient_updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_id BINARY(16) NOT NULL,

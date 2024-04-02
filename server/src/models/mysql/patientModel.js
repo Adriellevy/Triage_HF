@@ -2,6 +2,7 @@
 /* eslint-disable no-else-return */
 /* eslint-disable quotes */
 /* eslint-disable camelcase */
+import 'dotenv/config'
 import { connection } from '../../db.js'
 
 export class PatientsModel {
@@ -86,10 +87,10 @@ export class PatientsModel {
             VALUES (
                     UUID_TO_BIN(?), 
                     ?,
-                    ?, 
-                    ?, 
+                    STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
+                    STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
                     ?,
-                    ?, 
+                    STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
                     ?, 
                     ?, 
                     ?, 
@@ -135,6 +136,8 @@ export class PatientsModel {
 
   static async updatePatient({ id, data }) {
     try {
+      console.log('info')
+      console.log(data)
       const [[Box]] = await connection.query(
         'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
         [id],
@@ -145,8 +148,6 @@ export class PatientsModel {
         .map(([key, value]) => {
           if (key === 'box_id' || key === 'nurse_id' || key === 'doctor_id') {
             return `${key} = UUID_TO_BIN(?)`
-          } else if (key === 'patient_triage_time') {
-            return `${key} = STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ')`
           } else {
             return `${key} = ?`
           }

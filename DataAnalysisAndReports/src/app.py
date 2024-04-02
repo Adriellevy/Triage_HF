@@ -32,6 +32,9 @@ def get_args():
     from_ format: yyyy-mm-dd
     to format: yyyy-mm-dd
     patient_age format: yyyy-01-01 00:00:00
+    patient_isolated format: 
+        empty (patientisolated=) if want to be False
+        any non-empty value if want to be True
     """
     args = {'from_': request.args.get('from', default=None, type=str),
             'to': request.args.get('to', default=None, type=str),
@@ -45,13 +48,25 @@ def get_args():
             'box_type': request.args.get('boxtype', default=None, type=str)}
     return args
 
+@app.route('/')
+def index():
+    return """
+            <p>
+            No deberias estar aca :( <br> 
+            Accede a algun grafico mediante las siguientes URL: <br>
+            127.0.0.1:5000/number_patients_date/ <br>
+            127.0.0.1:5000/number_patients_date/metrics/ <br>
+            127.0.0.1:5000/top_queries_date/ <br>
+            </p>
+           """
+
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
     dic = get_args()
     
     df = bf.build_features('Patient', dic)
     
-    if (df.empty):
+    if df is None:
         return Response(status=204)
     
     df = bf.build_number_patients_date(df)
