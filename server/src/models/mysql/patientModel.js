@@ -47,6 +47,7 @@ export class PatientsModel {
         box.box_code,
         patient_status,
         patient_symptom,
+        patient_healthcare_system,
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name
         FROM Patient
