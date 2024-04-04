@@ -16,9 +16,12 @@ import visualization.metrics as mt
 
 # GENERAL
 # -AGREGAR EVENTO DE CLIC EN GRAFICOS
-
-
-
+# - AGREGAR GRAFICO TIEMPO MEDIO DE ESTADIA DEL PACIENTE POR CADA MEDICO
+# - AGREGAR GRAFICO TIEMPO MEDIO DE ESTADIA DEL PACIENTE POR CADA ENFERMERO
+#
+#
+#
+#
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -29,7 +32,7 @@ def get_args():
     from_ format: yyyy-mm-dd
     to format: yyyy-mm-dd
     patient_age format: yyyy-01-01 00:00:00
-    patient_isolated format: 
+    patient_isolated format:
         empty (patientisolated=) if want to be False
         any non-empty value if want to be True
     """
@@ -49,7 +52,7 @@ def get_args():
 def index():
     return """
             <p>
-            No deberias estar aca :( <br> 
+            No deberias estar aca :( <br>
             Accede a algun grafico mediante las siguientes URL: <br>
             http://127.0.0.1:5000/number_patients_date/ <br>
             http://127.0.0.1:5000/number_patients_date/metrics/ <br>
@@ -60,16 +63,16 @@ def index():
 @app.route('/number_patients_date/')
 def chart_number_patients_date():
     dic = get_args()
-    
+
     df = bf.build_features('Patient', dic)
-    
+
     if df is None:
         return Response(status=204)
-    
+
     df = bf.build_number_patients_date(df)
-    
+
     mean = request.args.get('mean', default=None, type=bool)
-    
+
     fig = vl.line_chart(df=df,
                      x='patient_entry_time',
                      y='number_of_patients',
@@ -84,14 +87,14 @@ def chart_number_patients_date():
 @app.route('/number_patients_date/metrics/')
 def metrics_number_patients_date():
     dic = get_args()
-    
+
     df = bf.build_features('Patient', dic)
-    
+
     if (df.empty):
         return Response(status=204)
-    
+
     df = bf.build_number_patients_date(df)
-    
+
     data = mt.metrics_data(df=df,
                           x='patient_entry_time',
                           y='number_of_patients',
@@ -108,14 +111,14 @@ def chart_top_queries_date():
 
     if df is None:
         return Response(status=204)
-    
+
     top = request.args.get('top', default=10, type=int)
-    order = request.args.get('order', default=None, type=str)   
-     
+    order = request.args.get('order', default=None, type=str)
+
     df = bf.build_top_queries_date(df, top, order)
-    
+
     mean = request.args.get('mean', default=None, type=bool)
-    
+
     fig = vl.bar_chart(df=df,
                     x='patient_symptom',
                     y='symptom_count',
@@ -130,25 +133,46 @@ def chart_top_queries_date():
 @app.route('/top_queries_date/metrics/')
 def metrics_top_queries_date():
     dic = get_args()
-    
+
     df = bf.build_features('Patient', dic)
-    
+
     if (df.empty):
         return Response(status=204)
-    
+
     top = request.args.get('top', default=10, type=int)
-    order = request.args.get('order', default=None, type=str)   
-    
+    order = request.args.get('order', default=None, type=str)
+
     df = bf.build_top_queries_date(df, top, order)
-    
-    
-    
+
+
+
     data = mt.metrics_data(df=df,
                           x='patient_symptom',
                           y='symptom_count',
                           txt_x='sintoma',
                           txt_y='cantidad de sintomas')
     return jsonify(data)
+
+@app.route('/patiens_mean_time_doctor/')
+def patiens_mean_time_doctor():
+    dic = get_args()
+
+    df = bf.build_features('Patient', dic)
+
+    if df is None:
+        return Response(status=204)
+
+    df = bf.patiens_mean_time_doctor(df)
+
+    fig = vl.line_chart(df=df,
+                    x='user_full_name',
+                    y='patient_mean_time',
+                    x_title='Doctor',
+                    y_title='Tiempo Medio de Estadia',
+                    title='Tiempo Medio de Estadia de Pacientes por Doctor',
+                    color='patient_triage_level')
+
+    return fig.to_html()
 
 
 if __name__ == '__main__':

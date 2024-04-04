@@ -8,7 +8,7 @@ def calculate_mean(df, y):
 
 def calculate_median(df, y):
     return df[y].median()
-    
+
 def calculate_max(df, y):
     return df[y].max()
 
@@ -41,4 +41,3 @@ def metrics_data(df, x, y, txt_x, txt_y):
         'min': min(txt_x, txt_y, df_sum, x, y),
         'max': max(txt_x, txt_y, df_sum, x, y)
     }
-    
