@@ -99,6 +99,11 @@ function PatientDetail() {
     SetMedicalDischarge(true)
     if (Patient) {
       Patient.patient_status = PatientStatus.DISCHARGED
+      Patient.patient_triage_time = new Date(Patient.patient_triage_time)
+      Patient.patient_entry_time = new Date(Patient.patient_entry_time)
+      Patient.patient_age = new Date(Patient.patient_age)
+      console.log('paciente a actualizar ')
+      console.log(Patient)
       updatePatient(Patient.patient_id, Patient)
     } else {
       console.log('Error en dar de ALTA al paciente')
@@ -123,7 +128,7 @@ function PatientDetail() {
                   {Patient
                     ? field.format
                       ? field.format(String(Patient[field.key]))
-                      : Patient[field.key]
+                      : String(Patient[field.key])
                     : null}
                 </span>
               </li>
