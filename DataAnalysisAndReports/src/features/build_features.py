@@ -123,7 +123,6 @@ def build_top_queries_date(df, top=10, order=None):
     
     count = order_triage_top_queries_date(count)
     
-
     return count
 
 def build_features(table_name, dictionary):

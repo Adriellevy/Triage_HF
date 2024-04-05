@@ -5,20 +5,14 @@ import features.build_features as bf
 import visualization.visualize as vl
 import visualization.metrics as mt
 
-
-# TOD0S LOS CHARTS
-# ANIMACIONES AL APARACER LOS GRAFICOS
-# AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
 #
-# BARCHARTS
-# AL EGIR QULEE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
+#
+# COSAS QUE ME GUSTARIA AGREGAR QUE AHORA NO SON POSIBLES
+# - AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE "Y"
+# - AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
-
-# GENERAL
-# -AGREGAR EVENTO DE CLIC EN GRAFICOS
-
-
-
+# - AGREGAR EVENTO DE CLICK EN GRAFICOS
+#
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -92,11 +86,11 @@ def metrics_number_patients_date():
     
     df = bf.build_number_patients_date(df)
     
-    data = mt.metrics_data(df=df,
+    data = mt.metrics_data(txt='pacientes',
+                          df=df,
                           x='patient_entry_time',
                           y='number_of_patients',
-                          txt_x='fecha de ingreso',
-                          txt_y='pacientes')
+                          z='patient_triage_level')
     return jsonify(data)
 
 
@@ -143,11 +137,11 @@ def metrics_top_queries_date():
     
     
     
-    data = mt.metrics_data(df=df,
+    data = mt.metrics_data(txt='consultas',
+                          df=df,
                           x='patient_symptom',
                           y='symptom_count',
-                          txt_x='sintoma',
-                          txt_y='cantidad de sintomas')
+                          z='patient_triage_level')
     return jsonify(data)
 
 
