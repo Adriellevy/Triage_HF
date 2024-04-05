@@ -40,9 +40,23 @@ function PatientHistoryItem({ item, index }: PropsPatientHystoryItem) {
 
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
 
+  const formatDate = (date: string): string => {
+    const newdate = new Date(date)
+    const dateFormat: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    }
+    const formatter = new Intl.DateTimeFormat('es-AR', dateFormat)
+    return formatter.format(newdate)
+  }
+
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{patient_updated_date}</td>
+      <td className='border p-2 '>{formatDate(patient_updated_date)}</td>
       <td className='border p-2 '>{columns[String(patient_updated_column)]}</td>
       <td className='border p-2 '>{patient_old_value}</td>
       <td className='border p-2 '>{patient_new_value}</td>
