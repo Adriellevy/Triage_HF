@@ -1,8 +1,8 @@
 import pandas as pd
 import datetime as dt
 import data.make_dataset as md
-
-def order_triage_top_queries_date(df):
+from typing import Dict, List, Series, Tuple
+def order_triage_top_queries_date(df: pd.DataFrame)-> pd.DataFrame:
     first_rows = df.head(4)
     values = ['Nivel I', 'Nivel II', 'Nivel III', 'Nivel IV']
     i = 0
@@ -20,7 +20,7 @@ def order_triage_top_queries_date(df):
 
     return df
 
-def insert_row(row_number, df, row_value):
+def insert_row(row_number: int, df: pd.DataFrame, row_value: Dict) -> pd.DataFrame:
     start_upper = 0
     end_upper = row_number
     start_lower = row_number
@@ -34,7 +34,7 @@ def insert_row(row_number, df, row_value):
     df = df.sort_index()
     return df
 
-def filter_dictionary(dictionary, keys):
+def filter_dictionary(dictionary: Dict, keys: List) -> pd.DataFrame:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
 
 def date_filters(df, dictionary):
@@ -49,16 +49,16 @@ def date_filters(df, dictionary):
     return df
 
 
-def drop_id_feature(df):
+def drop_id_feature(df: pd.DataFrame) -> pd.DataFrame:
     return df.iloc[:, 1:]
 
-def triage_level_style(df):
+def triage_level_style(df: pd.DataFrame) -> Series:
     df['patient_triage_level'] = df['patient_triage_level'].apply(lambda x: str(int(float(x))))
     df = df[df['patient_triage_level'] != '0']
     mapping = {'1': 'Nivel I', '2': 'Nivel II', '3': 'Nivel III', '4': 'Nivel IV'}
     return df['patient_triage_level'].map(mapping)
 
-def get_last_week(df):
+def get_last_week(df: pd.DataFrame):
     to = df['patient_entry_time'].max()
     from_ = to.replace(hour=0, minute=0) - dt.timedelta(days=6)
     return (from_, to)
