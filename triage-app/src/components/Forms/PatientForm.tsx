@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@mui/material'
 import React from 'react'
+import _ from 'lodash'
 
 function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
@@ -212,6 +213,9 @@ function PatientForm() {
     nurse_id: '',
     box_id: null
   })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [oldFormData, setOldFormData] = useState<any>(formData)
 
   const handleCheckbox = () => {
     setChecked(!checked)
@@ -427,6 +431,20 @@ function PatientForm() {
         })
       }
     }
+    ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function ObjetoconDatosCambiados(proxy: any, oldFormData: any) {
+    const datosCambiados = _.omitBy(proxy, (value, key) => {
+      // Omitir si el valor es igual al valor antiguo, o si es un campo vacío
+      return (
+        _.isEqual(value, oldFormData[key]) || (typeof value === 'string' && value.trim() === '')
+      )
+    })
+    console.log('Los datos cambiados son: \n')
+    console.log(datosCambiados)
+    // Aquí puedes enviar datosCambiados al backend
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
