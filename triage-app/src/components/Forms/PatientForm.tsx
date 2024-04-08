@@ -274,7 +274,9 @@ function PatientForm() {
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+    const name = e.target.name
+    let value = e.target.value
+
     // Get the selected option based on the entered value
     // Check if it's the hidden input
 
@@ -285,6 +287,7 @@ function PatientForm() {
       const itemId = DoctorOptions
         ? DoctorOptions.find((option) => option.user_name === value)?.user_id
         : null
+      value = itemId || ''
       console.log('user id del doc: ' + itemId)
       setformInterfaz({
         ...formInterfaz,
@@ -309,6 +312,7 @@ function PatientForm() {
       const itemId = NurseOptions
         ? NurseOptions.find((option) => option.user_name === value)?.user_id
         : null
+      value = itemId || ''
       setformInterfaz({
         ...formInterfaz,
         [name]: itemValue
@@ -345,6 +349,7 @@ function PatientForm() {
         })
       } else {
         const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
+        value = itemId || ''
         setformInterfaz({
           ...formInterfaz,
           [name]: itemId,
@@ -442,6 +447,7 @@ function PatientForm() {
       cancelBoxPreviousSelected
       console.log('Los datos cambiados son: \n')
       console.log(datosCambiados)
+      // si se desea averiguar el nombre en vez del id hay que cambiar
       // Aquí puedes enviar datosCambiados al backend
     }
   }
