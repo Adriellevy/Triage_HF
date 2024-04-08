@@ -124,6 +124,17 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
     
     return count
 
+def build_patiens_mean_time_doctor() -> pd.DataFrame:
+    dict: Dict[str, str] = {'doctor_full_name': 'yes'}
+    query = join_filters(dict)
+    df = md.get_table('Patient', query)
+
+    df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
+    
+    df = df.groupby(['user_id', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
+    
+    return df
+
 def build_features(table_name: str, dictionary: Dict[str, Any]) -> pd.DataFrame:
     where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
     join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])

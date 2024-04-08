@@ -28,7 +28,6 @@ import visualization.metrics as mt
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
-
 def get_args() -> Dict[str, Any]:
     """
     from_ format: yyyy-mm-dd
@@ -55,10 +54,11 @@ def index() -> str:
     return """
             <p>
             No deberias estar aca :( <br>
-            Accede a algun grafico mediante las siguientes URL: <br>
+            Accede a algun grafico o metrica mediante las siguientes URL: <br>
             http://127.0.0.1:5000/number_patients_date/ <br>
             http://127.0.0.1:5000/number_patients_date/metrics/ <br>
             http://127.0.0.1:5000/top_queries_date/ <br>
+            http://127.0.0.1:5000/top_queries_date/metrics/
             </p>
            """
 
@@ -146,35 +146,36 @@ def metrics_top_queries_date() -> Response:
 
     df = bf.build_top_queries_date(df, top, order)
     
-    
-    
     data: Dict[str, str] = mt.metrics_data(txt='consultas',
                           df=df,
                           x='patient_symptom',
                           y='symptom_count',
                           z='patient_triage_level')
+    
     return jsonify(data)
 
-# @app.route('/patiens_mean_time_doctor/')
-# def patiens_mean_time_doctor():
-#     dic = get_args()
+@app.route('/patients_mean_time_doctor/')
+def patiens_mean_time_doctor() -> Union[str, Response]:
+    dic: Dict[str, Any] = get_args()
 
-#     df = bf.build_features('Patient', dic)
+    df: pd.DataFrame = bf.build_features('Patient', dic)
 
-#     if df is None:
-#         return Response(status=204)
+    if df is None:
+        return Response(status=204)
 
-#     df = bf.patiens_mean_time_doctor(df)
+    df = bf.build_patiens_mean_time_doctor()
 
-#     fig = vl.line_chart(df=df,
-#                     x='user_full_name',
-#                     y='patient_mean_time',
-#                     x_title='Doctor',
-#                     y_title='Tiempo Medio de Estadia',
-#                     title='Tiempo Medio de Estadia de Pacientes por Doctor',
-#                     color='patient_triage_level')
+    return Response(status=200)
 
-#     return fig.to_html()
+    # fig: Figure = vl.line_chart(df=df,
+    #                 x='user_full_name',
+    #                 y='patient_mean_time',
+    #                 x_title='Doctor',
+    #                 y_title='Tiempo Medio de Estadia',
+    #                 title='Tiempo Medio de Estadia de Pacientes por Doctor',
+    #                 color='patient_triage_level')
+
+    # return fig.to_html()
 
 
 if __name__ == '__main__':
