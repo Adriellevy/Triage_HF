@@ -144,6 +144,20 @@ export class PatientController {
               user_id: userID,
             })
           }
+        } else if (key === 'patient_isolated') {
+          if (
+            UserAntiguo.hasOwnProperty(key) &&
+            Boolean(UserAntiguo[key]) !== Boolean(UserNuevo[key])
+          ) {
+            cambios.push({
+              patient_id: UserAntiguo.patient_id,
+              updated_column: key,
+              old_value: UserAntiguo[key],
+              new_value: UserNuevo[key],
+              update_date: tiempoActual,
+              user_id: userID,
+            })
+          }
         } else if (
           UserAntiguo.hasOwnProperty(key) &&
           UserAntiguo[key] !== UserNuevo[key]
