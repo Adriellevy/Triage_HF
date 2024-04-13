@@ -34,10 +34,14 @@ def update_layout(fig, title, x_title, y_title):
                       yaxis=dict(linecolor='black', showgrid=True),
                       legend=dict(title='Nivel de Triage'))
     
-def update_traces(fig):      
+def update_traces_lines(fig, y_txt: str):      
     fig.update_layout(hovermode='x unified')
-    fig.update_traces(mode="markers+lines", 
-                      hovertemplate="<b>%{y} pacientes<b>")  
+    fig.update_traces(mode='markers+lines', 
+                      hovertemplate='<b>%{y}' + f' {y_txt}<b>')  
+
+def update_traces_bar(fig, y_txt: str):
+    fig.update_layout(hovermode='x unified')    
+    fig.update_traces(hovertemplate='<b>%{y}' + f' {y_txt}<b>')  
     
 def add_total_line(fig, df, x, y):
     df_sum = df.groupby(x)[y].sum().reset_index(name=y)
@@ -48,7 +52,7 @@ def add_total_line(fig, df, x, y):
                              name='Total'))
     
 
-def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
+def line_chart(df, x, y, title, x_title, y_title, color, y_txt, mean=None):
     global color_discrete_map
     fig = px.line(df,
                   x=x,
@@ -62,7 +66,8 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
                    x=x,
                    y=y)
     
-    update_traces(fig=fig)
+    update_traces_lines(fig=fig,
+                        y_txt=y_txt)
 
     update_layout(fig=fig, 
                   title=title,
@@ -76,7 +81,7 @@ def line_chart(df, x, y, title, x_title, y_title, color, mean=None):
                      y=y)
     return fig
 
-def bar_chart(df, x, y, title, x_title, y_title, color, mean=None):
+def bar_chart(df, x, y, title, x_title, y_title, color, y_txt, mean=None):
     global color_discrete_map
     
     fig = px.bar(df,
@@ -89,6 +94,9 @@ def bar_chart(df, x, y, title, x_title, y_title, color, mean=None):
                   title=title,
                   x_title=x_title,
                   y_title=y_title)
+
+    update_traces_bar(fig=fig,
+                      y_txt=y_txt)
     
     if(mean):
         include_mean(fig=fig, 
