@@ -105,7 +105,6 @@ def metrics_number_patients_date() -> Response:
                           z='patient_triage_level')
     return jsonify(data)
 
-
 @app.route('/top_queries_date/')
 def chart_top_queries_date() -> Union[str, Response]:
     dic: Dict[str, Any] = get_args()
@@ -162,17 +161,15 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
     dic: Dict[str, Any] = get_args()
 
     df: pd.DataFrame = bf.build_features('Patient', dic)
-
+    
     if df is None:
         return Response(status=204)
-
+    
     df = bf.build_patiens_mean_time_doctor()
-
-    #return Response(status=200)
 
     fig: Figure = vl.line_chart(df=df,
                     x='user_full_name',
-                    y='patient_mean_time',
+                    y='patient_mean_delta_time',
                     x_title='Doctor',
                     y_title='Tiempo Medio de Estadia',
                     title='Tiempo Medio de Estadia de Pacientes por Doctor',
@@ -180,7 +177,6 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
                     color='patient_triage_level')
 
     return fig.to_html()
-
 
 if __name__ == '__main__':
     app.run(debug=True)

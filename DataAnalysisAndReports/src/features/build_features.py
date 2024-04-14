@@ -1,7 +1,9 @@
 import pandas as pd
 import datetime as dt
 import data.make_dataset as md
+
 from typing import Dict, Tuple, Any, List
+from numpy import ndarray
 
 def filter_dictionary(dictionary: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -16,7 +18,6 @@ def date_filters(df: pd.DataFrame, dictionary: Dict[str, Any]) -> pd.DataFrame:
     df = df[(df['patient_entry_time'] >= dictionary['from_']) & (df['patient_entry_time'] <= dictionary['to'])]
 
     return df
-
 
 def drop_id_feature(df: pd.DataFrame) -> pd.DataFrame:
     return df.iloc[:, 1:]
@@ -34,7 +35,6 @@ def get_last_week(df: pd.DataFrame) -> Tuple[pd.Timestamp, pd.Timestamp]:
 
 def where_filters(dictionary: Dict[str, Any]) -> str:
     query: str = ' WHERE '
-    #print(dictionary)
     
     for key, value in dictionary.items():
         if value is not None:
@@ -55,9 +55,9 @@ def join_filters(dictionary: Dict[str, Any]) -> str:
     for key, value in dictionary.items():
         if value is not None:
             if key == 'doctor_full_name':
-                query += 'JOIN User ON User.user_id '
+                query += 'JOIN User ON Patient.doctor_id = User.user_id '
             if key == 'nurse_full_name':
-                query += 'JOIN User ON User.user_id '
+                query += 'JOIN User ON Patient.nurse_id = User.user_id '
             if key == 'box_type':
                 query += 'JOIN Box ON Box.box_id '
     if query == '':
@@ -81,16 +81,16 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
     top_reasons: pd.Index[str] = df.groupby('patient_symptom')['symptom_count'].sum().nlargest(top).index
     df = df[df['patient_symptom'].isin(top_reasons)]
     
-    all_triage_levels = df['patient_triage_level'].unique()
+    all_triage_levels: ndarray = df['patient_triage_level'].unique()
 
-    all_combinations = []
+    all_combinations: list = []
     for symptom in df['patient_symptom'].unique():
         for triage_level in all_triage_levels:
             all_combinations.append({'patient_symptom': symptom, 'patient_triage_level': triage_level})
 
-    all_combinations_df = pd.DataFrame(all_combinations)
+    all_combinations_df: pd.DataFrame = pd.DataFrame(all_combinations)
 
-    merged_df = pd.merge(all_combinations_df, df, on=['patient_symptom', 'patient_triage_level'], how='left')
+    merged_df: pd.DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', 'patient_triage_level'], how='left')
     merged_df['symptom_count'].fillna(0, inplace=True)
 
     merged_df = merged_df.sort_values(by=['patient_triage_level', 'symptom_count'], ascending=[True, False])
@@ -106,12 +106,15 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
 
 def build_patiens_mean_time_doctor() -> pd.DataFrame:
     dict: Dict[str, str] = {'doctor_full_name': 'yes'}
-    query = join_filters(dict)
-    df = md.get_table('Patient', query)
+    query: str = join_filters(dict)
+    df: pd.DataFrame = md.get_table('Patient', query)
 
+    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
+    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
+    
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
     
-    df = df.groupby(['user_id', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
+    df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
     
     return df
 
