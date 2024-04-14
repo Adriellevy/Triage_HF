@@ -17,8 +17,8 @@ export class PatientsModel {
     patient_triage_time,
     patient_triage_level,
     patient_isolated,
-    BIN_TO_UUID(patient.box_id) AS box_id,
-    box.box_code,
+    BIN_TO_UUID(Patient.box_id) AS box_id,
+    Box.box_code,
     patient_status,
     patient_symptom,
     Doctor.user_name AS doctor_name,
@@ -26,7 +26,7 @@ export class PatientsModel {
     FROM Patient
     LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
     LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-    LEFT JOIN Box ON patient.box_id = Box.box_id;
+    LEFT JOIN Box ON Patient.box_id = Box.box_id;
     `
     const [patients] = await connection.query(patientsQuery)
     return patients
@@ -43,8 +43,8 @@ export class PatientsModel {
         patient_triage_time,
         patient_triage_level,
         patient_isolated,
-        BIN_TO_UUID(patient.box_id) AS box_id,
-        box.box_code,
+        BIN_TO_UUID(Patient.box_id) AS box_id,
+        Box.box_code,
         patient_status,
         patient_symptom,
         patient_healthcare_system,
@@ -53,8 +53,8 @@ export class PatientsModel {
         FROM Patient
         LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-        LEFT JOIN Box ON patient.box_id = Box.box_id
-        WHERE patient.patient_id = UUID_TO_BIN(?);
+        LEFT JOIN Box ON Patient.box_id = Box.box_id
+        WHERE Patient.patient_id = UUID_TO_BIN(?);
     `
     const [patients] = await connection.query(patientsQuery, [id])
     if (patients.length === 0) return false

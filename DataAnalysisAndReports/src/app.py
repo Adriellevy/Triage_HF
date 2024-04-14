@@ -82,6 +82,7 @@ def chart_number_patients_date() -> Union[str, Response]:
                      y_title='Cantidad de Pacientes',
                      title='Cantidad de Pacientes por Fecha de Ingreso',
                      color='patient_triage_level',
+                     y_txt='pacientes',
                      mean=mean)
 
     return fig.to_html()
@@ -113,7 +114,7 @@ def chart_top_queries_date() -> Union[str, Response]:
 
     if df is None:
         return Response(status=204)
-
+    
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
 
@@ -128,6 +129,7 @@ def chart_top_queries_date() -> Union[str, Response]:
                     y_title='Cantidad de Consultas',
                     title='Motivos de Consulta mas Frecuentes',
                     color='patient_triage_level',
+                    y_txt='consultas',
                     mean=mean)
 
     return fig.to_html()
@@ -155,6 +157,7 @@ def metrics_top_queries_date() -> Response:
     return jsonify(data)
 
 @app.route('/patients_mean_time_doctor/')
+#http://localhost:5173/stats/patients_mean_time_doctor
 def patiens_mean_time_doctor() -> Union[str, Response]:
     dic: Dict[str, Any] = get_args()
 
@@ -165,17 +168,18 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
 
     df = bf.build_patiens_mean_time_doctor()
 
-    return Response(status=200)
+    #return Response(status=200)
 
-    # fig: Figure = vl.line_chart(df=df,
-    #                 x='user_full_name',
-    #                 y='patient_mean_time',
-    #                 x_title='Doctor',
-    #                 y_title='Tiempo Medio de Estadia',
-    #                 title='Tiempo Medio de Estadia de Pacientes por Doctor',
-    #                 color='patient_triage_level')
+    fig: Figure = vl.line_chart(df=df,
+                    x='user_full_name',
+                    y='patient_mean_time',
+                    x_title='Doctor',
+                    y_title='Tiempo Medio de Estadia',
+                    title='Tiempo Medio de Estadia de Pacientes por Doctor',
+                    y_txt='Minutos',
+                    color='patient_triage_level')
 
-    # return fig.to_html()
+    return fig.to_html()
 
 
 if __name__ == '__main__':
