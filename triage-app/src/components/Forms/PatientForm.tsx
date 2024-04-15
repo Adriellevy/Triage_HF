@@ -211,7 +211,7 @@ function PatientForm() {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [oldFormData, setOldFormData] = useState<any>(formData)
+  const [oldFormData] = useState<any>(formData)
 
   const handleCheckbox = () => {
     setChecked(!checked)
@@ -447,7 +447,7 @@ function PatientForm() {
       cancelBoxPreviousSelected
       console.log('Los datos cambiados son: \n')
       console.log(datosCambiados)
-      // si se desea averiguar el nombre en vez del id hay que cambiar
+      // si se desea averiguar el nombre en vez del id hay que cambiar el let de value y ponerlo como otra var
       // Aquí puedes enviar datosCambiados al backend
     }
   }
