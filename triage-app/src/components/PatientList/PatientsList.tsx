@@ -76,10 +76,9 @@ function PatientsList({ patients }: PropsPatientsList) {
     }
   })
 
-  console.log(sortedPatients.filter(patient=>patient.patient_status!=='ALTA'));
-
+//Experimental
   const quitALTApatients=sortedPatients.filter(patient=>patient.patient_status!=='ALTA')
-
+//
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>
