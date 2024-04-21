@@ -616,6 +616,29 @@ function PatientForm() {
             />
           )}
         </div>
+
+        <div>
+          <Label htmlFor='patient_symptom'>{t('PatientSymptom')}</Label>
+          <Input
+            error_active={ErrorsForm.patient_symptom}
+            type='text'
+            id='patient_symptom'
+            name='patient_symptom'
+            value={formInterfaz.patient_symptom}
+            onChange={handleInputChange}
+            autoComplete='off'
+            list='patientSymptoms'
+          />
+          <datalist
+            id='patientSymptoms'
+            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
+          >
+            {PatientProblems?.map((option) => (
+              <option key={option._id} value={option.name} data-id={option._id} />
+            ))}
+          </datalist>
+        </div>
+
         <div>
           <Label htmlFor='patient_triage_level'>{t('TriageLevelLabel')}</Label>
           <div
@@ -658,27 +681,7 @@ function PatientForm() {
           />
         </div>
 
-        <div>
-          <Label htmlFor='patient_symptom'>{t('PatientSymptom')}</Label>
-          <Input
-            error_active={ErrorsForm.patient_symptom}
-            type='text'
-            id='patient_symptom'
-            name='patient_symptom'
-            value={formInterfaz.patient_symptom}
-            onChange={handleInputChange}
-            autoComplete='off'
-            list='patientSymptoms'
-          />
-          <datalist
-            id='patientSymptoms'
-            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
-          >
-            {PatientProblems?.map((option) => (
-              <option key={option._id} value={option.name} data-id={option._id} />
-            ))}
-          </datalist>
-        </div>
+        <div className='m sm:disabled'></div>
 
         <div>
           <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
