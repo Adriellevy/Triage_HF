@@ -76,6 +76,10 @@ function PatientsList({ patients }: PropsPatientsList) {
     }
   })
 
+  console.log(sortedPatients.filter(patient=>patient.patient_status!=='ALTA'));
+
+  const quitALTApatients=sortedPatients.filter(patient=>patient.patient_status!=='ALTA')
+
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>
@@ -96,7 +100,8 @@ function PatientsList({ patients }: PropsPatientsList) {
           </tr>
         </thead>
         <tbody>
-          {sortedPatients.map((patient, index) => (
+          {/* {sortedPatients.map((patient, index) => ( */}
+          {quitALTApatients.map((patient, index) => (
             <PatientItem key={patient?.patient_id} patient={patient} index={index} />
           ))}
         </tbody>

@@ -56,6 +56,22 @@ function Search({ onSearch, options }: PropsSearch) {
             ))}
           </select>
         </div>
+        {/* test */}
+        {/* <div className='flex-1'>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>Mostrar ALTA:</label>
+          <input type="checkbox" name="" id="" />
+          <select
+            value={searchBy}
+            onChange={handleSelectChange}
+            className='w-full p-2 border rounded-md'
+          >
+            {options.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.text}
+              </option>
+            ))}
+          </select>
+        </div> */}
       </div>
     </div>
   )
