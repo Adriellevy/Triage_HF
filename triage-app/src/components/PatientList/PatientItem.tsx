@@ -66,7 +66,7 @@ function PatientItem({ patient, index }: PropsPatientItem) {
   }, [])
 
   const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null)
-  const handleFastDischarge = (id: any) => {
+  const handleFastDischarge = (id: string) => {
     console.log('fast Discharge in process ' + id)
     setPatientToDischarge(patient)
   }
@@ -117,8 +117,12 @@ function PatientItem({ patient, index }: PropsPatientItem) {
               </Link>
             </div>
           </div>
-          {patient_status !== 'ALTA' && (
+          {(patient_status !== 'ALTA' && (
             <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </Button>
+          )) || (
+            <Button wfull color='grey_disabled' disabled>
               <FontAwesomeIcon icon={faRightFromBracket} />
             </Button>
           )}

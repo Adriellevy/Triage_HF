@@ -94,6 +94,12 @@ export class PatientController {
       req.headers.authorization && req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const userID = decoded.id
+
+    // Zod console.logs
+
+    // console.log(result.success)
+    // console.log(result.error)
+
     if (!result.success) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
@@ -102,17 +108,32 @@ export class PatientController {
 
       const [UserAntiguo] = await PatientsModel.getPatientById({ id })
 
-      result.data.patient_age = new Date(result.data.patient_age)
-      result.data.patient_triage_time = new Date(result.data.patient_triage_time)
-      result.data.patient_entry_time = new Date(result.data.patient_entry_time)
-
+      if (result.data.patient_age) {
+        result.data.patient_age = new Date(result.data.patient_age)
+      }
+      if (result.data.patient_triage_time) {
+        result.data.patient_triage_time = new Date(
+          result.data.patient_triage_time,
+        )
+      }
+      if (result.data.patient_entry_time) {
+        result.data.patient_entry_time = new Date(
+          result.data.patient_entry_time,
+        )
+      }
       const UserNuevo = result.data
       const cambios = []
       const tiempoActual = new Date()
 
+      console.log(UserNuevo)
+
       // eslint-disable-next-line no-restricted-syntax
       for (const key in UserNuevo) {
-        if (key === 'patient_triage_time' || key === 'patient_entry_time' || key === 'patient_age') {
+        if (
+          key === 'patient_triage_time' ||
+          key === 'patient_entry_time' ||
+          key === 'patient_age'
+        ) {
           if (UserAntiguo[key].getTime() !== UserNuevo[key].getTime()) {
             cambios.push({
               patient_id: UserAntiguo.patient_id,
@@ -123,7 +144,24 @@ export class PatientController {
               user_id: userID,
             })
           }
-        } else if (UserAntiguo.hasOwnProperty(key) && UserAntiguo[key] !== UserNuevo[key]) {
+        } else if (key === 'patient_isolated') {
+          if (
+            UserAntiguo.hasOwnProperty(key) &&
+            Boolean(UserAntiguo[key]) !== Boolean(UserNuevo[key])
+          ) {
+            cambios.push({
+              patient_id: UserAntiguo.patient_id,
+              updated_column: key,
+              old_value: UserAntiguo[key],
+              new_value: UserNuevo[key],
+              update_date: tiempoActual,
+              user_id: userID,
+            })
+          }
+        } else if (
+          UserAntiguo.hasOwnProperty(key) &&
+          UserAntiguo[key] !== UserNuevo[key]
+        ) {
           cambios.push({
             patient_id: UserAntiguo.patient_id,
             updated_column: key,

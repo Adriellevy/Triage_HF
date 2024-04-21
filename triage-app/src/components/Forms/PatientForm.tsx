@@ -17,9 +17,11 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@mui/material'
 import React from 'react'
+import _ from 'lodash'
 
 function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
+  const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [checked, setChecked] = React.useState(false)
@@ -30,6 +32,45 @@ function PatientForm() {
   // Edit states
   const { edditingPatientID } = useParams()
   const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
+  //-----------------------------------  SETEO FORMULARIOS ---------------------------------
+  // Formulario interfaz tiene como objetivo guardar los valores de los elementos selecionados y no los id
+  // ya que los valores no se mandan a la base de datos
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formInterfaz, setformInterfaz] = useState<any>({
+    patient_name: '',
+    patient_age: null,
+    patient_entry_time: '',
+    patient_exit_time: null,
+    patient_triage_time: new Date(),
+    patient_triage_level: '',
+    patient_isolated: false,
+    patient_status: 'AFUERA',
+    patient_symptom: '',
+    //patient_medication: '',
+    doctor_id: '',
+    nurse_id: '',
+    box_id: null
+  })
+
+  // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
+  // ya que los id's son los que se mandan a la base de datos
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formData, setFormData] = useState<any>({
+    patient_name: '',
+    patient_age: null,
+    patient_entry_time: '',
+    patient_exit_time: null,
+    patient_triage_time: new Date(),
+    patient_triage_level: '',
+    patient_isolated: false,
+    patient_status: 'AFUERA',
+    patient_symptom: '',
+    patient_healthcare_system: 'default',
+    //patient_medication: '',
+    doctor_id: '',
+    nurse_id: '',
+    box_id: null
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,13 +102,15 @@ function PatientForm() {
         setDoctorOptions(docs)
         setNurseOptions(nurses)
         setBoxesOptions(boxes)
+        const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
+        if (box) setBoxOcupiedByPatient([box])
+
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
-        formInterfaz.doctor_id = doctor ? doctor.user_id : ''
+        formInterfaz.doctor_id = doctor ? doctor.user_name : ''
         formData.doctor_id = doctor ? doctor.user_id : ''
         const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
-        formInterfaz.nurse_id = nurse ? nurse.user_id : ''
+        formInterfaz.nurse_id = nurse ? nurse.user_name : ''
         formData.nurse_id = nurse ? nurse.user_id : ''
-        const box = allBoxes?.find((box) => box.box_code === edditingPatient?.box_code)
         formInterfaz.box_id = box ? box.box_id : ''
         formData.box_id = box ? box.box_id : ''
       } catch (error) {
@@ -82,12 +125,12 @@ function PatientForm() {
       formInterfaz.patient_exit_time = edditingPatient.patient_exit_time || null
       formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
       formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
-      formInterfaz.patient_isolated = edditingPatient.patient_isolated || 'false'
+      formInterfaz.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formInterfaz.patient_status = edditingPatient.patient_status || ''
       formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
       formInterfaz.box_id = edditingPatient.box_id || ''
-      formInterfaz.nurse_id = edditingPatient.nurse_id || ''
-      formInterfaz.doctor_id = edditingPatient.doctor_id || ''
+      formInterfaz.nurse_id = edditingPatient.nurse_name || ''
+      formInterfaz.doctor_id = edditingPatient.doctor_name || ''
       //
       formData.patient_name = edditingPatient.patient_name || ''
       formData.patient_age = edditingPatient.patient_age || ''
@@ -95,7 +138,7 @@ function PatientForm() {
       formData.patient_exit_time = edditingPatient.patient_exit_time || null
       formData.patient_triage_time = edditingPatient.patient_triage_time || ''
       formData.patient_triage_level = edditingPatient.patient_triage_level || ''
-      formData.patient_isolated = edditingPatient.patient_isolated || 'false'
+      formData.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formData.patient_status = edditingPatient.patient_status || ''
       formData.patient_symptom = edditingPatient.patient_symptom || ''
       formData.box_id = edditingPatient.box_id || ''
@@ -140,11 +183,7 @@ function PatientForm() {
     fetchBoxes()
   }, [])
 
-  //TODO estas 3 const deberian traerse desde api
-  const StateOptions = [
-    { state_id: 1, state_name: 'EN OBSERVACION' },
-    { state_id: 5, state_name: 'AFUERA' }
-  ]
+  //TODO estos const deberían levantarse de la base de datos
   const PatientProblems = [
     { _id: 1, name: 'Convulsiones' },
     { _id: 2, name: 'Trauma de Cráneo' },
@@ -167,53 +206,18 @@ function PatientForm() {
     { _id: 4, name: 'IV', color: '105,168,79' }
   ]
 
-  // Function to get the current time in the desired format
-  const getCurrentTime = () => {
-    const now = new Date()
-    return now
-  }
-
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
-    formInterfaz.patient_triage_time = getCurrentTime()
+    formInterfaz.patient_triage_time = new Date()
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [formInterfaz, setformInterfaz] = useState<any>({
-    patient_name: '',
-    patient_age: null,
-    patient_entry_time: '',
-    patient_exit_time: null,
-    patient_triage_time: getCurrentTime(),
-    patient_triage_level: '',
-    patient_isolated: false,
-    patient_status: 'AFUERA',
-    patient_symptom: '',
-    //patient_medication: '',
-    doctor_id: '',
-    nurse_id: '',
-    box_id: null
-  })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [formData, setFormData] = useState<any>({
-    patient_name: '',
-    patient_age: null,
-    patient_entry_time: '',
-    patient_exit_time: null,
-    patient_triage_time: getCurrentTime(),
-    patient_triage_level: '',
-    patient_isolated: false,
-    patient_status: 'AFUERA',
-    patient_symptom: '',
-    patient_healthcare_system: 'default',
-    //patient_medication: '',
-    doctor_id: '',
-    nurse_id: '',
-    box_id: null
-  })
 
-  const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked)
-    setformInterfaz({ ...formInterfaz, patient_isolated: Boolean(checked) })
-    setFormData({ ...formData, patient_isolated: Boolean(checked) })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [oldFormData] = useState<any>(formData)
+
+  const handleCheckbox = () => {
+    setChecked(!checked)
+
+    setformInterfaz({ ...formInterfaz, patient_isolated: Boolean(!checked) })
+    setFormData({ ...formData, patient_isolated: Boolean(!checked) })
     setErrorsForm({
       ...ErrorsForm,
       patient_isolated: {
@@ -221,6 +225,7 @@ function PatientForm() {
         value: false
       }
     })
+    console.log('Chequed: ' + !checked)
   }
 
   //Triage level buttons
@@ -269,7 +274,9 @@ function PatientForm() {
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+    const name = e.target.name
+    let value = e.target.value
+
     // Get the selected option based on the entered value
     // Check if it's the hidden input
 
@@ -280,6 +287,7 @@ function PatientForm() {
       const itemId = DoctorOptions
         ? DoctorOptions.find((option) => option.user_name === value)?.user_id
         : null
+      value = itemId || ''
       console.log('user id del doc: ' + itemId)
       setformInterfaz({
         ...formInterfaz,
@@ -304,6 +312,7 @@ function PatientForm() {
       const itemId = NurseOptions
         ? NurseOptions.find((option) => option.user_name === value)?.user_id
         : null
+      value = itemId || ''
       setformInterfaz({
         ...formInterfaz,
         [name]: itemValue
@@ -340,6 +349,7 @@ function PatientForm() {
         })
       } else {
         const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
+        value = itemId || ''
         setformInterfaz({
           ...formInterfaz,
           [name]: itemId,
@@ -422,8 +432,36 @@ function PatientForm() {
         })
       }
     }
+    ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function ObjetoconDatosCambiados(proxy: any, oldFormData: any) {
+    if (edditingPatient) {
+      const datosCambiados = _.omitBy(proxy, (value, key) => {
+        // Omitir si el valor es igual al valor antiguo, o si es un campo vacío
+        return (
+          _.isEqual(value, oldFormData[key]) || (typeof value === 'string' && value.trim() === '')
+        )
+      })
+      cancelBoxPreviousSelected
+      console.log('Los datos cambiados son: \n')
+      console.log(datosCambiados)
+      // si se desea averiguar el nombre en vez del id hay que cambiar el let de value y ponerlo como otra var
+      // Aquí puedes enviar datosCambiados al backend
+    }
+  }
+
+  // Función para cancelar el cambio de box y agregar el box previo a la lista
+  const cancelBoxPreviousSelected = () => {
+    // Verificar que BoxesOptions y formData.box_id tengan valores válidos
+    if (BoxesOptions && formData.box_id) {
+      // Agregar el box previo a la lista solo si no está ya en la lista
+      if (!BoxesOptions.includes(formData.box_id)) {
+        setBoxesOptions([...BoxesOptions, formData.box_id])
+      }
+    }
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     //Update patient_entry_time
@@ -431,7 +469,12 @@ function PatientForm() {
     try {
       //Delete Id
       const formDataNoID = formDataNow
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
       formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
+      formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
+      formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
+      formDataNoID.patient_age = new Date(formDataNoID.patient_age)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
 
@@ -441,10 +484,6 @@ function PatientForm() {
           console.log('Editing patch')
           console.log(formDataNoID)
           try {
-            formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
-            formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
-            formDataNoID.patient_age = new Date(formDataNoID.patient_age)
-            console.log(formDataNoID)
             await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
             toast.success('Paciente actualizado', {
               duration: 2000
@@ -456,8 +495,7 @@ function PatientForm() {
             })
           }
         } else {
-          formDataNow.patient_entry_time = getCurrentTime()
-          console.log(formDataNoID)
+          formDataNow.patient_entry_time = new Date()
           const { data, errors } = await addNewPatient(formDataNow)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
@@ -487,7 +525,7 @@ function PatientForm() {
               patient_age: '2000-01-01',
               patient_entry_time: null,
               patient_exit_time: null,
-              patient_triage_time: getCurrentTime(),
+              patient_triage_time: new Date(),
               patient_triage_level: '',
               patient_status: '',
               patient_isolated: false,
@@ -502,7 +540,7 @@ function PatientForm() {
               patient_age: '2000-01-01',
               patient_entry_time: null,
               patient_exit_time: null,
-              patient_triage_time: getCurrentTime(),
+              patient_triage_time: new Date(),
               patient_triage_level: '',
               patient_status: '',
               patient_symptom: '',
@@ -696,6 +734,12 @@ function PatientForm() {
               Seleccionar box
             </option>
             <option value=''>AFUERA</option>
+            {BoxOcupiedByPatient?.map((option) => (
+              <option key={option.box_id} value={option.box_id} disabled>
+                {option.box_code + ': ' + option.box_type}
+              </option>
+            ))}
+
             {BoxesOptions?.map((option) => (
               <option key={option.box_id} value={option.box_id}>
                 {option.box_code + ': ' + option.box_type}
