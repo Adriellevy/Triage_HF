@@ -8,7 +8,6 @@ import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
-
 interface ColourOption {
   readonly value: string
   readonly label: string
@@ -21,6 +20,14 @@ interface ColourOption {
 interface Option {
   readonly label: string
   readonly options: ColourOption[]
+}
+
+const predefinedOption: ColourOption = {
+  value: 'patient_status',
+  item: 'TODOS MENOS ALTA',
+  label: 'TODOS MENOS ALTA',
+  color: '#525252',
+  isFixed: true
 }
 
 const options: Option[] = [
@@ -46,24 +53,28 @@ const options: Option[] = [
       { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
       {
         value: 'patient_status',
-        item: 'EN ESPERA DE INTERNACION',
-        label: 'EN ESPERA DE INTERNACION',
+        item: 'EN OBSERVACION',
+        label: 'EN OBSERVACION',
         color: '#525252'
       },
       {
         value: 'patient_status',
-        item: 'EN INTERNACION',
-        label: 'EN INTERNACION',
+        item: 'AFUERA',
+        label: 'AFUERA',
         color: '#525252'
       },
-      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       {
         value: 'patient_status',
         item: 'EN AISLAMIENTO',
         label: 'EN AISLAMIENTO',
         color: '#525252'
       },
-      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
+      {
+        value: 'patient_status',
+        item: 'TODOS MENOS ALTA',
+        label: 'TODOS MENOS ALTA',
+        color: '#525252'
+      },
       { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
     ]
   },
@@ -147,18 +158,24 @@ function Patients() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
   const [RawData, setRawData] = useState<Patient[] | null>(null)
-
+  const [hasRun, setHasRun] = useState(false)
   //hardoceado ver como obtenerlo de otra forma
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
     // Filtrar patientsData
     if (RawData) {
       const filteredData = RawData.filter((patient) => {
+        console.log(patient)
         // Verificar si el paciente cumple con todas las opciones seleccionadas
         return selectedOptions.every((option) => {
-          if (option.item === 'TODOS' || option.item === '1-4') {
+          if (option.item === 'TODOS MENOS ALTA') {
+            if (patient[option.value] != 'ALTA') {
+              return patient[option.value]
+            }
+          } else if (option.item === 'TODOS' || option.item === '1-4') {
             return patient[option.value]
           } else if (option.item === 'MINE') {
             // Verificar si el paciente tiene el doctor_name igual a 'Dr. Smith'
+            //TODO: Cambiar el 'Dr. Smith' hardcodeado y que me levante el nombre del doc o el nombre del enfermero logeado
             return patient.doctor_name === 'Dr. Smith'
           }
           // Comprobar si el paciente tiene el valor de la opción seleccionada
@@ -209,6 +226,7 @@ function Patients() {
         if (token) {
           const data = await getPatients()
           const sortedData = data.sort((a, b) => {
+            //TODO:  ver de remover este "filtrado" de horarios
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
           setRawData(sortedData)
@@ -230,6 +248,36 @@ function Patients() {
     }
   }, [socket])
 
+  useEffect(() => {
+    if (!hasRun) {
+      console.log('secorre')
+      const selectedOptions: MultiValue<ColourOption> = [predefinedOption]
+      if (RawData) {
+        const filteredData = RawData.filter((patient) => {
+          console.log(patient)
+          // Verificar si el paciente cumple con todas las opciones seleccionadas
+          return selectedOptions.every((option) => {
+            if (option.item === 'TODOS MENOS ALTA') {
+              if (patient[option.value] != 'ALTA') {
+                return patient[option.value]
+              }
+            } else if (option.item === 'TODOS' || option.item === '1-4') {
+              return patient[option.value]
+            } else if (option.item === 'MINE') {
+              // Verificar si el paciente tiene el doctor_name igual a 'Dr. Smith'
+              //TODO: Cambiar el 'Dr. Smith' hardcodeado y que me levante el nombre del doc o el nombre del enfermero logeado
+              return patient.doctor_name === 'Dr. Smith'
+            }
+            // Comprobar si el paciente tiene el valor de la opción seleccionada
+            return patient[option.value].toString() === option.item
+          })
+        })
+        setPatientsData(filteredData)
+        setFilteredPatients(filteredData)
+        setHasRun(true)
+      }
+    }
+  }, [RawData])
   return (
     <div className='bg-white pb-4'>
       <div>
@@ -243,6 +291,7 @@ function Patients() {
             closeMenuOnSelect={true}
             onChange={onChangeSelect}
             styles={colourStyles}
+            defaultValue={[predefinedOption]}
           />
         </div>
       </div>
