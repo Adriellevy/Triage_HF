@@ -170,8 +170,7 @@ function Patients() {
         return selectedOptions.every((option) => {
           if (option.item === 'TODOS' || option.item === '1-4') {
             return patient[option.value]
-          }
-          if (option.item === 'TODOS MENOS ALTA') {
+          } else if (option.item === 'TODOS MENOS ALTA') {
             if (patient[option.value] != 'ALTA') {
               return patient[option.value]
             }
@@ -207,10 +206,13 @@ function Patients() {
       try {
         if (token) {
           const data = await getPatients()
-          const sortedData = data.sort((a, b) => {
+          const sortedData1 = data.sort((a, b) => {
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
-          setRawData(sortedData)
+          setRawData(sortedData1)
+          const sortedData = data
+            .filter((patient) => patient.patient_status !== 'ALTA') // Filtrar solo los pacientes que no están dados de alta
+            .sort((a, b) => new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime())
           setPatientsData(sortedData)
         }
       } catch (error) {
@@ -261,6 +263,7 @@ function Patients() {
             closeMenuOnSelect={true}
             onChange={onChangeSelect}
             styles={colourStyles}
+            defaultValue={[predefinedOption]}
           />
         </div>
       </div>
