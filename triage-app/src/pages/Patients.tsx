@@ -22,7 +22,13 @@ interface Option {
   readonly label: string
   readonly options: ColourOption[]
 }
-
+const predefinedOption: ColourOption = {
+  value: 'patient_status',
+  item: 'TODOS MENOS ALTA',
+  label: 'TODOS MENOS ALTA',
+  color: '#525252',
+  isFixed: true
+}
 const options: Option[] = [
   {
     label: 'TRIAGE LEVEL',
@@ -64,6 +70,13 @@ const options: Option[] = [
         color: '#525252'
       },
       { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
+
+      {
+        value: 'patient_status',
+        item: 'TODOS MENOS ALTA',
+        label: 'TODOS MENOS ALTA',
+        color: '#525252'
+      },
       { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
     ]
   },
@@ -157,6 +170,11 @@ function Patients() {
         return selectedOptions.every((option) => {
           if (option.item === 'TODOS' || option.item === '1-4') {
             return patient[option.value]
+          }
+          if (option.item === 'TODOS MENOS ALTA') {
+            if (patient[option.value] != 'ALTA') {
+              return patient[option.value]
+            }
           } else if (option.item === 'MINE') {
             // Verificar si el paciente tiene el doctor_name igual a 'Dr. Smith'
             return patient.doctor_name === 'Dr. Smith'
