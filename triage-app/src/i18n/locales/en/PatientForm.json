@@ -12,5 +12,6 @@
   "PatientStatusLabel": "Patient Status",
   "AddNewPatientButton": "Add Patient",
   "SavePatientButton": "Save Patient",
-  "CancelButton": "Cancel"
+  "CancelButton": "Cancel",
+  "NurseComent":"Nurse coment"
 }
