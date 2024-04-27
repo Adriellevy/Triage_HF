@@ -5,8 +5,8 @@ import pandas as pd
 import visualization.metrics as mt
 import visualization.visualize as vl
 from flask import Flask, Response, jsonify, request
-from waitress import serve
 from plotly.graph_objects import Figure
+from waitress import serve
 
 #
 #
@@ -25,11 +25,11 @@ from plotly.graph_objects import Figure
 #
 
 app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+app.config["JSON_SORT_KEYS"] = False
 
 
 def get_args() -> Dict[str, Any]:
-    """"
+    """ "
     from_ format: yyyy-mm-dd
     to format: yyyy-mm-dd
     patient_age format: yyyy-01-01 00:00:00
@@ -38,25 +38,25 @@ def get_args() -> Dict[str, Any]:
         any non-empty value if want to be True
     """
     args: Dict[str, Any] = {
-        'from_': request.args.get('from', default=None, type=str),
-        'to': request.args.get('to', default=None, type=str),
-        'patient_age': request.args.get('patientage', default=None, type=str),
-        'patient_isolated': request.args.get(
-            'patientisolated', default=None, type=bool
+        "from_": request.args.get("from", default=None, type=str),
+        "to": request.args.get("to", default=None, type=str),
+        "patient_age": request.args.get("patientage", default=None, type=str),
+        "patient_isolated": request.args.get(
+            "patientisolated", default=None, type=bool
         ),
-        'patient_status': request.args.get('patientstatus', default=None, type=str),
-        'patient_symptom': request.args.get('patientsymptom', default=None, type=str),
-        'patient_healthcare_system': request.args.get(
-            'patienthealthcaresystem', default=None, type=str
+        "patient_status": request.args.get("patientstatus", default=None, type=str),
+        "patient_symptom": request.args.get("patientsymptom", default=None, type=str),
+        "patient_healthcare_system": request.args.get(
+            "patienthealthcaresystem", default=None, type=str
         ),
-        'doctor_full_name': request.args.get('doctorfullname', default=None, type=str),
-        'nurse_full_name': request.args.get('nursefullname', default=None, type=str),
-        'box_type': request.args.get('boxtype', default=None, type=str),
+        "doctor_full_name": request.args.get("doctorfullname", default=None, type=str),
+        "nurse_full_name": request.args.get("nursefullname", default=None, type=str),
+        "box_type": request.args.get("boxtype", default=None, type=str),
     }
     return args
 
 
-@app.route('/')
+@app.route("/")
 def index() -> str:
     return """
             <p>
@@ -70,39 +70,39 @@ def index() -> str:
            """
 
 
-@app.route('/number_patients_date/')
+@app.route("/number_patients_date/")
 def chart_number_patients_date() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
-    df: pd.DataFrame = bf.build_features('Patient', dict)
+    df: pd.DataFrame = bf.build_features("Patient", dict)
 
     if df.empty == True:
         return Response(status=204)
 
     df = bf.build_number_patients_date(df)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    mean: bool = request.args.get("mean", default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        x_title='Fecha de Ingreso',
-        y_title='Cantidad de Pacientes',
-        title='Cantidad de Pacientes por Fecha de Ingreso',
-        color='patient_triage_level',
-        y_txt='pacientes',
+        x="patient_entry_time",
+        y="number_of_patients",
+        x_title="Fecha de Ingreso",
+        y_title="Cantidad de Pacientes",
+        title="Cantidad de Pacientes por Fecha de Ingreso",
+        color="patient_triage_level",
+        y_txt="pacientes",
         mean=mean,
     )
 
     return fig.to_html()
 
 
-@app.route('/number_patients_date/metrics/')
+@app.route("/number_patients_date/metrics/")
 def metrics_number_patients_date() -> Response:
     dict: Dict[str, Any] = get_args()
 
-    df: pd.DataFrame = bf.build_features('Patient', dict)
+    df: pd.DataFrame = bf.build_features("Patient", dict)
 
     if df.empty:
         return Response(status=204)
@@ -110,104 +110,102 @@ def metrics_number_patients_date() -> Response:
     df = bf.build_number_patients_date(df)
 
     data: Dict[str, str] = mt.metrics_data(
-        txt='pacientes',
+        txt="pacientes",
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        z='patient_triage_level',
+        x="patient_entry_time",
+        y="number_of_patients",
+        z="patient_triage_level",
     )
     return jsonify(data)
 
 
-@app.route('/top_queries_date/')
+@app.route("/top_queries_date/")
 def chart_top_queries_date() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
-    df: pd.DataFrame = bf.build_features('Patient', dict)
+    df: pd.DataFrame = bf.build_features("Patient", dict)
 
     if df is None:
         return Response(status=204)
 
-    top: int = request.args.get('top', default=10, type=int)
-    order: str = request.args.get('order', default='', type=str)
+    top: int = request.args.get("top", default=10, type=int)
+    order: str = request.args.get("order", default="", type=str)
 
     df = bf.build_top_queries_date(df, top, order)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    mean: bool = request.args.get("mean", default=False, type=bool)
 
     fig: Figure = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
-        color='patient_triage_level',
-        y_txt='consultas',
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        color="patient_triage_level",
+        y_txt="consultas",
         mean=mean,
     )
 
     return fig.to_html()
 
 
-@app.route('/top_queries_date/metrics/')
+@app.route("/top_queries_date/metrics/")
 def metrics_top_queries_date() -> Response:
     dict: Dict[str, Any] = get_args()
 
-    df = bf.build_features('Patient', dict)
+    df = bf.build_features("Patient", dict)
 
     if df.empty:
         return Response(status=204)
 
-    top: int = request.args.get('top', default=10, type=int)
-    order: str = request.args.get('order', default='', type=str)
+    top: int = request.args.get("top", default=10, type=int)
+    order: str = request.args.get("order", default="", type=str)
 
     df = bf.build_top_queries_date(df, top, order)
 
     data: Dict[str, str] = mt.metrics_data(
-        txt='consultas',
+        txt="consultas",
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        z='patient_triage_level',
+        x="patient_symptom",
+        y="symptom_count",
+        z="patient_triage_level",
     )
 
     return jsonify(data)
 
 
-@app.route('/patients_mean_time_doctor/')
+@app.route("/patients_mean_time_doctor/")
 # http://localhost:5173/stats/patients_mean_time_doctor
 def patiens_mean_time_doctor() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
-    dict['doctor_full_name'] = 'all'
-    
+    dict["doctor_full_name"] = "all"
+
     condition: str = bf.join_filters(dict)
 
-    df = bf.build_features('Patient', dict, condition)
+    df = bf.build_features("Patient", dict, condition)
 
     df = bf.build_patiens_mean_time_doctor(df)
-    
+
     if df.empty == True:
         return Response(status=204)
 
     fig: Figure = vl.line_chart(
         df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        x_title='Doctor',
-        y_title='Tiempo Medio de Estadia',
-        title='Tiempo Medio de Estadia de Pacientes por Doctor',
-        y_txt='Minutos',
-        color='patient_triage_level',
+        x="user_full_name",
+        y="patient_mean_delta_time",
+        x_title="Doctor",
+        y_title="Tiempo Medio de Estadia",
+        title="Tiempo Medio de Estadia de Pacientes por Doctor",
+        y_txt="Minutos",
+        color="patient_triage_level",
     )
 
     return fig.to_html()
 
-# waitress-serve --host 192.168.0.99 app:app  
 
-serve(app, host='0.0.0.0', port=5000)
+# waitress-serve --host 192.168.0.99 app:app
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
