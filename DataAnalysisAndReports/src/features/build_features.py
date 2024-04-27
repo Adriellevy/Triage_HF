@@ -104,11 +104,7 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
 
     return merged_df
 
-def build_patiens_mean_time_doctor() -> pd.DataFrame:
-    dict: Dict[str, str] = {'doctor_full_name': 'yes'}
-    query: str = join_filters(dict)
-    df: pd.DataFrame = md.get_table('Patient', query)
-
+def build_patiens_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
     df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
     df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
     
@@ -116,17 +112,21 @@ def build_patiens_mean_time_doctor() -> pd.DataFrame:
     
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
     
+    df = df.sort_values(by=['patient_triage_level', 'patient_mean_delta_time', 'user_full_name'])
+    
+    print(df)
     return df
 
-def build_features(table_name: str, dictionary: Dict[str, Any]) -> pd.DataFrame:
+def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') -> pd.DataFrame: # type: ignore
     pd.options.display.max_rows = None # type: ignore
     pd.options.display.max_columns = None # type: ignore
     
-    where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
-    join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
+    if condition == '':
+        where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
+        join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
 
-    condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
-
+        condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
+        
     df: pd.DataFrame= md.get_table(table_name, condition)
 
     if df.empty == True:
@@ -137,5 +137,5 @@ def build_features(table_name: str, dictionary: Dict[str, Any]) -> pd.DataFrame:
     df = drop_id_feature(df)
 
     df['patient_triage_level'] = triage_level_style(df)
-
+    
     return df
