@@ -5,7 +5,7 @@ import pandas as pd
 import visualization.metrics as mt
 import visualization.visualize as vl
 from flask import Flask, Response, jsonify, request
-
+from waitress import serve
 from plotly.graph_objects import Figure
 
 #
@@ -204,8 +204,9 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
 
     return fig.to_html()
 
-
 # waitress-serve --host 192.168.0.99 app:app  
+
+serve(app, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     app.run(debug=True)
