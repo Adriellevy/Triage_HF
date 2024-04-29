@@ -1,9 +1,12 @@
+# Typed
+from typing import Dict, Tuple, Any, List
+from numpy import ndarray
+
+# Data handling
 import pandas as pd
 import datetime as dt
 import data.make_dataset as md
 
-from typing import Dict, Tuple, Any, List
-from numpy import ndarray
 
 def filter_dictionary(dictionary: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -104,7 +107,7 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
 
     return merged_df
 
-def build_patiens_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
+def build_patients_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
     df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
     df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
     
@@ -114,7 +117,34 @@ def build_patiens_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
     
     df = df.sort_values(by=['patient_triage_level', 'patient_mean_delta_time', 'user_full_name'])
     
-    print(df)
+    df['patient_mean_delta_time'] = df['patient_mean_delta_time'].apply(lambda x: x.total_seconds()) / 60
+
+    return df
+
+def build_patients_mean_time_nurse(df: pd.DataFrame) -> pd.DataFrame:
+    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
+    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
+    
+    df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
+    
+    df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
+    
+    df = df.sort_values(by=['patient_triage_level', 'patient_mean_delta_time', 'user_full_name'])    
+    
+    return df
+
+def build_patients_mean_time_date(df: pd.DataFrame) -> pd.DataFrame:
+    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
+    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
+    
+    df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
+    
+    df['patient_entry_time'] = df['patient_entry_time'].dt.date
+    
+    df = df.groupby(['patient_entry_time', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
+    
+    df = df.sort_values(by=['patient_triage_level', 'patient_entry_time', 'patient_triage_level'])
+    
     return df
 
 def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') -> pd.DataFrame: # type: ignore
@@ -128,6 +158,8 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
         condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
     df: pd.DataFrame= md.get_table(table_name, condition)
+    
+    print(df)
 
     if df.empty == True:
         return pd.DataFrame()
