@@ -1,8 +1,13 @@
-import pandas as pd
-import mysql.connector
+# Typed
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection_cext import CMySQLConnection
 from typing import Union
+
+# Data handling
+import pandas as pd
+
+# Database handling
+import mysql.connector
 
 def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
     try:

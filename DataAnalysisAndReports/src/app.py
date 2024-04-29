@@ -1,32 +1,34 @@
+# Typed
 from typing import Any, Dict, Union
-
-import features.build_features as bf
-import pandas as pd
-import visualization.metrics as mt
-import visualization.visualize as vl
-from flask import Flask, Response, jsonify, request
-from waitress import serve
 from plotly.graph_objects import Figure
 
-#
-#
+# Data handling
+import pandas as pd
+
+# Modules
+import features.build_features as bf
+import visualization.metrics as mt
+import visualization.visualize as vl
+
+# Server
+from flask import Flask, Response, jsonify, request
+# from waitress import serve
+
+
+
 # COSAS QUE ME GUSTARIA AGREGAR QUE AHORA NO SON POSIBLES
 # - AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE 'Y'
 # - AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
+# - AGREGAR EVENTO DE CLIC EN GRAFICOS
 
 # GENERAL
-# -AGREGAR EVENTO DE CLIC EN GRAFICOS
-# - AGREGAR GRAFICO TIEMPO MEDIO DE ESTADIA DEL PACIENTE POR CADA MEdictO
-# - AGREGAR GRAFICO TIEMPO MEDIO DE ESTADIA DEL PACIENTE POR CADA ENFERMERO
-#
-#
-#
-#
+# - EN ESTADISTICAS: HACER QUE NO MUESTRE DECIMALES CUANDO NO ES NECESARIO
+# - ESPERAR A LUQUITAS PARA QUE ACTUALICE EL EXIT_TIME DE LOS PACIENTES Y PROBAR LOS GRAFICOS CORRESPONDIENTES
+# Tiempo medio de estadia de pacientes por fecha
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
-
 
 def get_args() -> Dict[str, Any]:
     """"
@@ -60,12 +62,16 @@ def get_args() -> Dict[str, Any]:
 def index() -> str:
     return """
             <p>
-            No deberias estar aca :( <br>
-            Accede a algun grafico o metrica mediante las siguientes URL: <br>
-            http://127.0.0.1:5000/number_patients_date/ <br>
-            http://127.0.0.1:5000/number_patients_date/metrics/ <br>
-            http://127.0.0.1:5000/top_queries_date/ <br>
-            http://127.0.0.1:5000/top_queries_date/metrics/
+            Accede a algún gráfico o métrica mediante las siguientes rutas: <br>
+            <b> Gráficos </b> <br>
+            /number_patients_date/ <br>
+            /top_queries_date/ <br>
+            /patients_mean_time_doctor/ <br>
+            /patients_mean_time_nurse/ <br>
+            <br>
+            <b> Métricas </b> <br>
+            /number_patients_date/metrics/ <br>
+            /top_queries_date/metrics/ <br>
             </p>
            """
 
@@ -141,7 +147,7 @@ def chart_top_queries_date() -> Union[str, Response]:
         y='symptom_count',
         x_title='Motivo de Consulta',
         y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
+        title='Motivos de Consulta más Frecuentes',
         color='patient_triage_level',
         y_txt='consultas',
         mean=mean,
@@ -176,7 +182,6 @@ def metrics_top_queries_date() -> Response:
 
 
 @app.route('/patients_mean_time_doctor/')
-# http://localhost:5173/stats/patients_mean_time_doctor
 def patiens_mean_time_doctor() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -186,27 +191,131 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
 
     df = bf.build_features('Patient', dict, condition)
 
-    df = bf.build_patiens_mean_time_doctor(df)
-    
     if df.empty == True:
         return Response(status=204)
-
+    
+    df = bf.build_patients_mean_time_doctor(df)
+    
     fig: Figure = vl.line_chart(
         df=df,
         x='user_full_name',
         y='patient_mean_delta_time',
         x_title='Doctor',
-        y_title='Tiempo Medio de Estadia',
-        title='Tiempo Medio de Estadia de Pacientes por Doctor',
+        y_title='Tiempo Medio de Estadía',
+        title='Tiempo Medio de Estadía de Pacientes por Doctor',
         y_txt='Minutos',
         color='patient_triage_level',
     )
 
     return fig.to_html()
 
+@app.route('/patients_mean_time_doctor/metrics/')
+def metrics_patients_mean_time_doctor() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    dict['doctor_full_name'] = 'all'
+    
+    condition: str = bf.join_filters(dict)
+
+    df = bf.build_features('Patient', dict, condition)
+
+    if df.empty == True:
+        return Response(status=204)
+    
+    df = bf.build_patients_mean_time_doctor(df)
+    
+    data: Dict[str, str] = mt.metrics_data(
+        txt='medicos',
+        df=df,
+        x='user_full_name',
+        y='patient_mean_delta_time',
+        z='patient_triage_level',
+    )
+
+    return jsonify(data)
+
+@app.route('/patients_mean_time_nurse/')
+def patiens_mean_time_nurse() -> Union[str, Response]:
+    dict: Dict[str, Any] = get_args()
+
+    dict['nurse_full_name'] = 'all'
+    
+    condition: str = bf.join_filters(dict)
+
+    df = bf.build_features('Patient', dict, condition)
+
+    if df.empty == True:
+        return Response(status=204)
+    
+    df = bf.build_patients_mean_time_nurse(df)
+    
+    fig: Figure = vl.line_chart(
+        df=df,
+        x='user_full_name',
+        y='patient_mean_delta_time',
+        x_title='Enfermero',
+        y_title='Tiempo Medio de Estadía',
+        title='Tiempo Medio de Estadía de Pacientes por Enfermero',
+        y_txt='Minutos',
+        color='patient_triage_level',
+    )
+
+    return fig.to_html()
+
+@app.route('/patients_mean_time_nurse/metrics/')
+def metrics_patients_mean_time_nurse() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    dict['nurse_full_name'] = 'all'
+    
+    condition: str = bf.join_filters(dict)
+
+    df = bf.build_features('Patient', dict, condition)
+
+    if df.empty == True:
+        return Response(status=204)
+    
+    df = bf.build_patients_mean_time_doctor(df)
+    
+    data: Dict[str, str] = mt.metrics_data(
+        txt='enfermeros',
+        df=df,
+        x='user_full_name',
+        y='patient_mean_delta_time',
+        z='patient_triage_level',
+    )
+
+    return jsonify(data)
+
+@app.route('/patients_mean_time_date/')
+def patients_mean_time_date() -> Union[str, Response]:
+    dict: Dict[str, Any] = get_args()
+
+    df: pd.DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty == True:
+        return Response(status=204)
+
+    df = bf.build_patients_mean_time_date(df)
+
+    mean: bool = request.args.get('mean', default=False, type=bool)
+
+    fig: Figure = vl.line_chart(
+        df=df,
+        x='patient_entry_time',
+        y='patient_mean_delta_time',
+        x_title='Fecha de Ingreso',
+        y_title='Tiempo Medio de Estadía',
+        title='Tiempo Medio de Estadía de Pacientes por Fecha de Ingreso',
+        color='patient_triage_level',
+        y_txt='minutos',
+        mean=mean,
+    )
+
+    return fig.to_html()
 # waitress-serve --host 192.168.0.99 app:app  
 
-serve(app, host='0.0.0.0', port=5000)
+# serve(app, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     app.run(debug=True)

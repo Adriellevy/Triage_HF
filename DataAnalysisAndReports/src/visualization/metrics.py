@@ -1,5 +1,8 @@
-import pandas as pd
+# Typed
 from typing import Any, Dict
+
+# Data handling
+import pandas as pd
 
 def calculate_total(df: pd.DataFrame, y: str) -> int:
     return df[y].sum()
@@ -36,7 +39,7 @@ def mean(df: pd.DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     return string
     
 def min(df: pd.DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
-    string = f'El minimo de {txt} '
+    string = f'El mínimo de {txt} '
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
@@ -44,7 +47,7 @@ def min(df: pd.DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -
     return string
 
 def max(df: pd.DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
-    string = f'El maximo de {txt} '
+    string = f'El máximo de {txt} '
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
