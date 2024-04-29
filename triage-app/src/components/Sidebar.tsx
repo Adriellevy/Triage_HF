@@ -85,6 +85,11 @@ function Sidebar() {
           icon: StatsIcon,
           title: t('StatsReasons'),
           linkUrl: '/stats/top_consultas_fecha'
+        },
+        {
+          icon: StatsIcon,
+          title: t('MeanTimePatientPerDoctor'),
+          linkUrl: '/stats/patients_mean_time_doctor'
         }
       ]
     },
