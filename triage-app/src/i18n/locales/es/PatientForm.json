@@ -12,5 +12,6 @@
   "PatientStatusLabel": "Estado del Paciente",
   "AddNewPatientButton": "Agregar Paciente",
   "SavePatientButton": "Guardar Paciente",
-  "CancelButton": "Cancelar"
+  "CancelButton": "Cancelar",
+  "NurseComent":"Comentario Enfermero"
 }

@@ -76,7 +76,10 @@ function App() {
                       <>
                         <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
                         <Route path='/stats/top_consultas_fecha' element={<StatsTopConsultas />} />
-                        <Route path='/stats/patients_mean_time_doctor' element={<StatsPatientTriage />} />
+                        <Route
+                          path='/stats/patients_mean_time_doctor'
+                          element={<StatsPatientTriage />}
+                        />
                         <Route path='/settings/user' element={<UserSettings />} />
                         <Route path='/settings/box' element={<BoxSettings />} />
                       </>

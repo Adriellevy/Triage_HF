@@ -45,11 +45,13 @@ function PatientForm() {
     patient_triage_level: '',
     patient_isolated: false,
     patient_status: 'AFUERA',
+    patient_healthcare_system: 'default',
     patient_symptom: '',
     //patient_medication: '',
     doctor_id: '',
     nurse_id: '',
     box_id: null
+    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
@@ -70,6 +72,7 @@ function PatientForm() {
     doctor_id: '',
     nurse_id: '',
     box_id: null
+    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   useEffect(() => {
@@ -718,8 +721,18 @@ function PatientForm() {
             onChange={handleCheckbox}
           />
         </div>
-
-        <div className='m sm:disabled'></div>
+        <div>
+          <Label htmlFor='nurse_coment'>{t('NurseComent')}</Label>
+          <Input
+            error_active={ErrorsForm.nurse_coment}
+            type='text'
+            id='nurse_coment'
+            name='nurse_coment'
+            value={formInterfaz.nurse_coment}
+            onChange={handleInputChange}
+            // required
+          />
+        </div>
 
         <div>
           <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
