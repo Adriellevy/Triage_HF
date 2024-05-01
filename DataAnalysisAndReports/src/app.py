@@ -23,9 +23,7 @@ from flask import Flask, Response, jsonify, request
 # - AGREGAR EVENTO DE CLIC EN GRAFICOS
 
 # GENERAL
-# - EN ESTADISTICAS: HACER QUE NO MUESTRE DECIMALES CUANDO NO ES NECESARIO
 # - ESPERAR A LUQUITAS PARA QUE ACTUALICE EL EXIT_TIME DE LOS PACIENTES Y PROBAR LOS GRAFICOS CORRESPONDIENTES
-# Tiempo medio de estadia de pacientes por fecha
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -313,6 +311,28 @@ def patients_mean_time_date() -> Union[str, Response]:
     )
 
     return fig.to_html()
+
+@app.route('/patients_mean_time_date/metrics/')
+def metrics_patients_mean_time_date() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    df = bf.build_features('Patient', dict)
+
+    if df.empty == True:
+        return Response(status=204)
+    
+    df = bf.build_patients_mean_time_date(df)
+    
+    data: Dict[str, str] = mt.metrics_data(
+        txt='minutos',
+        df=df,
+        x='patient_entry_time',
+        y='patient_mean_delta_time',
+        z='patient_triage_level',
+    )
+
+    return jsonify(data)    
+
 # waitress-serve --host 192.168.0.99 app:app  
 
 # serve(app, host='0.0.0.0', port=5000)
