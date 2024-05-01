@@ -13,5 +13,6 @@
   "AddNewPatientButton": "Add Patient",
   "SavePatientButton": "Save Patient",
   "CancelButton": "Cancel",
-  "NurseComent":"Nurse coment"
+  "NurseComent":"Nurse coment",
+  "doctor_procedure":"Doctor Indications" 
 }

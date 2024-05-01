@@ -13,5 +13,6 @@
   "AddNewPatientButton": "Agregar Paciente",
   "SavePatientButton": "Guardar Paciente",
   "CancelButton": "Cancelar",
-  "NurseComent":"Comentario Enfermero"
+  "NurseComent":"Comentario Enfermero",
+  "doctor_procedure":"Indicaciones del Doctor" 
 }
