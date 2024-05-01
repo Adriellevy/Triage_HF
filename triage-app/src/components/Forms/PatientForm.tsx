@@ -50,8 +50,9 @@ function PatientForm() {
     //patient_medication: '',
     doctor_id: '',
     nurse_id: '',
-    box_id: null
+    box_id: null,
     //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
+    nurse_comment:''
   })
 
   // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
@@ -525,7 +526,8 @@ function PatientForm() {
 
             setformInterfaz({
               patient_name: '',
-              patient_age: '2000-01-01',
+              patient_age: '',
+              // patient_age: '2000-01-01',
               patient_entry_time: null,
               patient_exit_time: null,
               patient_triage_time: new Date(),
@@ -536,7 +538,8 @@ function PatientForm() {
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
-              box_id: ''
+              box_id: '',
+              nurse_comment:''
             })
             setFormData({
               patient_name: '',
@@ -551,7 +554,8 @@ function PatientForm() {
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
-              box_id: ''
+              box_id: '',
+              nurse_comment:''
             })
             setChecked(false)
             setSelectedDate(null)
@@ -601,6 +605,8 @@ function PatientForm() {
       box_id: { value: null, message: 'Seleccione un box válido' }
     })
   }
+
+  console.log(formInterfaz);
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -722,13 +728,13 @@ function PatientForm() {
           />
         </div>
         <div>
-          <Label htmlFor='nurse_coment'>{t('NurseComent')}</Label>
+          <Label htmlFor='nurse_comment'>{t('NurseComent')}</Label>
           <Input
-            error_active={ErrorsForm.nurse_coment}
+            error_active={ErrorsForm.nurse_comment}
             type='text'
-            id='nurse_coment'
-            name='nurse_coment'
-            value={formInterfaz.nurse_coment}
+            id='nurse_comment'
+            name='nurse_comment'
+            value={formInterfaz.nurse_comment}
             onChange={handleInputChange}
             // required
           />
@@ -743,18 +749,18 @@ function PatientForm() {
             value={formInterfaz.box_id ? formInterfaz.box_id : ''}
             onChange={handleInputChange}
           >
-            <option value='' disabled>
+            <option value='' disabled className='bg-white opacity-100'>
               Seleccionar box
             </option>
-            <option value=''>AFUERA</option>
+            <option value='' className='bg-white opacity-100'>AFUERA</option>
             {BoxOcupiedByPatient?.map((option) => (
-              <option key={option.box_id} value={option.box_id} disabled>
+              <option key={option.box_id} value={option.box_id} disabled className='bg-white opacity-100'>
                 {option.box_code + ': ' + option.box_type}
               </option>
             ))}
 
             {BoxesOptions?.map((option) => (
-              <option key={option.box_id} value={option.box_id}>
+              <option key={option.box_id} value={option.box_id} className='bg-white opacity-100'>
                 {option.box_code + ': ' + option.box_type}
               </option>
             ))}
@@ -770,11 +776,11 @@ function PatientForm() {
             value={formInterfaz.doctor_id}
             onChange={handleInputChange}
           >
-            <option value='' disabled>
+            <option value='' disabled className='bg-white opacity-100'>
               Seleccionar doctor
             </option>
             {DoctorOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name}>
+              <option key={option.user_id} value={option.user_name} className='bg-white opacity-100'>
                 {option.user_name}
               </option>
             ))}
@@ -790,11 +796,11 @@ function PatientForm() {
             value={formInterfaz.nurse_id}
             onChange={handleInputChange}
           >
-            <option value='' disabled>
+            <option value='' disabled className='bg-white opacity-100'>
               Seleccionar enfermero
             </option>
             {NurseOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name}>
+              <option key={option.user_id} value={option.user_name} className='bg-white opacity-100'>
                 {option.user_name}
               </option>
             ))}
