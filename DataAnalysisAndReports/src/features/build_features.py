@@ -108,10 +108,14 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
     return merged_df
 
 def build_patients_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
-    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
-    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
+    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'], errors='coerce')
+    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'], errors='coerce')
     
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
+    
+    print(df['patient_exit_time'])
+    print(df['patient_entry_time'])
+    print(df['patient_delta_time'])
     
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
     
@@ -158,8 +162,6 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
         condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
     df: pd.DataFrame= md.get_table(table_name, condition)
-    
-    print(df)
 
     if df.empty == True:
         return pd.DataFrame()
