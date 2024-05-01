@@ -52,7 +52,7 @@ function PatientForm() {
     nurse_id: '',
     box_id: null,
     //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
-    nurse_comment:''
+    nurse_comment: ''
   })
 
   // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
@@ -535,11 +535,12 @@ function PatientForm() {
               patient_status: '',
               patient_isolated: false,
               patient_symptom: '',
+              patient_healthcare_system: 'default',
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
               box_id: '',
-              nurse_comment:''
+              nurse_comment: ''
             })
             setFormData({
               patient_name: '',
@@ -550,12 +551,13 @@ function PatientForm() {
               patient_triage_level: '',
               patient_status: '',
               patient_symptom: '',
+              patient_healthcare_system: 'default',
               patient_isolated: false,
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
               box_id: '',
-              nurse_comment:''
+              nurse_comment: ''
             })
             setChecked(false)
             setSelectedDate(null)
@@ -606,7 +608,8 @@ function PatientForm() {
     })
   }
 
-  console.log(formInterfaz);
+  console.log(formInterfaz)
+  console.log(formData)
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
@@ -752,9 +755,16 @@ function PatientForm() {
             <option value='' disabled className='bg-white opacity-100'>
               Seleccionar box
             </option>
-            <option value='' className='bg-white opacity-100'>AFUERA</option>
+            <option value='' className='bg-white opacity-100'>
+              AFUERA
+            </option>
             {BoxOcupiedByPatient?.map((option) => (
-              <option key={option.box_id} value={option.box_id} disabled className='bg-white opacity-100'>
+              <option
+                key={option.box_id}
+                value={option.box_id}
+                disabled
+                className='bg-white opacity-100'
+              >
                 {option.box_code + ': ' + option.box_type}
               </option>
             ))}
@@ -780,7 +790,11 @@ function PatientForm() {
               Seleccionar doctor
             </option>
             {DoctorOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} className='bg-white opacity-100'>
+              <option
+                key={option.user_id}
+                value={option.user_name}
+                className='bg-white opacity-100'
+              >
                 {option.user_name}
               </option>
             ))}
@@ -800,7 +814,11 @@ function PatientForm() {
               Seleccionar enfermero
             </option>
             {NurseOptions?.map((option) => (
-              <option key={option.user_id} value={option.user_name} className='bg-white opacity-100'>
+              <option
+                key={option.user_id}
+                value={option.user_name}
+                className='bg-white opacity-100'
+              >
                 {option.user_name}
               </option>
             ))}
