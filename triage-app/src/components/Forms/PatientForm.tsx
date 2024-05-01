@@ -588,7 +588,9 @@ function PatientForm() {
     //patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
     doctor_id: { value: null, message: 'Seleccione un doctor válido' },
     nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
-    box_id: { value: null, message: 'Seleccione un box válido' }
+    box_id: { value: null, message: 'Seleccione un box válido' },
+    patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
+
   })
   const resetErrors = () => {
     setErrorsForm({
@@ -604,7 +606,9 @@ function PatientForm() {
       //patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
       doctor_id: { value: null, message: 'Seleccione un doctor válido' },
       nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
-      box_id: { value: null, message: 'Seleccione un box válido' }
+      box_id: { value: null, message: 'Seleccione un box válido' },
+    patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
+
     })
   }
 
@@ -634,6 +638,7 @@ function PatientForm() {
             // required
           />
         </div>
+        
 
         <div>
           <Label htmlFor='patient_age'>
@@ -731,18 +736,19 @@ function PatientForm() {
           />
         </div>
         <div>
-          <Label htmlFor='nurse_comment'>{t('NurseComent')}</Label>
+
+          <Label htmlFor='patient_healthcare_system'>{t('patient_healthcare_system')}</Label>
           <Input
-            error_active={ErrorsForm.nurse_comment}
+            error_active={ErrorsForm.patient_healthcare_system}
             type='text'
-            id='nurse_comment'
-            name='nurse_comment'
-            value={formInterfaz.nurse_comment}
+            id='patient_healthcare_system'
+            name='patient_healthcare_system'
+            value={formInterfaz.patient_healthcare_system}
             onChange={handleInputChange}
             // required
           />
         </div>
-
+        
         <div>
           <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
           <Select
@@ -825,6 +831,20 @@ function PatientForm() {
           </Select>
         </div>
 
+        <div>
+          <Label htmlFor='nurse_comment'>{t('NurseComent')}</Label>
+          <Input
+            error_active={ErrorsForm.nurse_comment}
+            type='text'
+            id='nurse_comment'
+            name='nurse_comment'
+            value={formInterfaz.nurse_comment}
+            onChange={handleInputChange}
+            // required
+          />
+        </div>
+
+
         <div className='flex items-end gap-4 '>
           <Button type='submit' color='green' onClick={handleButtonClick}>
             {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
@@ -837,6 +857,7 @@ function PatientForm() {
             </Link>
           )}
         </div>
+        
       </form>
     </div>
   )

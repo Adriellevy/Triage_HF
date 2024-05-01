@@ -25,7 +25,7 @@ export function Input(props: PropsInput) {
     <>
       <input
         onBlur={handleBlur}
-        className={`w-full p-2 border rounded-md ${errorBorder} ${
+        className={`w-full p-2 border rounded-md border-gray-300 ${errorBorder} ${
           isFilled ? 'opacity-60 bg-gray-400' : ''
         }`}
         {...props}
