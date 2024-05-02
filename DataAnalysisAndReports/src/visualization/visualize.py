@@ -1,4 +1,3 @@
-# Chart
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -42,8 +41,7 @@ def update_traces_lines(fig, y_txt: str):
 
 def update_traces_bar(fig, y_txt: str):
     fig.update_layout(hovermode='x unified')    
-    fig.update_traces(hovertemplate='<b>%{y}' + f' {y_txt}<b>',
-                      width=0.325)
+    fig.update_traces(hovertemplate='<b>%{y}' + f' {y_txt}<b>')  
     
 def add_total_line(fig, df, x, y):
     df_sum = df.groupby(x)[y].sum().reset_index(name=y)
