@@ -121,9 +121,6 @@ export class PatientController {
           result.data.patient_entry_time,
         )
       }
-      if (result.data.patient_exit_time) {
-        result.data.patient_exit_time = new Date(result.data.patient_exit_time)
-      }
       const UserNuevo = result.data
       const cambios = []
       const tiempoActual = new Date()
@@ -132,19 +129,9 @@ export class PatientController {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const key in UserNuevo) {
-        if (key === 'patient_exit_time') {
-          cambios.push({
-            patient_id: UserAntiguo.patient_id,
-            updated_column: key,
-            old_value: 'null',
-            new_value: UserNuevo[key],
-            update_date: tiempoActual,
-            user_id: userID,
-          })
-        } else if (
+        if (
           key === 'patient_triage_time' ||
           key === 'patient_entry_time' ||
-          key === 'patient_exit_time' ||
           key === 'patient_age'
         ) {
           if (UserAntiguo[key].getTime() !== UserNuevo[key].getTime()) {
