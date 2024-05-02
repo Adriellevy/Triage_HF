@@ -57,7 +57,8 @@ export const updatePatient = async (
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        patient_status: updatedData.patient_status
+        patient_status: updatedData.patient_status,
+        patient_exit_time: new Date()
       })
     })
     if (!response.ok) {

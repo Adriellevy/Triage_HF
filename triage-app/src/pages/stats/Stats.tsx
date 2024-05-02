@@ -147,8 +147,10 @@ function Stats() {
       </div>
       {searchPerformed && (
         <iframe
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          src={`http://localhost:5000/?${new URLSearchParams(params as any).toString()}`}
+          src={`http://${import.meta.env.VITE_API_URL}:5000/?${new URLSearchParams(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            params as any
+          ).toString()}`}
           title='Gráfico'
           width='100%'
           height='100%'

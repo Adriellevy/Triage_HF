@@ -14,5 +14,5 @@
   "SavePatientButton": "Guardar Paciente",
   "CancelButton": "Cancelar",
   "NurseComent":"Comentario Enfermero",
-  "doctor_procedure":"Indicaciones del Doctor" 
+  "patient_healthcare_system":"Cobertura Médica"
 }

@@ -66,17 +66,12 @@ function App() {
                     <Route path='/' element={<GuidedEntry />} />
                     <Route path='/guidedentry' element={<GuidedEntry />} />
                     <Route path='/patients' element={<Patients />} />
-                    <Route path='/patients/:patient_id' element={<PatientDetail />} />{' '}
-                    {
-                      //le paso el parametro del tipo de usario para saber que ventana de edicion de paciente cargar
-                    }
-                    <Route
-                      path='/edit_patient/:edditingPatientID'
-                      element={<PatientEdit user_tipe={role} />}
-                    />
+                    <Route path='/patients/:patient_id' element={<PatientDetail />} />
+                    <Route path='/edit_patient/:edditingPatientID' element={<PatientEdit />} />
                     <Route path='/users' element={<UserDetail />} />
                     <Route path='/users/:user_id' element={<UserDetail />} />
                     <Route path='/boxes' element={<Boxes />} />
+
                     {role === UserRole.HOSPITAL && (
                       <>
                         <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
@@ -89,6 +84,7 @@ function App() {
                         <Route path='/settings/box' element={<BoxSettings />} />
                       </>
                     )}
+
                     <Route path='*' element={<NotFound />} />
                   </Routes>
                 </div>
