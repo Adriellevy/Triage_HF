@@ -102,7 +102,6 @@ function PatientDetail() {
       Patient.patient_triage_time = new Date(Patient.patient_triage_time)
       Patient.patient_entry_time = new Date(Patient.patient_entry_time)
       Patient.patient_age = new Date(Patient.patient_age)
-      Patient.patient_exit_time = new Date()
       console.log('paciente a actualizar ')
       console.log(Patient)
       updatePatient(Patient.patient_id, Patient)

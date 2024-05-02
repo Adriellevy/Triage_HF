@@ -6,7 +6,6 @@
   "StatsPatientsDate": "Number of patients by date",
   "StatsPatientsTriage": "Number of patients by triage",
   "StatsReasons": "Reasons for consultation by date",
-  "MeanTimePatientPerDoctor":"Mean time of patient per doctor",
   "Settings": "Settings",
   "UsersSettings": "Users Settings",
   "BoxSettings": "Box Settings",

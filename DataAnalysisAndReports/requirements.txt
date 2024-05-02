@@ -7,7 +7,6 @@ pandas
 
 # WEB APP
 flask
-waitress
 
 # CHART
 plotly

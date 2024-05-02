@@ -14,5 +14,5 @@
   "SavePatientButton": "Save Patient",
   "CancelButton": "Cancel",
   "NurseComent":"Nurse coment",
-  "patient_healthcare_system":"Health Insurance"
+  "doctor_procedure":"Doctor Indications" 
 }
