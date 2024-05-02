@@ -6,6 +6,7 @@
   "StatsPatientsDate": "Cantidad de pacientes",
   "StatsPatientsTriage": "Cantidad de pacientes",
   "StatsReasons": "Motivos de consulta",
+  "MeanTimePatientPerDoctor":"Tiempo medio pacientes por doctor",
   "Settings": "Configuración",
   "UsersSettings": "Configuración de usuarios",
   "BoxesSettings": "Configuración de cajas",
