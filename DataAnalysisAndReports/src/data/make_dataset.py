@@ -9,7 +9,7 @@ def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
         connection: Union[MySQLConnection, CMySQLConnection] = mysql.connector.connect(
             host='localhost',
             user='root',
-            password='',
+            password='admin',
             database='Triage_db',
             charset='latin1'
         ) 
