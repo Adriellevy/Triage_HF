@@ -1,20 +1,21 @@
 # Typed
-from mysql.connector.connection import MySQLConnection
-from mysql.connector.connection_cext import CMySQLConnection
 from typing import Union
-
-# Data handling
-import pandas as pd
 
 # Database handling
 import mysql.connector
+
+# Data handling
+import pandas as pd
+from mysql.connector.connection import MySQLConnection
+from mysql.connector.connection_cext import CMySQLConnection
+
 
 def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
     try:
         connection: Union[MySQLConnection, CMySQLConnection] = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="",
+            password="admin",
             database="Triage_db",
             charset="latin1",
         )
