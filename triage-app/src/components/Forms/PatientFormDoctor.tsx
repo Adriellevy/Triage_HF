@@ -57,7 +57,8 @@ function PatientFormDoctor() {
     //patient_medication: '',
     doctor_id: '',
     nurse_id: '',
-    box_id: null
+    box_id: null,
+    nurse_comment: ''
     //doctor_procedure: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
@@ -79,7 +80,8 @@ function PatientFormDoctor() {
     doctor_id: '',
     nurse_id: '',
     box_id: null
-    //doctor_procedure: '' cuando este listo el backend para mandar los comentarios descomentar linea
+    //doctor_procedure: '' decomentar cuando este listo el backend para mandar los comentarios descomentar linea
+    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   useEffect(() => {
@@ -309,7 +311,6 @@ function PatientFormDoctor() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name
     let value = e.target.value
-
     // Get the selected option based on the entered value
     // Check if it's the hidden input
 
@@ -438,6 +439,25 @@ function PatientFormDoctor() {
           }
         })
       }
+    } else if (name === 'doctor_procedure') {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: value
+      })
+
+      value = e.target.value + ' /e: ' + ListaEstudiosSolicitados
+
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
     } else {
       setformInterfaz({
         ...formInterfaz,
@@ -465,6 +485,7 @@ function PatientFormDoctor() {
         })
       }
     }
+    console.log(formData)
     ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
   }
 
@@ -614,6 +635,7 @@ function PatientFormDoctor() {
     nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
     box_id: { value: null, message: 'Seleccione un box válido' }
   })
+
   const resetErrors = () => {
     setErrorsForm({
       patient_name: { value: null, message: 'Escriba un nombre válido' },
@@ -721,33 +743,7 @@ function PatientFormDoctor() {
                 ))}
               </Select>
             </div>
-
-            <div className='flex items-end gap-4 '>
-              <Label htmlFor='doctor_procedure'>{t('doctor_procedure')}</Label>
-              <Input
-                error_active={ErrorsForm.doctor_procedure}
-                type='text'
-                id='doctor_procedure'
-                name='doctor_procedure'
-                value={formInterfaz.doctor_procedure}
-                onChange={handleInputChange}
-                // required
-              />
-            </div>
-            <div className='flex items-end gap-4 '>
-              <Button type='submit' color='green' onClick={handleButtonClick}>
-                {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
-              </Button>
-              {edditingPatient && (
-                <Link to={`/patients`}>
-                  <Button type='button' color='grey'>
-                    {t('CancelButton')}
-                  </Button>
-                </Link>
-              )}
-            </div>
           </form>
-
           <div className='flex items-end gap-8 my-8'>
             {!dropdownOpen && !loading && (
               <Button wfull color='yellow' onClick={toggleDropdown}>
@@ -769,14 +765,40 @@ function PatientFormDoctor() {
               </div>
             )}
           </div>
-          <div>
-            {dropdownOpen && !loading && (
-              <Button wfull color='blue' onClick={sendRequest}>
-                Send Request
-              </Button>
+          <form>
+            <div className='flex items-end gap-4 '>
+              <Label htmlFor='doctor_procedure'>{t('doctor_procedure')}</Label>
+              <Input
+                error_active={ErrorsForm.doctor_procedure}
+                type='text'
+                id='doctor_procedure'
+                name='doctor_procedure'
+                value={formInterfaz.doctor_procedure}
+                onChange={handleInputChange}
+                // required
+              />
+            </div>
+            {!loading && (
+              <div className='flex items-end gap-4 m-2'>
+                <Button type='submit' color='green' onClick={handleButtonClick}>
+                  {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
+                </Button>
+                {edditingPatient && (
+                  <Link to={`/patients`}>
+                    <Button type='button' color='grey'>
+                      {t('CancelButton')}
+                    </Button>
+                  </Link>
+                )}
+              </div>
             )}
-          </div>
-          {loading && <LoaderSpin />}
+
+            {loading && (
+              <div className='m-2'>
+                <LoaderSpin />
+              </div>
+            )}
+          </form>
         </div>
       ) : (
         <div></div>
