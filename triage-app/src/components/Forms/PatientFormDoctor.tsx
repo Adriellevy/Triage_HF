@@ -751,7 +751,7 @@ function PatientFormDoctor() {
           <div className='flex items-end gap-8 my-8'>
             {!dropdownOpen && !loading && (
               <Button wfull color='yellow' onClick={toggleDropdown}>
-                <FontAwesomeIcon icon={faFlaskVial} />
+                <label>Solicitar Procedimiento </label>
                 <FontAwesomeIcon icon={faChevronDown} />
               </Button>
             )}
