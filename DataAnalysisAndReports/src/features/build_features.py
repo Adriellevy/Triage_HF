@@ -1,6 +1,7 @@
 # Typed
 from typing import Dict, Tuple, Any, List
 from numpy import ndarray
+from pandas import DataFrame
 
 # Data handling
 import pandas as pd
@@ -11,7 +12,7 @@ import data.make_dataset as md
 def filter_dictionary(dictionary: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
 
-def date_filters(df: pd.DataFrame, dictionary: Dict[str, Any]) -> pd.DataFrame:
+def date_filters(df:DataFrame, dictionary: Dict[str, Any]) ->DataFrame:
     if (dictionary['from_'] == None and dictionary['to'] == None):
         dictionary['from_'], dictionary['to'] = get_last_week(df)
     else:
@@ -22,16 +23,16 @@ def date_filters(df: pd.DataFrame, dictionary: Dict[str, Any]) -> pd.DataFrame:
 
     return df
 
-def drop_id_feature(df: pd.DataFrame) -> pd.DataFrame:
+def drop_id_feature(df:DataFrame) ->DataFrame:
     return df.iloc[:, 1:]
 
-def triage_level_style(df: pd.DataFrame) -> pd.Series:
+def triage_level_style(df:DataFrame) -> pd.Series:
     df['patient_triage_level'] = df['patient_triage_level'].apply(lambda x: str(int(float(x))))
     df = df[df['patient_triage_level'] != '0']
     mapping: Dict[str, str] = {'1': 'Nivel I', '2': 'Nivel II', '3': 'Nivel III', '4': 'Nivel IV'}
     return df['patient_triage_level'].map(mapping)
 
-def get_last_week(df: pd.DataFrame) -> Tuple[pd.Timestamp, pd.Timestamp]:
+def get_last_week(df:DataFrame) -> Tuple[pd.Timestamp, pd.Timestamp]:
     to: pd.Timestamp = df['patient_entry_time'].max()
     from_: pd.Timestamp = to.replace(hour=0, minute=0) - dt.timedelta(days=6)
     return (from_, to)
@@ -68,17 +69,17 @@ def join_filters(dictionary: Dict[str, Any]) -> str:
     else:
         return query[:-1]
 
-def build_number_patients_date(df: pd.DataFrame) -> pd.DataFrame:
+def build_number_patients_date(df:DataFrame, groupby: str) ->DataFrame:
     df['patient_entry_time'] = df['patient_entry_time'].dt.date
-    df = df.groupby(['patient_entry_time', 'patient_triage_level'], sort=False).size().reset_index(name='number_of_patients') # type: ignore
+    df = df.groupby(['patient_entry_time', groupby], sort=False).size().reset_index(name='number_of_patients') # type: ignore
 
     df.sort_values(by='patient_entry_time', inplace=True)
 
-    df = df.sort_values(by=['patient_triage_level', 'patient_entry_time', 'number_of_patients'])
+    df = df.sort_values(by=[groupby, 'patient_entry_time', 'number_of_patients'])
 
     return df
 
-def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.DataFrame:
+def build_top_queries_date(df:DataFrame, top: int=10, order: str='') ->DataFrame:
     df = df.groupby(['patient_symptom', 'patient_triage_level']).size().reset_index(name='symptom_count') # type: ignore
 
     top_reasons: pd.Index[str] = df.groupby('patient_symptom')['symptom_count'].sum().nlargest(top).index
@@ -91,9 +92,9 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
         for triage_level in all_triage_levels:
             all_combinations.append({'patient_symptom': symptom, 'patient_triage_level': triage_level})
 
-    all_combinations_df: pd.DataFrame = pd.DataFrame(all_combinations)
+    all_combinations_df:DataFrame =DataFrame(all_combinations)
 
-    merged_df: pd.DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', 'patient_triage_level'], how='left')
+    merged_df:DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', 'patient_triage_level'], how='left')
     merged_df['symptom_count'].fillna(0, inplace=True)
 
     merged_df = merged_df.sort_values(by=['patient_triage_level', 'symptom_count'], ascending=[True, False])
@@ -107,7 +108,7 @@ def build_top_queries_date(df: pd.DataFrame, top: int=10, order: str='') -> pd.D
 
     return merged_df
 
-def build_patients_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
+def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
     df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'], errors='coerce')
     df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'], errors='coerce')
     
@@ -125,7 +126,7 @@ def build_patients_mean_time_doctor(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-def build_patients_mean_time_nurse(df: pd.DataFrame) -> pd.DataFrame:
+def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:
     df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
     df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
     
@@ -137,7 +138,7 @@ def build_patients_mean_time_nurse(df: pd.DataFrame) -> pd.DataFrame:
     
     return df
 
-def build_patients_mean_time_date(df: pd.DataFrame) -> pd.DataFrame:
+def build_patients_mean_time_date(df:DataFrame) ->DataFrame:
     df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
     df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
     
@@ -151,7 +152,7 @@ def build_patients_mean_time_date(df: pd.DataFrame) -> pd.DataFrame:
     
     return df
 
-def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') -> pd.DataFrame: # type: ignore
+def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') ->DataFrame: # type: ignore
     pd.options.display.max_rows = None # type: ignore
     pd.options.display.max_columns = None # type: ignore
     
@@ -161,10 +162,10 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
 
         condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
-    df: pd.DataFrame= md.get_table(table_name, condition)
+    df:DataFrame= md.get_table(table_name, condition)
 
     if df.empty == True:
-        return pd.DataFrame()
+        return DataFrame()
 
     df = date_filters(df, dictionary)
 

@@ -1,3 +1,7 @@
+# Typed
+from typing import Any, Dict, Union
+from plotly.graph_objects import Figure
+
 # Chart
 import plotly.express as px
 import plotly.graph_objects as go
@@ -10,12 +14,25 @@ import plotly.graph_objects as go
 # showarrow = False,
 # font = dict(color = 'red'))
 
-color_discrete_map = {'Nivel I': '#BDBEBE', 
-                      'Nivel II': '#FA8162', 
-                      'Nivel III': '#CCCC52', 
-                      'Nivel IV': '#A0C791'}
+color_discrete_map: Dict = {
+    'triage_color_map': { 'Nivel I': '#BDBEBE', 
+                          'Nivel II': '#FA8162', 
+                          'Nivel III': '#CCCC52', 
+                          'Nivel IV': '#A0C791' },
+    'isolated_discrete_map': { 'Si': '#A0C791',
+                                'No': '#FA8162' },
+    'status_discrete_map': { 'Alta': '#A0C791',
+                             'En observacion': '#BDBEBE',
+                             'En espera de internacion': '#CCCC52',
+                             'Internado': '#FA8162',
+                             'Afuera': "#FFE030" },
+    'age_range_discrete_map': { '0 a 40': '#000000',
+                                 '40 a 60': '#000000',
+                                 '60 a 80': '#000000',
+                                 '+80': '#000000' }
+}
 
-def include_mean(fig, df, x, y):
+def include_mean(fig: Figure, df, x, y):
     df_sum = df.groupby(x)[y].sum().reset_index(name=y)
     mean = df_sum[y].mean()
     fig.add_trace(go.Scatter(x=df_sum[x],
@@ -54,14 +71,14 @@ def add_total_line(fig, df, x, y):
                              name='Total'))
     
 
-def line_chart(df, x, y, title, x_title, y_title, color, y_txt, mean=None):
+def line_chart(df, x, y, title, x_title, y_title, color, color_map, y_txt, mean=None):
     global color_discrete_map
     fig = px.line(df,
                   x=x,
                   y=y,
                   color=color,
                   markers=True,
-                  color_discrete_map=color_discrete_map)
+                  color_discrete_map=color_discrete_map[color_map])
     
     add_total_line(fig=fig,
                    df=df,
