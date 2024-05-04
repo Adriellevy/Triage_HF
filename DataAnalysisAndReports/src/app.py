@@ -1,16 +1,12 @@
-# Typed
 from typing import Any, Dict, Union
 from plotly.graph_objects import Figure
 from pandas import DataFrame
 
-# Modules
 import features.build_features as bf
 import visualization.metrics as mt
 import visualization.visualize as vl
-
-# Server
 from flask import Flask, Response, jsonify, request
-# from waitress import serve
+from plotly.graph_objects import Figure
 
 
 
@@ -18,7 +14,6 @@ from flask import Flask, Response, jsonify, request
 # - AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE 'Y'
 # - AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
-# - AGREGAR EVENTO DE CLIC EN GRAFICOS
 
 # TODO
 # - ESPERAR A LUQUITAS PARA QUE ACTUALICE EL EXIT_TIME DE LOS PACIENTES Y PROBAR LOS GRAFICOS CORRESPONDIENTES
@@ -29,7 +24,8 @@ from flask import Flask, Response, jsonify, request
 # ADAPTAR GROUPBY EN VISUALIZE PARA MOSTRAR LOS DIFERENTES COLOR MAPS
 
 app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+app.config["JSON_SORT_KEYS"] = False
+
 
 def get_args() -> Dict[str, Any]:
     """
@@ -63,16 +59,12 @@ def get_args() -> Dict[str, Any]:
 def index() -> str:
     return """
             <p>
-            Accede a algún gráfico o métrica mediante las siguientes rutas: <br>
-            <b> Gráficos </b> <br>
-            /number_patients_date/ <br>
-            /top_queries_date/ <br>
-            /patients_mean_time_doctor/ <br>
-            /patients_mean_time_nurse/ <br>
-            <br>
-            <b> Métricas </b> <br>
-            /number_patients_date/metrics/ <br>
-            /top_queries_date/metrics/ <br>
+            No deberias estar aca :( <br>
+            Accede a algun grafico o metrica mediante las siguientes URL: <br>
+            http://127.0.0.1:5000/number_patients_date/ <br>
+            http://127.0.0.1:5000/number_patients_date/metrics/ <br>
+            http://127.0.0.1:5000/top_queries_date/ <br>
+            http://127.0.0.1:5000/top_queries_date/metrics/
             </p>
            """
 
@@ -173,13 +165,13 @@ def chart_top_queries_date() -> Union[str, Response]:
 
     fig: Figure = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta más Frecuentes',
-        color='patient_triage_level',
-        y_txt='consultas',
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        color="patient_triage_level",
+        y_txt="consultas",
         mean=mean,
     )
 
@@ -211,7 +203,8 @@ def metrics_top_queries_date() -> Response:
     return jsonify(data)
 
 
-@app.route('/patients_mean_time_doctor/')
+@app.route("/patients_mean_time_doctor/")
+# http://localhost:5173/stats/patients_mean_time_doctor
 def patiens_mean_time_doctor() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -252,34 +245,9 @@ def metrics_patients_mean_time_doctor() -> Response:
 
     if df.empty == True:
         return Response(status=204)
-    
+
     df = bf.build_patients_mean_time_doctor(df)
-    
-    data: Dict[str, str] = mt.metrics_data(
-        txt='medicos',
-        df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        z='patient_triage_level',
-    )
 
-    return jsonify(data)
-
-@app.route('/patients_mean_time_nurse/')
-def patiens_mean_time_nurse() -> Union[str, Response]:
-    dict: Dict[str, Any] = get_args()
-
-    dict['nurse_full_name'] = 'all'
-    
-    condition: str = bf.join_filters(dict)
-
-    df = bf.build_features('Patient', dict, condition)
-
-    if df.empty == True:
-        return Response(status=204)
-    
-    df = bf.build_patients_mean_time_nurse(df)
-    
     fig: Figure = vl.line_chart(
         df=df,
         x='user_full_name',

@@ -38,7 +38,7 @@ def mean(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
-    string += f'fue de {format_number(calculate_mean(df, y))}'
+    string += f'fue de {round(calculate_mean(df, y), 2)}'
     return string
     
 def min(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:

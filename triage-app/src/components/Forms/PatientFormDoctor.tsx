@@ -15,16 +15,23 @@ import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Checkbox } from '@mui/material'
+import { Checkbox, FormControlLabel } from '@mui/material'
 import React from 'react'
 import _ from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFlaskVial, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import LoaderSpin from '../LoaderSpin'
 
-function PatientForm() {
+function PatientFormDoctor() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [checked, setChecked] = React.useState(false)
+  const [ListaEstudiosSolicitados, setListaEstudiosSolicitados] = useState<string[] | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [certainValue, setCertainValue] = useState<boolean | null>(null)
+  const [loading, setLoading] = useState(false)
   const { t } = useTranslation('PatientForm')
 
   const navigate = useNavigate()
@@ -51,8 +58,8 @@ function PatientForm() {
     doctor_id: '',
     nurse_id: '',
     box_id: null,
-    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
     nurse_comment: ''
+    //doctor_procedure: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
@@ -73,6 +80,7 @@ function PatientForm() {
     doctor_id: '',
     nurse_id: '',
     box_id: null
+    //doctor_procedure: '' decomentar cuando este listo el backend para mandar los comentarios descomentar linea
     //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
@@ -209,7 +217,13 @@ function PatientForm() {
     { _id: 3, name: 'III', color: '255,255,102' },
     { _id: 4, name: 'IV', color: '105,168,79' }
   ]
-
+  const listaPosiblesEstudios = [
+    { _id: 'Placa_Toracica', name: 'Placa Toracica' },
+    { _id: 'Vía', name: 'Vía' },
+    { _id: 'Laboratorio', name: 'Laboratorio' },
+    { _id: 'Ecografía', name: 'Ecografía' },
+    { _id: 'Rayos', name: 'Rayos' }
+  ]
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     formInterfaz.patient_triage_time = new Date()
   }
@@ -277,10 +291,26 @@ function PatientForm() {
     }
   }
 
+  const handleInputChangeEstudios = (e: React.SyntheticEvent<Element, Event>, checked: boolean) => {
+    const target = e.target as HTMLInputElement
+    const name = target.name
+    let estudios: string[] = ListaEstudiosSolicitados ? ListaEstudiosSolicitados : []
+
+    if (checked) {
+      // Si el checkbox está marcado, agregamos el nombre a la lista
+      estudios.push(name)
+    } else {
+      // Si el checkbox no está marcado, removemos el nombre de la lista
+      estudios = estudios.filter((estudio) => estudio !== name)
+    }
+    console.log(estudios)
+    setListaEstudiosSolicitados(estudios)
+    setCertainValue(true)
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name
     let value = e.target.value
-
     // Get the selected option based on the entered value
     // Check if it's the hidden input
 
@@ -409,6 +439,25 @@ function PatientForm() {
           }
         })
       }
+    } else if (name === 'doctor_procedure') {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: value
+      })
+
+      value = e.target.value + ' /e: ' + ListaEstudiosSolicitados
+
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
     } else {
       setformInterfaz({
         ...formInterfaz,
@@ -436,6 +485,7 @@ function PatientForm() {
         })
       }
     }
+    console.log(formData)
     ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
   }
 
@@ -526,8 +576,7 @@ function PatientForm() {
 
             setformInterfaz({
               patient_name: '',
-              patient_age: '',
-              // patient_age: '2000-01-01',
+              patient_age: '2000-01-01',
               patient_entry_time: null,
               patient_exit_time: null,
               patient_triage_time: new Date(),
@@ -535,12 +584,10 @@ function PatientForm() {
               patient_status: '',
               patient_isolated: false,
               patient_symptom: '',
-              patient_healthcare_system: 'default',
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
-              box_id: '',
-              nurse_comment: ''
+              box_id: ''
             })
             setFormData({
               patient_name: '',
@@ -551,13 +598,11 @@ function PatientForm() {
               patient_triage_level: '',
               patient_status: '',
               patient_symptom: '',
-              patient_healthcare_system: 'default',
               patient_isolated: false,
               //patient_medication: '',
               doctor_id: '',
               nurse_id: '',
-              box_id: '',
-              nurse_comment: ''
+              box_id: ''
             })
             setChecked(false)
             setSelectedDate(null)
@@ -588,10 +633,9 @@ function PatientForm() {
     //patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
     doctor_id: { value: null, message: 'Seleccione un doctor válido' },
     nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
-    box_id: { value: null, message: 'Seleccione un box válido' },
-    patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
-
+    box_id: { value: null, message: 'Seleccione un box válido' }
   })
+
   const resetErrors = () => {
     setErrorsForm({
       patient_name: { value: null, message: 'Escriba un nombre válido' },
@@ -606,261 +650,161 @@ function PatientForm() {
       //patient_medication: { value: null, message: 'Escriba la medicación del paciente' },
       doctor_id: { value: null, message: 'Seleccione un doctor válido' },
       nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
-      box_id: { value: null, message: 'Seleccione un box válido' },
-    patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
-
+      box_id: { value: null, message: 'Seleccione un box válido' }
     })
   }
+  // Replace with your actual logic
 
-  console.log(formInterfaz)
-  console.log(formData)
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen)
+
+  const sendRequest = () => {
+    if (certainValue == false) {
+      // Replace with your actual popup logic
+      alert('Please provide the required value.')
+    } else {
+      setLoading(true)
+      //acordarse que esto es
+    }
+  }
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       {edditingPatient ? (
-        <h2 className='text-2xl font-semibold mb-5'>{t('title.EditMode')}</h2>
-      ) : (
-        <h2 className='text-2xl font-semibold mb-5'>{t('title.AddMode')}</h2>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
-      >
         <div>
-          <Label htmlFor='patient_name'>{t('NameLabel')}</Label>
-          <Input
-            error_active={ErrorsForm.patient_name}
-            type='text'
-            id='patient_name'
-            name='patient_name'
-            value={formInterfaz.patient_name}
-            onChange={handleInputChange}
-            // required
-          />
-        </div>
-        
-
-        <div>
-          <Label htmlFor='patient_age'>
-            {edditingPatient ? t('DateOfBirthLabel') : t('AgeLabel')}
-          </Label>
-          {/* <DatePickerMUI
-            //@ts-expect-error no se handlea el vento
-            onChangeExt={handleDateChange}
-            //@ts-expect-error no se handlea el vento
-            selectedDateExt={selectedDate}
-            error_active={ErrorsForm.patient_age}
-          /> */}
-          {edditingPatient ? (
-            <DatePickerMUI
-              //@ts-expect-error no se handlea el vento
-              onChangeExt={handleDateChange}
-              //@ts-expect-error no se handlea el vento
-              selectedDateExt={selectedDate}
-              error_active={ErrorsForm.patient_age}
-            />
-          ) : (
-            <Input
-              error_active={ErrorsForm.patient_age}
-              type='number'
-              id='patient_age'
-              name='patient_age'
-              value={formInterfaz.patient_age}
-              onChange={handleInputChange}
-              // required
-            />
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor='patient_symptom'>{t('PatientSymptom')}</Label>
-          <Input
-            error_active={ErrorsForm.patient_symptom}
-            type='text'
-            id='patient_symptom'
-            name='patient_symptom'
-            value={formInterfaz.patient_symptom}
-            onChange={handleInputChange}
-            autoComplete='off'
-            list='patientSymptoms'
-          />
-          <datalist
-            id='patientSymptoms'
-            className='absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg'
+          <form
+            onSubmit={handleSubmit}
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8'
           >
-            {PatientProblems?.map((option) => (
-              <option key={option._id} value={option.name} data-id={option._id} />
-            ))}
-          </datalist>
-        </div>
+            <div>
+              <Label htmlFor='patient_name'>{t('NameLabel')}</Label>
+              <Input
+                error_active={ErrorsForm.patient_name}
+                type='text'
+                id='patient_name'
+                name='patient_name'
+                value={formInterfaz.patient_name}
+                onChange={handleInputChange}
+              />
+            </div>
 
-        <div>
-          <Label htmlFor='patient_triage_level'>{t('TriageLevelLabel')}</Label>
-          <div
-            className={`flex gap-3 p-0.5 ${
-              ErrorsForm.patient_triage_level.value ? 'border border-red-500' : ''
-            }`}
-          >
-            {TriageLevels.map((level) => (
-              <button
-                key={level._id}
-                onClick={() => handleTriageLevelClick(level._id)}
-                type='button'
-                className={`py-1  flex-grow border-4 ${
-                  formInterfaz.patient_triage_level == level._id
-                    ? ' border-black'
-                    : 'border-transparent'
+            <div>
+              <Label htmlFor='patient_triage_level'>{t('TriageLevelLabel')}</Label>
+              <div
+                className={`flex gap-3 p-0.5 ${
+                  ErrorsForm.patient_triage_level.value ? 'border border-red-500' : ''
                 }`}
-                style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
               >
-                {level.name}
-              </button>
-            ))}
-          </div>
-          <div>
-            {ErrorsForm.patient_triage_level.value && (
-              <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
+                {TriageLevels.map((level) => (
+                  <button
+                    key={level._id}
+                    onClick={() => handleTriageLevelClick(level._id)}
+                    type='button'
+                    className={`py-1  flex-grow border-4 ${
+                      formInterfaz.patient_triage_level == level._id
+                        ? ' border-black'
+                        : 'border-transparent'
+                    }`}
+                    style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
+                  >
+                    {level.name}
+                  </button>
+                ))}
+              </div>
+              <div>
+                {ErrorsForm.patient_triage_level.value && (
+                  <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
+                )}
+              </div>
+            </div>
+
+            <div className='flex items-end gap-4 '>
+              <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
+              <Select
+                error_active={ErrorsForm.box_id}
+                id='box_id'
+                name='box_id'
+                value={formInterfaz.box_id ? formInterfaz.box_id : ''}
+                onChange={handleInputChange}
+              >
+                <option value='' disabled>
+                  Seleccionar box
+                </option>
+                <option value=''>AFUERA</option>
+                {BoxOcupiedByPatient?.map((option) => (
+                  <option key={option.box_id} value={option.box_id} disabled>
+                    {option.box_code + ': ' + option.box_type}
+                  </option>
+                ))}
+
+                {BoxesOptions?.map((option) => (
+                  <option key={option.box_id} value={option.box_id}>
+                    {option.box_code + ': ' + option.box_type}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </form>
+          <div className='flex items-end gap-8 my-8'>
+            {!dropdownOpen && !loading && (
+              <Button wfull color='yellow' onClick={toggleDropdown}>
+                <label>Solicitar Procedimiento </label>
+                <FontAwesomeIcon icon={faChevronDown} />
+              </Button>
+            )}
+            {dropdownOpen && !loading && (
+              <div className='dropdown-menu grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12'>
+                {listaPosiblesEstudios.map((item) => (
+                  <FormControlLabel
+                    label={item.name.toString()}
+                    id={item._id.toString()}
+                    name={item.name.toString()}
+                    control={<Checkbox />}
+                    onChange={handleInputChangeEstudios}
+                  ></FormControlLabel>
+                ))}
+              </div>
             )}
           </div>
-        </div>
+          <form>
+            <div className='flex items-end gap-4 '>
+              <Label htmlFor='doctor_procedure'>{t('doctor_procedure')}</Label>
+              <Input
+                error_active={ErrorsForm.doctor_procedure}
+                type='text'
+                id='doctor_procedure'
+                name='doctor_procedure'
+                value={formInterfaz.doctor_procedure}
+                onChange={handleInputChange}
+                // required
+              />
+            </div>
+            {!loading && (
+              <div className='flex items-end gap-4 m-2'>
+                <Button type='submit' color='green' onClick={handleButtonClick}>
+                  {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
+                </Button>
+                {edditingPatient && (
+                  <Link to={`/patients`}>
+                    <Button type='button' color='grey'>
+                      {t('CancelButton')}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
 
-        <div>
-          <Label htmlFor='patient_isolated'>{t('PatientIsolation')}</Label>
-          <Checkbox
-            id='patient_isolated'
-            name='patient_isolated'
-            color='success'
-            checked={checked}
-            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
-            onChange={handleCheckbox}
-          />
+            {loading && (
+              <div className='m-2'>
+                <LoaderSpin />
+              </div>
+            )}
+          </form>
         </div>
-        <div>
-
-          <Label htmlFor='patient_healthcare_system'>{t('patient_healthcare_system')}</Label>
-          <Input
-            error_active={ErrorsForm.patient_healthcare_system}
-            type='text'
-            id='patient_healthcare_system'
-            name='patient_healthcare_system'
-            value={formInterfaz.patient_healthcare_system}
-            onChange={handleInputChange}
-            // required
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
-          <Select
-            error_active={ErrorsForm.box_id}
-            id='box_id'
-            name='box_id'
-            value={formInterfaz.box_id ? formInterfaz.box_id : ''}
-            onChange={handleInputChange}
-          >
-            <option value='' disabled className='bg-white opacity-100'>
-              Seleccionar box
-            </option>
-            <option value='' className='bg-white opacity-100'>
-              AFUERA
-            </option>
-            {BoxOcupiedByPatient?.map((option) => (
-              <option
-                key={option.box_id}
-                value={option.box_id}
-                disabled
-                className='bg-white opacity-100'
-              >
-                {option.box_code + ': ' + option.box_type}
-              </option>
-            ))}
-
-            {BoxesOptions?.map((option) => (
-              <option key={option.box_id} value={option.box_id} className='bg-white opacity-100'>
-                {option.box_code + ': ' + option.box_type}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor='doctor_id'>{t('DoctorNameLabel')}</Label>
-          <Select
-            error_active={ErrorsForm.doctor_id}
-            id='doctor_id'
-            name='doctor_id'
-            value={formInterfaz.doctor_id}
-            onChange={handleInputChange}
-          >
-            <option value='' disabled className='bg-white opacity-100'>
-              Seleccionar doctor
-            </option>
-            {DoctorOptions?.map((option) => (
-              <option
-                key={option.user_id}
-                value={option.user_name}
-                className='bg-white opacity-100'
-              >
-                {option.user_name}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor='nurse_id'>{t('NurseNameLabel')}</Label>
-          <Select
-            error_active={ErrorsForm.nurse_id}
-            id='nurse_id'
-            name='nurse_id'
-            value={formInterfaz.nurse_id}
-            onChange={handleInputChange}
-          >
-            <option value='' disabled className='bg-white opacity-100'>
-              Seleccionar enfermero
-            </option>
-            {NurseOptions?.map((option) => (
-              <option
-                key={option.user_id}
-                value={option.user_name}
-                className='bg-white opacity-100'
-              >
-                {option.user_name}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor='nurse_comment'>{t('NurseComent')}</Label>
-          <Input
-            error_active={ErrorsForm.nurse_comment}
-            type='text'
-            id='nurse_comment'
-            name='nurse_comment'
-            value={formInterfaz.nurse_comment}
-            onChange={handleInputChange}
-            // required
-          />
-        </div>
-
-
-        <div className='flex items-end gap-4 '>
-          <Button type='submit' color='green' onClick={handleButtonClick}>
-            {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
-          </Button>
-          {edditingPatient && (
-            <Link to={`/patients`}>
-              <Button type='button' color='grey'>
-                {t('CancelButton')}
-              </Button>
-            </Link>
-          )}
-        </div>
-        
-      </form>
+      ) : (
+        <div></div>
+      )}
     </div>
   )
 }
 
-export default PatientForm
+export default PatientFormDoctor

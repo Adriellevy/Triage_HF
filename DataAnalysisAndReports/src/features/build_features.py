@@ -8,6 +8,8 @@ import pandas as pd
 import datetime as dt
 import data.make_dataset as md
 
+from typing import Dict, Tuple, Any, List
+from numpy import ndarray
 
 def filter_dictionary(dictionary: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -134,8 +136,6 @@ def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:
     
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
     
-    df = df.sort_values(by=['patient_triage_level', 'patient_mean_delta_time', 'user_full_name'])    
-    
     return df
 
 def build_patients_mean_time_date(df:DataFrame) ->DataFrame:
@@ -156,11 +156,10 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
     pd.options.display.max_rows = None # type: ignore
     pd.options.display.max_columns = None # type: ignore
     
-    if condition == '':
-        where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
-        join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
+    where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
+    join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
 
-        condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
+    condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
     df:DataFrame= md.get_table(table_name, condition)
 
@@ -172,5 +171,5 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
     df = drop_id_feature(df)
 
     df['patient_triage_level'] = triage_level_style(df)
-    
+
     return df
