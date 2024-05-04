@@ -21,6 +21,10 @@ export class PatientsModel {
     Box.box_code,
     patient_status,
     patient_symptom,
+    patient_healthcare_system,
+    doctor_procedure,
+    doctor_studies_solicitated,
+    nurse_coment,
     Doctor.user_name AS doctor_name,
     Nurse.user_name AS nurse_name
     FROM Patient
@@ -48,6 +52,9 @@ export class PatientsModel {
         patient_status,
         patient_symptom,
         patient_healthcare_system,
+        doctor_procedure,
+        doctor_studies_solicitated,
+        nurse_coment,
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name
         FROM Patient
@@ -80,7 +87,8 @@ export class PatientsModel {
                 patient_isolated, 
                 patient_status, 
                 patient_symptom,
-                patient_healthcare_system,  
+                patient_healthcare_system,
+                nurse_coment,  
                 doctor_id, 
                 nurse_id, 
                 box_id
@@ -95,6 +103,7 @@ export class PatientsModel {
                     ?, 
                     ?, 
                     ?, 
+                    ?,
                     ?,
                     ?,
                     UUID_TO_BIN(?), 
@@ -113,6 +122,7 @@ export class PatientsModel {
         data.patient_status,
         data.patient_symptom,
         data.patient_healthcare_system,
+        data.nurse_coment,
         data.doctor_id,
         data.nurse_id,
         data.box_id,

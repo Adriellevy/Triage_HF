@@ -72,8 +72,8 @@ function PatientForm() {
     //patient_medication: '',
     doctor_id: '',
     nurse_id: '',
-    box_id: null
-    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
+    box_id: null,
+    nurse_coment: ''
   })
 
   useEffect(() => {
@@ -590,7 +590,6 @@ function PatientForm() {
     nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
     box_id: { value: null, message: 'Seleccione un box válido' },
     patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
-
   })
   const resetErrors = () => {
     setErrorsForm({
@@ -607,8 +606,7 @@ function PatientForm() {
       doctor_id: { value: null, message: 'Seleccione un doctor válido' },
       nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
       box_id: { value: null, message: 'Seleccione un box válido' },
-    patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
-
+      patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
     })
   }
 
@@ -638,7 +636,6 @@ function PatientForm() {
             // required
           />
         </div>
-        
 
         <div>
           <Label htmlFor='patient_age'>
@@ -736,7 +733,6 @@ function PatientForm() {
           />
         </div>
         <div>
-
           <Label htmlFor='patient_healthcare_system'>{t('patient_healthcare_system')}</Label>
           <Input
             error_active={ErrorsForm.patient_healthcare_system}
@@ -748,7 +744,7 @@ function PatientForm() {
             // required
           />
         </div>
-        
+
         <div>
           <Label htmlFor='box_id'>{t('BoxIDLabel')}</Label>
           <Select
@@ -844,7 +840,6 @@ function PatientForm() {
           />
         </div>
 
-
         <div className='flex items-end gap-4 '>
           <Button type='submit' color='green' onClick={handleButtonClick}>
             {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
@@ -857,7 +852,6 @@ function PatientForm() {
             </Link>
           )}
         </div>
-        
       </form>
     </div>
   )
