@@ -1,6 +1,7 @@
 # Typed
 from typing import Any, Dict, Union
 from plotly.graph_objects import Figure
+from pandas import DataFrame
 
 # Chart
 import plotly.express as px
@@ -14,25 +15,25 @@ import plotly.graph_objects as go
 # showarrow = False,
 # font = dict(color = 'red'))
 
-color_discrete_map: Dict = {
+color_discrete_map: Dict[str, Dict[str, str]] = {
     'triage_color_map': { 'Nivel I': '#BDBEBE', 
                           'Nivel II': '#FA8162', 
                           'Nivel III': '#CCCC52', 
                           'Nivel IV': '#A0C791' },
-    'isolated_discrete_map': { 'Si': '#A0C791',
-                                'No': '#FA8162' },
-    'status_discrete_map': { 'Alta': '#A0C791',
-                             'En observacion': '#BDBEBE',
-                             'En espera de internacion': '#CCCC52',
-                             'Internado': '#FA8162',
-                             'Afuera': "#FFE030" },
+    'isolated_discrete_map': { 'Si': '#67A353',
+                                'No': '#D63F38' },
+    'status_discrete_map': { 'Alta': '#67A353',
+                             'En observación': '#cc5f21',
+                             'En espera de internación': '#b2911c',
+                             'Internado': '#8456ce',
+                             'Afuera': "#c33d69" },
     'age_range_discrete_map': { '0 a 40': '#000000',
                                  '40 a 60': '#000000',
                                  '60 a 80': '#000000',
                                  '+80': '#000000' }
 }
 
-def include_mean(fig: Figure, df, x, y):
+def include_mean(fig: Figure, df: DataFrame, x: str, y: str) -> None:
     df_sum = df.groupby(x)[y].sum().reset_index(name=y)
     mean = df_sum[y].mean()
     fig.add_trace(go.Scatter(x=df_sum[x],
@@ -42,7 +43,7 @@ def include_mean(fig: Figure, df, x, y):
                                  line=dict(color='red', width=2, dash='dash'),
                                  hovertemplate='<b>%{y:.2f} pacientes</b>'))
         
-def update_layout(fig, title, x_title, y_title):
+def update_layout(fig: Figure, title: str, legend_title: str, x_title: str, y_title: str) -> None:
     fig.update_layout(title=f'<b>{title}</b>',
                       title_x=0.5,
                       xaxis_title=x_title,
@@ -50,27 +51,26 @@ def update_layout(fig, title, x_title, y_title):
                       plot_bgcolor='white',
                       xaxis=dict(linecolor='black', showgrid=True),
                       yaxis=dict(linecolor='black', showgrid=True),
-                      legend=dict(title='Nivel de Triage'))
+                      legend=dict(title=legend_title))
     
-def update_traces_lines(fig, y_txt: str):      
+def update_traces_lines(fig: Figure, y_txt: str) -> None:      
     fig.update_layout(hovermode='x unified')
     fig.update_traces(mode='markers+lines', 
                       hovertemplate='<b>%{y}' + f' {y_txt}<b>')  
 
-def update_traces_bar(fig, y_txt: str):
+def update_traces_bar(fig: Figure, y_txt: str) -> None:
     fig.update_layout(hovermode='x unified')    
     fig.update_traces(hovertemplate='<b>%{y}' + f' {y_txt}<b>')  
     
-def add_total_line(fig, df, x, y):
+def add_total_line(fig: Figure, df: DataFrame, x: str, y: str):
     df_sum = df.groupby(x)[y].sum().reset_index(name=y)
     fig.add_trace(go.Scatter(x=df_sum[x], 
                              y=df_sum[y], 
                              line=dict(color='#3B82F6'), 
                              mode='lines', 
-                             name='Total'))
-    
+                             name='Total'))    
 
-def line_chart(df, x, y, title, x_title, y_title, color, color_map, y_txt, mean=None):
+def line_chart(df: DataFrame, x: str, y: str, title: str, legend_title: str, x_title: str, y_title: str, color: str, color_map: str, y_txt: str, mean: bool=False) -> Figure:
     global color_discrete_map
     fig = px.line(df,
                   x=x,
@@ -89,6 +89,7 @@ def line_chart(df, x, y, title, x_title, y_title, color, color_map, y_txt, mean=
 
     update_layout(fig=fig, 
                   title=title,
+                  legend_title=legend_title,
                   x_title=x_title,
                   y_title=y_title)
     
@@ -99,7 +100,7 @@ def line_chart(df, x, y, title, x_title, y_title, color, color_map, y_txt, mean=
                      y=y)
     return fig
 
-def bar_chart(df, x, y, title, x_title, y_title, color, y_txt, mean=None):
+def bar_chart(df: DataFrame, x: str, y: str, title: str, legend_title: str, x_title: str, y_title: str, color: str, y_txt: str, mean=None):
     global color_discrete_map
     
     fig = px.bar(df,
@@ -110,6 +111,7 @@ def bar_chart(df, x, y, title, x_title, y_title, color, y_txt, mean=None):
     
     update_layout(fig=fig,
                   title=title,
+                  legend_title=legend_title,
                   x_title=x_title,
                   y_title=y_title)
 

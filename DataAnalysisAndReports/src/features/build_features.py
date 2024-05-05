@@ -71,13 +71,16 @@ def join_filters(dictionary: Dict[str, Any]) -> str:
     else:
         return query[:-1]
 
-def build_number_patients_date(df:DataFrame, groupby: str) ->DataFrame:
+def build_number_patients_date(df:DataFrame, groupby: str, rename: Dict[Any, str] = {}) ->DataFrame:
     df['patient_entry_time'] = df['patient_entry_time'].dt.date
     df = df.groupby(['patient_entry_time', groupby], sort=False).size().reset_index(name='number_of_patients') # type: ignore
 
     df.sort_values(by='patient_entry_time', inplace=True)
 
     df = df.sort_values(by=[groupby, 'patient_entry_time', 'number_of_patients'])
+    
+    if rename:
+        df[groupby] = df[groupby].replace(rename)
 
     return df
 
@@ -161,7 +164,7 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
 
     condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
-    df:DataFrame= md.get_table(table_name, condition)
+    df: DataFrame = md.get_table(table_name, condition)
 
     if df.empty == True:
         return DataFrame()

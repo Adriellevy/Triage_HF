@@ -89,6 +89,7 @@ def chart_number_patients_date() -> Union[str, Response]:
         x_title='Fecha de Ingreso',
         y_title='Cantidad de Pacientes',
         title='Cantidad de Pacientes por Fecha de Ingreso',
+        legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='pacientes',
@@ -97,7 +98,7 @@ def chart_number_patients_date() -> Union[str, Response]:
 
     return fig.to_html()
 
-@app.route('/number_patients_date/isolated')
+@app.route('/number_patients_date/isolated/')
 def chart_number_patients_date_isolated() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -105,8 +106,13 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
 
     if df.empty == True:
         return Response(status=204)
+    
+    rename = {
+        0: 'No',
+        1: 'Si'
+    }
 
-    df = bf.build_number_patients_date(df, 'patient_isolated')
+    df = bf.build_number_patients_date(df, 'patient_isolated', rename)
 
     mean: bool = request.args.get('mean', default=False, type=bool)
 
@@ -117,8 +123,46 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
         x_title='Fecha de Ingreso',
         y_title='Cantidad de Pacientes',
         title='Cantidad de Pacientes por Fecha de Ingreso',
+        legend_title='¿Se encuentra aislado?',
         color='patient_isolated',
         color_map='isolated_discrete_map',
+        y_txt='pacientes',
+        mean=mean,
+    )
+
+    return fig.to_html()
+
+@app.route('/number_patients_date/status/')
+def chart_number_patients_date_status() -> Union[str, Response]:
+    dict: Dict[str, Any] = get_args()
+
+    df: DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty == True:
+        return Response(status=204)
+    
+    rename = {
+        'ALTA': 'Alta',
+        'EN OBSERVACION': 'En observación',
+        'EN ESPERA DE INTERNACION': 'En espera de internación',
+        'INTERNADO': 'Internado',
+        'AFUERA': 'Afuera'
+    }
+
+    df = bf.build_number_patients_date(df, 'patient_status', rename)
+
+    mean: bool = request.args.get('mean', default=False, type=bool)
+
+    fig: Figure = vl.line_chart(
+        df=df,
+        x='patient_entry_time',
+        y='number_of_patients',
+        x_title='Fecha de Ingreso',
+        y_title='Cantidad de Pacientes',
+        title='Cantidad de Pacientes por Fecha de Ingreso',
+        legend_title='Estados',
+        color='patient_status',
+        color_map='status_discrete_map',
         y_txt='pacientes',
         mean=mean,
     )
@@ -170,6 +214,7 @@ def chart_top_queries_date() -> Union[str, Response]:
         x_title="Motivo de Consulta",
         y_title="Cantidad de Consultas",
         title="Motivos de Consulta mas Frecuentes",
+        legend_title='Nivel de Triage',
         color="patient_triage_level",
         y_txt="consultas",
         mean=mean,
@@ -226,6 +271,7 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
         x_title='Doctor',
         y_title='Tiempo Medio de Estadía',
         title='Tiempo Medio de Estadía de Pacientes por Doctor',
+        legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='Minutos',
@@ -255,6 +301,7 @@ def metrics_patients_mean_time_doctor() -> Response:
         x_title='Enfermero',
         y_title='Tiempo Medio de Estadía',
         title='Tiempo Medio de Estadía de Pacientes por Enfermero',
+        legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='Minutos',
@@ -307,6 +354,7 @@ def patients_mean_time_date() -> Union[str, Response]:
         x_title='Fecha de Ingreso',
         y_title='Tiempo Medio de Estadía',
         title='Tiempo Medio de Estadía de Pacientes por Fecha de Ingreso',
+        legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='minutos',
