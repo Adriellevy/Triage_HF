@@ -2,6 +2,7 @@
 from typing import Dict, Tuple, Any, List
 from numpy import ndarray
 from pandas import DataFrame
+from datetime import datetime
 
 # Data handling
 import pandas as pd
@@ -10,6 +11,23 @@ import data.make_dataset as md
 
 from typing import Dict, Tuple, Any, List
 from numpy import ndarray
+
+def age_groups(df: DataFrame) -> None:
+    age_groups: List = []
+    for age in df['patient_age']:
+        age = calculate_age(age)
+        if age <= 40:
+            age_groups.append('0 a 40')
+        elif age > 40 and age <= 60:
+            age_groups.append('41 a 60')
+        elif age > 60 and age <= 80:
+            age_groups.append('61 a 80')
+        else:
+            age_groups.append('+80')
+    df['patient_age_group'] = age_groups
+            
+def calculate_age(born: datetime) -> int:
+    return dt.date.today().year - born.year - ((dt.date.today().month, dt.date.today().day) < (born.month, born.day)) 
 
 def filter_dictionary(dictionary: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     return dict((k,dictionary[k]) for k in (keys) if k in dictionary)
@@ -84,32 +102,35 @@ def build_number_patients_date(df:DataFrame, groupby: str, rename: Dict[Any, str
 
     return df
 
-def build_top_queries_date(df:DataFrame, top: int=10, order: str='') ->DataFrame:
-    df = df.groupby(['patient_symptom', 'patient_triage_level']).size().reset_index(name='symptom_count') # type: ignore
+def build_top_queries_date(df:DataFrame, groupby: str, top: int=10, order: str='', rename: Dict[Any, str]={}) ->DataFrame:
+    df = df.groupby(['patient_symptom', groupby]).size().reset_index(name='symptom_count') # type: ignore
 
     top_reasons: pd.Index[str] = df.groupby('patient_symptom')['symptom_count'].sum().nlargest(top).index
     df = df[df['patient_symptom'].isin(top_reasons)]
     
-    all_triage_levels: ndarray = df['patient_triage_level'].unique()
+    all_triage_levels: ndarray = df[groupby].unique()
 
     all_combinations: list = []
     for symptom in df['patient_symptom'].unique():
         for triage_level in all_triage_levels:
-            all_combinations.append({'patient_symptom': symptom, 'patient_triage_level': triage_level})
+            all_combinations.append({'patient_symptom': symptom, groupby: triage_level})
 
     all_combinations_df:DataFrame =DataFrame(all_combinations)
 
-    merged_df:DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', 'patient_triage_level'], how='left')
+    merged_df:DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', groupby], how='left')
     merged_df['symptom_count'].fillna(0, inplace=True)
 
-    merged_df = merged_df.sort_values(by=['patient_triage_level', 'symptom_count'], ascending=[True, False])
+    merged_df = merged_df.sort_values(by=[groupby, 'symptom_count'], ascending=[True, False])
     
     if (order == 'asc'):
         merged_df = merged_df.sort_values(by=['patient_symptom'], key=lambda x: x.map(
         dict(zip(top_reasons[::-1], range(len(top_reasons)))))).reset_index(drop=True)
     else:
-        merged_df = merged_df.sort_values(by=['patient_symptom', 'patient_triage_level'], key=lambda x: x.map(
+        merged_df = merged_df.sort_values(by=['patient_symptom', groupby], key=lambda x: x.map(
             dict(zip(top_reasons, range(len(top_reasons)))))).reset_index(drop=True)
+        
+    if rename:
+        merged_df[groupby] = merged_df[groupby].replace(rename)
 
     return merged_df
 
@@ -174,5 +195,9 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
     df = drop_id_feature(df)
 
     df['patient_triage_level'] = triage_level_style(df)
+    
+    age_groups(df)
+    
+    print(df)
 
     return df

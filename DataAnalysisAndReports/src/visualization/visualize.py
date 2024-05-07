@@ -21,16 +21,16 @@ color_discrete_map: Dict[str, Dict[str, str]] = {
                           'Nivel III': '#CCCC52', 
                           'Nivel IV': '#A0C791' },
     'isolated_discrete_map': { 'Si': '#67A353',
-                                'No': '#D63F38' },
-    'status_discrete_map': { 'Alta': '#67A353',
-                             'En observación': '#cc5f21',
-                             'En espera de internación': '#b2911c',
-                             'Internado': '#8456ce',
-                             'Afuera': "#c33d69" },
-    'age_range_discrete_map': { '0 a 40': '#000000',
-                                 '40 a 60': '#000000',
-                                 '60 a 80': '#000000',
-                                 '+80': '#000000' }
+                                'No': '#BA2E0F' },
+    'status_discrete_map': { 'Alta': '#C33D69',
+                             'En observación': '#2EA597',
+                             'En espera de internación': '#8456CE',
+                             'Internado': '#E07941',
+                             'Afuera': "#962249" },
+    'age_range_discrete_map': { '0 a 40': '#E07941',
+                                 '41 a 60': '#C33D69',
+                                 '61 a 80': '#2EA597',
+                                 '+80': '#8456CE' }
 }
 
 def include_mean(fig: Figure, df: DataFrame, x: str, y: str) -> None:
@@ -100,14 +100,14 @@ def line_chart(df: DataFrame, x: str, y: str, title: str, legend_title: str, x_t
                      y=y)
     return fig
 
-def bar_chart(df: DataFrame, x: str, y: str, title: str, legend_title: str, x_title: str, y_title: str, color: str, y_txt: str, mean=None):
+def bar_chart(df: DataFrame, x: str, y: str, title: str, legend_title: str, x_title: str, y_title: str, color: str, color_map: str, y_txt: str, mean=None):
     global color_discrete_map
     
     fig = px.bar(df,
                  x=x,
                  y=y,
                  color=color,
-                 color_discrete_map=color_discrete_map)
+                 color_discrete_map=color_discrete_map[color_map])
     
     update_layout(fig=fig,
                   title=title,
