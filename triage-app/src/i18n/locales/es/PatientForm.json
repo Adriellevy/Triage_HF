@@ -15,5 +15,6 @@
   "CancelButton": "Cancelar",
   "NurseComent":"Comentario Enfermero",
   "patient_healthcare_system":"Cobertura Médica",
-  "doctor_procedure":"Indicaciones del Doctor" 
+  "doctor_procedure":"Indicaciones del Doctor",
+  "doctor_coment":"Comentarios del Doctor" 
 }
