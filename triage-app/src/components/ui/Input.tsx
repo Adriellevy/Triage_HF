@@ -1,6 +1,6 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
-
+import { useState } from 'react'
+//import {useEffect}from 'react'
 interface PropsInput extends React.InputHTMLAttributes<HTMLInputElement> {
   error_active?: { value: boolean | null; message: string }
 }
@@ -13,14 +13,13 @@ export function Input(props: PropsInput) {
   const handleBlur = () => {
     props.value ? setIsFilled(true) : setIsFilled(false)
   }
-  useEffect(() => {
-    if (props.value === '' || props.value === 0) {
-      setIsFilled(false);
-  }
-  }, [props.value])
-  
-  
-  console.log(props.value);
+  // useEffect(() => {
+  //   if (props.value === '' || props.value === 0) {
+  //     setIsFilled(false)
+  //   }
+  // }, [props.value])
+
+  //console.log(props.value);
   return (
     <>
       <input
