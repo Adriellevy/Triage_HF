@@ -96,7 +96,7 @@ export class PatientsModel {
             VALUES (
                     UUID_TO_BIN(?), 
                     ?,
-                    STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
+                    ?, 
                     STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
                     ?,
                     STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
@@ -114,7 +114,7 @@ export class PatientsModel {
         uuid,
         data.patient_name,
         data.patient_age,
-        data.patient_entry_time,
+        new Date(data.patient_entry_time),
         data.patient_exit_time,
         data.patient_triage_time,
         data.patient_triage_level,

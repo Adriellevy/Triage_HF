@@ -112,14 +112,10 @@ export class PatientController {
         result.data.patient_age = new Date(result.data.patient_age)
       }
       if (result.data.patient_triage_time) {
-        result.data.patient_triage_time = new Date(
-          result.data.patient_triage_time,
-        )
+        result.data.patient_triage_time = new Date(result.data.patient_triage_time)
       }
       if (result.data.patient_entry_time) {
-        result.data.patient_entry_time = new Date(
-          result.data.patient_entry_time,
-        )
+        result.data.patient_entry_time = new Date(result.data.patient_entry_time)
       }
       if (result.data.patient_exit_time) {
         result.data.patient_exit_time = new Date(result.data.patient_exit_time)
