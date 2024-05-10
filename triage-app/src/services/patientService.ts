@@ -127,6 +127,8 @@ export const addNewPatient = async (
       body: JSON.stringify(newPatientData)
     })
 
+    console.log("body")
+    console.log(newPatientData)
     if (!response.ok) {
       const errorResponse = await response.json()
       if (errorResponse.error) {
