@@ -58,8 +58,8 @@ function PatientFormDoctor() {
     doctor_id: '',
     nurse_id: '',
     box_id: null,
-    nurse_comment: ''
-    //doctor_procedure: '' cuando este listo el backend para mandar los comentarios descomentar linea
+    nurse_comment: '',
+    doctor_procedure: '' //cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
@@ -79,18 +79,16 @@ function PatientFormDoctor() {
     //patient_medication: '',
     doctor_id: '',
     nurse_id: '',
-    box_id: null
-    //doctor_procedure: '' decomentar cuando este listo el backend para mandar los comentarios descomentar linea
-    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
+    box_id: null,
+    doctor_procedure: '', //decomentar cuando este listo el backend para mandar los comentarios descomentar linea
+    doctor_coment: '',
+    nurse_coment: '' //cuando este listo el backend para mandar los comentarios descomentar linea
   })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [data] = await getPatientById(edditingPatientID)
-
-        console.log('getting patient')
-        console.log(data)
         setedditingPatient(data)
       } catch (error) {
         if (error instanceof Error) {
@@ -218,11 +216,11 @@ function PatientFormDoctor() {
     { _id: 4, name: 'IV', color: '105,168,79' }
   ]
   const listaPosiblesEstudios = [
-    { _id: 'Placa_Toracica', name: 'Placa Toracica' },
-    { _id: 'Vía', name: 'Vía' },
-    { _id: 'Laboratorio', name: 'Laboratorio' },
-    { _id: 'Ecografía', name: 'Ecografía' },
-    { _id: 'Rayos', name: 'Rayos' }
+    { _id: 'Placa Toracica', name: 'doctor_procedure' },
+    { _id: 'Vía', name: 'doctor_procedure' },
+    { _id: 'Laboratorio', name: 'doctor_procedure' },
+    { _id: 'Ecografía', name: 'doctor_procedure' },
+    { _id: 'Rayos', name: 'doctor_procedure' }
   ]
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     formInterfaz.patient_triage_time = new Date()
@@ -243,7 +241,6 @@ function PatientFormDoctor() {
         value: false
       }
     })
-    console.log('Chequed: ' + !checked)
   }
 
   //Triage level buttons
@@ -308,9 +305,10 @@ function PatientFormDoctor() {
     setCertainValue(true)
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const name = e.target.name
-    let value = e.target.value
+  const handleInputChange = (e: React.SyntheticEvent<Element, Event>) => {
+    const target = e.target as HTMLInputElement
+    const name = target.name
+    let value = target.value
     // Get the selected option based on the entered value
     // Check if it's the hidden input
 
@@ -440,16 +438,19 @@ function PatientFormDoctor() {
         })
       }
     } else if (name === 'doctor_procedure') {
-      setformInterfaz({
-        ...formInterfaz,
-        [name]: value
-      })
-
-      value = e.target.value + ' /e: ' + ListaEstudiosSolicitados
-
+      let estudios: string[] = ListaEstudiosSolicitados ? ListaEstudiosSolicitados : []
+      if (target.dataset.id && target.checked) {
+        // Si el checkbox está marcado, agregamos el nombre a la lista
+        estudios.push(target.dataset.id.toString())
+      } else {
+        // Si el checkbox no está marcado, removemos el nombre de la lista
+        estudios = estudios.filter((estudio) => estudio !== target.dataset.id)
+      }
+      console.log(target.dataset.id, target.checked, estudios)
+      setListaEstudiosSolicitados(estudios)
       setFormData({
         ...formData,
-        [name]: value
+        [name]: estudios
       })
       setErrorsForm({
         ...ErrorsForm,
@@ -485,7 +486,6 @@ function PatientFormDoctor() {
         })
       }
     }
-    console.log(formData)
     ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
   }
 
@@ -499,8 +499,6 @@ function PatientFormDoctor() {
         )
       })
       cancelBoxPreviousSelected
-      console.log('Los datos cambiados son: \n')
-      console.log(datosCambiados)
       // si se desea averiguar el nombre en vez del id hay que cambiar el let de value y ponerlo como otra var
       // Aquí puedes enviar datosCambiados al backend
     }
@@ -523,16 +521,12 @@ function PatientFormDoctor() {
     try {
       //Delete Id
       const formDataNoID = formDataNow
-      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
       formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
-      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
       formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
       formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
       formDataNoID.patient_age = new Date(formDataNoID.patient_age)
       delete formDataNoID.patient_id
       const token = Cookies.get('authToken')
-
-      console.log(formDataNoID)
       if (token) {
         if (edditingPatient) {
           console.log('Editing patch')
@@ -569,7 +563,6 @@ function PatientFormDoctor() {
               return updatedErrorsForm
             })
           } else {
-            console.log('Nuevo paciente agregado:', data)
             toast.success('Nuevo paciente agregado', {
               duration: 2000
             })
@@ -755,24 +748,35 @@ function PatientFormDoctor() {
               <div className='dropdown-menu grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12'>
                 {listaPosiblesEstudios.map((item) => (
                   <FormControlLabel
-                    label={item.name.toString()}
+                    label={item._id.toString()}
                     id={item._id.toString()}
-                    name={item.name.toString()}
-                    control={<Checkbox />}
-                    onChange={handleInputChangeEstudios}
+                    name='doctor_procedure'
+                    control={
+                      <Checkbox
+                        inputProps={
+                          {
+                            'data-id': item._id.toString()
+                          } as React.InputHTMLAttributes<HTMLInputElement>
+                        }
+                      />
+                    }
+                    onChange={handleInputChange}
                   ></FormControlLabel>
                 ))}
               </div>
             )}
           </div>
-          <form>
+          <form
+            onSubmit={handleSubmit}
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8'
+          >
             <div className='flex items-end gap-4 '>
-              <Label htmlFor='doctor_procedure'>{t('doctor_procedure')}</Label>
+              <Label htmlFor='doctor_coment'>{t('doctor_coment')}</Label>
               <Input
                 error_active={ErrorsForm.doctor_procedure}
                 type='text'
-                id='doctor_procedure'
-                name='doctor_procedure'
+                id='doctor_coment'
+                name='doctor_coment'
                 value={formInterfaz.doctor_procedure}
                 onChange={handleInputChange}
                 // required
