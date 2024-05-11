@@ -43,6 +43,7 @@ def mean(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     
 def min(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
     string = f'El mínimo de {txt} '
+    print(z)
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
@@ -57,27 +58,17 @@ def max(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> s
     string += f'fue de {calculate_max(df, y)} ({calculate_max_x(df, y, x)})'
     return string
 
-def metrics_data(df: DataFrame, y: str, txt: str, x:str, z: str) -> Dict[str, str]:
+def metrics_data(df: DataFrame, y: str, txt: str, x:str, z: str, expand: Dict[str, str]) -> Dict[str, str]:
     df_sum: DataFrame = df.groupby(df[x])[y].sum().reset_index(name=y)
-    return {
-        'total': total(df, y, txt),
-        'total_triage_I': total(df, y, txt, z, 'Nivel I'),
-        'total_triage_II': total(df, y, txt, z, 'Nivel II'),
-        'total_triage_III': total(df, y, txt, z, 'Nivel III'),
-        'total_triage IV': total(df, y, txt, z, 'Nivel IV'),
-        'mean': mean(df_sum, y, txt),
-        'mean_triage_I': mean(df, y, txt, z, 'Nivel I'),
-        'mean_triage_II': mean(df, y, txt, z, 'Nivel II'),
-        'mean_triage_III': mean(df, y, txt, z, 'Nivel III'),
-        'mean_triage_IV': mean(df, y, txt, z, 'Nivel IV'),
-        'min': min(df_sum, y, txt, x),
-        'min_triage_I': min(df, y, txt, x, z, 'Nivel I'),
-        'min_triage_II': min(df, y, txt, x, z, 'Nivel II'),
-        'min_triage_III': min(df, y, txt, x, z, 'Nivel III'),
-        'min_triage_IV': min(df, y, txt, x, z, 'Nivel IV'),
-        'max': max(df_sum, y, txt, x),
-        'max_triage_I': max(df, y, txt, x, z, 'Nivel I'),
-        'max_triage_II': max(df, y, txt, x, z, 'Nivel II'),
-        'max_triage_III': max(df, y, txt, x, z, 'Nivel III'),
-        'max_triage_IV': max(df, y, txt, x, z, 'Nivel IV')
-    }
+    dict: Dict[str, str] = {}
+    dict['total'] = total(df_sum, y, txt)
+    dict['mean'] = mean(df_sum, y, txt)
+    dict['min'] = min(df_sum, y, txt, x)
+    dict['max'] = max(df_sum, y, txt, x)
+    for key, val in expand.items():
+        dict['total_' + key] = total(df, y, txt, z, val)
+        dict['mean_' + key] = mean(df, y, txt, z, val)
+        dict['min_' + key] = min(df, y, txt, x, z, val)
+        dict['max_' + key] = max(df, y, txt, x, z, val)
+    
+    return dict
