@@ -22,6 +22,10 @@ from plotly.graph_objects import Figure
 # MODIFICAR LOS ARGS EN BASE A LOS COLOR MAPS NUEVOS
 # ADAPTAR GROUPBY EN FEATURES PARA MOSTRAR LOS DIFERENTES COLOR MAPS
 # ADAPTAR GROUPBY EN VISUALIZE PARA MOSTRAR LOS DIFERENTES COLOR MAPS
+# QUE LOS GRAFICOS SE DESPLIEGUEN DESDE 200 PACIENTES EN ADELANTE
+# ACHICAR GRAFICOS DE BARRA
+# ARREGLAR TOP QUERIES DATE METRICS
+# ARREGLAR /number_patients_date/status/metrics/
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -50,7 +54,7 @@ def get_args() -> Dict[str, Any]:
         ),
         'doctor_full_name': request.args.get('doctorfullname', default=None, type=str),
         'nurse_full_name': request.args.get('nursefullname', default=None, type=str),
-        'box_type': request.args.get('boxtype', default=None, type=str),
+        'box_type': request.args.get('boxtype', default=None, type=str)
     }
     return args
 
@@ -69,11 +73,13 @@ def index() -> str:
             /top_queries_date/isolated/ <br>
             /top_queries_date/status/ <br>
             /top_queries_date/age/ <br>
+            <br>
             /patients_mean_time_doctor/ <br>
             /patients_mean_time_nurse/ <br>
             <br>
             <b> Métricas </b> <br>
             /number_patients_date/metrics/ <br>
+            /number_patients_date/isolated/metrics/ <br>   
             /top_queries_date/metrics/ <br>
             </p>
            """
@@ -103,7 +109,7 @@ def chart_number_patients_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='pacientes',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -137,7 +143,7 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
         color='patient_isolated',
         color_map='isolated_discrete_map',
         y_txt='pacientes',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -174,7 +180,7 @@ def chart_number_patients_date_status() -> Union[str, Response]:
         color='patient_status',
         color_map='status_discrete_map',
         y_txt='pacientes',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -203,7 +209,7 @@ def chart_number_patients_date_age() -> Union[str, Response]:
         color='patient_age_group',
         color_map='age_range_discrete_map',
         y_txt='pacientes',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -220,14 +226,90 @@ def metrics_number_patients_date() -> Response:
 
     df = bf.build_number_patients_date(df, 'patient_triage_level')
 
+    expand = {
+        'triage_I': 'Nivel I',
+        'triage_II': 'Nivel II',
+        'triage_III': 'Nivel III',
+        'triage_IV': 'Nivel IV'
+    }
+
     data: Dict[str, str] = mt.metrics_data(
         txt='pacientes',
         df=df,
         x='patient_entry_time',
         y='number_of_patients',
         z='patient_triage_level',
+        expand=expand
     )
     return jsonify(data)
+
+@app.route('/number_patients_date/isolated/metrics/')
+def metrics_number_patients_date_isolated() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    df: DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response(status=204)
+    
+    rename = {
+        0: 'No',
+        1: 'Si'
+    }
+
+    df = bf.build_number_patients_date(df, 'patient_isolated', rename)
+
+    expand = {
+        'no': 'No',
+        'si': 'Si',
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='pacientes',
+        df=df,
+        x='patient_entry_time',
+        y='number_of_patients',
+        z='patient_isolated',
+        expand=expand
+    )
+    return jsonify(data)    
+
+@app.route('/number_patients_date/status/metrics/')
+def metrics_number_patients_date_metrics() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    df: DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response(status=204)
+    
+    rename = {
+        'ALTA': 'Alta',
+        'EN OBSERVACION': 'En observación',
+        'EN ESPERA DE INTERNACION': 'En espera de internación',
+        'INTERNADO': 'Internado',
+        'AFUERA': 'Afuera'
+    }
+
+    df = bf.build_number_patients_date(df, 'patient_status', rename)
+
+    expand = {
+        'alta': 'Alta',
+        'en_observacion': 'En observación',
+        'en_espera_de_internacion': 'En espera de internación',
+        'internado': 'Internado',
+        'afuera': 'Afuera'
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='pacientes',
+        df=df,
+        x='patient_entry_time',
+        y='number_of_patients',
+        z='patient_status',
+        expand=expand
+    )
+    return jsonify(data)    
 
 @app.route('/top_queries_date/')
 def chart_top_queries_date() -> Union[str, Response]:
@@ -256,12 +338,12 @@ def chart_top_queries_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='consultas',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
 
-@app.route('/top_queries_date/isolated')
+@app.route('/top_queries_date/isolated/')
 def chart_top_queries_date_isolated() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -293,12 +375,12 @@ def chart_top_queries_date_isolated() -> Union[str, Response]:
         color='patient_isolated',
         color_map='isolated_discrete_map',
         y_txt='consultas',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
 
-@app.route('/top_queries_date/status')
+@app.route('/top_queries_date/status/')
 def chart_top_queries_date_status() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -333,12 +415,12 @@ def chart_top_queries_date_status() -> Union[str, Response]:
         color='patient_status',
         color_map='status_discrete_map',
         y_txt='consultas',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
 
-@app.route('/top_queries_date/age')
+@app.route('/top_queries_date/age/')
 def chart_top_queries_date_age() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
@@ -365,7 +447,7 @@ def chart_top_queries_date_age() -> Union[str, Response]:
         color='patient_age_group',
         color_map='age_range_discrete_map',
         y_txt='consultas',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -385,12 +467,20 @@ def metrics_top_queries_date() -> Response:
 
     df = bf.build_top_queries_date(df, 'patient_triage_level', top, order)
 
+    expand = {
+        'triage_I': 'Nivel I',
+        'triage_II': 'Nivel II',
+        'triage_III': 'Nivel III',
+        'triage_IV': 'Nivel IV'
+    }
+
     data: Dict[str, str] = mt.metrics_data(
         txt='consultas',
         df=df,
         x='patient_symptom',
         y='symptom_count',
         z='patient_triage_level',
+        expand=expand
     )
 
     return jsonify(data)
@@ -422,7 +512,7 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
         legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
-        y_txt='Minutos',
+        y_txt='Minutos'
     )
 
     return fig.to_html()
@@ -452,7 +542,7 @@ def metrics_patients_mean_time_doctor() -> Response:
         legend_title='Nivel de Triage',
         color='patient_triage_level',
         color_map='triage_color_map',
-        y_txt='Minutos',
+        y_txt='Minutos'
     )
 
     return fig.to_html()
@@ -472,12 +562,20 @@ def metrics_patients_mean_time_nurse() -> Response:
     
     df = bf.build_patients_mean_time_doctor(df)
     
+    expand = {
+        'triage_I': 'Nivel I',
+        'triage_II': 'Nivel II',
+        'triage_III': 'Nivel III',
+        'triage_IV': 'Nivel IV'
+    }    
+    
     data: Dict[str, str] = mt.metrics_data(
         txt='enfermeros',
         df=df,
         x='user_full_name',
         y='patient_mean_delta_time',
         z='patient_triage_level',
+        expand=expand
     )
 
     return jsonify(data)
@@ -506,7 +604,7 @@ def patients_mean_time_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='minutos',
-        mean=mean,
+        mean=mean
     )
 
     return fig.to_html()
@@ -522,12 +620,20 @@ def metrics_patients_mean_time_date() -> Response:
     
     df = bf.build_patients_mean_time_date(df)
     
+    expand = {
+        'triage_I': 'Nivel I',
+        'triage_II': 'Nivel II',
+        'triage_III': 'Nivel III',
+        'triage_IV': 'Nivel IV'
+    }
+
     data: Dict[str, str] = mt.metrics_data(
         txt='minutos',
         df=df,
         x='patient_entry_time',
         y='patient_mean_delta_time',
         z='patient_triage_level',
+        expand=expand
     )
 
     return jsonify(data)    

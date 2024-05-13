@@ -49,8 +49,8 @@ def update_layout(fig: Figure, title: str, legend_title: str, x_title: str, y_ti
                       xaxis_title=x_title,
                       yaxis_title=y_title,
                       plot_bgcolor='white',
-                      xaxis=dict(linecolor='black', showgrid=True),
-                      yaxis=dict(linecolor='black', showgrid=True),
+                      xaxis=dict(linecolor='black', showgrid=True, gridcolor='rgb(200, 200, 200)'),
+                      yaxis=dict(linecolor='black', showgrid=True, gridcolor='rgb(200, 200, 200)'),
                       legend=dict(title=legend_title))
     
 def update_traces_lines(fig: Figure, y_txt: str) -> None:      

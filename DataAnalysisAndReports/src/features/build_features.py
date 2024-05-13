@@ -140,10 +140,6 @@ def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
     
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
     
-    print(df['patient_exit_time'])
-    print(df['patient_entry_time'])
-    print(df['patient_delta_time'])
-    
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
     
     df = df.sort_values(by=['patient_triage_level', 'patient_mean_delta_time', 'user_full_name'])
@@ -197,7 +193,5 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
     df['patient_triage_level'] = triage_level_style(df)
     
     age_groups(df)
-    
-    print(df)
 
     return df
