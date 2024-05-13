@@ -7,6 +7,7 @@
   "StatsPatientsTriage": "Number of patients by triage",
   "StatsReasons": "Reasons for consultation by date",
   "MeanTimePatientPerDoctor":"Mean time of patient per doctor",
+  "MeanTimePatientPerNurse":"Tiempo medio pacientes por enfermero",
   "Settings": "Settings",
   "UsersSettings": "Users Settings",
   "BoxSettings": "Box Settings",
