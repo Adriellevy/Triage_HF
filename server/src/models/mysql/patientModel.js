@@ -96,8 +96,8 @@ export class PatientsModel {
             VALUES (
                     UUID_TO_BIN(?), 
                     ?,
-                    ?, 
                     STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
+                    ?, 
                     ?,
                     STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
                     ?, 

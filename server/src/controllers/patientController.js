@@ -112,10 +112,14 @@ export class PatientController {
         result.data.patient_age = new Date(result.data.patient_age)
       }
       if (result.data.patient_triage_time) {
-        result.data.patient_triage_time = new Date(result.data.patient_triage_time)
+        result.data.patient_triage_time = new Date(
+          result.data.patient_triage_time,
+        )
       }
       if (result.data.patient_entry_time) {
-        result.data.patient_entry_time = new Date(result.data.patient_entry_time)
+        result.data.patient_entry_time = new Date(
+          result.data.patient_entry_time,
+        )
       }
       if (result.data.patient_exit_time) {
         result.data.patient_exit_time = new Date(result.data.patient_exit_time)
@@ -129,7 +133,8 @@ export class PatientController {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in UserNuevo) {
         if (key === 'patient_exit_time') {
-          cambios.push({
+          /*
+            cambios.push({
             patient_id: UserAntiguo.patient_id,
             updated_column: key,
             old_value: 'null',
@@ -137,10 +142,10 @@ export class PatientController {
             update_date: tiempoActual,
             user_id: userID,
           })
+          */
         } else if (
           key === 'patient_triage_time' ||
           key === 'patient_entry_time' ||
-          key === 'patient_exit_time' ||
           key === 'patient_age'
         ) {
           if (UserAntiguo[key].getTime() !== UserNuevo[key].getTime()) {
@@ -155,6 +160,7 @@ export class PatientController {
           }
         } else if (key === 'patient_isolated') {
           if (
+            // eslint-disable-next-line no-prototype-builtins
             UserAntiguo.hasOwnProperty(key) &&
             Boolean(UserAntiguo[key]) !== Boolean(UserNuevo[key])
           ) {
@@ -168,6 +174,7 @@ export class PatientController {
             })
           }
         } else if (
+          // eslint-disable-next-line no-prototype-builtins
           UserAntiguo.hasOwnProperty(key) &&
           UserAntiguo[key] !== UserNuevo[key]
         ) {
