@@ -7,7 +7,7 @@
   "StatsPatientsTriage": "Cantidad de pacientes",
   "StatsReasons": "Motivos de consulta",
   "MeanTimePatientPerDoctor":"Tiempo medio pacientes por doctor",
-  
+  "StatsPatientsAge":"Agrupacion de pacientes por edad",
   "MeanTimePatientPerNurse":"Tiempo medio pacientes por enfermero",
   "Settings": "Configuración",
   "UsersSettings": "Configuración de usuarios",
