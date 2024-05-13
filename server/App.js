@@ -10,6 +10,7 @@ import { authRouter } from './src/routes/authRoutes.js'
 import { userRouter } from './src/routes/userRoutes.js'
 import { settingsRouter } from './src/routes/settingRoutes.js'
 import { dashboardRouter } from './src/routes/dashboardRoutes.js'
+import { nodemailerRouter } from './src/routes/nodemailerRoutes.js'
 // import cors from 'cors' Linea de emergencia + comentar corsMiddleware
 
 process.env.TZ = 'America/Argentina/Buenos_Aires'
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth', authRouter)
+app.use('/nodemailer', nodemailerRouter)
 app.use('/patient', authenticateToken, patientRouter)
 app.use('/box', authenticateToken, boxRouter)
 app.use('/users', authenticateToken, userRouter)
