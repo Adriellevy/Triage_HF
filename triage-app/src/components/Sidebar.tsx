@@ -90,6 +90,16 @@ function Sidebar() {
           icon: StatsIcon,
           title: t('MeanTimePatientPerDoctor'),
           linkUrl: '/stats/patients_mean_time_doctor'
+        },
+        {
+          icon: StatsIcon,
+          title: t('MeanTimePatientPerNurse'),
+          linkUrl: '/stats/number_patients_date/age/'
+        },
+        {
+          icon: StatsIcon,
+          title: t('StatsPatientsAge'),
+          linkUrl: '/stats/number_patients_date/age/'
         }
       ]
     },

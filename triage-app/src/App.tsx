@@ -20,7 +20,8 @@ import BoxSettings from './pages/settings/BoxSettings'
 import UserSettings from './pages/settings/UserSettings'
 import PatientEdit from './pages/PatientEdit'
 import StatsPatientTriage from './pages/stats/StatsPatientTriage'
-
+import PatientsMeanTimeNurse from './pages/stats/PatientsMeanTimeNurse'
+import PatientsMeanAge from './pages/stats/PatientsMeanAge'
 function App() {
   const { isAuthenticated, login } = useAuth()
   const { role, setRole } = useRoleContext()
@@ -84,6 +85,14 @@ function App() {
                         <Route
                           path='/stats/patients_mean_time_doctor'
                           element={<StatsPatientTriage />}
+                        />
+                        <Route
+                          path='/stats/patients_mean_time_nurse'
+                          element={<PatientsMeanTimeNurse />}
+                        />
+                        <Route
+                          path='/stats/number_patients_date/age/'
+                          element={<PatientsMeanAge />}
                         />
                         <Route path='/settings/user' element={<UserSettings />} />
                         <Route path='/settings/box' element={<BoxSettings />} />
