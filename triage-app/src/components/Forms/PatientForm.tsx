@@ -51,7 +51,6 @@ function PatientForm() {
     doctor_id: '',
     nurse_id: '',
     box_id: null,
-    //nurse_coment: '' cuando este listo el backend para mandar los comentarios descomentar linea
     nurse_comment: ''
   })
 
