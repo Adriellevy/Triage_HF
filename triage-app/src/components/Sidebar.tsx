@@ -94,7 +94,7 @@ function Sidebar() {
         {
           icon: StatsIcon,
           title: t('MeanTimePatientPerNurse'),
-          linkUrl: '/stats/number_patients_date/age/'
+          linkUrl: '/stats/patients_mean_time_nurse'
         },
         {
           icon: StatsIcon,
