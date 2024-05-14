@@ -146,6 +146,8 @@ def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
     
     df['patient_mean_delta_time'] = df['patient_mean_delta_time'].apply(lambda x: x.total_seconds()) / 60
 
+    print(df)
+
     return df
 
 def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:
@@ -176,10 +178,11 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
     pd.options.display.max_rows = None # type: ignore
     pd.options.display.max_columns = None # type: ignore
     
-    where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
-    join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
+    if condition == '':
+        where_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['patient_age', 'patient_isolated', 'patient_status', 'patient_symptom', 'patient_healthcare_system', 'doctor_full_name', 'nurse_full_name', 'box_type'])
+        join_dictionary: Dict[str, Any] = filter_dictionary(dictionary, ['doctor_full_name', 'nurse_full_name', 'box_type'])
 
-    condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
+        condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
     df: DataFrame = md.get_table(table_name, condition)
 

@@ -494,8 +494,12 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
     dict['doctor_full_name'] = 'all'
 
     condition: str = bf.join_filters(dict)
+    
+    condition = condition + " WHERE patient_status = 'ALTA'"
 
     df = bf.build_features('Patient', dict, condition)
+
+    print(df)
 
     if df.empty == True:
         return Response(status=204)
@@ -643,6 +647,6 @@ def metrics_patients_mean_time_date() -> Response:
 # serve(app, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(debug=True, host="192.168.0.83", port=5000)
+    app.run(debug=True)
+    #app.run(debug=True, host="192.168.0.99", port=5000)
     
