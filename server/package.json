@@ -27,6 +27,7 @@
     "zod": "3.22.4"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.15",
     "eslint": "^8.52.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.1"
