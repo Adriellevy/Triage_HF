@@ -35,4 +35,23 @@ export class BoxModel {
     const [result] = await connection.query(availableBoxesQuery)
     return result[0].cantidad
   }
+
+  static async getBoxCodeById(boxId) {
+    try {
+      const boxCodeQuery = `
+          SELECT box_code
+          FROM Box
+          WHERE box_id = UUID_TO_BIN(?);
+        `
+      const [result] = await connection.query(boxCodeQuery, [boxId])
+      if (result.length === 0) {
+        console.log('No se encontró ningún box con el ID proporcionado.')
+        return null
+      }
+      return result[0].box_code
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }
 }
