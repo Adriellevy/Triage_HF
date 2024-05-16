@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { PatientData, PatientHistoryItem } from '@/interfaces/Patinet'
+import { PatientData, PatientHistoryItem as PatientHistoryItemType } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
 import { getBoxCodeById } from '../../services/boxService'
 
 interface PropsPatientHystoryItem {
-  item: PatientHistoryItem
+  item: PatientHistoryItemType
   index: number
 }
 
@@ -16,8 +16,8 @@ interface Field {
 }
 
 const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) => {
-  const [oldValue, setOldValue] = useState<string>('')
-  const [newValue, setNewValue] = useState<string>('')
+  const [oldValue, setOldValue] = useState<string | null>('')
+  const [newValue, setNewValue] = useState<string | null>('')
 
   useEffect(() => {
     const formatValues = async () => {
@@ -75,7 +75,7 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
       <td className='border p-2 '>{getFormatDate(patient_updated_date)}</td>
       <td className='border p-2 '>
         {columnas.find((col) => col.key === patient_updated_column)?.label ||
-          patient_updated_column}
+          String(patient_updated_column)}
       </td>
       <td className='border p-2 '>{oldValue}</td>
       <td className='border p-2 '>{newValue}</td>
