@@ -10,22 +10,14 @@ from plotly.graph_objects import Figure
 
 
 
-# TODO [COSAS QUE ME GUSTARIA AGREGAR QUE AHORA NO SON POSIBLES]
+# [COSAS QUE ME GUSTARIA AGREGAR QUE AHORA NO SON POSIBLES]
 # - AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE 'Y'
 # - AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
 
 # TODO
-# - ESPERAR A LUQUITAS PARA QUE ACTUALICE EL EXIT_TIME DE LOS PACIENTES Y PROBAR LOS GRAFICOS CORRESPONDIENTES
-# IMPLEMENTAR LOS COLOR MAPS EN TODOS LOS GRAFICOS
-
 # MODIFICAR LOS ARGS EN BASE A LOS COLOR MAPS NUEVOS
-# ADAPTAR GROUPBY EN FEATURES PARA MOSTRAR LOS DIFERENTES COLOR MAPS
-# ADAPTAR GROUPBY EN VISUALIZE PARA MOSTRAR LOS DIFERENTES COLOR MAPS
-# QUE LOS GRAFICOS SE DESPLIEGUEN DESDE 200 PACIENTES EN ADELANTE
-# ACHICAR GRAFICOS DE BARRA
 # ARREGLAR TOP QUERIES DATE METRICS
-# ARREGLAR /number_patients_date/status/metrics/
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -91,8 +83,12 @@ def chart_number_patients_date() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    print(f'df size: {df.shape[0]}')
+
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)    
 
     df = bf.build_number_patients_date(df, 'patient_triage_level')
 
@@ -120,8 +116,10 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     rename = {
         0: 'No',
@@ -154,8 +152,10 @@ def chart_number_patients_date_status() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     rename = {
         'ALTA': 'Alta',
@@ -191,8 +191,10 @@ def chart_number_patients_date_age() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     df = bf.build_number_patients_date(df, 'patient_age_group')
 
@@ -222,7 +224,9 @@ def metrics_number_patients_date() -> Response:
     df: DataFrame = bf.build_features('Patient', dict)
 
     if df.empty:
-        return Response(status=204)
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)
 
     df = bf.build_number_patients_date(df, 'patient_triage_level')
 
@@ -250,7 +254,9 @@ def metrics_number_patients_date_isolated() -> Response:
     df: DataFrame = bf.build_features('Patient', dict)
 
     if df.empty:
-        return Response(status=204)
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     rename = {
         0: 'No',
@@ -281,7 +287,9 @@ def metrics_number_patients_date_metrics() -> Response:
     df: DataFrame = bf.build_features('Patient', dict)
 
     if df.empty:
-        return Response(status=204)
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     rename = {
         'ALTA': 'Alta',
@@ -317,8 +325,10 @@ def chart_top_queries_date() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df is None:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -349,8 +359,10 @@ def chart_top_queries_date_isolated() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df is None:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)      
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -386,8 +398,10 @@ def chart_top_queries_date_status() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df is None:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -426,8 +440,10 @@ def chart_top_queries_date_age() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df is None:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)  
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -460,7 +476,9 @@ def metrics_top_queries_date() -> Response:
     df = bf.build_features('Patient', dict)
 
     if df.empty:
-        return Response(status=204)
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -499,10 +517,10 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
 
     df = bf.build_features('Patient', dict, condition)
 
-    print(df)
-
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     df = bf.build_patients_mean_time_doctor(df)
     
@@ -531,8 +549,10 @@ def metrics_patients_mean_time_doctor() -> Response:
 
     df = bf.build_features('Patient', dict, condition)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     df = bf.build_patients_mean_time_doctor(df)
 
@@ -561,8 +581,10 @@ def metrics_patients_mean_time_nurse() -> Response:
 
     df = bf.build_features('Patient', dict, condition)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)   
     
     df = bf.build_patients_mean_time_doctor(df)
     
@@ -590,8 +612,10 @@ def patients_mean_time_date() -> Union[str, Response]:
 
     df: DataFrame = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
 
     df = bf.build_patients_mean_time_date(df)
 
@@ -619,8 +643,10 @@ def metrics_patients_mean_time_date() -> Response:
 
     df = bf.build_features('Patient', dict)
 
-    if df.empty == True:
-        return Response(status=204)
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response(status=422)    
     
     df = bf.build_patients_mean_time_date(df)
     

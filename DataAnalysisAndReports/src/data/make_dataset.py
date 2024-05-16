@@ -1,8 +1,9 @@
-import pandas as pd
-import mysql.connector
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection_cext import CMySQLConnection
 from typing import Union
+
+import pandas as pd
+import mysql.connector
 
 def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
     try:
@@ -25,7 +26,7 @@ def get_table(table_name: str, condition: str='') -> pd.DataFrame:
             query += f' {condition}'
         print(query)
         df = pd.read_sql(sql=query,
-                         con=connection) 
+                         con=connection)
         connection.close()
         return df
     else:
