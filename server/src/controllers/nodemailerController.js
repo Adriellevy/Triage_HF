@@ -3,17 +3,21 @@ import NodeMailer from 'nodemailer'
 export class NodemailerController {
   static async SendEmailTest(req, res) {
     try {
-      const transporter = NodeMailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
+      const transporter = NodeMailer.createTransport(
+        {
+          service: "Gmail",
+          host: "smtp.gmail.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
       })
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
+        to: 'adriellevy2014@gmail.com',
         subject: 'Email Test',
         text: 'Texto de prueba ',
       }
