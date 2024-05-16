@@ -1,65 +1,84 @@
-import { PatientHistoryItem } from '@/interfaces/Patinet'
+import React, { useEffect, useState } from 'react'
+import { PatientData, PatientHistoryItem } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
+import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
+import { getBoxCodeById } from '../../services/boxService'
 
 interface PropsPatientHystoryItem {
   item: PatientHistoryItem
   index: number
 }
 
-interface Columns {
-  [key: string]: string
+interface Field {
+  label: string
+  key: keyof PatientData
+  format: ((value: string) => string | Promise<string | null>) | null
 }
 
-function PatientHistoryItem({ item, index }: PropsPatientHystoryItem) {
-  const { t } = useTranslation('PatientHistoryItem')
-  const {
-    patient_updated_date,
-    patient_updated_column,
-    patient_old_value,
-    patient_new_value,
-    user_name
-  } = item
+const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) => {
+  const [oldValue, setOldValue] = useState<string>('')
+  const [newValue, setNewValue] = useState<string>('')
 
-  const columns: Columns = {
-    patient_name: t('NameLabel'),
-    patient_age: t('AgeLabel'),
-    patient_entry_time: t('EntryTimeLabel'),
-    patient_triage_level: t('TriageLevelLabel'),
-    patient_triage_time: t('TriageTimeLabel'),
-    patient_medication: t('PatientMedication'),
-    patient_isolated: t('PatientIsolatedLabel'),
-    patient_symptom: t('PatientProblem'),
-    patient_healthcare_system: t('PatientHealthcareSystem'),
-    box_code: t('PatientBoxLabel'),
-    doctor_name: t('DoctorNameLabel'),
-    nurse_name: t('NurseNameLabel'),
-    patient_status: t('PatientStatusLabel')
+  useEffect(() => {
+    const formatValues = async () => {
+      const oldVal = await formatValue(
+        item.patient_old_value,
+        item.patient_updated_column as keyof PatientData
+      )
+      const newVal = await formatValue(
+        item.patient_new_value,
+        item.patient_updated_column as keyof PatientData
+      )
+      setOldValue(oldVal)
+      setNewValue(newVal)
+    }
+    formatValues()
+  }, [item.patient_old_value, item.patient_new_value, item.patient_updated_column])
+
+  const { t } = useTranslation('PatientHistoryItem')
+  const { patient_updated_date, patient_updated_column, user_name } = item
+
+  const Id_a_codigo = async (Id: string): Promise<string | null> => {
+    const resul = await getBoxCodeById(Id)
+    if (resul) return resul.toString()
+    return null
   }
 
-  const isOdd = index % 2 !== 0
+  const columnas: Field[] = [
+    { key: 'patient_name', label: t('NameLabel'), format: null },
+    { key: 'patient_age', label: t('AgeLabel'), format: getFormatBirthDate },
+    { key: 'patient_entry_time', label: t('EntryTimeLabel'), format: getFormatDate },
+    { key: 'patient_triage_level', label: t('TriageLevelLabel'), format: null },
+    { key: 'patient_triage_time', label: t('TriageTimeLabel'), format: getFormatDate },
+    { key: 'patient_isolated', label: t('PatientIsolatedLabel'), format: null },
+    { key: 'patient_symptom', label: t('PatientProblem'), format: null },
+    { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: null },
+    { key: 'box_id', label: t('PatientBoxLabel'), format: Id_a_codigo },
+    { key: 'doctor_name', label: t('DoctorNameLabel'), format: null },
+    { key: 'nurse_name', label: t('NurseNameLabel'), format: null },
+    { key: 'patient_status', label: t('PatientStatusLabel'), format: null }
+  ]
 
+  const isOdd = index % 2 !== 0
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
 
-  const formatDate = (date: string): string => {
-    const newdate = new Date(date)
-    const dateFormat: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: false
+  const formatValue = async (value: string, key: keyof PatientData) => {
+    const field = columnas.find((field) => field.key === key)
+    if (field && field.format) {
+      return await field.format(value)
     }
-    const formatter = new Intl.DateTimeFormat('es-AR', dateFormat)
-    return formatter.format(newdate)
+    return value
   }
 
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{formatDate(patient_updated_date)}</td>
-      <td className='border p-2 '>{columns[String(patient_updated_column)]}</td>
-      <td className='border p-2 '>{patient_old_value}</td>
-      <td className='border p-2 '>{patient_new_value}</td>
+      <td className='border p-2 '>{getFormatDate(patient_updated_date)}</td>
+      <td className='border p-2 '>
+        {columnas.find((col) => col.key === patient_updated_column)?.label ||
+          patient_updated_column}
+      </td>
+      <td className='border p-2 '>{oldValue}</td>
+      <td className='border p-2 '>{newValue}</td>
       <td className='border p-2 '>{user_name}</td>
     </tr>
   )
