@@ -26,3 +26,12 @@ export const getFormatDate = (entry__time: string): string => {
   const formatEntryTime = formatoFechaHora.format(entryTimeOriginal);
   return formatEntryTime;
 };
+
+export const getAgeNumber = (edad: number) => {
+  if (edad) {
+    const hoy = new Date()
+    const añoActual = hoy.getFullYear()
+    const añoNacimiento = añoActual - edad
+    return new Date(añoNacimiento + '-01-01')
+  }
+}
