@@ -54,7 +54,7 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
     { key: 'patient_symptom', label: t('PatientProblem'), format: null },
     { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: null },
     { key: 'box_id', label: t('PatientBoxLabel'), format: Id_a_codigo },
-    { key: 'doctor_name', label: t('DoctorNameLabel'), format: null },
+    { key: 'doctor_id', label: t('DoctorNameLabel'), format: null },
     { key: 'nurse_name', label: t('NurseNameLabel'), format: null },
     { key: 'patient_status', label: t('PatientStatusLabel'), format: null }
   ]
