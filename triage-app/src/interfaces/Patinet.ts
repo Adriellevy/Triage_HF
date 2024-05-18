@@ -41,6 +41,7 @@ export interface PatientData {
   patient_symptom: string
   doctor_name: string
   nurse_name: string
+  patient_healthcare_system?:string
 }
 
 export type NullablePatient = Patient | null
@@ -60,6 +61,7 @@ export interface PartialPatient {
   patient_symptom?: string
   doctor_name?: string
   nurse_name?: string
+  patient_healthcare_system?:string
 }
 
 export interface PatientHistoryItem {

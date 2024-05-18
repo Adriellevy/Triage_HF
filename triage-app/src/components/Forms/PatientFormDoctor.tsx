@@ -21,7 +21,7 @@ import _ from 'lodash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFlaskVial, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import LoaderSpin from '../LoaderSpin'
-
+import { getAgeNumber } from '../../helpers/HelperFechas'
 function PatientFormDoctor() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
@@ -278,16 +278,6 @@ function PatientFormDoctor() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
-  // only Age
-  const getBirthDate = (edad: number) => {
-    if (edad) {
-      const hoy = new Date()
-      const añoActual = hoy.getFullYear()
-      const añoNacimiento = añoActual - edad
-      return new Date(añoNacimiento + '-01-01')
-    }
-  }
-
   const handleInputChangeEstudios = (e: React.SyntheticEvent<Element, Event>, checked: boolean) => {
     const target = e.target as HTMLInputElement
     const name = target.name
@@ -420,14 +410,14 @@ function PatientFormDoctor() {
       if (edditingPatient) {
         console.log('revisar error')
       } else {
-        getBirthDate(Number(value))
+        getAgeNumber(Number(value))
         setformInterfaz({
           ...formInterfaz,
           [name]: Number(value)
         })
         setFormData({
           ...formData,
-          [name]: getBirthDate(Number(value))
+          [name]: getAgeNumber(Number(value))
         })
         setErrorsForm({
           ...ErrorsForm,

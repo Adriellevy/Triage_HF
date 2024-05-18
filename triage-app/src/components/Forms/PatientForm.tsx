@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@mui/material'
 import React from 'react'
 import _ from 'lodash'
+import { getAgeNumber } from '../../helpers/HelperFechas'
 
 function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
@@ -267,14 +268,6 @@ function PatientForm() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   // only Age
-  const getBirthDate = (edad: number) => {
-    if (edad) {
-      const hoy = new Date()
-      const añoActual = hoy.getFullYear()
-      const añoNacimiento = añoActual - edad
-      return new Date(añoNacimiento + '-01-01')
-    }
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name
@@ -391,14 +384,14 @@ function PatientForm() {
       if (edditingPatient) {
         console.log('revisar error')
       } else {
-        getBirthDate(Number(value))
+        getAgeNumber(Number(value))
         setformInterfaz({
           ...formInterfaz,
           [name]: Number(value)
         })
         setFormData({
           ...formData,
-          [name]: getBirthDate(Number(value))
+          [name]: getAgeNumber(Number(value))
         })
         setErrorsForm({
           ...ErrorsForm,

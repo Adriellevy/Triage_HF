@@ -8,7 +8,7 @@ import PatientInformIA from '@/components/PatientInformIA'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
 import { useTranslation } from 'react-i18next'
-
+import { getFormatBirthDate, getFormatDate } from '../helpers/HelperFechas'
 function PatientDetail() {
   const { t } = useTranslation('PatientDetail')
   const { patient_id } = useParams()
@@ -25,7 +25,7 @@ function PatientDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data] = await getPatientById(patient_id)
+        const data = await getPatientById(patient_id)
         setPatient(data)
         handlePatientStatus(data)
       } catch (error) {
@@ -41,34 +41,6 @@ function PatientDetail() {
 
   //------------------------------------------------------  Formating Patient -----------------------------------------------------------------------------
 
-  const getFormatEntryDate = (entry__time: string) => {
-    const entryTimeOriginal = new Date(entry__time)
-    const dateFormat: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
-    }
-    const formatoFechaHora = new Intl.DateTimeFormat('es-ES', dateFormat)
-    const formatEntryTime = formatoFechaHora.format(entryTimeOriginal)
-    return formatEntryTime
-  }
-
-  const getFormatBirthDate = (birth__date: string) => {
-    const originalBirthDate = new Date(birth__date)
-    const birthFormat: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour12: true
-    }
-    const formatoNacimiento = new Intl.DateTimeFormat('es-ES', birthFormat)
-    const formatBirthDate = formatoNacimiento.format(originalBirthDate)
-    return formatBirthDate
-  }
-
   interface Field {
     label: string
     key: keyof PatientData
@@ -78,7 +50,7 @@ function PatientDetail() {
   const patientFields: Field[] = [
     { label: t('NameLabel'), key: 'patient_name', format: null },
     { label: t('DateOfBirthLabel'), key: 'patient_age', format: getFormatBirthDate },
-    { label: t('EntryTimeLabel'), key: 'patient_entry_time', format: getFormatEntryDate },
+    { label: t('EntryTimeLabel'), key: 'patient_entry_time', format: getFormatDate },
     { label: t('TriageLevelLabel'), key: 'patient_triage_level', format: null },
     { label: t('PatientProblem'), key: 'patient_symptom', format: null },
     { label: t('PatientBoxCodeLabel'), key: 'box_code', format: null },
