@@ -146,8 +146,6 @@ def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
     
     df['patient_mean_delta_time'] = df['patient_mean_delta_time'].apply(lambda x: x.total_seconds()) / 60
 
-    print(df)
-
     return df
 
 def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:

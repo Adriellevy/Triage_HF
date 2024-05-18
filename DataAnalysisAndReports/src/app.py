@@ -72,6 +72,9 @@ def index() -> str:
             <b> Métricas </b> <br>
             /number_patients_date/metrics/ <br>
             /number_patients_date/isolated/metrics/ <br>   
+            /number_patients_date/status/metrics/ <br>
+            /number_patients_date/age/metrics/ <br>
+            <br>
             /top_queries_date/metrics/ <br>
             </p>
            """
@@ -82,8 +85,6 @@ def chart_number_patients_date() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
     df: DataFrame = bf.build_features('Patient', dict)
-
-    print(f'df size: {df.shape[0]}')
 
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
@@ -119,7 +120,7 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)    
     
     rename = {
         0: 'No',
@@ -155,7 +156,7 @@ def chart_number_patients_date_status() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
     
     rename = {
         'ALTA': 'Alta',
@@ -194,7 +195,7 @@ def chart_number_patients_date_age() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)   
 
     df = bf.build_number_patients_date(df, 'patient_age_group')
 
@@ -226,8 +227,8 @@ def metrics_number_patients_date() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)
-
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)   
+    
     df = bf.build_number_patients_date(df, 'patient_triage_level')
 
     expand = {
@@ -256,7 +257,7 @@ def metrics_number_patients_date_isolated() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
     
     rename = {
         0: 'No',
@@ -269,7 +270,7 @@ def metrics_number_patients_date_isolated() -> Response:
         'no': 'No',
         'si': 'Si',
     }
-
+    
     data: Dict[str, str] = mt.metrics_data(
         txt='pacientes',
         df=df,
@@ -289,7 +290,7 @@ def metrics_number_patients_date_metrics() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
     
     rename = {
         'ALTA': 'Alta',
@@ -298,7 +299,7 @@ def metrics_number_patients_date_metrics() -> Response:
         'INTERNADO': 'Internado',
         'AFUERA': 'Afuera'
     }
-
+    
     df = bf.build_number_patients_date(df, 'patient_status', rename)
 
     expand = {
@@ -317,7 +318,40 @@ def metrics_number_patients_date_metrics() -> Response:
         z='patient_status',
         expand=expand
     )
-    return jsonify(data)    
+    return jsonify(data)   
+
+@app.route('/number_patients_date/age/metrics/')
+def metrics_number_patients_date_age() -> Union[str, Response]:
+    dict: Dict[str, Any] = get_args()
+
+    df: DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)   
+
+    df = bf.build_number_patients_date(df, 'patient_age_group')
+
+    print(df)
+    
+    expand = {
+        '0 a 40': '0 a 40',
+        '41 a 60': '41 a 60',
+        '61 a 80': '61 a 80',
+        '+80': '+80'
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='pacientes',
+        df=df,
+        x='patient_entry_time',
+        y='number_of_patients',
+        z='patient_age_group',
+        expand=expand
+    )
+
+    return jsonify(data)  
 
 @app.route('/top_queries_date/')
 def chart_top_queries_date() -> Union[str, Response]:
@@ -328,7 +362,7 @@ def chart_top_queries_date() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -362,7 +396,7 @@ def chart_top_queries_date_isolated() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)      
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)       
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -401,7 +435,7 @@ def chart_top_queries_date_status() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -443,7 +477,7 @@ def chart_top_queries_date_age() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)  
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)   
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -478,7 +512,7 @@ def metrics_top_queries_date() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
 
     top: int = request.args.get('top', default=10, type=int)
     order: str = request.args.get('order', default='', type=str)
@@ -520,7 +554,7 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
     
     df = bf.build_patients_mean_time_doctor(df)
     
@@ -552,7 +586,7 @@ def metrics_patients_mean_time_doctor() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
 
     df = bf.build_patients_mean_time_doctor(df)
 
@@ -584,7 +618,7 @@ def metrics_patients_mean_time_nurse() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)   
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)    
     
     df = bf.build_patients_mean_time_doctor(df)
     
@@ -615,7 +649,7 @@ def patients_mean_time_date() -> Union[str, Response]:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
 
     df = bf.build_patients_mean_time_date(df)
 
@@ -646,7 +680,7 @@ def metrics_patients_mean_time_date() -> Response:
     if df.empty:
         return Response('No hay registros para mostrar', status=204)
     elif df.shape[0] < 200:
-        return Response(status=422)    
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
     
     df = bf.build_patients_mean_time_date(df)
     
@@ -673,6 +707,6 @@ def metrics_patients_mean_time_date() -> Response:
 # serve(app, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(debug=True, host="192.168.0.83", port=5000)
+    app.run(debug=True)
+    #app.run(debug=True, host="192.168.0.83", port=5000)
     

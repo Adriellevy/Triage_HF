@@ -20,10 +20,16 @@ def calculate_min(df: DataFrame, y: str) -> Any:
     return df[y].min()
 
 def calculate_min_x(df: DataFrame, y: str, x: str) -> Any:
-    return df.loc[df[y].idxmin(), x]
+    try:
+        return df.loc[df[y].idxmin(), x]
+    except (ValueError, KeyError):
+        return 0
 
 def calculate_max_x(df: DataFrame, y: str, x: str) -> Any:
-    return df.loc[df[y].idxmax(), x]
+    try:
+        return df.loc[df[y].idxmax(), x]
+    except (ValueError, KeyError):
+        return 0
 
 def total(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     string = f'El total de {txt} '
@@ -43,7 +49,6 @@ def mean(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     
 def min(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
     string = f'El mínimo de {txt} '
-    print(z)
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
