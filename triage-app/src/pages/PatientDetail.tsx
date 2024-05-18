@@ -25,7 +25,7 @@ function PatientDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data] = await getPatientById(patient_id)
+        const data = await getPatientById(patient_id)
         setPatient(data)
         handlePatientStatus(data)
       } catch (error) {
