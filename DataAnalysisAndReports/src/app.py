@@ -16,7 +16,6 @@ from plotly.graph_objects import Figure
 # MODIFICAR TEXT TRACE TEMPLATE
 
 # TODO
-# MODIFICAR LOS ARGS EN BASE A LOS COLOR MAPS NUEVOS
 # ARREGLAR TOP QUERIES DATE METRICS
 
 app = Flask(__name__)
@@ -74,8 +73,6 @@ def index() -> str:
             /number_patients_date/isolated/metrics/ <br>   
             /number_patients_date/status/metrics/ <br>
             /number_patients_date/age/metrics/ <br>
-            <br>
-            /top_queries_date/metrics/ <br>
             </p>
            """
 

@@ -2,22 +2,19 @@
 from typing import Any, Dict, Union
 from pandas import DataFrame
 
-def format_number(number: Union[int, float]) -> Union[int, float]:
-    if number == int(number):
-        return int(number)
-    return round(number, 1)
+import pandas as pd
 
 def calculate_total(df: DataFrame, y: str) -> int:
     return df[y].sum()
 
 def calculate_mean(df: DataFrame, y: str) -> float:
-    return df[y].mean()
+    return df[y].mean() if not pd.isna(df[y].mean()) else 0
 
 def calculate_max(df: DataFrame, y: str) -> Any:
-    return df[y].max()
+    return df[y].max() if not pd.isna(df[y].max()) else 0
 
 def calculate_min(df: DataFrame, y: str) -> Any:
-    return df[y].min()
+    return df[y].min() if not pd.isna(df[y].min()) else 0
 
 def calculate_min_x(df: DataFrame, y: str, x: str) -> Any:
     try:
@@ -32,7 +29,7 @@ def calculate_max_x(df: DataFrame, y: str, x: str) -> Any:
         return 0
 
 def total(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
-    string = f'El total de {txt} '
+    string: str = f'El total de {txt} '
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
@@ -40,7 +37,7 @@ def total(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     return string
 
 def mean(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
-    string = f'La media de {txt} '
+    string: str = f'La media de {txt} '
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
@@ -48,11 +45,12 @@ def mean(df: DataFrame, y: str, txt: str, z: str = '', lvl: str = '') -> str:
     return string
     
 def min(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
-    string = f'El mínimo de {txt} '
+    string: str = f'El mínimo de {txt} '
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
-    string += f'fue de {calculate_min(df, y)} ({calculate_min_x(df, y, x)})'
+    min_x: Any = calculate_min_x(df, y, x) 
+    string += f'fue de {calculate_min(df, y)}' + (f' ({min_x})' if min_x != 0 else '')
     return string
 
 def max(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> str:
@@ -60,7 +58,8 @@ def max(df: DataFrame, y: str, txt: str, x:str, z: str = '', lvl: str = '') -> s
     if z != '' and lvl != '':
         df = df[df[z] == lvl]
         string += f'en {lvl} '
-    string += f'fue de {calculate_max(df, y)} ({calculate_max_x(df, y, x)})'
+    max_x: Any = calculate_max_x(df, y, x) 
+    string += f'fue de {calculate_max(df, y)}' + (f' ({max_x})' if max_x != 0 else '')
     return string
 
 def metrics_data(df: DataFrame, y: str, txt: str, x:str, z: str, expand: Dict[str, str]) -> Dict[str, str]:
