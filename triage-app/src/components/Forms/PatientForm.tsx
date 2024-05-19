@@ -79,7 +79,7 @@ function PatientForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data] = await getPatientById(edditingPatientID)
+        const data = await getPatientById(edditingPatientID)
 
         console.log('getting patient')
         console.log(data)
