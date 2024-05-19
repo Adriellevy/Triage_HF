@@ -18,7 +18,16 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
     const fetchData = async () => {
       try {
         const data = await getPatientHistory(patient_id)
-        setPatientHistoryData(data)
+        console.log('datos del paciente cambiado')
+        console.log(data)
+
+        // Ordenar los datos por fecha de actualización
+        const sortedData = data.sort(
+          (a: PatientHistoryItem, b: PatientHistoryItem) =>
+            new Date(b.patient_updated_date).getTime() - new Date(a.patient_updated_date).getTime()
+        )
+
+        setPatientHistoryData(sortedData)
         setisLoading(false)
       } catch (error) {
         console.error((error as Error).message)
