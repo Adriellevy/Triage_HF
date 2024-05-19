@@ -11,3 +11,7 @@ boxRouter.get('/', (req: Request, res: Response) => {
 boxRouter.get('/available', (req: Request, res: Response) => {
   void BoxController.getAvailableBoxes(req, res);
 });
+
+boxRouter.get('/searchid/:id',(req: Request, res: Response)=> {
+  void  BoxController.getBoxCodeById(req, res);
+});
