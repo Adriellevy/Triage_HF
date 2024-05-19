@@ -1,11 +1,7 @@
-import jwt, { type JwtPayload, type Secret } from 'jsonwebtoken';
 import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { UserModel } from '../models/mysql/userModel';
-
-export interface ExtendedJwtPayload extends JwtPayload {
-  id: string;
-}
+import { verifyToken } from '../helpers/authhelper';
 
 export class UserController {
   static async getUserIdByToken(req: Request, res: Response): Promise<Response> {
@@ -14,8 +10,7 @@ export class UserController {
       return res.status(401).json({ error: 'Token no proporcionado' });
     }
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as ExtendedJwtPayload;
-
+      const decoded = verifyToken(token);
       return res.json(decoded.id);
     } catch (error) {
       return res.status(401).json({ error: 'Invalid token' });

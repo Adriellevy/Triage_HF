@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
-/* eslint-disable camelcase */
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../db';
 import { type User } from '../../interface/user';
@@ -30,7 +28,7 @@ export class UserModel {
     }
   }
 
-  static async getUserByID({ id }): Promise<User | undefined> {
+  static async getUserByID({ id }: { id: string }): Promise<User | undefined> {
     try {
       const usersQuery = `
         SELECT 

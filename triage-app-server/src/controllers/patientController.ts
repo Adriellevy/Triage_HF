@@ -1,12 +1,8 @@
-import jwt, { type JwtPayload, type Secret } from 'jsonwebtoken';
 import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { PatientsModel } from '../models/mysql/patientModel';
 import { validatePatient } from '../schemas/patientSchema';
-
-export interface ExtendedJwtPayload extends JwtPayload {
-  id: string;
-}
+import { verifyToken } from '../helpers/authhelper';
 
 export class PatientController {
   static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -27,7 +23,7 @@ export class PatientController {
       return res.status(401).json({ error: 'Token no proporcionado' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as ExtendedJwtPayload;
+    const decoded = verifyToken(token);
     const userID = decoded.id;
 
     if (!result.success) {
@@ -40,7 +36,6 @@ export class PatientController {
         data: result.data
       });
       if (newPatientId) {
-        // eslint-disable-next-line prefer-destructuring
         const io = req.io;
         io?.emit('update', {
           message: 'New patient'

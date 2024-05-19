@@ -1,21 +1,18 @@
 import 'dotenv/config';
-import jwt, { type Secret } from 'jsonwebtoken';
 import { type Request, type Response } from 'express';
 import { compare } from '../helpers/handleBcrypt';
 import { UserModel } from '../models/mysql/userModel';
-import { validatePartialUser } from '../schemas/userSchema';
+import { signToken } from '../helpers/authhelper';
+import { validateAuth } from '../schemas/authSchema';
 
 export class AuthController {
   static async login(req: Request, res: Response): Promise<Response> {
-    const result = validatePartialUser(req.body);
+    const result = validateAuth(req.body);
     if (!result.success) {
       return res.status(400).json({ errors: result.error.errors });
     }
     try {
       const { user_name, user_password } = result.data;
-      if (!user_password || !user_name) {
-        return res.status(401).json({ message: 'Password' });
-      }
       const UserData = await UserModel.getUserByUserName(user_name);
       if (!UserData?.user_password) {
         return res.status(401).json({ message: 'User not found' });
@@ -26,7 +23,7 @@ export class AuthController {
           id: UserData.user_id,
           name: user_name
         };
-        const token = jwt.sign(userForToken, process.env.JWT_SECRET as Secret);
+        const token = signToken(userForToken);
         return res.send({
           name: user_name,
           token

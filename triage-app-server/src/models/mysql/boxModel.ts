@@ -1,5 +1,3 @@
-/* eslint-disable quotes */
-/* eslint-disable camelcase */
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../db';
 import { type Box } from '../../interface/box';

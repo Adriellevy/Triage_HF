@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express, { type Request, type Response } from 'express';
 import { createServer } from 'http';
-import 'dotenv/config';
 import authenticateToken from './middlewares/authMiddleware';
 import initializeSocketMiddleware from './middlewares/socketMiddleware';
 import { corsMiddleware } from './middlewares/corsMiddleware';
