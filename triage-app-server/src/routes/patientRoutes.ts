@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { type Request, type Response, Router } from 'express';
 import { PatientController } from '../controllers/patientController';
 
@@ -20,7 +18,9 @@ patientRouter.post('/', (req: Request, res: Response) => {
 patientRouter.get('/:id', (req: Request, res: Response) => {
   void PatientController.getPatientById(req, res);
 });
+
 // patientRouter.patch('/:id', PatientController.updatePatient);
+
 patientRouter.get('/history/:id', (req: Request, res: Response) => {
   void PatientController.getPatientUpdateHistory(req, res);
 });

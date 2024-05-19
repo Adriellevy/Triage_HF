@@ -22,3 +22,14 @@ export interface Patient {
   doctor_name: string;
   nurse_name: string;
 }
+
+export interface PatientHistoryItem {
+  updated_id: string;
+  patient_id?: string;
+  patient_updated_column: keyof Patient;
+  patient_old_value: string;
+  patient_new_value: string;
+  patient_updated_date: string;
+  user_id?: string;
+  user_name: string;
+}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
 import { readFileSync } from 'fs';
 import { type Request, type Response } from 'express';
 const jsondata = JSON.parse(readFileSync('././data/TriageModels.json', 'utf8'));
