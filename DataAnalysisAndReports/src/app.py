@@ -73,6 +73,11 @@ def index() -> str:
             /number_patients_date/isolated/metrics/ <br>   
             /number_patients_date/status/metrics/ <br>
             /number_patients_date/age/metrics/ <br>
+            <br>
+            /top_queries_date/metrics/ <br>
+            /top_queries_date/isolated/metrics/ <br>
+            /top_queries_date/status/metrics/ <br>
+            /top_queries_date/age/metrics/ <br>
             </p>
            """
 
@@ -534,9 +539,119 @@ def metrics_top_queries_date() -> Response:
 
     return jsonify(data)
 
+@app.route('/top_queries_date/isolated/metrics/')
+def metrics_top_queries_date_isolated() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    df = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
+
+    top: int = request.args.get('top', default=10, type=int)
+    order: str = request.args.get('order', default='', type=str)
+    
+    rename = {
+        0: 'No',
+        1: 'Si'
+    }
+
+    df = bf.build_top_queries_date(df, 'patient_isolated', top, order, rename)
+
+    expand = {
+        'no': 'No',
+        'si': 'Si',
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='consultas',
+        df=df,
+        x='patient_symptom',
+        y='symptom_count',
+        z='patient_isolated',
+        expand=expand
+    )
+
+    return jsonify(data)
+
+@app.route('/top_queries_date/status/metrics/')
+def metrics_top_queries_date_status() -> Response:
+    dict: Dict[str, Any] = get_args()
+
+    df = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)     
+
+    top: int = request.args.get('top', default=10, type=int)
+    order: str = request.args.get('order', default='', type=str)
+    
+    rename = {
+        'ALTA': 'Alta',
+        'EN OBSERVACION': 'En observación',
+        'EN ESPERA DE INTERNACION': 'En espera de internación',
+        'INTERNADO': 'Internado',
+        'AFUERA': 'Afuera'
+    }
+
+    df = bf.build_top_queries_date(df, 'patient_status', top, order, rename)
+
+    expand = {
+        'alta': 'Alta',
+        'en_observacion': 'En observación',
+        'en_espera_de_internacion': 'En espera de internación',
+        'internado': 'Internado',
+        'afuera': 'Afuera'
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='consultas',
+        df=df,
+        x='patient_symptom',
+        y='symptom_count',
+        z='patient_status',
+        expand=expand
+    )
+
+    return jsonify(data)
+
+@app.route('/top_queries_date/age/metrics/')
+def metrics_top_queries_date_date_age() -> Union[str, Response]:
+    dict: Dict[str, Any] = get_args()
+
+    df: DataFrame = bf.build_features('Patient', dict)
+
+    if df.empty:
+        return Response('No hay registros para mostrar', status=204)
+    elif df.shape[0] < 200:
+        return Response('No hay suficientes registros para mostrar (deben ser mas de 200)',status=422)   
+
+    df = bf.build_top_queries_date(df, 'patient_age_group')
+    
+    expand = {
+        '0 a 40': '0 a 40',
+        '41 a 60': '41 a 60',
+        '61 a 80': '61 a 80',
+        '+80': '+80'
+    }
+
+    data: Dict[str, str] = mt.metrics_data(
+        txt='consultas',
+        df=df,
+        x='patient_symptom',
+        y='symptom_count',
+        z='patient_age_group',
+        expand=expand
+    )
+
+    return jsonify(data)  
+
 
 @app.route('/patients_mean_time_doctor/')
-# http://localhost:5173/stats/patients_mean_time_doctor
 def patiens_mean_time_doctor() -> Union[str, Response]:
     dict: Dict[str, Any] = get_args()
 
