@@ -1,5 +1,3 @@
-/* eslint-disable quotes */
-/* eslint-disable camelcase */
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../db';
 import { type Box } from '../../interface/box';
@@ -41,5 +39,16 @@ export class BoxModel {
     const conn = await connect();
     const [boxes] = await conn.query<IBox[]>(boxQuery);
     return boxes[0].cantidad;
+  }
+
+  static async getBoxCodeById(boxId: string): Promise<IBox[]> {
+    const boxCodeQuery = `
+          SELECT box_code
+          FROM Box
+          WHERE box_id = UUID_TO_BIN(?);
+        `;
+    const conn = await connect();
+    const [boxes] = await conn.query<IBox[]>(boxCodeQuery, [boxId]);
+    return boxes;
   }
 }

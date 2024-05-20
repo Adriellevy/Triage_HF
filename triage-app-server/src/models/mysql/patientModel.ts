@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
 import 'dotenv/config';
 import { connect } from '../../db';
 import { type Patient } from '../../interface/patient';
@@ -47,7 +46,7 @@ export class PatientsModel {
     }
   }
 
-  static async getPatientById({ id }): Promise<IUser | undefined> {
+  static async getPatientById({ id }: { id: string }): Promise<IUser | undefined> {
     const patientsQuery = `
         SELECT 
         BIN_TO_UUID(patient_id) AS patient_id,
@@ -235,7 +234,7 @@ export class PatientsModel {
 */
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static async getPatientUpdateHistory({ id }): Promise<any> {
+  static async getPatientUpdateHistory({ id }: { id: string }): Promise<any> {
     const PatientUpdateHistoryQuery = ` 
     SELECT 
     BIN_TO_UUID(PUH.updated_id) AS updated_id,
@@ -257,7 +256,6 @@ export class PatientsModel {
     const conn = await connect();
     const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
     const [{ uuid }] = uuidResult;
-    // eslint-disable-next-line object-curly-newline
     const { patient_id, updated_column, old_value, new_value, user_id } = data;
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (

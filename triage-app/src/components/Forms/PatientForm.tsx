@@ -79,7 +79,7 @@ function PatientForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data] = await getPatientById(edditingPatientID)
+        const data = await getPatientById(edditingPatientID)
 
         console.log('getting patient')
         console.log(data)
@@ -131,6 +131,7 @@ function PatientForm() {
       formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
       formInterfaz.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formInterfaz.patient_status = edditingPatient.patient_status || ''
+      formInterfaz.patient_healthcare_system = edditingPatient.patient_healthcare_system || ''
       formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
       formInterfaz.box_id = edditingPatient.box_id || ''
       formInterfaz.nurse_id = edditingPatient.nurse_name || ''
@@ -144,6 +145,7 @@ function PatientForm() {
       formData.patient_triage_level = edditingPatient.patient_triage_level || ''
       formData.patient_isolated = Boolean(edditingPatient.patient_isolated)
       formData.patient_status = edditingPatient.patient_status || ''
+      formData.patient_healthcare_system = edditingPatient.patient_healthcare_system || ''
       formData.patient_symptom = edditingPatient.patient_symptom || ''
       formData.box_id = edditingPatient.box_id || ''
       formData.nurse_id = edditingPatient.nurse_id || ''
@@ -601,9 +603,6 @@ function PatientForm() {
       patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
     })
   }
-
-  console.log(formInterfaz)
-  console.log(formData)
 
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>

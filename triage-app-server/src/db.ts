@@ -16,7 +16,6 @@ export async function connect(): Promise<Pool> {
 
   try {
     pool = createPool(DATABASE_CONFIG);
-    // Realiza una consulta de prueba para verificar la conexión
     await pool.query('SELECT 1');
     console.log('Conexión exitosa a la base de datos.');
     return pool;
