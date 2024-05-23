@@ -8,18 +8,16 @@ patientRouter.get('/', (req: Request, res: Response) => {
 });
 
 patientRouter.post('/', (req: Request, res: Response) => {
-  try {
-    void PatientController.createNewPatient(req, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  void PatientController.createNewPatient(req, res);
 });
 
 patientRouter.get('/:id', (req: Request, res: Response) => {
   void PatientController.getPatientById(req, res);
 });
 
-// patientRouter.patch('/:id', PatientController.updatePatient);
+patientRouter.patch('/:id', (req: Request, res: Response) => {
+  void PatientController.updatePatient(req, res);
+});
 
 patientRouter.get('/history/:id', (req: Request, res: Response) => {
   void PatientController.getPatientUpdateHistory(req, res);
