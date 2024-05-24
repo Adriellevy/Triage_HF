@@ -1,8 +1,14 @@
 import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { PatientsModel } from '../models/mysql/patientModel';
-import { validatePatient } from '../schemas/patientSchema';
+import { validatePartialPatient, validatePatient } from '../schemas/patientSchema';
 import { verifyToken } from '../helpers/authhelper';
+import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
+import {
+  SendNewPatientNotifications,
+  SendUpdatePatientNotifications
+} from '../helpers/notificationhelper';
+// import { ComparePatientItems } from '../helpers/patienthelper';
 
 export class PatientController {
   static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -27,42 +33,19 @@ export class PatientController {
     const userID = decoded.id;
 
     if (!result.success) {
-      return res.status(500);
-      // return res.status(500).json({ error: JSON.parse(result.error) });
+      return res.status(500).json({ errors: result.error.errors });
     }
-    console.log(result.data);
+
     try {
-      const newPatientId = await PatientsModel.createNewPatient({
+      const newPatientId: string = await PatientsModel.createNewPatient({
         data: result.data
       });
+      const newPatient = {
+        ...result.data,
+        patient_id: newPatientId
+      };
       if (newPatientId) {
-        const io = req.io;
-        io?.emit('update', {
-          message: 'New patient'
-        });
-
-        io?.emit('update', {
-          message: 'Box Update'
-        });
-
-        if (userID !== result.data.doctor_id) {
-          io?.emit(`${result.data.doctor_id}`, {
-            message: 'New patient assigned',
-            patient: {
-              patient_name: result.data.patient_name,
-              patient_id: newPatientId
-            }
-          });
-        }
-        if (userID !== result.data.nurse_id) {
-          io?.emit(`${result.data.nurse_id}`, {
-            message: 'New patient assigned',
-            patient: {
-              patient_name: result.data.patient_name,
-              patient_id: newPatientId
-            }
-          });
-        }
+        SendNewPatientNotifications(req, newPatient, userID);
         return res.status(201).json({
           message: 'New patient created successfully',
           patientId: newPatientId
@@ -81,6 +64,63 @@ export class PatientController {
       if (User) return res.json(User);
       return res.status(404).json({ message: 'Patient not found' });
     } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async updatePatient(req: Request, res: Response): Promise<Response> {
+    const result = validatePartialPatient(req.body);
+
+    if (!result.success) {
+      return res.status(500);
+      // return res.status(500).json({ error: JSON.parse(result.error) });
+    }
+
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+
+    const tokendecoded = verifyToken(token);
+    const userID = tokendecoded.id;
+
+    try {
+      const { id } = req.params;
+
+      const UserAntiguo = await PatientsModel.getPatientById({ id });
+
+      if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
+
+      const UserNuevo = {
+        ...result.data,
+        patient_id: UserAntiguo.patient_id
+      };
+
+      const tiempoActual = new Date();
+
+      const cambios = GeneratePatientHistoryItem(UserNuevo, UserAntiguo, tiempoActual, userID);
+
+      console.log(cambios);
+
+      for (const item of cambios) {
+        await PatientsModel.AddUpdateHistory({ data: item });
+      }
+
+      const updatedUser = await PatientsModel.updatePatient({
+        id,
+        data: result.data
+      });
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'Patient not found' });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      SendUpdatePatientNotifications(req, updatedUser, userID);
+      return res.json(UserAntiguo);
+    } catch (error) {
+      console.error(error.message);
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }

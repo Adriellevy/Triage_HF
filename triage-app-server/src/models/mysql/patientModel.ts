@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { connect } from '../../db';
 import { type Patient } from '../../interface/patient';
 import { type OkPacket, type RowDataPacket } from 'mysql2/promise';
+import { type IBox } from './boxModel';
 
 export interface IUser extends Patient, RowDataPacket {}
 
@@ -158,6 +159,90 @@ export class PatientsModel {
       console.error(error);
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async updatePatient({ id, data }): Promise<any> {
+    try {
+      const conn = await connect();
+      console.log('info');
+      console.log(data);
+      const [[Box]] = await conn.query<IBox[]>(
+        'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
+        [id]
+      );
+      const prevBox = Box.box_id;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const updateFields = Object.entries(data)
+        .filter(([key, value]) => value !== null && value !== undefined)
+        .map(([key, value]) => {
+          if (key === 'box_id' || key === 'nurse_id' || key === 'doctor_id') {
+            return `${key} = UUID_TO_BIN(?)`;
+          } else if (
+            key === 'patient_age' ||
+            key === 'patient_entry_time' ||
+            key === 'patient_triage_time' ||
+            key === 'patient_exit_time'
+          ) {
+            return `${key} = STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ')`;
+          } else {
+            return `${key} = ?`;
+          }
+        })
+        .join(', ');
+      const patientsUpdateQuery = `
+        UPDATE Patient
+        SET ${updateFields}
+        WHERE patient_id = UUID_TO_BIN(?);
+      `;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const updateValues = Object.values(data).filter(
+        (value) => value !== null && value !== undefined
+      );
+      updateValues.push(id);
+
+      const [result] = await conn.execute<OkPacket>(patientsUpdateQuery, updateValues);
+
+      if (result.affectedRows > 0) {
+        if (data.patient_status === 'ALTA' && data.box_id !== null) {
+          await conn.query(
+            `
+            UPDATE Patient
+            SET box_id = null
+            WHERE patient_id = UUID_TO_BIN(?);`,
+            [id]
+          );
+          await conn.query(
+            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
+            [prevBox]
+          );
+          return { message: 'Patient updated successfully' };
+        }
+
+        if (prevBox !== data.box_id) {
+          const now = new Date();
+          await conn.query(
+            `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
+            [prevBox]
+          );
+          await conn.query(
+            `
+            UPDATE Box
+            SET box_time = ?,
+            box_status = 'OCUPADO'
+            WHERE box_id = UUID_TO_BIN(?)`,
+            [now, data.box_id]
+          );
+        }
+        return { message: 'Patient updated successfully' };
+      } else {
+        return { error: 'Error updating the patient' };
+      }
+    } catch (error) {
+      console.error(error);
+      return { error: 'An error occurred during the update' };
+    }
+  }
+
   /*
   static async updatePatient({ id, data }) {
     try {
@@ -256,7 +341,9 @@ export class PatientsModel {
     const conn = await connect();
     const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
     const [{ uuid }] = uuidResult;
-    const { patient_id, updated_column, old_value, new_value, user_id } = data;
+    console.log(data);
+    const { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
+      data;
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (
           updated_id, 
@@ -270,9 +357,9 @@ export class PatientsModel {
     await conn.query(insertQuery, [
       uuid,
       patient_id,
-      updated_column,
-      old_value,
-      new_value,
+      patient_updated_column,
+      patient_old_value,
+      patient_new_value,
       user_id
     ]);
     return 1;

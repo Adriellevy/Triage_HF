@@ -9,18 +9,20 @@ export enum PatientStatus {
 export interface Patient {
   patient_id: string;
   patient_name: string;
-  patient_age: Date;
-  patient_entry_time: Date;
-  patient_exit_time: Date;
-  patient_triage_time: Date;
-  patient_triage_level: number;
-  patient_isolated: number;
-  box_id: string;
-  box_code: string;
+  patient_age: string;
+  patient_entry_time: string;
+  patient_exit_time: string | null;
+  patient_triage_time: string;
+  patient_triage_level: number | null;
+  patient_isolated: boolean;
+  box_id: string | null;
+  box_code?: string;
   patient_status: string;
   patient_symptom: string;
-  doctor_name: string;
-  nurse_name: string;
+  doctor_id: string;
+  nurse_id: string;
+  doctor_name?: string;
+  nurse_name?: string;
 }
 
 export interface PatientHistoryItem {
@@ -29,7 +31,7 @@ export interface PatientHistoryItem {
   patient_updated_column: keyof Patient;
   patient_old_value: string;
   patient_new_value: string;
-  patient_updated_date: string;
+  patient_updated_date: Date;
   user_id?: string;
-  user_name: string;
+  user_name?: string;
 }
