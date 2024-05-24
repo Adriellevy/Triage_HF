@@ -41,14 +41,14 @@ export class BoxModel {
     return boxes[0].cantidad;
   }
 
-  static async getBoxCodeById(boxId: string): Promise<IBox[]> {
+  static async getBoxCodeById(boxId: string): Promise<IBox> {
     const boxCodeQuery = `
           SELECT box_code
           FROM Box
           WHERE box_id = UUID_TO_BIN(?);
         `;
     const conn = await connect();
-    const [boxes] = await conn.query<IBox[]>(boxCodeQuery, [boxId]);
+    const [[boxes]] = await conn.query<IBox[]>(boxCodeQuery, [boxId]);
     return boxes;
   }
 }
