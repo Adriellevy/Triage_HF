@@ -40,7 +40,7 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
 
   const Id_a_codigo = async (Id: string): Promise<string | null> => {
     const resul = await getBoxCodeById(Id)
-    if (resul) return resul.toString()
+    if (resul) return resul.box_code
     return null
   }
 
