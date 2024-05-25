@@ -34,8 +34,31 @@ function PatientForm() {
   const { edditingPatientID } = useParams()
   const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
-  // Formulario estandar tiene como objetivo ser la plantilla
-  const Forumario_estandar = {
+  // Formulario interfaz tiene como objetivo guardar los valores de los elementos selecionados y no los id
+  // ya que los valores no se mandan a la base de datos
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formInterfaz, setformInterfaz] = useState<any>({
+    patient_name: '',
+    patient_age: null,
+    patient_entry_time: '',
+    patient_exit_time: null,
+    patient_triage_time: new Date(),
+    patient_triage_level: '',
+    patient_isolated: false,
+    patient_status: 'AFUERA',
+    patient_healthcare_system: 'default',
+    patient_symptom: '',
+    //patient_medication: '',
+    doctor_id: '',
+    nurse_id: '',
+    box_id: null,
+    nurse_comment: ''
+  })
+
+  // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
+  // ya que los id's son los que se mandan a la base de datos
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formData, setFormData] = useState<any>({
     patient_name: '',
     patient_age: null,
     patient_entry_time: '',
@@ -51,131 +74,121 @@ function PatientForm() {
     nurse_id: '',
     box_id: null,
     nurse_coment: ''
-  }
-  // Formulario interfaz tiene como objetivo guardar los valores de los elementos selecionados y no los id
-  // ya que los valores no se mandan a la base de datos
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [formInterfaz, setformInterfaz] = useState<any>(Forumario_estandar)
-
-  // Formulario Data tiene como objetivo guardar los id's de los elementos selecionados y no los valores
-  // ya que los id's son los que se mandan a la base de datos
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [formData, setFormData] = useState<any>(Forumario_estandar)
-  //-----------------------------------  USE EFFECTS ---------------------------------
-  // Function to fetch patient data by ID
-  const fetchPatientById = async (id: string) => {
-    try {
-      const data = await getPatientById(id)
-      console.log('getting patient', data)
-      setedditingPatient(data)
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error al obtener pacientes:', error.message)
-      } else {
-        console.error('Error desconocido al obtener pacientes:', error)
-      }
-    }
-  }
-
-  // Function to fetch all options (doctors, nurses, boxes)
-  const fetchAllOptions = async () => {
-    try {
-      const [docs, nurses, boxes, allBoxes] = await Promise.all([
-        getAllDoctors(),
-        getAllNurses(),
-        getAvailableBoxes(),
-        getAllBoxes()
-      ])
-      setDoctorOptions(docs)
-      setNurseOptions(nurses)
-      setBoxesOptions(boxes)
-
-      return { docs, nurses, allBoxes }
-    } catch (error) {
-      console.error('Error al obtener opciones:', error)
-      return { docs: [], nurses: [], allBoxes: [] }
-    }
-  }
-
-  // Function to set form data based on patient data and fetched options
-  const setFormDataFromPatient = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    patient: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options: { docs: any[]; nurses: any[]; allBoxes: any[] }
-  ) => {
-    const { docs, nurses, allBoxes } = options
-
-    const box = allBoxes.find((box) => patient?.box_code.includes(box.box_code))
-    if (box) setBoxOcupiedByPatient([box])
-
-    const doctor = docs.find((doctor) => doctor.user_name === patient?.doctor_name)
-    const nurse = nurses.find((nurse) => nurse.user_name === patient?.nurse_name)
-
-    const updatedFormInterfaz = {
-      ...formInterfaz,
-      doctor_id: doctor ? doctor.user_name : '',
-      nurse_id: nurse ? nurse.user_name : '',
-      box_id: box ? box.box_id : '',
-      patient_name: patient.patient_name || '',
-      patient_age: String(patient.patient_age).slice(0, 10) || '',
-      patient_entry_time: patient.patient_entry_time || '',
-      patient_exit_time: patient.patient_exit_time || null,
-      patient_triage_time: patient.patient_triage_time || '',
-      patient_triage_level: patient.patient_triage_level || '',
-      patient_isolated: Boolean(patient.patient_isolated),
-      patient_status: patient.patient_status || '',
-      patient_healthcare_system: patient.patient_healthcare_system || '',
-      patient_symptom: patient.patient_symptom || '',
-      nurse_coment: patient.nurse_coment || ''
-    }
-
-    setformInterfaz(updatedFormInterfaz)
-
-    const updatedFormData = {
-      ...formData,
-      doctor_id: doctor ? doctor.user_id : '',
-      nurse_id: nurse ? nurse.user_id : '',
-      box_id: box ? box.box_id : '',
-      patient_name: patient.patient_name || '',
-      patient_age: patient.patient_age || '',
-      patient_entry_time: patient.patient_entry_time || '',
-      patient_exit_time: patient.patient_exit_time || null,
-      patient_triage_time: patient.patient_triage_time || '',
-      patient_triage_level: patient.patient_triage_level || '',
-      patient_isolated: Boolean(patient.patient_isolated),
-      patient_status: patient.patient_status || '',
-      patient_healthcare_system: patient.patient_healthcare_system || '',
-      patient_symptom: patient.patient_symptom || '',
-      nurse_coment: patient.nurse_coment || ''
-    }
-
-    setFormData(updatedFormData)
-    setChecked(Boolean(patient.patient_isolated))
-
-    const newDate = dayjs(patient.patient_age)
-    setSelectedDate(newDate.toDate())
-  }
+  })
 
   useEffect(() => {
-    if (edditingPatientID) {
-      fetchPatientById(edditingPatientID)
+    const fetchData = async () => {
+      try {
+        const data = await getPatientById(edditingPatientID)
+
+        console.log('getting patient')
+        console.log(data)
+        setedditingPatient(data)
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error al obtener pacientes:', error.message)
+        } else {
+          console.error('Error desconocido al obtener pacientes:', error)
+        }
+      }
     }
+    edditingPatientID && fetchData() //Only runs if params exists
   }, [edditingPatientID])
 
   useEffect(() => {
+    //Only runs in edit mode
+    const asFun = async () => {
+      try {
+        const docs = await getAllDoctors()
+        const nurses = await getAllNurses()
+        const boxes = await getAvailableBoxes()
+        const allBoxes = await getAllBoxes()
+        setDoctorOptions(docs)
+        setNurseOptions(nurses)
+        setBoxesOptions(boxes)
+        const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
+        if (box) setBoxOcupiedByPatient([box])
+
+        const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
+        formInterfaz.doctor_id = doctor ? doctor.user_name : ''
+        formData.doctor_id = doctor ? doctor.user_id : ''
+        const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
+        formInterfaz.nurse_id = nurse ? nurse.user_name : ''
+        formData.nurse_id = nurse ? nurse.user_id : ''
+        formInterfaz.box_id = box ? box.box_id : ''
+        formData.box_id = box ? box.box_id : ''
+      } catch (error) {
+        console.log(error)
+      }
+    }
     if (edditingPatient) {
-      fetchAllOptions().then((options) => {
-        setFormDataFromPatient(edditingPatient, options)
-      })
+      setChecked(Boolean(edditingPatient.patient_isolated))
+      formInterfaz.patient_name = edditingPatient.patient_name || ''
+      formInterfaz.patient_age = String(edditingPatient.patient_age).slice(0, 10) || ''
+      formInterfaz.patient_entry_time = edditingPatient.patient_entry_time || ''
+      formInterfaz.patient_exit_time = edditingPatient.patient_exit_time || null
+      formInterfaz.patient_triage_time = edditingPatient.patient_triage_time || ''
+      formInterfaz.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formInterfaz.patient_isolated = Boolean(edditingPatient.patient_isolated)
+      formInterfaz.patient_status = edditingPatient.patient_status || ''
+      formInterfaz.patient_healthcare_system = edditingPatient.patient_healthcare_system || ''
+      formInterfaz.patient_symptom = edditingPatient.patient_symptom || ''
+      formInterfaz.box_id = edditingPatient.box_id || ''
+      formInterfaz.nurse_id = edditingPatient.nurse_name || ''
+      formInterfaz.doctor_id = edditingPatient.doctor_name || ''
+      //
+      formData.patient_name = edditingPatient.patient_name || ''
+      formData.patient_age = edditingPatient.patient_age || ''
+      formData.patient_entry_time = edditingPatient.patient_entry_time || ''
+      formData.patient_exit_time = edditingPatient.patient_exit_time || null
+      formData.patient_triage_time = edditingPatient.patient_triage_time || ''
+      formData.patient_triage_level = edditingPatient.patient_triage_level || ''
+      formData.patient_isolated = Boolean(edditingPatient.patient_isolated)
+      formData.patient_status = edditingPatient.patient_status || ''
+      formData.patient_healthcare_system = edditingPatient.patient_healthcare_system || ''
+      formData.patient_symptom = edditingPatient.patient_symptom || ''
+      formData.box_id = edditingPatient.box_id || ''
+      formData.nurse_id = edditingPatient.nurse_id || ''
+      formData.doctor_id = edditingPatient.doctor_id || ''
+      //formInterfaz.patient_medication = edditingPatient.patient_medication || ''
+      asFun()
+
+      const newDate = dayjs(edditingPatient.patient_age)
+      setSelectedDate(newDate.toDate())
     }
   }, [edditingPatient])
 
   useEffect(() => {
-    fetchAllOptions()
+    //bring doctors, nurses, and boxes available
+    const fetchDoctors = async () => {
+      try {
+        const data = await getAllDoctors()
+        setDoctorOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    const fetchNurses = async () => {
+      try {
+        const data = await getAllNurses()
+        setNurseOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    const fetchBoxes = async () => {
+      try {
+        const data = await getAvailableBoxes()
+        setBoxesOptions(data)
+      } catch (error) {
+        // console.error('Error:', error.message)
+      }
+    }
+    fetchDoctors()
+    fetchNurses()
+    fetchBoxes()
   }, [])
 
-  //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
   const PatientProblems = [
     { _id: 1, name: 'Convulsiones' },
@@ -199,7 +212,6 @@ function PatientForm() {
     { _id: 4, name: 'IV', color: '105,168,79' }
   ]
 
-  //-----------------------------------  HANDLRES ---------------------------------
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     formInterfaz.patient_triage_time = new Date()
   }
@@ -258,14 +270,32 @@ function PatientForm() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   // only Age
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value: rawValue } = e.target
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let value: any = rawValue
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateFormData = (newFormData: any) => {
-      setFormData(newFormData)
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const name = e.target.name
+    let value = e.target.value
+
+    // Get the selected option based on the entered value
+    // Check if it's the hidden input
+
+    if (name === 'doctor_id') {
+      const itemValue = DoctorOptions
+        ? DoctorOptions.find((option) => option.user_name === value)?.user_name
+        : null
+      const itemId = DoctorOptions
+        ? DoctorOptions.find((option) => option.user_name === value)?.user_id
+        : null
+      value = itemId || ''
+      console.log('user id del doc: ' + itemId)
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: itemValue
+      })
+      setFormData({
+        ...formData,
+        [name]: itemId
+      })
+
       setErrorsForm({
         ...ErrorsForm,
         [name]: {
@@ -273,163 +303,136 @@ function PatientForm() {
           value: false
         }
       })
-      ObjetoconDatosCambiados(newFormData, oldFormData)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleOptionChange = (options: any[], idKey: string, nameKey: string) => {
-      const selectedOption = options.find((option) => option[nameKey] === value)
-      const itemId = selectedOption ? selectedOption[idKey] : ''
-      const itemValue = selectedOption ? selectedOption[nameKey] : ''
+    } else if (name === 'nurse_id') {
+      const itemValue = NurseOptions
+        ? NurseOptions.find((option) => option.user_name === value)?.user_name
+        : null
+      const itemId = NurseOptions
+        ? NurseOptions.find((option) => option.user_name === value)?.user_id
+        : null
+      value = itemId || ''
       setformInterfaz({
         ...formInterfaz,
         [name]: itemValue
       })
-      updateFormData({
+      setFormData({
         ...formData,
         [name]: itemId
       })
-    }
-
-    switch (name) {
-      case 'doctor_id':
-        if (DoctorOptions) handleOptionChange(DoctorOptions, 'user_id', 'user_name')
-        break
-
-      case 'nurse_id':
-        if (NurseOptions) handleOptionChange(NurseOptions, 'user_id', 'user_name')
-        break
-
-      case 'box_id':
-        if (value === '' || value === 'AFUERA') {
-          setformInterfaz({
-            ...formInterfaz,
-            [name]: null,
-            patient_status: 'AFUERA'
-          })
-          updateFormData({
-            ...formData,
-            [name]: null,
-            patient_status: 'AFUERA'
-          })
-        } else {
-          const boxId = BoxesOptions?.find((box) => box.box_id == value)?.box_id || ''
-          setformInterfaz({
-            ...formInterfaz,
-            [name]: boxId,
-            patient_status: 'EN OBSERVACION'
-          })
-          updateFormData({
-            ...formData,
-            [name]: boxId,
-            patient_status: 'EN OBSERVACION'
-          })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
         }
-        break
-
-      case 'patient_triage_level':
-        value = Number(value)
+      })
+    } else if (name === 'box_id') {
+      if (value === '' || value === 'AFUERA') {
         setformInterfaz({
           ...formInterfaz,
-          [name]: value
+          [name]: null,
+          patient_status: 'AFUERA'
         })
-        updateFormData({
+        setFormData({
           ...formData,
-          [name]: value
-        })
-        break
-
-      case 'patient_age':
-        if (!edditingPatient) {
-          value = getAgeNumber(Number(value))
-          setformInterfaz({
-            ...formInterfaz,
-            [name]: Number(rawValue)
-          })
-          updateFormData({
-            ...formData,
-            [name]: value
-          })
-        } else {
-          console.log('revisar error')
-        }
-        break
-
-      default:
-        setformInterfaz({
-          ...formInterfaz,
-          [name]: value
-        })
-        updateFormData({
-          ...formData,
-          [name]: value
+          [name]: null,
+          patient_status: 'AFUERA'
         })
         setErrorsForm({
           ...ErrorsForm,
           [name]: {
             ...ErrorsForm[name],
-            value: value ? false : true
+            value: false
           }
         })
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    try {
-      const formDataNoID = { ...formData }
-      delete formDataNoID.patient_id
-      formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
-      if (!formDataNoID.patient_triage_time) formDataNoID.patient_triage_time = new Date()
-      if (formDataNoID.patient_entry_time)
-        formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
-      else formDataNoID.patient_entry_time = new Date()
-      formDataNoID.patient_age = new Date(formDataNoID.patient_age)
-      const token = Cookies.get('authToken')
-      if (token) {
-        if (edditingPatient) {
-          await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
-          toast.success('Paciente actualizado', { duration: 2000 })
-          navigate('/patients')
-        } else {
-          const { data, errors } = await addNewPatient(formDataNoID)
-          if (errors) {
-            console.error('Errores en el formulario al agregar nuevo paciente:', errors)
-            toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
-            resetErrors()
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setErrorsForm((prevErrorsForm: any) => {
-              let updatedErrorsForm = { ...prevErrorsForm }
-              errors.forEach((error) => {
-                updatedErrorsForm = {
-                  ...updatedErrorsForm,
-                  [error.path]: { ...updatedErrorsForm[error.path], value: true }
-                }
-              })
-              return updatedErrorsForm
-            })
-          } else {
-            console.log('Nuevo paciente agregado:', data)
-            toast.success('Nuevo paciente agregado', { duration: 2000 })
-            resetForm()
+      } else {
+        const itemId = BoxesOptions?.find((box) => box.box_id == value)?.box_id
+        value = itemId || ''
+        setformInterfaz({
+          ...formInterfaz,
+          [name]: itemId,
+          patient_status: 'EN OBSERVACION'
+        })
+        setFormData({
+          ...formData,
+          [name]: itemId,
+          patient_status: 'EN OBSERVACION'
+        })
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
           }
-        }
+        })
       }
-    } catch (error) {
-      toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
-      console.error('Error al intentar agregar un nuevo paciente:', error)
+    } else if (name === 'patient_triage_level') {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: Number(value)
+      })
+      setFormData({
+        ...formData,
+        [name]: Number(value)
+      })
+      setErrorsForm({
+        ...ErrorsForm,
+        [name]: {
+          ...ErrorsForm[name],
+          value: false
+        }
+      })
+    } else if (name === 'patient_age') {
+      if (edditingPatient) {
+        console.log('revisar error')
+      } else {
+        getAgeNumber(Number(value))
+        setformInterfaz({
+          ...formInterfaz,
+          [name]: Number(value)
+        })
+        setFormData({
+          ...formData,
+          [name]: getAgeNumber(Number(value))
+        })
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      }
+    } else {
+      setformInterfaz({
+        ...formInterfaz,
+        [name]: value
+      })
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      if (value) {
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: false
+          }
+        })
+      } else {
+        setErrorsForm({
+          ...ErrorsForm,
+          [name]: {
+            ...ErrorsForm[name],
+            value: true
+          }
+        })
+      }
     }
+    ObjetoconDatosCambiados({ ...formData, [name]: value }, oldFormData)
   }
 
-  const resetForm = () => {
-    setformInterfaz(Forumario_estandar)
-    setFormData(Forumario_estandar)
-    setChecked(false)
-    setSelectedDate(null)
-    resetErrors()
-  }
-  //-----------------------------------  Console Log datos cambiados ---------------------------------
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function ObjetoconDatosCambiados(proxy: any, oldFormData: any) {
     if (edditingPatient) {
@@ -447,7 +450,6 @@ function PatientForm() {
     }
   }
 
-  //----------------------------------------------  Deseleccion Box ---------------------------------
   // Función para cancelar el cambio de box y agregar el box previo a la lista
   const cancelBoxPreviousSelected = () => {
     // Verificar que BoxesOptions y formData.box_id tengan valores válidos
@@ -458,8 +460,113 @@ function PatientForm() {
       }
     }
   }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    //Update patient_entry_time
+    const formDataNow = formData
+    try {
+      //Delete Id
+      const formDataNoID = formDataNow
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
+      formDataNoID.patient_isolated = Boolean(formDataNoID.patient_isolated)
+      console.log('formDataNoID.patient_isolated: ' + formDataNoID.patient_isolated)
+      formDataNoID.patient_triage_time = new Date(formDataNoID.patient_triage_time)
+      formDataNoID.patient_entry_time = new Date(formDataNoID.patient_entry_time)
+      formDataNoID.patient_age = new Date(formDataNoID.patient_age)
+      delete formDataNoID.patient_id
+      const token = Cookies.get('authToken')
 
-  //--------------------------------------  Handler Errores -----------------------------------------
+      console.log(formDataNoID)
+      if (token) {
+        if (edditingPatient) {
+          console.log('Editing patch')
+          console.log(formDataNoID)
+          try {
+            await updateAnyPatient(edditingPatient.patient_id, formDataNoID)
+            toast.success('Paciente actualizado', {
+              duration: 2000
+            })
+            navigate('/patients')
+          } catch {
+            toast.error('Error al actualizar un paciente', {
+              duration: 2000
+            })
+          }
+        } else {
+          formDataNow.patient_entry_time = new Date()
+          const { data, errors } = await addNewPatient(formDataNow)
+          if (errors) {
+            console.error('Errores en el formulario al agregar nuevo paciente:', errors)
+            toast.error('Error al intentar agregar un nuevo paciente', {
+              duration: 2000
+            })
+            resetErrors()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setErrorsForm((prevErrorsForm: any) => {
+              let updatedErrorsForm = { ...prevErrorsForm }
+              errors.forEach((error) => {
+                updatedErrorsForm = {
+                  ...updatedErrorsForm,
+                  [error.path]: { ...updatedErrorsForm[error.path], value: true }
+                }
+              })
+              return updatedErrorsForm
+            })
+          } else {
+            console.log('Nuevo paciente agregado:', data)
+            toast.success('Nuevo paciente agregado', {
+              duration: 2000
+            })
+
+            setformInterfaz({
+              patient_name: '',
+              patient_age: '',
+              // patient_age: '2000-01-01',
+              patient_entry_time: null,
+              patient_exit_time: null,
+              patient_triage_time: new Date(),
+              patient_triage_level: '',
+              patient_status: '',
+              patient_isolated: false,
+              patient_symptom: '',
+              patient_healthcare_system: 'default',
+              //patient_medication: '',
+              doctor_id: '',
+              nurse_id: '',
+              box_id: '',
+              nurse_comment: ''
+            })
+            setFormData({
+              patient_name: '',
+              patient_age: '2000-01-01',
+              patient_entry_time: null,
+              patient_exit_time: null,
+              patient_triage_time: new Date(),
+              patient_triage_level: '',
+              patient_status: '',
+              patient_symptom: '',
+              patient_healthcare_system: 'default',
+              patient_isolated: false,
+              //patient_medication: '',
+              doctor_id: '',
+              nurse_id: '',
+              box_id: '',
+              nurse_comment: ''
+            })
+            setChecked(false)
+            setSelectedDate(null)
+          }
+        }
+      }
+    } catch (error) {
+      toast.error('Error al intentar agregar un nuevo paciente', {
+        duration: 2000
+      })
+      console.error('Error al intentar agregar un nuevo paciente:', error)
+    }
+  }
+
+  // Errors
   const [ErrorsForm, setErrorsForm] = useState<{
     [key: string]: { value: boolean | null; message: string }
   }>({
@@ -493,12 +600,10 @@ function PatientForm() {
       doctor_id: { value: null, message: 'Seleccione un doctor válido' },
       nurse_id: { value: null, message: 'Seleccione un enfermero válido' },
       box_id: { value: null, message: 'Seleccione un box válido' },
-      patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' },
-      nurse_coment: { value: null, message: 'No debería aparecer este mensaje' }
+      patient_healthcare_system: { value: null, message: 'Detalle Cobertura Médica' }
     })
   }
 
-  //-----------------------------------  Componente ---------------------------------
   return (
     <div className='max-w-6xl mx-auto mt-5 p-6 bg-white shadow-md rounded-md'>
       {edditingPatient ? (
