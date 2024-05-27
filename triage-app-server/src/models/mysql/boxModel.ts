@@ -1,5 +1,5 @@
 import { type RowDataPacket } from 'mysql2/promise';
-import { connect } from '../../db';
+import { connect } from '../../config/db';
 import { type Box } from '../../interface/box';
 
 export interface IBox extends Box, RowDataPacket {}

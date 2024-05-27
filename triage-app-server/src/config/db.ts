@@ -1,5 +1,5 @@
-import { type Pool, type ConnectionOptions, createPool } from 'mysql2/promise';
 import 'dotenv/config';
+import { type Pool, type ConnectionOptions, createPool } from 'mysql2/promise';
 
 const DATABASE_CONFIG: ConnectionOptions = {
   host: process.env.DB_HOST ?? 'localhost',

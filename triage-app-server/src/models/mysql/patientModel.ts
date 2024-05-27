@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { connect } from '../../db';
+import { connect } from '../../config/db';
 import { type Patient } from '../../interface/patient';
 import { type OkPacket, type RowDataPacket } from 'mysql2/promise';
 import { type IBox } from './boxModel';

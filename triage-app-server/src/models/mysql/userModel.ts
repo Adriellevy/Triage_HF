@@ -1,5 +1,5 @@
 import { type RowDataPacket } from 'mysql2/promise';
-import { connect } from '../../db';
+import { connect } from '../../config/db';
 import { type User } from '../../interface/user';
 
 export interface IUser extends User, RowDataPacket {}

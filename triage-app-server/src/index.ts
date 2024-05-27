@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import './config/envvars';
 import express, { type Request, type Response } from 'express';
 import { createServer } from 'http';
 import authenticateToken from './middlewares/authMiddleware';
