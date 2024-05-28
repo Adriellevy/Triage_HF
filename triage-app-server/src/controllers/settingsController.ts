@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { type Request, type Response } from 'express';
-const jsondata = JSON.parse(readFileSync('././data/TriageModels.json', 'utf8'));
+const jsondata = JSON.parse(readFileSync('././src/data/TriageModels.json', 'utf8'));
 
 export class SettingsController {
   static getSettings(req: Request, res: Response): void {
