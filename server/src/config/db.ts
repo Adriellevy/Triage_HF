@@ -1,12 +1,14 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
 import { type Pool, type ConnectionOptions, createPool } from 'mysql2/promise';
 
+config();
 const DATABASE_CONFIG: ConnectionOptions = {
-  host: process.env.DB_HOST ?? 'localhost',
+  host: process.env.DB_HOST ?? 'mysqldb',
   user: process.env.DB_USER ?? 'root',
-  port: process.env.DB_PORT != null ? parseInt(process.env.DB_PORT, 10) : undefined,
-  password: process.env.DB_PASSWORD ?? '',
-  database: process.env.DB_NAME ?? 'Triage_db'
+  port: process.env.DB_PORT != null ? parseInt(process.env.DB_PORT, 10) : 3306,
+  password: process.env.DB_PASSWORD ?? '1234',
+  database: process.env.DB_NAME ?? 'Triagedb'
 };
 
 let pool: Pool | null = null;

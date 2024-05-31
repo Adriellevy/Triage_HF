@@ -1,7 +1,7 @@
 {
-  "semi": false,
+  "semi": true,
   "singleQuote": true,
-  "jsxSingleQuote": true,
-  "trailingComma": "all",
-  "eslintIntegration": true
+  "trailingComma": "none",
+  "eslintIntegration": true,
+  "printWidth": 100
 }

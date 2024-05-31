@@ -8,10 +8,11 @@ import mysql.connector
 def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
     try:
         connection: Union[MySQLConnection, CMySQLConnection] = mysql.connector.connect(
-            host='localhost',
+            host='mysqldb',
             user='root',
-            password='',
-            database='Triage_db',
+            password='1234',
+            port='3306',
+            database='Triagedb',
             charset='latin1'
         ) 
     except mysql.connector.Error:

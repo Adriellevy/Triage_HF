@@ -1,0 +1,46 @@
+services:
+  mysqldb:
+    image: mysql:8.0.33
+    container_name: mysql_container
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=Triagedb
+    ports:
+      - 3307:3306
+    networks:
+      - app-network
+  api:
+    container_name: server_api_container
+    build:
+      context: ./server/
+    depends_on:
+      - mysqldb
+    links:
+      - mysqldb
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=root
+      - DB_PORT=3306
+      - DB_PASSWORD=1234
+      - DB_NAME=Triagedb
+      - PORTAPI=3000
+      - JWT_SECRET=123
+      - EMAIL_USER=Test
+      - EMAIL_PASS=Test
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+  dataanalysisandreports:
+    container_name: DataAnalysisAndReports_api_container
+    build:
+      context: ./DataAnalysisAndReports/src/
+    depends_on:
+      - mysqldb
+    links:
+      - mysqldb
+    ports:
+      - 5000:5000
+networks:
+      app-network:
+        driver: bridge

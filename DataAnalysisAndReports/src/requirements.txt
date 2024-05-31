@@ -1,0 +1,19 @@
+# DATABASE
+mysql-connector-python
+
+# DATA HANDLING
+numpy
+pandas
+
+# WEB APP
+flask
+
+# CHART
+plotly
+matplotlib # TO DEBUG .ipynb
+seaborn # TO DEBUG .ipynb
+
+# ML
+nltk
+gensim
+scikit-learn

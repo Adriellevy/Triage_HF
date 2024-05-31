@@ -15,6 +15,8 @@ import { nodemailerRouter } from './routes/nodemailerRoutes';
 
 const PORT = process.env.PORTAPI ?? 3000;
 
+console.log(process.env.DB_USER);
+
 const app = express();
 app.disable('x-powered-by');
 app.use(express.json());
