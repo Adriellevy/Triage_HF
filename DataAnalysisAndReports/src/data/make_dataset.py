@@ -12,7 +12,7 @@ def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
             user='root',
             password='1234',
             port='3306',
-            database='Triagedb',
+            database='Triage_db',
             charset='latin1'
         ) 
     except mysql.connector.Error:

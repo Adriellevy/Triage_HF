@@ -8,7 +8,9 @@ WORKDIR /DataAnalysis
 COPY . .
 
 COPY requirements.txt requirements.txt
+
+# Install Python dependencies
 RUN pip3 install -r requirements.txt
 
 # set the start command
-CMD [ "python3", "app.py"]
+CMD [ "python3", "app.py" ]
