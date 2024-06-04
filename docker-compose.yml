@@ -48,6 +48,25 @@ services:
     networks:
       - app-network
 
+  triageapp:
+    container_name: react_app_container
+    build:
+      context: ./triage-app/
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_NETWORK_APP_URL="http://192.168.120.278:5173"
+      - VITE_PYTHON_URL="http://localhost:5000"
+    depends_on:
+      - mysqldb
+      - api
+    links:
+      - mysqldb
+      - api
+    ports:
+      - 5173:5173
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
