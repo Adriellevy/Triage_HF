@@ -1,3 +1,7 @@
+import { Box } from "./Boxes"
+import { User } from "./User"
+
+
 export enum PatientStatus {
   WAITING = 'EN OBSERVACION',
   DISCHARGED = 'ALTA',
@@ -76,4 +80,17 @@ export interface PatientHistoryItem {
   patient_updated_date: string
   user_id?: string
   user_name: string
+}
+
+
+export interface Field {
+  label: string | null
+  labelAlternativo:string|null,
+  key: keyof Patient
+  //TODO arreglar el error de typescript en el Patient form puede ser que los imports no sean los adecuados
+  format:((value: User | Box | string) => string | Promise<string | null>) | null
+  component_type: string
+  value: string | null|Date
+  handlerHelperFunction: Box | User | string | number | null
+  formatdata: ((value: string | null) => string | null) | null
 }
