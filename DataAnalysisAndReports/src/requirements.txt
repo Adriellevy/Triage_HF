@@ -10,10 +10,10 @@ flask
 
 # CHART
 plotly
-matplotlib # TO DEBUG .ipynb
-seaborn # TO DEBUG .ipynb
+# matplotlib # TO DEBUG .ipynb
+# seaborn # TO DEBUG .ipynb
 
 # ML
-nltk
-gensim
-scikit-learn
+# nltk
+# gensim
+# scikit-learn
