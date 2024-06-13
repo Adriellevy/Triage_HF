@@ -57,16 +57,18 @@ export function SendUpdatePatientNotifications(
   const io = req.io;
 
   io?.emit(SocketEvent.UPDATE, {
-    message: UpdateEvent.NEW_PATIENT
+    message: UpdateEvent.UPDATE_PATIENT
   });
 
   io?.emit(SocketEvent.UPDATE, {
     message: UpdateEvent.BOX_UPDATE
   });
 
+  console.log(userID);
+  console.log(UpdatedPatient.doctor_id);
   if (userID !== UpdatedPatient.doctor_id) {
     io?.emit(`${UpdatedPatient.doctor_id}`, {
-      message: UpdateEvent.NEW_PATIENT_ASSIGNED,
+      message: UpdateEvent.UPDATE_PATIENT,
       patient: {
         patient_name: UpdatedPatient.patient_name,
         patient_id: UpdatedPatient.patient_id
@@ -76,7 +78,7 @@ export function SendUpdatePatientNotifications(
 
   if (userID !== UpdatedPatient.nurse_id) {
     io?.emit(`${UpdatedPatient.nurse_id}`, {
-      message: UpdateEvent.NEW_PATIENT_ASSIGNED,
+      message: UpdateEvent.UPDATE_PATIENT,
       patient: {
         patient_name: UpdatedPatient.patient_name,
         patient_id: UpdatedPatient.patient_id

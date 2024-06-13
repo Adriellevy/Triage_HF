@@ -116,8 +116,12 @@ export class PatientController {
         return res.status(404).json({ message: 'Patient not found' });
       }
 
+      const UserFinal = await PatientsModel.getPatientById({ id });
+
+      if (!UserFinal) return res.status(404).json({ message: 'Patient not found' });
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      SendUpdatePatientNotifications(req, updatedUser, userID);
+      SendUpdatePatientNotifications(req, UserFinal, userID);
       return res.json(UserAntiguo);
     } catch (error) {
       console.error(error.message);
