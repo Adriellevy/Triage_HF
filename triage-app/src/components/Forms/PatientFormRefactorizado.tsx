@@ -76,9 +76,19 @@ function PatientForm() {
       labelAlternativo: 'AgeLabel',
       format: returnDependingModeAge,
       component_type: 'DependsMode',
-      value: null,
+      value: '' || null,
       handlerHelperFunction: null,
       formatdata: returnDate4Database
+    },
+    {
+      key: 'patient_symptom',
+      label: 'PatientSymptom',
+      labelAlternativo: null,
+      format: returnSintomName,
+      component_type: 'select',
+      value: null,
+      handlerHelperFunction: null,
+      formatdata: returnSintomName
     },
     {
       key: 'patient_entry_time',
@@ -139,16 +149,6 @@ function PatientForm() {
       value: null,
       handlerHelperFunction: null,
       formatdata: returnEstado
-    },
-    {
-      key: 'patient_symptom',
-      label: 'PatientSymptom',
-      labelAlternativo: null,
-      format: returnSintomName,
-      component_type: 'select',
-      value: null,
-      handlerHelperFunction: null,
-      formatdata: returnSintomName
     },
     {
       key: 'patient_healthcare_system',
@@ -490,6 +490,7 @@ function PatientForm() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    resetErrors()
     e.preventDefault()
     console.log('formData en el front antes de mandar: \n', formData)
     console.log('formInterfaz en el front antes de mandar: \n', formInterfaz)
@@ -505,7 +506,6 @@ function PatientForm() {
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
             toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
-            resetErrors()
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setErrorsForm((prevErrorsForm: any) => {
               let updatedErrorsForm = { ...prevErrorsForm }
@@ -526,7 +526,8 @@ function PatientForm() {
       }
     } catch (error) {
       toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
-      console.error('Error al intentar agregar un nuevo paciente:', error)
+      console.error('Error al intentar agregar un nuevo paciente:\n')
+      console.error(error)
     }
   }
 
@@ -632,21 +633,23 @@ function PatientForm() {
                 (formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode' &&
                   edditingPatient === null)) && (
                 <Input
-                  error_active={error?.value}
+                  error_active={ErrorsForm[formInterfaz[key].key]}
                   id={formInterfaz[key as keyof typeof formInterfaz].key.toString()}
                   name={'input'}
                   type={
                     formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode'
-                      ? 'Number'
+                      ? 'number'
                       : 'text'
                   }
                   value={
-                    formInterfaz[key as keyof typeof formInterfaz]?.format
+                    formInterfaz[key as keyof typeof formInterfaz]?.value == null // verifica si el valor es null o undefined
+                      ? '' // si es null o undefined, establece el valor como cadena vacía
+                      : formInterfaz[key as keyof typeof formInterfaz]?.format
                       ? formInterfaz[key as keyof typeof formInterfaz]?.format(
                           formInterfaz[key as keyof typeof formInterfaz]?.value,
                           true || null
                         )
-                      : formInterfaz[key as keyof typeof formInterfaz]?.value || ''
+                      : formInterfaz[key as keyof typeof formInterfaz]?.value
                   }
                   onChange={handleSelectorInputChange}
                 />
@@ -656,9 +659,14 @@ function PatientForm() {
               {formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'select' && (
                 <Select
                   key={0}
-                  error_active={ErrorsForm.doctor_id}
-                  id={formInterfaz[key as keyof typeof formInterfaz].key.toString()}
+                  error_active={ErrorsForm[formInterfaz[key].key]}
+                  id={formInterfaz[key as keyof typeof formInterfaz].key}
                   name={'select'}
+                  value={
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?.user_id ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value ||
+                    ''
+                  }
                   onChange={handleSelectorInputChange}
                 >
                   <option value='' disabled className='bg-white opacity-100'>
@@ -666,20 +674,19 @@ function PatientForm() {
                     {t(formInterfaz[key as keyof typeof formInterfaz]?.label).toLowerCase()}
                   </option>
                   {TotalOptions &&
-                    TotalOptions[formInterfaz[key].key]?.map((option, index: number) => {
-                      return (
-                        <option
-                          data-index={index}
-                          key={index + 1}
-                          id={index.toString()}
-                          className='bg-brown opacity-100'
-                        >
-                          {formInterfaz[key as keyof typeof formInterfaz]?.format
-                            ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
-                            : formInterfaz[key as keyof typeof formInterfaz]?.value || ''}
-                        </option>
-                      )
-                    })}
+                    TotalOptions[formInterfaz[key].key]?.map((option, index: number) => (
+                      <option
+                        value={option.user_id || option}
+                        data-index={index}
+                        key={index + 1}
+                        id={index.toString()}
+                        className='bg-brown opacity-100'
+                      >
+                        {formInterfaz[key as keyof typeof formInterfaz]?.format
+                          ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
+                          : option}
+                      </option>
+                    ))}
                 </Select>
               )}
 

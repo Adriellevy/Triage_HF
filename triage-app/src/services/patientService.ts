@@ -127,12 +127,11 @@ export const addNewPatient = async (
       body: JSON.stringify(newPatientData)
     })
 
-    console.log("body")
-    console.log(newPatientData)
+    console.log("body del mansaje mandado \n", newPatientData)
     if (!response.ok) {
       const errorResponse = await response.json()
-      if (errorResponse.error) {
-        const simplifiedErrors = errorResponse.error.map(
+      if (errorResponse.errors) {
+        const simplifiedErrors = errorResponse.errors.map(
           ({ message, path }: { message: string; path: string[] }) => ({
             message,
             path: path[0]
@@ -140,6 +139,7 @@ export const addNewPatient = async (
         )
         return { data: null, errors: simplifiedErrors }
       }
+      
       throw new Error(`Error en la solicitud POST a /patient: ${errorResponse}`)
     }
 
@@ -150,7 +150,6 @@ export const addNewPatient = async (
     throw new Error('Error al agregar nuevo paciente')
   }
 }
-
 export const getPatientHistory = async (
   patient_id: string | undefined
 ): Promise<PatientHistoryItem[]> => {
