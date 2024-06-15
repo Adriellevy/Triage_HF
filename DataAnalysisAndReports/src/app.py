@@ -8,47 +8,55 @@ import visualization.visualize as vl
 from flask import Flask, Response, jsonify, request
 from plotly.graph_objects import Figure
 
-
-
 # [COSAS QUE ME GUSTARIA AGREGAR QUE AHORA NO SON POSIBLES]
 # - AGREGAR PARA QUE EL NUMERO DE LA MEDIA QUEDE ALINEADO CON EL EJE DE REFERENCIAS DE 'Y'
 # - AL ELEGIR QUE NIVELES DE TRIAGE MOSTRAR, ORDENAR AUTOMATICAMENTE
 # MODIFICAR TEXT TRACE TEMPLATE
 
 # TODO
-# ARREGLAR TOP QUERIES DATE METRICS
+# 
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
 
+# def get_args() -> Dict[str, Any]:
+#     """
+#     from_ format: yyyy-mm-dd
+#     to format: yyyy-mm-dd
+#     patient_age format: yyyy-01-01 00:00:00
+#     patient_isolated format:
+#         empty (patientisolated=) if want to be False
+#         any non-empty value if want to be True
+#     """
+#     args: Dict[str, Any] = {
+#         'from_': request.args.get('from', default=None, type=str),
+#         'to': request.args.get('to', default=None, type=str),
+#         'patient_age': request.args.get('patientage', default=None, type=str),
+#         'patient_isolated': request.args.get(
+#             'patientisolated', default=None, type=bool
+#         ),
+#         'patient_status': request.args.get('patientstatus', default=None, type=str),
+#         'patient_symptom': request.args.get('patientsymptom', default=None, type=str),
+#         'patient_healthcare_system': request.args.get(
+#             'patienthealthcaresystem', default=None, type=str
+#         ),
+#         'doctor_full_name': request.args.get('doctorfullname', default=None, type=str),
+#         'nurse_full_name': request.args.get('nursefullname', default=None, type=str),
+#         'box_type': request.args.get('boxtype', default=None, type=str)
+#     }
+#     return args
+
 def get_args() -> Dict[str, Any]:
     """
     from_ format: yyyy-mm-dd
     to format: yyyy-mm-dd
-    patient_age format: yyyy-01-01 00:00:00
-    patient_isolated format:
-        empty (patientisolated=) if want to be False
-        any non-empty value if want to be True
     """
     args: Dict[str, Any] = {
         'from_': request.args.get('from', default=None, type=str),
-        'to': request.args.get('to', default=None, type=str),
-        'patient_age': request.args.get('patientage', default=None, type=str),
-        'patient_isolated': request.args.get(
-            'patientisolated', default=None, type=bool
-        ),
-        'patient_status': request.args.get('patientstatus', default=None, type=str),
-        'patient_symptom': request.args.get('patientsymptom', default=None, type=str),
-        'patient_healthcare_system': request.args.get(
-            'patienthealthcaresystem', default=None, type=str
-        ),
-        'doctor_full_name': request.args.get('doctorfullname', default=None, type=str),
-        'nurse_full_name': request.args.get('nursefullname', default=None, type=str),
-        'box_type': request.args.get('boxtype', default=None, type=str)
+        'to': request.args.get('to', default=None, type=str)
     }
     return args
-
 
 @app.route('/')
 def index() -> str:
@@ -95,7 +103,7 @@ def chart_number_patients_date() -> Union[str, Response]:
 
     df = bf.build_number_patients_date(df, 'patient_triage_level')
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
@@ -108,7 +116,7 @@ def chart_number_patients_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='pacientes',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -131,7 +139,7 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
 
     df = bf.build_number_patients_date(df, 'patient_isolated', rename)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
@@ -144,7 +152,7 @@ def chart_number_patients_date_isolated() -> Union[str, Response]:
         color='patient_isolated',
         color_map='isolated_discrete_map',
         y_txt='pacientes',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -170,7 +178,7 @@ def chart_number_patients_date_status() -> Union[str, Response]:
 
     df = bf.build_number_patients_date(df, 'patient_status', rename)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
@@ -183,7 +191,7 @@ def chart_number_patients_date_status() -> Union[str, Response]:
         color='patient_status',
         color_map='status_discrete_map',
         y_txt='pacientes',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -201,7 +209,7 @@ def chart_number_patients_date_age() -> Union[str, Response]:
 
     df = bf.build_number_patients_date(df, 'patient_age_group')
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
@@ -214,7 +222,7 @@ def chart_number_patients_date_age() -> Union[str, Response]:
         color='patient_age_group',
         color_map='age_range_discrete_map',
         y_txt='pacientes',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -303,7 +311,6 @@ def metrics_number_patients_date_metrics() -> Response:
     }
     
     df = bf.build_number_patients_date(df, 'patient_status', rename)
-
     expand = {
         'alta': 'Alta',
         'en_observacion': 'En observación',
@@ -371,7 +378,7 @@ def chart_top_queries_date() -> Union[str, Response]:
 
     df = bf.build_top_queries_date(df, 'patient_triage_level', top, order)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    #mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.bar_chart(
         df=df,
@@ -384,7 +391,7 @@ def chart_top_queries_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='consultas',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -410,7 +417,7 @@ def chart_top_queries_date_isolated() -> Union[str, Response]:
 
     df = bf.build_top_queries_date(df, 'patient_isolated', top, order, rename)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    #mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.bar_chart(
         df=df,
@@ -423,7 +430,7 @@ def chart_top_queries_date_isolated() -> Union[str, Response]:
         color='patient_isolated',
         color_map='isolated_discrete_map',
         y_txt='consultas',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -452,7 +459,7 @@ def chart_top_queries_date_status() -> Union[str, Response]:
 
     df = bf.build_top_queries_date(df, 'patient_status', top, order, rename)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    #mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.bar_chart(
         df=df,
@@ -465,7 +472,7 @@ def chart_top_queries_date_status() -> Union[str, Response]:
         color='patient_status',
         color_map='status_discrete_map',
         y_txt='consultas',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -486,7 +493,7 @@ def chart_top_queries_date_age() -> Union[str, Response]:
 
     df = bf.build_top_queries_date(df, 'patient_age_group', top, order)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+    #mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.bar_chart(
         df=df,
@@ -499,7 +506,7 @@ def chart_top_queries_date_age() -> Union[str, Response]:
         color='patient_age_group',
         color_map='age_range_discrete_map',
         y_txt='consultas',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()
@@ -682,7 +689,6 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
         color_map='triage_color_map',
         y_txt='Minutos'
     )
-
     return fig.to_html()
 
 @app.route('/patients_mean_time_doctor/metrics/')
@@ -765,7 +771,7 @@ def patients_mean_time_date() -> Union[str, Response]:
 
     df = bf.build_patients_mean_time_date(df)
 
-    mean: bool = request.args.get('mean', default=False, type=bool)
+   # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig: Figure = vl.line_chart(
         df=df,
@@ -778,7 +784,7 @@ def patients_mean_time_date() -> Union[str, Response]:
         color='patient_triage_level',
         color_map='triage_color_map',
         y_txt='minutos',
-        mean=mean
+        mean=True
     )
 
     return fig.to_html()

@@ -90,7 +90,6 @@ def join_filters(dictionary: Dict[str, Any]) -> str:
         return query[:-1]
 
 def build_number_patients_date(df:DataFrame, groupby: str, rename: Dict[Any, str] = {}) ->DataFrame:
-    df['patient_entry_time'] = df['patient_entry_time'].dt.date
     df = df.groupby(['patient_entry_time', groupby], sort=False).size().reset_index(name='number_of_patients') # type: ignore
 
     df.sort_values(by='patient_entry_time', inplace=True)
@@ -115,19 +114,22 @@ def build_top_queries_date(df:DataFrame, groupby: str, top: int=10, order: str='
         for triage_level in all_triage_levels:
             all_combinations.append({'patient_symptom': symptom, groupby: triage_level})
 
-    all_combinations_df:DataFrame =DataFrame(all_combinations)
+    all_combinations_df:DataFrame = DataFrame(all_combinations)
 
     merged_df:DataFrame = pd.merge(all_combinations_df, df, on=['patient_symptom', groupby], how='left')
     merged_df['symptom_count'].fillna(0, inplace=True)
 
     merged_df = merged_df.sort_values(by=[groupby, 'symptom_count'], ascending=[True, False])
     
-    if (order == 'asc'):
-        merged_df = merged_df.sort_values(by=['patient_symptom'], key=lambda x: x.map(
-        dict(zip(top_reasons[::-1], range(len(top_reasons)))))).reset_index(drop=True)
-    else:
-        merged_df = merged_df.sort_values(by=['patient_symptom', groupby], key=lambda x: x.map(
-            dict(zip(top_reasons, range(len(top_reasons)))))).reset_index(drop=True)
+    # if (order == 'asc'):
+    #     merged_df = merged_df.sort_values(by=['patient_symptom'], key=lambda x: x.map(
+    #     dict(zip(top_reasons[::-1], range(len(top_reasons)))))).reset_index(drop=True)
+    # else:
+    #     merged_df = merged_df.sort_values(by=['patient_symptom', groupby], key=lambda x: x.map(
+    #         dict(zip(top_reasons, range(len(top_reasons)))))).reset_index(drop=True)
+    
+    merged_df = merged_df.sort_values(by=['patient_symptom', groupby], key=lambda x: x.map(
+            dict(zip(top_reasons, range(len(top_reasons)))))).reset_index(drop=True)    
         
     if rename:
         merged_df[groupby] = merged_df[groupby].replace(rename)
@@ -135,9 +137,6 @@ def build_top_queries_date(df:DataFrame, groupby: str, top: int=10, order: str='
     return merged_df
 
 def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
-    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'], errors='coerce')
-    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'], errors='coerce')
-    
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
     
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
@@ -149,9 +148,6 @@ def build_patients_mean_time_doctor(df:DataFrame) ->DataFrame:
     return df
 
 def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:
-    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
-    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
-    
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
     
     df = df.groupby(['user_full_name', 'patient_triage_level'])['patient_delta_time'].mean().reset_index(name='patient_mean_delta_time')
@@ -159,9 +155,6 @@ def build_patients_mean_time_nurse(df:DataFrame) ->DataFrame:
     return df
 
 def build_patients_mean_time_date(df:DataFrame) ->DataFrame:
-    df['patient_exit_time'] = pd.to_datetime(df['patient_exit_time'])
-    df['patient_entry_time'] = pd.to_datetime(df['patient_entry_time'])
-    
     df['patient_delta_time'] = df['patient_exit_time'] - df['patient_entry_time'] 
     
     df['patient_entry_time'] = df['patient_entry_time'].dt.date
@@ -183,6 +176,10 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
         condition: str = join_filters(join_dictionary) + where_filters(where_dictionary)
         
     df: DataFrame = md.get_table(table_name, condition)
+    
+    if table_name  == "Patient":
+        df["patient_entry_time"] = pd.to_datetime(df['patient_entry_time'], errors='coerce')
+        df["patient_exit_time"] = pd.to_datetime(df['patient_entry_time'], errors='coerce')
 
     if df.empty == True:
         return DataFrame()
