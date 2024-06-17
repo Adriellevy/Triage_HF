@@ -48,6 +48,8 @@ export interface PatientData {
   nurse_name: string
   patient_healthcare_system?: string
   nurse_coment?: string
+  doctor_id?: string
+  nurse_id?: string
 }
 
 export type NullablePatient = Patient | null

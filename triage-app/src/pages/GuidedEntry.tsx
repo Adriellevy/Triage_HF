@@ -1,4 +1,4 @@
-import PatientForm from '@/components/Forms/PatientForm'
+import PatientForm from '@/components/Forms/PatientFormRefactorizado'
 import Dashboard from '@/components/Dashboard/Dashboard'
 
 function GuidedEntry() {

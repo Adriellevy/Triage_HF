@@ -50,27 +50,14 @@ const options: Option[] = [
     label: 'PATIENT STATE',
     options: [
       { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
-      {
-        value: 'patient_status',
-        item: 'EN ESPERA DE INTERNACION',
-        label: 'EN ESPERA DE INTERNACION',
-        color: '#525252'
-      },
-      {
-        value: 'patient_status',
-        item: 'EN INTERNACION',
-        label: 'EN INTERNACION',
-        color: '#525252'
-      },
       { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       {
-        value: 'patient_status',
+        value: 'patient_isolated',
         item: 'EN AISLAMIENTO',
         label: 'EN AISLAMIENTO',
         color: '#525252'
       },
       { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
-
       {
         value: 'patient_status',
         item: 'TODOS MENOS ALTA',
@@ -162,26 +149,28 @@ function Patients() {
   const [RawData, setRawData] = useState<Patient[] | null>(null)
 
   //hardoceado ver como obtenerlo de otra forma
+  const isPatientSelected = (patient, option) => {
+    switch (option.item) {
+      case 'TODOS':
+      case '1-4':
+        return patient[option.value]
+      case 'TODOS MENOS ALTA':
+        return patient[option.value] !== 'ALTA'
+      case 'MINE':
+        // Asumiendo que tienes una variable para el doctor actual
+        return patient.doctor_name === currentDoctorName
+      case 'EN AISLAMIENTO':
+        return patient.patient_isolated === 1
+      default:
+        return patient[option.value].toString() === option.item
+    }
+  }
+
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
-    // Filtrar patientsData
     if (RawData) {
-      const filteredData = RawData.filter((patient) => {
-        // Verificar si el paciente cumple con todas las opciones seleccionadas
-        return selectedOptions.every((option) => {
-          if (option.item === 'TODOS' || option.item === '1-4') {
-            return patient[option.value]
-          } else if (option.item === 'TODOS MENOS ALTA') {
-            if (patient[option.value] != 'ALTA') {
-              return patient[option.value]
-            }
-          } else if (option.item === 'MINE') {
-            // Verificar si el paciente tiene el doctor_name igual a 'Dr. Smith'
-            return patient.doctor_name === 'Dr. Smith'
-          }
-          // Comprobar si el paciente tiene el valor de la opción seleccionada
-          return patient[option.value].toString() === option.item
-        })
-      })
+      const filteredData = RawData.filter((patient) =>
+        selectedOptions.every((option) => isPatientSelected(patient, option))
+      )
       setPatientsData(filteredData)
       setFilteredPatients(filteredData)
     }
