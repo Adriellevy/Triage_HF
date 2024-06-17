@@ -715,7 +715,7 @@ function PatientForm() {
                     }
                     //@ts-expect-error no se handlea el vento
                     selectedDateExt={selectedDate}
-                    error_active={ErrorsForm.patient_age}
+                    error_active={ErrorsForm[formInterfaz[key].key]}
                     id={key as keyof typeof formInterfaz}
                     name={key}
                   />
@@ -747,9 +747,11 @@ function PatientForm() {
                       {level.name}
                     </button>
                   ))}
+                  {ErrorsForm.patient_triage_level.value && (
+                    <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
+                  )}
                 </div>
               )}
-              {error?.value && <span className='text-red-500'>{error?.message}</span>}
             </div>
           )
         })}

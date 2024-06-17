@@ -69,8 +69,9 @@ export function returnNurseId(Nurse: User): string {
   return Nurse.user_id
 }
 
-export function returnBoxID(Box: Box): string {
+export function returnBoxID(Box: Box): string | null {
   // Implementación de la función
+  if (Box === null) return null
   if (Box.box_id) return Box.box_id
   return Box.toString()
 }
