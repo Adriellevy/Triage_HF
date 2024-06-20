@@ -1,42 +1,48 @@
+import os
+import typing
+
+import mysql.connector
+import pandas as pd
+from dotenv import load_dotenv
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.connection_cext import CMySQLConnection
-from typing import Union
 
-import pandas as pd
-import mysql.connector
+load_dotenv()
 
-def connect() -> Union[MySQLConnection, CMySQLConnection, None]:
+
+def connect() -> typing.Union[MySQLConnection, CMySQLConnection, None]:
     try:
-        connection: Union[MySQLConnection, CMySQLConnection] = mysql.connector.connect(
-            host='mysqldb',
-            user='root',
-            password='1234',
-            port='3306',
-            database='Triage_db',
-            charset='latin1'
-        ) 
+        connection = mysql.connector.connect(
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            port=os.getenv('DB_PORT'),
+            database=os.getenv('DB_NAME'),
+            charset=os.getenv('DB_CHARSET')
+        )
     except mysql.connector.Error:
         return None
     return connection
 
-def get_table(table_name: str, condition: str='') -> pd.DataFrame:
+
+def get_table(table_name: str, condition: str = '') -> typing.Union[pd.DataFrame, None]:
     connection = connect()
     if connection:
-        query = f'SELECT * FROM {table_name}'
+        query = 'SELECT * FROM ' + table_name
         if condition != '':
-            query += f' {condition}'
-        print(query)
+            query += condition
+        print('QUERY:   \"' + query + '\"')
         df = pd.read_sql(sql=query,
                          con=connection)
         connection.close()
         return df
     else:
-        return pd.DataFrame()
-    
+        return None
+
 # def get_id(table_name):
 #     connection = connect()
 #     if connection:
-#         query = f'SELECT BIN_TO_UUID(box_id) FROM {table_name}'
+#         query = 'SELECT BIN_TO_UUID(box_id) FROM {table_name}'
 #         df = pd.read_sql(query, connection)
 #         connection.close()
 #         return df

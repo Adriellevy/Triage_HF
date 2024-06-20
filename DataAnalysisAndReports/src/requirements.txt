@@ -17,3 +17,6 @@ plotly
 # nltk
 # gensim
 # scikit-learn
+
+# DOTENV
+python-dotenv
