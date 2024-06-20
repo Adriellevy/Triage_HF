@@ -127,7 +127,7 @@ def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = 
 
     if df is None:
         return None
-    elif df.empty or df.shape[0] < 200:
+    elif df.empty:
         return DataFrame()
 
     df = bf.build_patients_mean_time(df, group_cond1, group_cond2)
