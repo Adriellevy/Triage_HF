@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { PatientData, PatientHistoryItem as PatientHistoryItemType } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
-import { getBoxCodeById } from '../../services/boxService'
-
+import { returnUserNameWithId, returnBoxCodeById } from '../../helpers/HelperHistoryItem'
 interface PropsPatientHystoryItem {
   item: PatientHistoryItemType
   index: number
@@ -38,12 +37,6 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
   const { t } = useTranslation('PatientHistoryItem')
   const { patient_updated_date, patient_updated_column, user_name } = item
 
-  const Id_a_codigo = async (Id: string): Promise<string | null> => {
-    const resul = await getBoxCodeById(Id)
-    if (resul) return resul.box_code
-    return null
-  }
-
   const columnas: Field[] = [
     { key: 'patient_name', label: t('NameLabel'), format: null },
     { key: 'patient_age', label: t('AgeLabel'), format: getFormatBirthDate },
@@ -53,9 +46,9 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
     { key: 'patient_isolated', label: t('PatientIsolatedLabel'), format: null },
     { key: 'patient_symptom', label: t('PatientProblem'), format: null },
     { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: null },
-    { key: 'box_id', label: t('PatientBoxLabel'), format: Id_a_codigo },
-    { key: 'doctor_id', label: t('DoctorNameLabel'), format: null },
-    { key: 'nurse_name', label: t('NurseNameLabel'), format: null },
+    { key: 'box_id', label: t('PatientBoxLabel'), format: returnBoxCodeById },
+    { key: 'doctor_id', label: t('DoctorNameLabel'), format: returnUserNameWithId },
+    { key: 'nurse_id', label: t('NurseNameLabel'), format: returnUserNameWithId },
     { key: 'patient_status', label: t('PatientStatusLabel'), format: null }
   ]
 
