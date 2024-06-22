@@ -43,6 +43,14 @@ services:
       - mysqldb
     links:
       - mysqldb
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=root
+      - DB_PORT=3306
+      - DB_PASSWORD=1234
+      - DB_NAME=Triage_db
+      - DB_CHARSET=latin1
+      - CHARTS_RESTRICTION=False
     ports:
       - 5000:5000
     networks:
@@ -58,6 +66,10 @@ services:
     links:
       - mysqldb
       - api
+    entrypoint: 
+    - VITE_API_URL=http://localhost:3000
+    - VITE_NETWORK_APP_URL=http://192.168.100.238:5173
+    - VITE_PYTHON_URL=http://localhost:5000
     ports:
       - 5173:5173
     networks:
