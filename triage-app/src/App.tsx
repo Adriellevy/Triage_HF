@@ -12,7 +12,7 @@ import Boxes from '@/pages/Boxes'
 import PatientDetail from '@/pages/PatientDetail'
 import UserDetail from '@/pages/UserDetail'
 import Sidebar from '@/components/Sidebar'
-import { UserRole } from '@/interfaces/User'
+import { UserRole, User } from '@/interfaces/User'
 import { getUserById, getUserIdByToken } from '@/services/userService'
 import StatsPatinet from './pages/stats/StatsPatinet'
 import StatsTopConsultas from './pages/stats/StatsTopConsultas'
@@ -26,6 +26,7 @@ function App() {
   const { isAuthenticated, login } = useAuth()
   const { role, setRole } = useRoleContext()
   const [User, setUser] = useState<string>('')
+  const [Actual_user, setActualUser] = useState<User>()
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
@@ -44,6 +45,7 @@ function App() {
           const data = await getUserIdByToken()
           const user = await getUserById(String(data))
           setRole(user.user_type)
+          setActualUser(user)
         }
       } catch (error) {
         console.error((error as Error).message)
@@ -66,7 +68,12 @@ function App() {
                   <Routes>
                     <Route path='/' element={<GuidedEntry />} />
                     <Route path='/guidedentry' element={<GuidedEntry />} />
-                    <Route path='/patients' element={<Patients />} />
+                    {Actual_user && (
+                      <Route
+                        path='/patients'
+                        element={<Patients actual_user={Actual_user} role={role} />}
+                      />
+                    )}
                     <Route path='/patients/:patient_id' element={<PatientDetail />} />{' '}
                     {
                       //le paso el parametro del tipo de usario para saber que ventana de edicion de paciente cargar

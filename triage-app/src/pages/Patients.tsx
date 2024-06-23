@@ -8,7 +8,9 @@ import { getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
-
+import { User } from '@/interfaces/User'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { UserRole } from '@/interfaces/User'
 interface ColourOption {
   readonly value: string
   readonly label: string
@@ -70,8 +72,8 @@ const options: Option[] = [
   {
     label: 'From Who',
     options: [
-      { value: 'type_user', label: 'ALL', color: '#525252' },
-      { value: 'type_user', label: 'MINE', color: '#525252' }
+      { value: 'type_user', label: 'TODOS', color: '#525252' },
+      { value: 'type_user', label: 'MÍOS', color: '#525252' }
     ]
   }
 ]
@@ -96,7 +98,7 @@ const colourStyles: StylesConfig<ColourOption, true> = {
           ? 'white'
           : 'black'
         : data.color,
-      cursor: isDisabled ? 'not-allowed' : 'default',
+      cursor: isDisabled ? 'not-TODOSowed' : 'default',
 
       ':active': {
         ...styles[':active'],
@@ -140,25 +142,36 @@ const SearchOption = [
   }
 ]
 
-function Patients() {
+function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
   const [patientsData, setPatientsData] = useState<Patient[] | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
   const [RawData, setRawData] = useState<Patient[] | null>(null)
-
+  const [hasExecuted, setHasExecuted] = useState(false)
+  // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
+  const predefinedOptions = [predefinedOption]
+  if (role === UserRole.DOCTOR) {
+    predefinedOptions.push({
+      value: 'type_user',
+      item: 'MÍOS',
+      label: 'MÍOS',
+      color: '#525252',
+      isFixed: true
+    })
+  }
   //hardoceado ver como obtenerlo de otra forma
-  const isPatientSelected = (patient, option) => {
-    switch (option.item) {
+  const isPatientSelected = (patient: Patient, option: ColourOption) => {
+    console.log('option:\n', option)
+    switch (option.label) {
       case 'TODOS':
       case '1-4':
         return patient[option.value]
       case 'TODOS MENOS ALTA':
         return patient[option.value] !== 'ALTA'
-      case 'MINE':
-        // Asumiendo que tienes una variable para el doctor actual
-        return patient.doctor_name === currentDoctorName
+      case 'MÍOS':
+        return patient.doctor_name === actual_user.user_name
       case 'EN AISLAMIENTO':
         return patient.patient_isolated === 1
       default:
@@ -199,10 +212,7 @@ function Patients() {
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
           setRawData(sortedData1)
-          const sortedData = data
-            .filter((patient) => patient.patient_status !== 'ALTA') // Filtrar solo los pacientes que no están dados de alta
-            .sort((a, b) => new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime())
-          setPatientsData(sortedData)
+          setPatientsData(sortedData1)
         }
       } catch (error) {
         console.error((error as Error).message)
@@ -239,6 +249,10 @@ function Patients() {
     }
   }, [socket])
 
+  useEffect(() => {
+    onChangeSelect(predefinedOptions)
+  }, [predefinedOptions])
+
   return (
     <div className='bg-white pb-4'>
       <div>
@@ -252,7 +266,7 @@ function Patients() {
             closeMenuOnSelect={true}
             onChange={onChangeSelect}
             styles={colourStyles}
-            defaultValue={[predefinedOption]}
+            defaultValue={predefinedOptions}
           />
         </div>
       </div>
