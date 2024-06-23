@@ -43,6 +43,14 @@ services:
       - mysqldb
     links:
       - mysqldb
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=root
+      - DB_PORT=3306
+      - DB_PASSWORD=1234
+      - DB_NAME=Triage_db
+      - DB_CHARSET=latin1
+      - CHARTS_RESTRICTION=False
     ports:
       - 5000:5000
     networks:

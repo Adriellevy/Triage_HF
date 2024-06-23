@@ -1,5 +1,7 @@
+import os
 from typing import Any, Dict, Union
 
+from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request
 from pandas import DataFrame
 
@@ -9,6 +11,8 @@ import visualization.visualize as vl
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
+
+load_dotenv('/data/.env')
 
 
 # def get_args() -> Dict[str, Any]:
@@ -89,7 +93,7 @@ def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None) -> Un
 
     if df is None:
         return None
-    elif df.empty or df.shape[0] < 200:
+    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
         return DataFrame()
 
     df = bf.build_number_patients_date(df, group_cond, rename)
@@ -104,7 +108,7 @@ def get_df_top_queries(group_cond: str, rename: Dict[Any, str] = None) -> Union[
 
     if df is None:
         return None
-    elif df.empty or df.shape[0] < 200:
+    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
         return DataFrame()
 
     # top = request.args.get('top', default=10, type=int)
@@ -127,7 +131,7 @@ def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = 
 
     if df is None:
         return None
-    elif df.empty:
+    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
         return DataFrame()
 
     df = bf.build_patients_mean_time(df, group_cond1, group_cond2)
