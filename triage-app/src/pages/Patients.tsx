@@ -208,11 +208,20 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       try {
         if (token) {
           const data = await getPatients()
-          const sortedData1 = data.sort((a, b) => {
+          const sortedData = data.sort((a, b) => {
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
-          setRawData(sortedData1)
-          setPatientsData(sortedData1)
+          setRawData(sortedData)
+          if (!hasExecuted) {
+            setHasExecuted(true)
+            const initialFilteredData = sortedData.filter((patient) =>
+              predefinedOptions.every((option) => isPatientSelected(patient, option))
+            )
+            setPatientsData(initialFilteredData)
+            setFilteredPatients(initialFilteredData)
+          } else {
+            setPatientsData(sortedData)
+          }
         }
       } catch (error) {
         console.error((error as Error).message)
@@ -230,6 +239,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
           const sortedData = data.sort((a, b) => {
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
+
           setRawData(sortedData)
           setPatientsData(sortedData)
         }
@@ -248,10 +258,6 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       }
     }
   }, [socket])
-
-  useEffect(() => {
-    onChangeSelect(predefinedOptions)
-  }, [predefinedOptions])
 
   return (
     <div className='bg-white pb-4'>
