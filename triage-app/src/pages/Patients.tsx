@@ -11,72 +11,9 @@ import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { User } from '@/interfaces/User'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { UserRole } from '@/interfaces/User'
-interface ColourOption {
-  readonly value: string
-  readonly label: string
-  readonly item?: string
-  readonly color: string
-  readonly isFixed?: boolean
-  readonly isDisabled?: boolean
-}
-
-interface Option {
-  readonly label: string
-  readonly options: ColourOption[]
-}
-const predefinedOption: ColourOption = {
-  value: 'patient_status',
-  item: 'TODOS MENOS ALTA',
-  label: 'TODOS MENOS ALTA',
-  color: '#525252',
-  isFixed: true
-}
-const options: Option[] = [
-  {
-    label: 'TRIAGE LEVEL',
-    options: [
-      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#bdbebe' },
-      { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
-      { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
-      { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
-      {
-        value: 'patient_triage_level',
-        item: '1-4',
-        label: 'Triage Level 1-4',
-        color: '#5243AA',
-        isFixed: true
-      }
-    ]
-  },
-  {
-    label: 'PATIENT STATE',
-    options: [
-      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
-      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
-      {
-        value: 'patient_isolated',
-        item: 'EN AISLAMIENTO',
-        label: 'EN AISLAMIENTO',
-        color: '#525252'
-      },
-      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
-      {
-        value: 'patient_status',
-        item: 'TODOS MENOS ALTA',
-        label: 'TODOS MENOS ALTA',
-        color: '#525252'
-      },
-      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
-    ]
-  },
-  {
-    label: 'From Who',
-    options: [
-      { value: 'type_user', label: 'TODOS', color: '#525252' },
-      { value: 'type_user', label: 'MÍOS', color: '#525252' }
-    ]
-  }
-]
+import { ColourOption } from '@/interfaces/PatientList'
+import { Option } from '@/interfaces/PatientList'
+import { filterPatients } from '@/helpers/HelperPatientList'
 
 const colourStyles: StylesConfig<ColourOption, true> = {
   control: (styles) => ({ ...styles, backgroundColor: 'white' }),
@@ -142,6 +79,52 @@ const SearchOption = [
   }
 ]
 
+const options: Option[] = [
+  {
+    label: 'TRIAGE LEVEL',
+    options: [
+      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#bdbebe' },
+      { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
+      { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
+      { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
+      {
+        value: 'patient_triage_level',
+        item: '1-4',
+        label: 'Triage Level 1-4',
+        color: '#5243AA',
+        isFixed: true
+      }
+    ]
+  },
+  {
+    label: 'PATIENT STATE',
+    options: [
+      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
+      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
+      {
+        value: 'patient_isolated',
+        item: 'EN AISLAMIENTO',
+        label: 'EN AISLAMIENTO',
+        color: '#525252'
+      },
+      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
+      {
+        value: 'patient_status',
+        item: 'TODOS MENOS ALTA',
+        label: 'TODOS MENOS ALTA',
+        color: '#525252'
+      },
+      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
+    ]
+  },
+  {
+    label: 'From Who',
+    options: [
+      { value: 'type_user', label: 'TODOS', color: '#525252' },
+      { value: 'type_user', label: 'MÍOS', color: '#525252' }
+    ]
+  }
+]
 function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
@@ -151,9 +134,19 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [RawData, setRawData] = useState<Patient[] | null>(null)
   const [hasExecuted, setHasExecuted] = useState(false)
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
-  const predefinedOptions = [predefinedOption]
+  // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
+  const predefinedOptionsVar: ColourOption[] = [
+    {
+      value: 'patient_status',
+      item: 'TODOS MENOS ALTA',
+      label: 'TODOS MENOS ALTA',
+      color: '#525252',
+      isFixed: true
+    }
+  ]
+
   if (role === UserRole.DOCTOR) {
-    predefinedOptions.push({
+    predefinedOptionsVar.push({
       value: 'type_user',
       item: 'MÍOS',
       label: 'MÍOS',
@@ -161,33 +154,56 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       isFixed: true
     })
   }
+
+  const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>(predefinedOptionsVar)
+
   //hardoceado ver como obtenerlo de otra forma
-  const isPatientSelected = (patient: Patient, option: ColourOption) => {
-    console.log('option:\n', option)
-    switch (option.label) {
-      case 'TODOS':
-      case '1-4':
-        return patient[option.value]
-      case 'TODOS MENOS ALTA':
-        return patient[option.value] !== 'ALTA'
-      case 'MÍOS':
-        return patient.doctor_name === actual_user.user_name
-      case 'EN AISLAMIENTO':
-        return patient.patient_isolated === 1
-      default:
-        return patient[option.value].toString() === option.item
-    }
-  }
 
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
+    console.log('predefined options debería cambiar a:\n', selectedOptions)
+    setPredefinedOptions(selectedOptions as ColourOption[])
     if (RawData) {
-      const filteredData = RawData.filter((patient) =>
-        selectedOptions.every((option) => isPatientSelected(patient, option))
-      )
+      const filteredData = filterPatients(RawData, selectedOptions, searchTerm, 'name', actual_user)
       setPatientsData(filteredData)
       setFilteredPatients(filteredData)
     }
   }
+
+  useEffect(() => {
+    const token = Cookies.get('authToken')
+    const fetchData = async () => {
+      try {
+        if (token) {
+          const data = await getPatients()
+          const sortedData = data.sort((a, b) => {
+            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+          })
+          console.log('Predifined Options em use efect', predefinedOptions)
+          const filteredPatients = filterPatients(
+            sortedData,
+            predefinedOptions,
+            searchTerm,
+            'name',
+            actual_user
+          )
+          setRawData(sortedData)
+          setPatientsData(filteredPatients)
+        }
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    if (socket) {
+      socket.on(SocketEvent.UPDATE, (data) => {
+        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
+          fetchData()
+        }
+      })
+      return () => {
+        socket.off(SocketEvent.UPDATE)
+      }
+    }
+  }, [socket, predefinedOptions])
 
   const handleonSearch = ({ term, by }: { term: string; by: string }) => {
     setSearchTerm(term)
@@ -214,8 +230,12 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
           setRawData(sortedData)
           if (!hasExecuted) {
             setHasExecuted(true)
-            const initialFilteredData = sortedData.filter((patient) =>
-              predefinedOptions.every((option) => isPatientSelected(patient, option))
+            const initialFilteredData = filterPatients(
+              sortedData,
+              predefinedOptions,
+              searchTerm,
+              'name',
+              actual_user
             )
             setPatientsData(initialFilteredData)
             setFilteredPatients(initialFilteredData)
@@ -229,35 +249,6 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     }
     fetchData()
   }, [token])
-
-  useEffect(() => {
-    const token = Cookies.get('authToken')
-    const fetchData = async () => {
-      try {
-        if (token) {
-          const data = await getPatients()
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-          })
-
-          setRawData(sortedData)
-          setPatientsData(sortedData)
-        }
-      } catch (error) {
-        console.error((error as Error).message)
-      }
-    }
-    if (socket) {
-      socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
-          fetchData()
-        }
-      })
-      return () => {
-        socket.off(SocketEvent.UPDATE)
-      }
-    }
-  }, [socket])
 
   return (
     <div className='bg-white pb-4'>
