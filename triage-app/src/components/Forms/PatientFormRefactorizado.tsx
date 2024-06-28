@@ -35,6 +35,7 @@ import {
   returnPatientTriageNumber,
   returnEstado
 } from '@/helpers/HelperPatientForm'
+import { Socket } from 'socket.io-client'
 
 function PatientForm() {
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
@@ -664,7 +665,8 @@ function PatientForm() {
                   name={'select'}
                   value={
                     formInterfaz[key as keyof typeof formInterfaz]?.value?.user_id ||
-                    formInterfaz[key as keyof typeof formInterfaz]?.value ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?.box_id ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?._id ||
                     ''
                   }
                   onChange={handleSelectorInputChange}
@@ -676,7 +678,7 @@ function PatientForm() {
                   {TotalOptions &&
                     TotalOptions[formInterfaz[key].key]?.map((option, index: number) => (
                       <option
-                        value={option.user_id || option}
+                        value={option.user_id || option.box_id || option._id}
                         data-index={index}
                         key={index + 1}
                         id={index.toString()}
@@ -715,7 +717,7 @@ function PatientForm() {
                     }
                     //@ts-expect-error no se handlea el vento
                     selectedDateExt={selectedDate}
-                    error_active={ErrorsForm[formInterfaz[key].key]}
+                    error_active={ErrorsForm.patient_age}
                     id={key as keyof typeof formInterfaz}
                     name={key}
                   />

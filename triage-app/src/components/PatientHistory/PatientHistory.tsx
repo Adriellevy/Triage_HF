@@ -18,8 +18,8 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
     const fetchData = async () => {
       try {
         const data = await getPatientHistory(patient_id)
-        console.log('datos del paciente cambiado')
-        console.log(data)
+        // console.log('datos del paciente cambiado')
+        // console.log(data)
 
         // Ordenar los datos por fecha de actualización
         const sortedData = data.sort(
