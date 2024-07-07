@@ -4,7 +4,7 @@
   "EntryTimeLabel": "Hora de Ingreso",
   "TriageLevelLabel": "Nivel de Triaje",
   "PatientMedication": "Medicación",
-  "PatientProblem": "Problema",
+  "PatientProblem": "Sintoma",
   "PatientBoxLabel": "Código de Box",
   "DoctorNameLabel": "Nombre del Doctor",
   "NurseNameLabel": "Nombre de la Enfermera",
