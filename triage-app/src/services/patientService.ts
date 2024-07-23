@@ -75,7 +75,10 @@ export const updatePatient = async (
 export const updateAnyPatient = async (
   patient_id: string,
   updatedData: Partial<Patient>
-): Promise<PartialPatient> => {
+):  Promise<{
+  currentData?: PartialPatient | null
+  newData?: { message: string; path: string }[] | null
+}> => {
   try {
     const token = Cookies.get('authToken')
     const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
@@ -98,12 +101,19 @@ export const updateAnyPatient = async (
       },
       body: JSON.stringify(body) // Pass the constructed body object
     })
+    const data = await response.json()
 
+    if (response.status === 409) {
+      console.error('400000009')
+      return { currentData:updatedData, newData:data }  
+    }
+    
     if (!response.ok) {
       throw new Error(`Error en la solicitud PATCH a ${apiUrl}: ${response.statusText}`)
     }
-    const data = await response.json()
-    return data
+
+    
+    return { currentData: null, newData: data }
   } catch (error) {
     console.error('Error al actualizar paciente:', error)
     throw new Error('Error al actualizar paciente')

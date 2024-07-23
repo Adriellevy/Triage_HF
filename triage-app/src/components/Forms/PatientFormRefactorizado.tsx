@@ -35,9 +35,10 @@ import {
   returnPatientTriageNumber,
   returnEstado
 } from '@/helpers/HelperPatientForm'
-import { Socket } from 'socket.io-client'
+import ConflictResolver from '../ConflictResolver/ConflictResolver'
 
-function PatientForm() {
+function PatientFormRefactorizado() {
+  // Select states
   const [BoxesOptions, setBoxesOptions] = useState<Box[] | null>(null)
   const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
@@ -48,14 +49,19 @@ function PatientForm() {
     box_id: Box[]
     patient_symptom: string[]
   } | null>(null)
+  // Checkbox state
   const [checked, setChecked] = React.useState(false)
-  const { t } = useTranslation('PatientForm')
-
-  const navigate = useNavigate()
-
   // Edit states
   const { edditingPatientID } = useParams()
   const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
+  // Conflict resolver states
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [conflictData, setConflictData] = useState<any>(null)
+  const [showConflictModal, setShowConflictModal] = useState<boolean>(true)
+  // Miscelaneous states
+  const { t } = useTranslation('PatientForm')
+  const navigate = useNavigate()
+
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
   // Formulario estandar tiene como objetivo ser la plantilla
 
@@ -219,9 +225,6 @@ function PatientForm() {
     const fetchData = async () => {
       try {
         const data = await getPatientById(edditingPatientID)
-
-        console.log('getting patient')
-        console.log(data)
         setedditingPatient(data)
       } catch (error) {
         if (error instanceof Error) {
@@ -296,7 +299,6 @@ function PatientForm() {
 
       const newDate = dayjs(edditingPatient.patient_age)
       setSelectedDate(newDate.toDate())
-      console.log(formInterfaz)
     }
   }, [edditingPatient])
 
@@ -344,6 +346,19 @@ function PatientForm() {
     fetchData()
   }, [])
 
+  /* useEffect(() => {
+  //   if (socket) {
+  //     socket.on(SocketEvent.UPDATE, (data) => {
+  //       if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
+  //         fetchData()
+  //       }
+  //     })
+  //     return () => {
+  //       socket.off(SocketEvent.UPDATE)
+  //     }
+  //   }
+  // }, [socket, predefinedOptions])*/
+
   //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
   const PatientProblems = [
@@ -383,7 +398,7 @@ function PatientForm() {
 
     handlerOtherTypes('patient_triage_time', new Date())
 
-    // TODO: DE ACA PARA ABAJO DEBERÍAN BORRARSE
+    //ESTOS ELEMENTOS SE LOS MODIFICA PARA QUE ALGUNA INFORMACION LE LLEGUE A LA BD
     const index_exit_time = formInterfaz.findIndex((item) => item.key === 'patient_exit_time')
 
     const index_healthcare_system = formInterfaz.findIndex(
@@ -426,7 +441,9 @@ function PatientForm() {
     console.log('Updated Form Interface before set:', updatedFormInterfaz)
 
     setformInterfaz(updatedFormInterfaz)
-    setFormData((prevFormData) => {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setFormData((prevFormData: any) => {
       const newFormData = {
         ...prevFormData,
         [key]: updatedFormInterfaz[index]?.formatdata
@@ -499,7 +516,16 @@ function PatientForm() {
       const token = Cookies.get('authToken')
       if (token) {
         if (edditingPatient) {
-          await updateAnyPatient(edditingPatient.patient_id, formData)
+          const { currentData, newData } = await updateAnyPatient(
+            edditingPatient.patient_id,
+            formData
+          )
+          // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
+          if (newData && currentData) {
+            console.log('Conflict Data:\n', { currentData, newData })
+            // setConflictData({ currentData, newData })
+            // setShowConflictModal(true)
+          }
           toast.success('Paciente actualizado', { duration: 2000 })
           navigate('/patients')
         } else {
@@ -539,23 +565,6 @@ function PatientForm() {
     setSelectedDate(null)
     resetErrors()
   }
-  //-----------------------------------  Console Log datos cambiados ---------------------------------
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function ObjetoconDatosCambiados(proxy: any, oldFormData: any) {
-    if (edditingPatient) {
-      const datosCambiados = _.omitBy(proxy, (value, key) => {
-        // Omitir si el valor es igual al valor antiguo, o si es un campo vacío
-        return (
-          _.isEqual(value, oldFormData[key]) || (typeof value === 'string' && value.trim() === '')
-        )
-      })
-      cancelBoxPreviousSelected
-      console.log('Los datos cambiados son: \n')
-      console.log(datosCambiados)
-      // si se desea averiguar el nombre en vez del id hay que cambiar el let de value y ponerlo como otra var
-      // Aquí puedes enviar datosCambiados al backend
-    }
-  }
 
   //----------------------------------------------  Deseleccion Box ---------------------------------
   // Función para cancelar el cambio de box y agregar el box previo a la lista
@@ -568,7 +577,23 @@ function PatientForm() {
       }
     }
   }
+  //--------------------------------------  Handler Conflictos -----------------------------------------
+  const handleResolveConflict = (mergedData: Record<string, string>) => {
+    //setformInterfaz(mergedData); ver como convertir la informacion de conflicto a formInterfaz
+    setShowConflictModal(false)
+    // Luego puedes enviar los datos merged al servidor
+  }
 
+  const handleAcceptCurrent = () => {
+    if (conflictData) {
+      //setformInterfaz(conflictData.currentData); ver como convertir la informacion de conflicto a formInterfaz
+    }
+    setShowConflictModal(false)
+  }
+
+  const handleCancel = () => {
+    setShowConflictModal(false)
+  }
   //--------------------------------------  Handler Errores -----------------------------------------
   const [ErrorsForm, setErrorsForm] = useState<{
     [key: string]: { value: boolean | null; message: string }
@@ -676,19 +701,33 @@ function PatientForm() {
                     {t(formInterfaz[key as keyof typeof formInterfaz]?.label).toLowerCase()}
                   </option>
                   {TotalOptions &&
-                    TotalOptions[formInterfaz[key].key]?.map((option, index: number) => (
-                      <option
-                        value={option.user_id || option.box_id || option._id}
-                        data-index={index}
-                        key={index + 1}
-                        id={index.toString()}
-                        className='bg-brown opacity-100'
-                      >
-                        {formInterfaz[key as keyof typeof formInterfaz]?.format
-                          ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
-                          : option}
-                      </option>
-                    ))}
+                    TotalOptions[formInterfaz[key].key]?.map(
+                      (
+                        option:
+                          | string
+                          | number
+                          | boolean
+                          | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                          | Iterable<React.ReactNode>
+                          | React.ReactPortal
+                          | Iterable<React.ReactNode>
+                          | null
+                          | undefined,
+                        index: number
+                      ) => (
+                        <option
+                          value={option.user_id || option.box_id || option._id}
+                          data-index={index}
+                          key={index + 1}
+                          id={index.toString()}
+                          className='bg-brown opacity-100'
+                        >
+                          {formInterfaz[key as keyof typeof formInterfaz]?.format
+                            ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
+                            : option}
+                        </option>
+                      )
+                    )}
                 </Select>
               )}
 
@@ -771,8 +810,17 @@ function PatientForm() {
           )}
         </div>
       </form>
+      {/*--------------------- Modal de conflicto de datos ----------------------- */}
+      {/*showConflictModal && conflictData && (
+        <ConflictResolver
+          conflictData={conflictData}
+          onResolve={handleResolveConflict}
+          onAcceptCurrent={handleAcceptCurrent}
+          onCancel={handleCancel}
+        />
+      )*/}
     </div>
   )
 }
 
-export default PatientForm
+export default PatientFormRefactorizado

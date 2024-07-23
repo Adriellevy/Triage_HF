@@ -97,6 +97,19 @@ export class PatientController {
         patient_id: UserAntiguo.patient_id
       };
 
+      // Verificar si hay dos ediciónes con una diferencia de tiempo 5 segundos, si es asi que se resuelva el merge
+      const lastUpdatedAt = new Date(req.body.lastUpdatedAt);
+      const currentTime = new Date();
+      const timeDifference = Math.abs(currentTime.getTime() - lastUpdatedAt.getTime()) / 1000;
+      console.log('Salto un 409')
+      if (timeDifference <= 5) {
+        return res.status(409).json({
+          message: 'Conflict detected',
+          currentData: UserAntiguo,
+          newData: result.data
+        });
+      }
+
       const tiempoActual = new Date();
 
       const cambios = GeneratePatientHistoryItem(UserNuevo, UserAntiguo, tiempoActual, userID);
