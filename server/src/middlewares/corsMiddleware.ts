@@ -18,7 +18,10 @@ const ACCEPTED_ORIGINS = [
   'https://sparkly-centaur-35769d.netlify.app',
   'https://triage-app.netlify.app',
   'http://181.167.200.30:4173',
-  'http://181.167.193.154:5173'
+  'http://181.167.193.154:5173',
+  'http://192.168.56.1:5173',
+  'http://192.168.0.111:5173',
+  'http://172.31.224.1:5173'
 ];
 
 export const corsMiddleware: (options?: { acceptedOrigins?: string[] }) => RequestHandler = ({

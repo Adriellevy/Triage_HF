@@ -98,16 +98,42 @@ export class PatientController {
       };
 
       // Verificar si hay dos ediciónes con una diferencia de tiempo 5 segundos, si es asi que se resuelva el merge
-      const lastUpdatedAt = new Date(req.body.lastUpdatedAt);
-      const currentTime = new Date();
-      const timeDifference = Math.abs(currentTime.getTime() - lastUpdatedAt.getTime()) / 1000;
-      console.log('Salto un 409')
-      if (timeDifference <= 5) {
-        return res.status(409).json({
-          message: 'Conflict detected',
-          currentData: UserAntiguo,
-          newData: result.data
-        });
+      const updateHistory = await PatientsModel.getPatientUpdateHistory({ id });
+
+      if (updateHistory.length > 0) {
+        const lastUpdate = updateHistory[0];
+        const lastUpdatedDateStr = lastUpdate.patient_updated_date;
+        const currentUpdateDateStr = result.data.patient_triage_time;
+      
+        // Check if the date strings are defined and not null
+        if (lastUpdatedDateStr && currentUpdateDateStr) {
+          const lastUpdatedAt = new Date(lastUpdatedDateStr);
+          const currentUpdateDate = new Date(currentUpdateDateStr);
+      
+          console.log("History str:",lastUpdatedDateStr)
+          console.log("History date:", lastUpdatedAt);
+          console.log("History date type:", typeof lastUpdatedAt);
+          console.log(" ")
+          console.log("Mase str:",currentUpdateDateStr)
+          console.log("Message date:", currentUpdateDate);
+          console.log("Message date type:", typeof currentUpdateDate);
+      
+          const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
+          console.log("Time Difference:", timeDifference);
+         
+          if (timeDifference <= 400000) { // 1000 Milisegundos = 1 segundo.  
+            console.log("Returning 409 Conflict with a time Diference of: ",timeDifference);
+            console.log("newData que se devuelve",result.data)
+            console.log("currentData que se devuelve",UserAntiguo)
+            return res.status(409).json({
+              message: 'Conflict detected',
+              currentData: UserAntiguo,
+              newData: result.data
+            });
+          }
+        } else {
+          console.error("Date strings are undefined.");
+        }
       }
 
       const tiempoActual = new Date();
