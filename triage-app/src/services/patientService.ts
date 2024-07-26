@@ -102,10 +102,12 @@ export const updateAnyPatient = async (
       body: JSON.stringify(body) // Pass the constructed body object
     })
     const data = await response.json()
-
+    
     if (response.status === 409) {
-      console.error('400000009')
-      return { currentData:updatedData, newData:data }  
+      const currentDatavar = data.currentData
+      const newDatavar = data.newData; 
+      console.error('llego un 409 con \nCurrentData: '+currentDatavar+'\n newdata: ',newDatavar)
+      return { currentData:currentDatavar, newData:newDatavar }  
     }
     
     if (!response.ok) {
