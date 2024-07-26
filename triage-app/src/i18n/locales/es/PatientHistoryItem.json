@@ -11,5 +11,7 @@
   "PatientBoxLabel": "Código de Box",
   "DoctorNameLabel": "Nombre del Doctor",
   "NurseNameLabel": "Nombre de la Enfermera",
-  "PatientStatusLabel": "Estado"
+  "PatientStatusLabel": "Estado",
+  "TrueLabel": "Verdadero",
+  "FalseLabel": "Falso"
 }

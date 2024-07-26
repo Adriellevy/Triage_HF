@@ -11,5 +11,7 @@
   "PatientBoxLabel": "Box Code",
   "DoctorNameLabel": "Doctor's Name",
   "NurseNameLabel": "Nurse's Name",
-  "PatientStatusLabel": "Status"
+  "PatientStatusLabel": "Status",
+  "TrueLabel": "True",
+  "FalseLabel": "False"
 }

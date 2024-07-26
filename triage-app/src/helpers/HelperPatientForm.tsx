@@ -39,7 +39,10 @@ export function returnDependingModeAge(age: number | Date) {
 export function returnBoolean(value: string | boolean) {
   if (value === null) return false
   if (typeof value === 'boolean') return value
-  return value.toLowerCase() === 'true'
+  if (typeof value === 'string') {
+    return value.toLowerCase() === 'true';
+  }
+  return false
 }
 
 export function returnName4Database(value: string) {

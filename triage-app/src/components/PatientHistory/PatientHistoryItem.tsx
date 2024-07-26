@@ -3,16 +3,7 @@ import { PatientData, PatientHistoryItem as PatientHistoryItemType } from '@/int
 import { useTranslation } from 'react-i18next'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
 import { returnUserNameWithId, returnBoxCodeById } from '../../helpers/HelperHistoryItem'
-interface PropsPatientHystoryItem {
-  item: PatientHistoryItemType
-  index: number
-}
-
-interface Field {
-  label: string
-  key: keyof PatientData
-  format: ((value: string) => string | Promise<string | null>) | null
-}
+import {PropsPatientHystoryItem, Field} from '../../interfaces/HistoryItem'
 
 const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) => {
   const [oldValue, setOldValue] = useState<string | null>('')
@@ -35,6 +26,13 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
   }, [item.patient_old_value, item.patient_new_value, item.patient_updated_column])
 
   const { t } = useTranslation('PatientHistoryItem')
+  
+  const getFormatBoolean = (value: string): string => {
+    const intValue = value === '1';
+    // Traduce el valor según el idioma actual
+    const translatedValue = t(intValue ? 'TrueLabel' : 'FalseLabel');
+    return translatedValue;
+  }
   const { patient_updated_date, patient_updated_column, user_name } = item
 
   const columnas: Field[] = [
@@ -43,7 +41,7 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
     { key: 'patient_entry_time', label: t('EntryTimeLabel'), format: getFormatDate },
     { key: 'patient_triage_level', label: t('TriageLevelLabel'), format: null },
     { key: 'patient_triage_time', label: t('TriageTimeLabel'), format: getFormatDate },
-    { key: 'patient_isolated', label: t('PatientIsolatedLabel'), format: null },
+    { key: 'patient_isolated', label: t('PatientIsolatedLabel'), format: getFormatBoolean },
     { key: 'patient_symptom', label: t('PatientProblem'), format: null },
     { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: null },
     { key: 'box_id', label: t('PatientBoxLabel'), format: returnBoxCodeById },
@@ -62,7 +60,6 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
     }
     return value
   }
-
   return (
     <tr className={bgClass}>
       <td className='border p-2 '>{getFormatDate(patient_updated_date)}</td>
