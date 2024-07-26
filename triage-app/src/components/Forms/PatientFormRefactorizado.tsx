@@ -36,6 +36,7 @@ import {
   returnEstado
 } from '@/helpers/HelperPatientForm'
 import ConflictResolver from '../ConflictResolver/ConflictResolver'
+import { Console } from 'console'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -94,7 +95,7 @@ function PatientFormRefactorizado() {
       format: returnSintomName,
       component_type: 'select',
       value: null,
-      handlerHelperFunction: null,
+      handlerHelperFunction: true,
       formatdata: returnSintomName
     },
     {
@@ -252,7 +253,7 @@ function PatientFormRefactorizado() {
           doctor_id: docs,
           nurse_id: nurses,
           box_id: boxes,
-          patient_symptom: PatientProblems
+          patient_symptom: PatientSintoms
         }
         setTotalOptions(TotalOptions_local)
         const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
@@ -296,6 +297,7 @@ function PatientFormRefactorizado() {
 
       //formInterfaz.patient_medication = edditingPatient.patient_medication || ''
       asFun()
+      console.log("FormInterfaz despues de recibir la informacion:\n",formInterfaz)
 
       const newDate = dayjs(edditingPatient.patient_age)
       setSelectedDate(newDate.toDate())
@@ -338,7 +340,7 @@ function PatientFormRefactorizado() {
         doctor_id: docs,
         nurse_id: nurses,
         box_id: boxes,
-        patient_symptom: PatientProblems
+        patient_symptom: PatientSintoms
       }
       setTotalOptions(TotalOptions_local)
     }
@@ -346,22 +348,10 @@ function PatientFormRefactorizado() {
     fetchData()
   }, [])
 
-  /* useEffect(() => {
-  //   if (socket) {
-  //     socket.on(SocketEvent.UPDATE, (data) => {
-  //       if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
-  //         fetchData()
-  //       }
-  //     })
-  //     return () => {
-  //       socket.off(SocketEvent.UPDATE)
-  //     }
-  //   }
-  // }, [socket, predefinedOptions])*/
 
   //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
-  const PatientProblems = [
+  const PatientSintoms = [
     { _id: 1, name: 'Convulsiones' },
     { _id: 2, name: 'Trauma de Cráneo' },
     { _id: 3, name: 'Dolor torácico / dorsal' },
@@ -438,7 +428,7 @@ function PatientFormRefactorizado() {
       value: newValue !== null ? newValue.toString() : null
     }
 
-    console.log('Updated Form Interface before set:', updatedFormInterfaz)
+    // console.log('Updated Form Interface before set:', updatedFormInterfaz)
 
     setformInterfaz(updatedFormInterfaz)
 
@@ -450,7 +440,7 @@ function PatientFormRefactorizado() {
           ? updatedFormInterfaz[index]?.formatdata(updatedFormInterfaz[index]?.value)
           : updatedFormInterfaz[index]?.value
       }
-      console.log('Updated Form Data:', newFormData)
+      // console.log('Updated Form Data:', newFormData)
       return newFormData
     })
   }
@@ -520,14 +510,17 @@ function PatientFormRefactorizado() {
             edditingPatient.patient_id,
             formData
           )
-          // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
+          // console.log('Conflict Data:\n', { currentData, newData })
+          // // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
           if (newData && currentData) {
             console.log('Conflict Data:\n', { currentData, newData })
-            // setConflictData({ currentData, newData })
-            // setShowConflictModal(true)
+             setConflictData({ currentData, newData })
+             setShowConflictModal(true)
+          }else{
+            toast.success('Paciente actualizado', { duration: 2000 })
+            navigate('/patients')
           }
-          toast.success('Paciente actualizado', { duration: 2000 })
-          navigate('/patients')
+          
         } else {
           const { data, errors } = await addNewPatient(formData)
           if (errors) {
@@ -691,7 +684,9 @@ function PatientFormRefactorizado() {
                   value={
                     formInterfaz[key as keyof typeof formInterfaz]?.value?.user_id ||
                     formInterfaz[key as keyof typeof formInterfaz]?.value?.box_id ||
-                    formInterfaz[key as keyof typeof formInterfaz]?.value?._id ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?._id || 
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?.name|| 
+                    formInterfaz[key as keyof typeof formInterfaz]?.value||
                     ''
                   }
                   onChange={handleSelectorInputChange}
@@ -716,13 +711,13 @@ function PatientFormRefactorizado() {
                         index: number
                       ) => (
                         <option
-                          value={option.user_id || option.box_id || option._id}
+                          value={option.user_id || option.box_id || option.name||option._id}
                           data-index={index}
                           key={index + 1}
                           id={index.toString()}
                           className='bg-brown opacity-100'
                         >
-                          {formInterfaz[key as keyof typeof formInterfaz]?.format
+                        {formInterfaz[key as keyof typeof formInterfaz]?.format
                             ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
                             : option}
                         </option>
@@ -811,14 +806,14 @@ function PatientFormRefactorizado() {
         </div>
       </form>
       {/*--------------------- Modal de conflicto de datos ----------------------- */}
-      {/*showConflictModal && conflictData && (
+      {showConflictModal && conflictData && (
         <ConflictResolver
           conflictData={conflictData}
           onResolve={handleResolveConflict}
           onAcceptCurrent={handleAcceptCurrent}
           onCancel={handleCancel}
         />
-      )*/}
+      )}
     </div>
   )
 }
