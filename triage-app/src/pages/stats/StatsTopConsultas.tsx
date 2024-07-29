@@ -1,12 +1,8 @@
+import StatIframe from '@/components/StatIframe'
+
 function StatsTopConsultas() {
-  return (
-    <iframe
-      src={`${import.meta.env.VITE_PYTHON_URL}/top_queries_date/`}
-      title='Gráfico'
-      width='100%'
-      height='100%'
-    ></iframe>
-  )
+  const url: string = 'top_queries_date/'
+  return <StatIframe url={url} />
 }
 
 export default StatsTopConsultas

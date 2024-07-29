@@ -1,12 +1,8 @@
+import StatIframe from '@/components/StatIframe'
+
 function StatsPatientTriage() {
-  return (
-    <iframe
-      src={`${import.meta.env.VITE_PYTHON_URL}/patients_mean_time_doctor/`}
-      title='Gráfico'
-      width='100%'
-      height='100%'
-    ></iframe>
-  )
+  const url: string = 'patients_mean_time_doctor/'
+  return <StatIframe url={url} />
 }
 
 export default StatsPatientTriage
