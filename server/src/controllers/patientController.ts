@@ -121,7 +121,7 @@ export class PatientController {
           const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
           console.log("Time Difference:", timeDifference);
          
-          if (timeDifference <= 400000) { // 1000 Milisegundos = 1 segundo.  
+          if (timeDifference <= 400000) { // 1000 Milisegundos = 1 segundo. Son 6 mins
             console.log("Returning 409 Conflict with a time Diference of: ",timeDifference);
             console.log("newData que se devuelve",result.data)
             console.log("currentData que se devuelve",UserAntiguo)
