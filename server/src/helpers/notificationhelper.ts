@@ -85,4 +85,12 @@ export function SendUpdatePatientNotifications(
       }
     });
   }
+
+  io?.emit(`${UpdatedPatient.patient_id}`, {
+    message: UpdateEvent.UPDATE_PATIENT,
+    patient: {
+      patient_name: UpdatedPatient.patient_name,
+      patient_id: UpdatedPatient.patient_id
+    }
+  });
 }
