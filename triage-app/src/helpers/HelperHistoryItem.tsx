@@ -15,3 +15,10 @@ export async function returnBoxCodeById(Id: string): Promise<string | null> {
   if (resul) return resul.box_code
   return null
 }
+
+export function normalizeValue(value:string[] |boolean|null|number):string{
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  if (typeof value === 'number') return String(Boolean(value));
+  return String(value);
+}

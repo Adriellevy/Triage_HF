@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ConflictResolverProps, Field } from '../../interfaces/ConflictResolver'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
-import { returnUserNameWithId, returnBoxCodeById } from '../../helpers/HelperHistoryItem'
+import { returnUserNameWithId, returnBoxCodeById, normalizeValue} from '../../helpers/HelperHistoryItem'
 import { useTranslation } from 'react-i18next'
 
 const ConflictResolver: React.FC<ConflictResolverProps> = ({
@@ -93,7 +93,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(conflictData.newData).filter((key) => key !== 'patient_triage_time' && conflictData.currentData[key] !== conflictData.newData[key]).map((key) => {
+                {Object.keys(conflictData.newData).filter((key) => key !== 'patient_triage_time' && normalizeValue(conflictData.currentData[key]) !== normalizeValue(conflictData.newData[key])).map((key) => {
                   return (
                     <tr key={key} className='border-t'>
                       <td className="py-2 px-4">{columnas.find(col => col.key === key)?.label || key}</td>
