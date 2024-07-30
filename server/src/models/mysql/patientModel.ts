@@ -339,6 +339,25 @@ export class PatientsModel {
     return PatientUpdateHistory;
   }
 
+  static async getLastPatientUpdateHistory({ id }: { id: string }): Promise<any> {
+    const PatientUpdateHistoryQuery = ` 
+    SELECT 
+      BIN_TO_UUID(PUH.updated_id) AS updated_id,
+      PUH.patient_updated_column,
+      PUH.patient_old_value,
+      PUH.patient_new_value,
+      PUH.patient_updated_date,
+      U.user_name 
+    FROM PatientUpdateHistory PUH
+    JOIN User U ON PUH.user_id = U.user_id
+    WHERE PUH.patient_id = UUID_TO_BIN(?)
+    ORDER BY PUH.patient_updated_date DESC;
+    `;
+    const conn = await connect();
+    const [PatientUpdateHistory] = await conn.query(PatientUpdateHistoryQuery, [id]);
+    return PatientUpdateHistory;
+  }
+
   static async AddUpdateHistory({ data }): Promise<number> {
     const conn = await connect();
     const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
