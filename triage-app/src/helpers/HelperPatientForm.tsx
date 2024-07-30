@@ -51,6 +51,11 @@ export function returnName4Database(value: string) {
 export function returnDate4Database(value: number | Date) {
   if (value instanceof Date) {
     return value
+  }else if (typeof value === 'string') {
+    const date = new Date(value)
+    if (!isNaN(date.getTime())) {
+      return date
+    }
   } else {
     const currentYear = new Date().getFullYear()
     const birthYear = currentYear - value
