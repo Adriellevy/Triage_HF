@@ -39,6 +39,7 @@ import ConflictResolver from '../ConflictResolver/ConflictResolver'
 import { Console } from 'console'
 import { SocketContext } from '@/contex/SocketContext'
 import { UpdateEvent } from '@/interfaces/Socket'
+import WarningBox from '../ui/WarningBox'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -54,13 +55,14 @@ function PatientFormRefactorizado() {
   } | null>(null)
   // Checkbox state
   const [checked, setChecked] = React.useState(false)
+  const [SeEditoMismoPaciente, setSeEditoMismoPaciente] = React.useState(false)
   // Edit states
   const { edditingPatientID } = useParams()
   const [edditingPatient, setedditingPatient] = useState<Patient | null>(null)
   // Conflict resolver states
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [conflictData, setConflictData] = useState<any>(null)
-  const [showConflictModal, setShowConflictModal] = useState<boolean>(true)
+  const [showConflictModal, setShowConflictModal] = useState<boolean>(false)
   // Miscelaneous states
   const { t } = useTranslation('PatientForm')
   const navigate = useNavigate()
@@ -360,14 +362,7 @@ function PatientFormRefactorizado() {
       const { patient_id } = data.patient
       console.log(patient_id)
       if (data.message === UpdateEvent.UPDATE_PATIENT) {
-        toast.info('Nuevo paciente asignado', {
-          action: {
-            label: 'SE EDITO MISMO PACIENTES',
-            onClick: () => {
-              navigate(`/patients/${patient_id}`)
-            }
-          }
-        })
+        setSeEditoMismoPaciente(true)
       }
     }
     const setupSocket = () => {
@@ -454,9 +449,6 @@ function PatientFormRefactorizado() {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [oldFormData] = useState<any>(formData)
-
   const handlerOtherTypes = (key: string, newValue: string | number | boolean | Date | null) => {
     const index = formInterfaz.findIndex((item) => item.key === key)
     if (index === -1) return formInterfaz
@@ -536,17 +528,20 @@ function PatientFormRefactorizado() {
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSubmit = async (e: React.FormEvent,merge?:any) => {
     resetErrors()
     e.preventDefault()
-    console.log('formData en el front antes de mandar: \n', formData)
+    
+    const updatedFormData = merge?merge:formData
+    console.log('updatedFormData en el front antes de mandar: \n', updatedFormData)
     console.log('formInterfaz en el front antes de mandar: \n', formInterfaz)
     try {
       if (token) {
         if (edditingPatient) {
           const { currentData, newData } = await updateAnyPatient(
             edditingPatient.patient_id,
-            formData
+            updatedFormData
           )
           // console.log('Conflict Data:\n', { currentData, newData })
           // // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
@@ -560,7 +555,7 @@ function PatientFormRefactorizado() {
           }
 
         } else {
-          const { data, errors } = await addNewPatient(formData)
+          const { data, errors } = await addNewPatient(updatedFormData)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
             toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
@@ -610,7 +605,9 @@ function PatientFormRefactorizado() {
   }
   //--------------------------------------  Handler Conflictos -----------------------------------------
   const handleResolveConflict = (mergedData: Record<string, string>) => {
-    //setformInterfaz(mergedData); ver como convertir la informacion de conflicto a formInterfaz
+    console.log("MERGED DATA:\n",mergedData)
+    const updatedFormData = { ...formData, ...mergedData,Merge_Complete: showConflictModal,patient_triage_time:new Date() };
+        handleSubmit(new Event('submit') as unknown as React.FormEvent,updatedFormData);
     setShowConflictModal(false)
     // Luego puedes enviar los datos merged al servidor
   }
@@ -670,6 +667,7 @@ function PatientFormRefactorizado() {
       <h2 className='text-2xl font-semibold mb-5'>
         {edditingPatient ? t('title.EditMode') : t('title.AddMode')}
       </h2>
+      {SeEditoMismoPaciente &&<WarningBox message={'EditedUser'} shouldStopCounter={showConflictModal}></WarningBox>}
       <form
         onSubmit={handleSubmit}
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
@@ -848,7 +846,6 @@ function PatientFormRefactorizado() {
         <ConflictResolver
           conflictData={conflictData}
           onResolve={handleResolveConflict}
-          onAcceptCurrent={handleAcceptCurrent}
           onCancel={handleCancel}
         />
       )}

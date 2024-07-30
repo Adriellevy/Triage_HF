@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { ConflictResolverProps, Field } from '../../interfaces/ConflictResolver'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
-import { returnUserNameWithId, returnBoxCodeById, normalizeValue} from '../../helpers/HelperHistoryItem'
+import { returnUserNameWithId, returnBoxCodeById, normalizeValue } from '../../helpers/HelperHistoryItem'
 import { useTranslation } from 'react-i18next'
 
 const ConflictResolver: React.FC<ConflictResolverProps> = ({
   conflictData,
   onResolve,
-  onAcceptCurrent,
   onCancel
 }) => {
-  //COmo usamos las mismas columnas usamos la misma traudcccion que el elemento historial
   const { t } = useTranslation('PatientHistoryItem')
   const [mergedData, setMergedData] = useState<Record<string, string>>({})
 
@@ -22,29 +20,31 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
     onResolve(mergedData)
   }
 
-  const getFormatBoolean = (value: string): string => {
-    const intValue = value === '1';
-    // Traduce el valor según el idioma actual
-    const translatedValue = t(intValue ? 'TrueLabel' : 'FalseLabel');
+  const getFormatBoolean = (value: boolean): string => {
+    const translatedValue = t(value ? 'TrueLabel' : 'FalseLabel');
     return translatedValue;
   }
 
+  const getFormatNull = (value: any): string => {
+    return value === null ? t('NullLabel') : value;
+  }
+
   const columnas: Field[] = [
-    { key: 'patient_name', label: t('NameLabel'), format: null },
+    { key: 'patient_name', label: t('NameLabel'), format: getFormatNull },
     { key: 'patient_age', label: t('AgeLabel'), format: getFormatBirthDate },
     { key: 'patient_entry_time', label: t('EntryTimeLabel'), format: getFormatDate },
-    { key: 'patient_triage_level', label: t('TriageLevelLabel'), format: null },
+    { key: 'patient_triage_level', label: t('TriageLevelLabel'), format: getFormatNull },
     { key: 'patient_triage_time', label: t('TriageTimeLabel'), format: getFormatDate },
     { key: 'patient_isolated', label: t('PatientIsolatedLabel'), format: getFormatBoolean },
-    { key: 'patient_symptom', label: t('PatientProblem'), format: null },
-    { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: null },
+    { key: 'patient_symptom', label: t('PatientProblem'), format: getFormatNull },
+    { key: 'patient_healthcare_system', label: t('PatientHealthcareSystem'), format: getFormatNull },
     { key: 'box_id', label: t('PatientBoxLabel'), format: returnBoxCodeById },
     { key: 'doctor_id', label: t('DoctorNameLabel'), format: returnUserNameWithId },
     { key: 'nurse_id', label: t('NurseNameLabel'), format: returnUserNameWithId },
-    { key: 'patient_status', label: t('PatientStatusLabel'), format: null }
+    { key: 'patient_status', label: t('PatientStatusLabel'), format: getFormatNull },
   ]
 
-  const formatValue = async (key: string, value: string) => {
+  const formatValue = async (key: string, value: any) => {
     const column = columnas.find(col => col.key === key);
     if (column && column.format) {
       const formattedValue = await column.format(value);
@@ -56,6 +56,23 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
   const [formattedCurrentData, setFormattedCurrentData] = useState<Record<string, string>>({});
   const [formattedNewData, setFormattedNewData] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    const initializeMergedData = () => {
+      const differingData: Record<string, string> = {};
+      
+      for (const key in conflictData.currentData) {
+        if (conflictData.newData.hasOwnProperty(key) && 
+            normalizeValue(conflictData.currentData[key]) !== normalizeValue(conflictData.newData[key])) {
+          differingData[key] = conflictData.currentData[key];
+        }
+      }
+      
+      setMergedData(differingData);
+    };
+
+    initializeMergedData();
+  }, [conflictData]);
+  
   useEffect(() => {
     const formatData = async () => {
       const newFormattedCurrentData: Record<string, string> = {};
@@ -135,7 +152,6 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
       </div>
     </div>
   );
-  
 }
 
 export default ConflictResolver
