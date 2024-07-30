@@ -27,6 +27,8 @@ import BoxItem_es from './locales/es/BoxItem.json'
 import BoxItem_en from './locales/en/BoxItem.json'
 import Boxes_es from './locales/es/Boxes.json'
 import Boxes_en from './locales/en/Boxes.json'
+import WarningBox_es from './locales/es/WarningBox.json'
+import WarningBox_en from './locales/en/WarningBox.json'
 
 i18n
   .use(Backend)
@@ -53,7 +55,8 @@ i18n
         PatientInform: PatientInform_es,
         BoxList: BoxList_es,
         BoxItem: BoxItem_es,
-        Boxes: Boxes_es
+        Boxes: Boxes_es,
+        WarningBox: WarningBox_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -67,7 +70,8 @@ i18n
         PatientInform: PatientInform_en,
         BoxList: BoxList_en,
         BoxItem: BoxItem_en,
-        Boxes: Boxes_en
+        Boxes: Boxes_en,
+        WarningBox: WarningBox_en
       }
     }
   })
