@@ -6,7 +6,7 @@ import { Box } from '@/interfaces/Boxes'
 import { addNewPatient, updateAnyPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { getAvailableBoxes, getAllBoxes } from '@/services/boxService'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { DatePickerMUI } from '../DatePickerMUI'
@@ -37,6 +37,8 @@ import {
 } from '@/helpers/HelperPatientForm'
 import ConflictResolver from '../ConflictResolver/ConflictResolver'
 import { Console } from 'console'
+import { SocketContext } from '@/contex/SocketContext'
+import { UpdateEvent } from '@/interfaces/Socket'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -62,6 +64,10 @@ function PatientFormRefactorizado() {
   // Miscelaneous states
   const { t } = useTranslation('PatientForm')
   const navigate = useNavigate()
+
+  const token = Cookies.get('authToken')
+
+  const socket = useContext(SocketContext)
 
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
   // Formulario estandar tiene como objetivo ser la plantilla
@@ -297,7 +303,7 @@ function PatientFormRefactorizado() {
 
       //formInterfaz.patient_medication = edditingPatient.patient_medication || ''
       asFun()
-      console.log("FormInterfaz despues de recibir la informacion:\n",formInterfaz)
+      console.log("FormInterfaz despues de recibir la informacion:\n", formInterfaz)
 
       const newDate = dayjs(edditingPatient.patient_age)
       setSelectedDate(newDate.toDate())
@@ -348,6 +354,39 @@ function PatientFormRefactorizado() {
     fetchData()
   }, [])
 
+  //----------------------------------- USE EFFECTS SOCKETS ----------------------------------------
+  useEffect(() => {
+    const handleSocketEvent = (data: { patient: Patient; message: UpdateEvent }) => {
+      const { patient_id } = data.patient
+      console.log(patient_id)
+      if (data.message === UpdateEvent.UPDATE_PATIENT) {
+        toast.info('Nuevo paciente asignado', {
+          action: {
+            label: 'SE EDITO MISMO PACIENTES',
+            onClick: () => {
+              navigate(`/patients/${patient_id}`)
+            }
+          }
+        })
+      }
+    }
+    const setupSocket = () => {
+      try {
+        socket.on(`${edditingPatientID}`, handleSocketEvent)
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    const cleanupSocket = () => {
+      try {
+        socket.off(`${edditingPatientID}`, handleSocketEvent)
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    setupSocket()
+    return cleanupSocket
+  }, [token, edditingPatientID, socket, navigate])
 
   //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
@@ -503,7 +542,6 @@ function PatientFormRefactorizado() {
     console.log('formData en el front antes de mandar: \n', formData)
     console.log('formInterfaz en el front antes de mandar: \n', formInterfaz)
     try {
-      const token = Cookies.get('authToken')
       if (token) {
         if (edditingPatient) {
           const { currentData, newData } = await updateAnyPatient(
@@ -514,13 +552,13 @@ function PatientFormRefactorizado() {
           // // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
           if (newData && currentData) {
             console.log('Conflict Data:\n', { currentData, newData })
-             setConflictData({ currentData, newData })
-             setShowConflictModal(true)
-          }else{
+            setConflictData({ currentData, newData })
+            setShowConflictModal(true)
+          } else {
             toast.success('Paciente actualizado', { duration: 2000 })
             navigate('/patients')
           }
-          
+
         } else {
           const { data, errors } = await addNewPatient(formData)
           if (errors) {
@@ -643,7 +681,7 @@ function PatientFormRefactorizado() {
             <div key={key}>
               <Label htmlFor={key}>
                 {!edditingPatient &&
-                t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
+                  t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
                   ? t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
                   : t(formInterfaz[key as keyof typeof formInterfaz]?.label)}
               </Label>
@@ -651,28 +689,28 @@ function PatientFormRefactorizado() {
               {(formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'input' ||
                 (formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode' &&
                   edditingPatient === null)) && (
-                <Input
-                  error_active={ErrorsForm[formInterfaz[key].key]}
-                  id={formInterfaz[key as keyof typeof formInterfaz].key.toString()}
-                  name={'input'}
-                  type={
-                    formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode'
-                      ? 'number'
-                      : 'text'
-                  }
-                  value={
-                    formInterfaz[key as keyof typeof formInterfaz]?.value == null // verifica si el valor es null o undefined
-                      ? '' // si es null o undefined, establece el valor como cadena vacía
-                      : formInterfaz[key as keyof typeof formInterfaz]?.format
-                      ? formInterfaz[key as keyof typeof formInterfaz]?.format(
-                          formInterfaz[key as keyof typeof formInterfaz]?.value,
-                          true || null
-                        )
-                      : formInterfaz[key as keyof typeof formInterfaz]?.value
-                  }
-                  onChange={handleSelectorInputChange}
-                />
-              )}
+                  <Input
+                    error_active={ErrorsForm[formInterfaz[key].key]}
+                    id={formInterfaz[key as keyof typeof formInterfaz].key.toString()}
+                    name={'input'}
+                    type={
+                      formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode'
+                        ? 'number'
+                        : 'text'
+                    }
+                    value={
+                      formInterfaz[key as keyof typeof formInterfaz]?.value == null // verifica si el valor es null o undefined
+                        ? '' // si es null o undefined, establece el valor como cadena vacía
+                        : formInterfaz[key as keyof typeof formInterfaz]?.format
+                          ? formInterfaz[key as keyof typeof formInterfaz]?.format(
+                            formInterfaz[key as keyof typeof formInterfaz]?.value,
+                            true || null
+                          )
+                          : formInterfaz[key as keyof typeof formInterfaz]?.value
+                    }
+                    onChange={handleSelectorInputChange}
+                  />
+                )}
 
               {/*Si el tipo de entry es modo SELECT*/}
               {formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'select' && (
@@ -684,9 +722,9 @@ function PatientFormRefactorizado() {
                   value={
                     formInterfaz[key as keyof typeof formInterfaz]?.value?.user_id ||
                     formInterfaz[key as keyof typeof formInterfaz]?.value?.box_id ||
-                    formInterfaz[key as keyof typeof formInterfaz]?.value?._id || 
-                    formInterfaz[key as keyof typeof formInterfaz]?.value?.name|| 
-                    formInterfaz[key as keyof typeof formInterfaz]?.value||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?._id ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value?.name ||
+                    formInterfaz[key as keyof typeof formInterfaz]?.value ||
                     ''
                   }
                   onChange={handleSelectorInputChange}
@@ -711,15 +749,16 @@ function PatientFormRefactorizado() {
                         index: number
                       ) => (
                         <option
-                          value={option.user_id || option.box_id || option.name||option._id}
+                          value={option.user_id || option.box_id || (!edditingPatient&&option._id)|| option.name  }
                           data-index={index}
                           key={index + 1}
                           id={index.toString()}
                           className='bg-brown opacity-100'
                         >
-                        {formInterfaz[key as keyof typeof formInterfaz]?.format
+                          {formInterfaz[key as keyof typeof formInterfaz]?.format
                             ? formInterfaz[key as keyof typeof formInterfaz]?.format(option)
                             : option}
+
                         </option>
                       )
                     )}
@@ -760,34 +799,33 @@ function PatientFormRefactorizado() {
               {/*Si el tipo de entry es el TRIAGE*/}
               {formInterfaz[key as keyof typeof formInterfaz]?.component_type ===
                 'TriageComponent' && (
-                <div className='flex flex-grow gap-3 p-0.5'>
-                  {TriageLevels.map((level) => (
-                    <button
-                      id={key as keyof typeof formInterfaz}
-                      key={level._id}
-                      name={key}
-                      onClick={() =>
-                        handlerOtherTypes(
-                          formInterfaz[key as keyof typeof formInterfaz]?.key,
-                          level._id
-                        )
-                      }
-                      type='button'
-                      className={`py-1 flex-grow border-4 ${
-                        formInterfaz[key as keyof typeof formInterfaz]?.value == level._id
+                  <div className='flex flex-grow gap-3 p-0.5'>
+                    {TriageLevels.map((level) => (
+                      <button
+                        id={key as keyof typeof formInterfaz}
+                        key={level._id}
+                        name={key}
+                        onClick={() =>
+                          handlerOtherTypes(
+                            formInterfaz[key as keyof typeof formInterfaz]?.key,
+                            level._id
+                          )
+                        }
+                        type='button'
+                        className={`py-1 flex-grow border-4 ${formInterfaz[key as keyof typeof formInterfaz]?.value == level._id
                           ? 'border-black'
                           : 'border-transparent'
-                      }`}
-                      style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
-                    >
-                      {level.name}
-                    </button>
-                  ))}
-                  {ErrorsForm.patient_triage_level.value && (
-                    <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
-                  )}
-                </div>
-              )}
+                          }`}
+                        style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
+                      >
+                        {level.name}
+                      </button>
+                    ))}
+                    {ErrorsForm.patient_triage_level.value && (
+                      <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
+                    )}
+                  </div>
+                )}
             </div>
           )
         })}
