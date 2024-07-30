@@ -86,7 +86,9 @@ export class PatientController {
 
     try {
       const { id } = req.params;
-
+      const { Merge_Complete } = req.body; // Destructurar Merge_complete del cuerpo del request
+      console.log('Body mensaje:\n ', req.body);
+      console.log('\nHay merge complete\n', Merge_Complete);
       const UserAntiguo = await PatientsModel.getPatientById({ id });
 
       if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
@@ -96,51 +98,39 @@ export class PatientController {
         patient_id: UserAntiguo.patient_id
       };
 
-      // Verificar si hay dos ediciónes con una diferencia de tiempo 5 segundos, si es asi que se resuelva el merge
-      const updateHistory = await PatientsModel.getLastPatientUpdateHistory({ id });
+      // Si se resulve el merge se ignora el codigo
+      if (!Merge_Complete) {
+        // Solo verificar el conflicto si Merge_complete no está presente o es falso
+        const updateHistory = await PatientsModel.getLastPatientUpdateHistory({ id });
 
-      if (updateHistory.length > 0) {
-        const lastUpdate = updateHistory[0];
-        const lastUpdatedDateStr = lastUpdate.patient_updated_date;
-        const currentUpdateDateStr = result.data.patient_triage_time;
+        if (updateHistory.length > 0) {
+          const lastUpdate = updateHistory[0];
+          const lastUpdatedDateStr = lastUpdate.patient_updated_date;
+          const currentUpdateDateStr = result.data.patient_triage_time;
 
-        // Check if the date strings are defined and not null
-        if (lastUpdatedDateStr && currentUpdateDateStr) {
-          const lastUpdatedAt = new Date(lastUpdatedDateStr);
-          const currentUpdateDate = new Date(currentUpdateDateStr);
+          // Check if the date strings are defined and not null
+          if (lastUpdatedDateStr && currentUpdateDateStr) {
+            const lastUpdatedAt = new Date(lastUpdatedDateStr);
+            const currentUpdateDate = new Date(currentUpdateDateStr);
 
-          console.log('History str:', lastUpdatedDateStr);
-          console.log('History date:', lastUpdatedAt);
-          console.log('History date type:', typeof lastUpdatedAt);
-          console.log(' ');
-          console.log('Mase str:', currentUpdateDateStr);
-          console.log('Message date:', currentUpdateDate);
-          console.log('Message date type:', typeof currentUpdateDate);
+            const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
 
-          const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
-          console.log('Time Difference:', timeDifference);
-
-          if (timeDifference <= 30000) {
-            // 1000 Milisegundos = 1 segundo. Son 30 segs
-            console.log('Returning 409 Conflict with a time Diference of: ', timeDifference);
-            console.log('newData que se devuelve', result.data);
-            console.log('currentData que se devuelve', UserAntiguo);
-            return res.status(409).json({
-              message: 'Conflict detected',
-              currentData: UserAntiguo,
-              newData: result.data
-            });
+            if (timeDifference <= 30000) {
+              // 1000 Milisegundos = 1 segundo. Son 30 segs
+              return res.status(409).json({
+                message: 'Conflict detected',
+                currentData: UserAntiguo,
+                newData: result.data
+              });
+            }
+          } else {
+            console.error('Date strings are undefined.');
           }
-        } else {
-          console.error('Date strings are undefined.');
         }
       }
 
       const tiempoActual = new Date();
-
       const cambios = GeneratePatientHistoryItem(UserNuevo, UserAntiguo, tiempoActual, userID);
-
-      console.log(cambios);
 
       for (const item of cambios) {
         await PatientsModel.AddUpdateHistory({ data: item });
@@ -159,7 +149,6 @@ export class PatientController {
 
       if (!UserFinal) return res.status(404).json({ message: 'Patient not found' });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       SendUpdatePatientNotifications(req, UserFinal, userID);
       return res.json(UserAntiguo);
     } catch (error) {

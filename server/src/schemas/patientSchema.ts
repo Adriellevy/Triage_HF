@@ -1,5 +1,4 @@
 import z from 'zod';
-
 const patientSchema = z.object({
   patient_name: z.string().max(50),
   patient_age: z.string(),
@@ -10,13 +9,12 @@ const patientSchema = z.object({
   patient_isolated: z.boolean(),
   patient_status: z.enum(['ALTA', 'EN OBSERVACION', 'AFUERA']),
   patient_symptom: z.string().min(1).max(500),
-  // doctor_procedure: z.string().min(1).max(500),
-  // doctor_studies_solicitated: z.string().min(1).max(500),
   nurse_coment: z.string().max(500),
   patient_healthcare_system: z.string().min(1).max(500),
   doctor_id: z.string(),
   nurse_id: z.string(),
-  box_id: z.string().nullable()
+  box_id: z.string().nullable(),
+  Merge_complete: z.boolean().optional()
 });
 
 type Patient = z.infer<typeof patientSchema>;
