@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { PatientHistoryItem } from '@/interfaces/Patinet'
+import { PatientHistoryItemType } from '@/interfaces/Patinet'
 import PatientHystoryItem from '@/components/PatientHistory/PatientHistoryItem'
 import { getPatientHistory } from '@/services/patientService'
 import LoaderSpin from '../LoaderSpin'
@@ -11,7 +11,7 @@ interface PropsPatienHistory {
 
 function PatientHistory({ patient_id }: PropsPatienHistory) {
   const { t } = useTranslation('PatientHistory')
-  const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItem[]>([])
+  const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItemType[]>([])
   const [isLoading, setisLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
 
         // Ordenar los datos por fecha de actualización
         const sortedData = data.sort(
-          (a: PatientHistoryItem, b: PatientHistoryItem) =>
+          (a: PatientHistoryItemType, b: PatientHistoryItemType) =>
             new Date(b.patient_updated_date).getTime() - new Date(a.patient_updated_date).getTime()
         )
 

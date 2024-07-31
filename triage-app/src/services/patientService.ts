@@ -1,4 +1,4 @@
-import { PartialPatient, Patient, PatientHistoryItem } from '../interfaces/Patinet'
+import { PartialPatient, Patient, PatientHistoryItemType } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
 
 export const getPatients = async (): Promise<Patient[]> => {
@@ -75,7 +75,7 @@ export const updatePatient = async (
 export const updateAnyPatient = async (
   patient_id: string,
   updatedData: Partial<Patient>
-):  Promise<{
+): Promise<{
   currentData?: PartialPatient | null
   newData?: { message: string; path: string }[] | null
 }> => {
@@ -102,19 +102,21 @@ export const updateAnyPatient = async (
       body: JSON.stringify(body) // Pass the constructed body object
     })
     const data = await response.json()
-    
+
     if (response.status === 409) {
       const currentDatavar = data.currentData
-      const newDatavar = data.newData; 
-      console.error('llego un 409 con \nCurrentData: '+currentDatavar+'\n newdata: ',newDatavar)
-      return { currentData:currentDatavar, newData:newDatavar }  
+      const newDatavar = data.newData
+      console.error(
+        'llego un 409 con \nCurrentData: ' + currentDatavar + '\n newdata: ',
+        newDatavar
+      )
+      return { currentData: currentDatavar, newData: newDatavar }
     }
-    
+
     if (!response.ok) {
       throw new Error(`Error en la solicitud PATCH a ${apiUrl}: ${response.statusText}`)
     }
 
-    
     return { currentData: null, newData: data }
   } catch (error) {
     console.error('Error al actualizar paciente:', error)
@@ -139,7 +141,7 @@ export const addNewPatient = async (
       body: JSON.stringify(newPatientData)
     })
 
-    console.log("body del mansaje mandado \n", newPatientData)
+    console.log('body del mansaje mandado \n', newPatientData)
     if (!response.ok) {
       const errorResponse = await response.json()
       if (errorResponse.errors) {
@@ -151,7 +153,7 @@ export const addNewPatient = async (
         )
         return { data: null, errors: simplifiedErrors }
       }
-      
+
       throw new Error(`Error en la solicitud POST a /patient: ${errorResponse}`)
     }
 
@@ -164,7 +166,7 @@ export const addNewPatient = async (
 }
 export const getPatientHistory = async (
   patient_id: string | undefined
-): Promise<PatientHistoryItem[]> => {
+): Promise<PatientHistoryItemType[]> => {
   const token = Cookies.get('authToken')
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/history/${patient_id}`, {
@@ -176,7 +178,7 @@ export const getPatientHistory = async (
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient:${response.status}`)
     }
-    return (await response.json()) as PatientHistoryItem[]
+    return (await response.json()) as PatientHistoryItemType[]
   } catch (error) {
     console.error('Error fetching patient:', error)
     throw new Error('Error fetching patient')

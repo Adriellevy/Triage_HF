@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { PatientData, PatientHistoryItem as PatientHistoryItemType } from '@/interfaces/Patinet'
+import { PatientData, PatientHistoryItemType } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
 import { returnUserNameWithId, returnBoxCodeById } from '../../helpers/HelperHistoryItem'
-import {PropsPatientHystoryItem, Field} from '../../interfaces/HistoryItem'
+
+interface PropsPatientHystoryItem {
+  item: PatientHistoryItemType
+  index: number
+}
+
+interface Field {
+  label: string
+  key: keyof PatientData
+  format: ((value: string) => string | Promise<string | null>) | null
+}
 
 const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) => {
   const [oldValue, setOldValue] = useState<string | null>('')
@@ -26,12 +36,12 @@ const PatientHistoryItem: React.FC<PropsPatientHystoryItem> = ({ item, index }) 
   }, [item.patient_old_value, item.patient_new_value, item.patient_updated_column])
 
   const { t } = useTranslation('PatientHistoryItem')
-  
+
   const getFormatBoolean = (value: string): string => {
-    const intValue = value === '1';
+    const intValue = value === '1'
     // Traduce el valor según el idioma actual
-    const translatedValue = t(intValue ? 'TrueLabel' : 'FalseLabel');
-    return translatedValue;
+    const translatedValue = t(intValue ? 'TrueLabel' : 'FalseLabel')
+    return translatedValue
   }
   const { patient_updated_date, patient_updated_column, user_name } = item
 

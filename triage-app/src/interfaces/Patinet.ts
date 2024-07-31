@@ -1,6 +1,5 @@
-import { Box } from "./Boxes"
-import { User } from "./User"
-
+import { Box } from './Boxes'
+import { User } from './User'
 
 export enum PatientStatus {
   WAITING = 'EN OBSERVACION',
@@ -73,7 +72,7 @@ export interface PartialPatient {
   nurse_coment?: string
 }
 
-export interface PatientHistoryItem {
+export interface PatientHistoryItemType {
   updated_id: string
   patient_id?: string
   patient_updated_column: keyof Patient
@@ -84,15 +83,14 @@ export interface PatientHistoryItem {
   user_name: string
 }
 
-
 export interface Field {
   label: string | null
-  labelAlternativo:string|null,
+  labelAlternativo: string | null
   key: keyof Patient
   //TODO arreglar el error de typescript en el Patient form puede ser que los imports no sean los adecuados
-  format:((value: User | Box | string) => string | Promise<string | null>) | null
+  format: ((value: User | Box | string) => string | Promise<string | null>) | null
   component_type: string
-  value: string | null|Date
+  value: string | null | Date
   handlerHelperFunction: Box | User | string | number | null | Boolean
   formatdata: ((value: string | null) => string | null) | null
 }
