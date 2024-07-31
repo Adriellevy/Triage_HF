@@ -5,14 +5,7 @@ interface CounterProps {
 }
 
 function Counter({ initialTime }: CounterProps) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initialTimeDate = new Date(initialTime)
-  const [counter, setCounter] = useState<{
-    days: number
-    hours: number
-    minutes: number
-    seconds: number
-  }>({
+  const [counter, setCounter] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
@@ -20,17 +13,27 @@ function Counter({ initialTime }: CounterProps) {
   })
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const initialTimeDate = new Date(initialTime)
+
+    const calculateTimeRemaining = () => {
       const currentTime = new Date()
       const timeDifference = currentTime.getTime() - initialTimeDate.getTime()
-      const seconds = Math.floor(timeDifference / 1000) % 60
-      const minutes = Math.floor((timeDifference / (1000 * 60)) % 60)
-      const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24)
+
       const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
-      setCounter({ days, hours, minutes, seconds })
-    }, 1000)
+      const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24)
+      const minutes = Math.floor((timeDifference / (1000 * 60)) % 60)
+      const seconds = Math.floor((timeDifference / 1000) % 60)
+
+      return { days, hours, minutes, seconds }
+    }
+
+    const updateCounter = () => setCounter(calculateTimeRemaining())
+
+    updateCounter()
+    const interval = setInterval(updateCounter, 1000)
+
     return () => clearInterval(interval)
-  }, [initialTimeDate])
+  }, [initialTime])
 
   return (
     <div>
