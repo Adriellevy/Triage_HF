@@ -21,7 +21,8 @@ const ACCEPTED_ORIGINS = [
   'http://181.167.193.154:5173',
   'http://192.168.56.1:5173',
   'http://192.168.0.111:5173',
-  'http://172.31.224.1:5173'
+  'http://172.31.224.1:5173',
+  'http://192.168.1.40:5173'
 ];
 
 export const corsMiddleware: (options?: { acceptedOrigins?: string[] }) => RequestHandler = ({

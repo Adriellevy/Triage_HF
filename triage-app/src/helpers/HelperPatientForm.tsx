@@ -49,18 +49,16 @@ export function returnName4Database(value: string) {
   return value
 }
 export function returnDate4Database(value: number | Date) {
-  if (value instanceof Date) {
-    return value
-  }else if (typeof value === 'string') {
-    const date = new Date(value)
-    if (!isNaN(date.getTime())) {
-      return date
-    }
-  } else {
+  console.log(value)
+  console.log(value instanceof Date)
+  if (!isNaN(value)) {
     const currentYear = new Date().getFullYear()
     const birthYear = currentYear - value
     const birthDate = new Date(birthYear, 0, 1)
     return birthDate
+  } else {
+    const date = new Date(value)
+    return date
   }
 }
 export function returnNewDate(): Date {

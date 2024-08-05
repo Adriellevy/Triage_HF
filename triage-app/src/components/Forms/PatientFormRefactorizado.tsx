@@ -308,7 +308,7 @@ function PatientFormRefactorizado() {
       console.log("FormInterfaz despues de recibir la informacion:\n", formInterfaz)
 
       const newDate = dayjs(edditingPatient.patient_age)
-      setSelectedDate(newDate.toDate())
+      setSelectedDate(newDate?.toDate())
     }
   }, [edditingPatient])
 
@@ -437,11 +437,11 @@ function PatientFormRefactorizado() {
     }
 
     if (!formInterfaz[index_healthcare_system].value) {
-      handlerOtherTypes('patient_healthcare_system', 'default')
+      handlerOtherTypes('patient_healthcare_system', 'N/A')
     }
 
     if (!formInterfaz[index_nurse_comment].value) {
-      handlerOtherTypes('nurse_coment', 'default')
+      handlerOtherTypes('nurse_coment', 'N/A')
     }
 
     if (!formInterfaz[index_patient_isolated].value) {
@@ -535,6 +535,7 @@ function PatientFormRefactorizado() {
     
     const updatedFormData = merge?merge:formData
     console.log('updatedFormData en el front antes de mandar: \n', updatedFormData)
+    console.log(updatedFormData.patient_age)
     console.log('formInterfaz en el front antes de mandar: \n', formInterfaz)
     try {
       if (token) {
@@ -797,28 +798,30 @@ function PatientFormRefactorizado() {
               {/*Si el tipo de entry es el TRIAGE*/}
               {formInterfaz[key as keyof typeof formInterfaz]?.component_type ===
                 'TriageComponent' && (
+                  <div className='flex flex-col'>
                   <div className='flex flex-grow gap-3 p-0.5'>
                     {TriageLevels.map((level) => (
                       <button
-                        id={key as keyof typeof formInterfaz}
-                        key={level._id}
-                        name={key}
-                        onClick={() =>
-                          handlerOtherTypes(
-                            formInterfaz[key as keyof typeof formInterfaz]?.key,
-                            level._id
-                          )
-                        }
-                        type='button'
-                        className={`py-1 flex-grow border-4 ${formInterfaz[key as keyof typeof formInterfaz]?.value == level._id
-                          ? 'border-black'
-                          : 'border-transparent'
-                          }`}
-                        style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
+                      id={key as keyof typeof formInterfaz}
+                      key={level._id}
+                      name={key}
+                      onClick={() =>
+                        handlerOtherTypes(
+                          formInterfaz[key as keyof typeof formInterfaz]?.key,
+                          level._id
+                        )
+                      }
+                      type='button'
+                      className={`py-1 flex-grow border-4 ${formInterfaz[key as keyof typeof formInterfaz]?.value == level._id
+                        ? 'border-black'
+                        : 'border-transparent'
+                      }`}
+                      style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
                       >
                         {level.name}
                       </button>
                     ))}
+                    </div>
                     {ErrorsForm.patient_triage_level.value && (
                       <span className='text-red-500'>{ErrorsForm.patient_triage_level.message}</span>
                     )}
