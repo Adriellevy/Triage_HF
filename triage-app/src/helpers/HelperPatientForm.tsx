@@ -21,6 +21,7 @@ export function returnNurseName(Nurse: User) {
 
 export function returnBoxCode(Box: Box) {
   if (Box === null) return ''
+  if (Box.box_id === "hardcoded-box-id") return "AFUERA"
   return `${Box.box_code} : ${Box.box_type}`
 }
 

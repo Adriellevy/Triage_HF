@@ -160,7 +160,7 @@ export const addNewPatient = async (
     const data = await response.json()
     return { data, errors: null }
   } catch (error) {
-    console.error('Error al agregar nuevo paciente:', error)
+    console.error('Error al agregar nuevo paciente:', JSON.stringify(error, null, 2))
     throw new Error('Error al agregar nuevo paciente')
   }
 }

@@ -2,7 +2,7 @@
 import { Field, Patient } from '@/interfaces/Patinet'
 import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
-import { Box } from '@/interfaces/Boxes'
+import { Box, BoxStatus, BoxType } from '@/interfaces/Boxes'
 import { addNewPatient, updateAnyPatient } from '@/services/patientService'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { getAvailableBoxes, getAllBoxes } from '@/services/boxService'
@@ -342,18 +342,26 @@ function PatientFormRefactorizado() {
       }
     }
 
+    const hardcodedBox = {
+      box_id: 'hardcoded-box-id',
+      box_code: 'AFUERA',
+      box_type: BoxType.OBSERVACION, // o el tipo que prefieras
+      box_time: new Date().toISOString(),
+      box_status: BoxStatus.LIBRE, // o el estado que prefieras
+    };
+    
     const fetchData = async () => {
-      const [docs, nurses, boxes] = await Promise.all([fetchDoctors(), fetchNurses(), fetchBoxes()])
+      const [docs, nurses, boxes] = await Promise.all([fetchDoctors(), fetchNurses(), fetchBoxes()]);
       const TotalOptions_local = {
-        doctor_id: docs,
-        nurse_id: nurses,
-        box_id: boxes,
-        patient_symptom: PatientSintoms
-      }
-      setTotalOptions(TotalOptions_local)
-    }
-
-    fetchData()
+        doctor_id: docs || [],
+        nurse_id: nurses || [],
+        box_id: [hardcodedBox, ...(boxes || [])] as Box[], // Asegurar que sea de tipo Box[]
+        patient_symptom: PatientSintoms || []
+      };
+      setTotalOptions(TotalOptions_local);
+    };
+  
+    fetchData();
   }, [])
 
   //----------------------------------- USE EFFECTS SOCKETS ----------------------------------------
@@ -410,7 +418,8 @@ function PatientFormRefactorizado() {
   //-----------------------------------  HANDLERS ---------------------------------
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     const index_box = formInterfaz.findIndex((item) => item.key === 'box_id')
-    if (!formInterfaz[index_box].value || formInterfaz[index_box].value === 'AFUERA') {
+    if (formInterfaz[index_box].value?.box_id === 'hardcoded-box-id') {
+      console.log("Entro al handle AFUERA")
       handlerOtherTypes('patient_status', 'AFUERA')
       handlerOtherTypes('box_id', null)
     } else {
