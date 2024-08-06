@@ -70,6 +70,14 @@ function PatientFormRefactorizado() {
   const token = Cookies.get('authToken')
 
   const socket = useContext(SocketContext)
+  //TODO: ver de recibir este elemento ya cargado desde el backend
+  const hardcodedBox = {
+    box_id: 'hardcoded-box-id',
+    box_code: 'AFUERA',
+    box_type: BoxType.OBSERVACION, // o el tipo que prefieras
+    box_time: new Date().toISOString(),
+    box_status: BoxStatus.LIBRE, // o el estado que prefieras
+  };
 
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
   // Formulario estandar tiene como objetivo ser la plantilla
@@ -260,13 +268,13 @@ function PatientFormRefactorizado() {
         const TotalOptions_local = {
           doctor_id: docs,
           nurse_id: nurses,
-          box_id: boxes,
+          box_id: [hardcodedBox, ...(boxes || [])] as Box[],
           patient_symptom: PatientSintoms
         }
+        
         setTotalOptions(TotalOptions_local)
-        const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
-        if (box) setBoxOcupiedByPatient([box])
 
+        
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
 
         const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
@@ -277,8 +285,17 @@ function PatientFormRefactorizado() {
         formInterfaz[IndiceObjeto(Formulario_estandar, 'nurse_id')].value = nurse || ''
         // formData[IndiceObjeto(Formulario_estandar, 'nurse_id')].value = nurse || ''
 
-        formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
-        // formData[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
+
+        if(edditingPatient?.box_code){
+          const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
+          if (box) setBoxOcupiedByPatient([box])           
+          formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
+          // formData[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
+        }else{
+          setBoxOcupiedByPatient(TotalOptions['box_id'][0])
+          formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = TotalOptions['box_id'][0]
+        }
+       
       } catch (error) {
         console.log(error)
       }
@@ -342,13 +359,7 @@ function PatientFormRefactorizado() {
       }
     }
 
-    const hardcodedBox = {
-      box_id: 'hardcoded-box-id',
-      box_code: 'AFUERA',
-      box_type: BoxType.OBSERVACION, // o el tipo que prefieras
-      box_time: new Date().toISOString(),
-      box_status: BoxStatus.LIBRE, // o el estado que prefieras
-    };
+    
     
     const fetchData = async () => {
       const [docs, nurses, boxes] = await Promise.all([fetchDoctors(), fetchNurses(), fetchBoxes()]);
@@ -418,7 +429,7 @@ function PatientFormRefactorizado() {
   //-----------------------------------  HANDLERS ---------------------------------
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
     const index_box = formInterfaz.findIndex((item) => item.key === 'box_id')
-    if (formInterfaz[index_box].value?.box_id === 'hardcoded-box-id') {
+    if (!formInterfaz[index_box].value || formInterfaz[index_box].value === 'AFUERA'|| formInterfaz[index_box].value?.box_id === 'hardcoded-box-id') {
       console.log("Entro al handle AFUERA")
       handlerOtherTypes('patient_status', 'AFUERA')
       handlerOtherTypes('box_id', null)
