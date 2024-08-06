@@ -115,8 +115,8 @@ export class PatientController {
 
             const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
 
-            if (timeDifference <= 30000) {
-              // 1000 Milisegundos = 1 segundo. Son 30 segs
+            if (timeDifference <= 10000) {
+              // 1000 Milisegundos = 1 segundo. Son 10 segs
               return res.status(409).json({
                 message: 'Conflict detected',
                 currentData: UserAntiguo,
