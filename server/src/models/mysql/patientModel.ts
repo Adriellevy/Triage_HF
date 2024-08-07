@@ -369,7 +369,7 @@ export class PatientsModel {
     let { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
       data;
     //TODO: ver si es que es el valor patient_new_value debería ser nulo
-    if (patient_updated_column == 'box_id') patient_new_value = ' ';
+    if (patient_updated_column == 'box_id' && patient_new_value == null) patient_new_value = ' ';
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (
           updated_id, 
