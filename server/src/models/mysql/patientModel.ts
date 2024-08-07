@@ -205,7 +205,10 @@ export class PatientsModel {
       const [result] = await conn.execute<OkPacket>(patientsUpdateQuery, updateValues);
 
       if (result.affectedRows > 0) {
-        if (data.patient_status === 'ALTA' && data.box_id !== null) {
+        if (
+          (data.patient_status === 'ALTA' && data.box_id !== null) ||
+          data.patient_status === 'AFUERA'
+        ) {
           await conn.query(
             `
             UPDATE Patient
@@ -362,9 +365,11 @@ export class PatientsModel {
     const conn = await connect();
     const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
     const [{ uuid }] = uuidResult;
-    console.log(data);
-    const { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
+    console.log('Data en el metodo AddUpdateHistory:\n', data);
+    let { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
       data;
+    //TODO: ver si es que es el valor patient_new_value debería ser nulo
+    if (patient_updated_column == 'box_id') patient_new_value = ' ';
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (
           updated_id, 
