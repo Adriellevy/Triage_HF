@@ -278,6 +278,7 @@ function PatientFormRefactorizado() {
         console.log("Informacion recibida:\n",edditingPatient)
         if(edditingPatient?.box_code){
           const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
+          if (box) ActualizarTotalOptions(null, null, box,null);
           console.log("Box encontrado: \n",box)
           formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
         }else{
