@@ -279,11 +279,12 @@ function PatientFormRefactorizado() {
         if(edditingPatient?.box_code){
           const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
           console.log("Box encontrado: \n",box)
-          if (box) ActualizarTotalOptions(null, null, box);
           formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
         }else{
-          setBoxOcupiedByPatient(TotalOptions_local['box_id'][0])
-          formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = TotalOptions_local['box_id'][0]
+          if(TotalOptions){
+            setBoxOcupiedByPatient(TotalOptions['box_id'][0])
+            formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = TotalOptions['box_id'][0]
+            }
         }
       } catch (error) {
         console.log(error)
@@ -323,7 +324,6 @@ function PatientFormRefactorizado() {
     const fetchDoctors = async () => {
       try {
         const data = await getAllDoctors()
-        setDoctorOptions(data)
         return data
       } catch (error) {
         // console.error('Error:', error.message)
@@ -332,7 +332,6 @@ function PatientFormRefactorizado() {
     const fetchNurses = async () => {
       try {
         const data = await getAllNurses()
-        setNurseOptions(data)
         return data
       } catch (error) {
         // console.error('Error:', error.message)
@@ -341,7 +340,6 @@ function PatientFormRefactorizado() {
     const fetchBoxes = async () => {
       try {
         const data = await getAvailableBoxes()
-        setBoxesOptions(data)
         return data
       } catch (error) {
         // console.error('Error:', error.message)
@@ -450,6 +448,7 @@ function PatientFormRefactorizado() {
     if (!formInterfaz[index_patient_isolated].value) {
       handlerOtherTypes('patient_isolated', checked)
     }
+    //TODO: Elimiar el box Selecionado
   }
 
   const handlerOtherTypes = (key: string, newValue: string | number | boolean | Date | null) => {
@@ -775,6 +774,7 @@ function PatientFormRefactorizado() {
                           | string
                           | number
                           | boolean
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           | React.ReactElement<any, string | React.JSXElementConstructor<any>>
                           | Iterable<React.ReactNode>
                           | React.ReactPortal
@@ -868,13 +868,21 @@ function PatientFormRefactorizado() {
         })}
 
         <div className='flex items-end gap-4 '>
-          {(formData && (<Button type='submit' color='green' onClick={handleButtonClick}>
-            {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
-          </Button>)) || (<Link to={`/patients`} >
-              <Button type='button' color='grey' >
+        {edditingPatient ? (
+        (formData && !Object.keys(edditingPatient).every(key => formData[key] === edditingPatient[key] || formData[key] == null)) ? (
+            <Button type='submit' color='green' onClick={handleButtonClick}>
+              {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
+            </Button>
+          ) : (
+            <Link to={`/patients`}>
+              <Button type='button' color='grey'>
                 {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
               </Button>
-            </Link>)}
+            </Link>
+          )
+        ):(<Button type='submit' color='green' onClick={handleButtonClick}>
+        {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
+      </Button>)}
           {edditingPatient && (
             <Link to={`/patients`}>
               <Button type='button' color='grey'>
