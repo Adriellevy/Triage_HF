@@ -279,7 +279,7 @@ function PatientFormRefactorizado() {
         if(edditingPatient?.box_code){
           const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
           if (box) ActualizarTotalOptions(null, null, box,null);
-          console.log("Box encontrado: \n",box)
+          // console.log("Box encontrado: \n",box)
           formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
         }else{
           if(TotalOptions){
@@ -589,6 +589,9 @@ function PatientFormRefactorizado() {
   }
 
   const resetForm = () => {
+    const boxToRemove = formData['box_id'];
+    const updatedBoxList = TotalOptions?.box_id.filter((box) => box.box_id !== boxToRemove)
+    ActualizarTotalOptions(null,null,updatedBoxList,null)
     setformInterfaz(Formulario_estandar)
     setFormData(null)
     setChecked(false)
