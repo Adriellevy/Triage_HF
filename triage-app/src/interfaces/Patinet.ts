@@ -8,7 +8,15 @@ export enum PatientStatus {
   WAITING_FOR_ADMISSION = 'EN ESPERA DE INTERNACION',
   AFUERA = 'AFUERA'
 }
-
+export interface PatientSymptom {
+  _id: number
+  name: string
+}
+export interface TriageLevel {
+  _id: number
+  name: string
+  color: string
+}
 export interface Patient {
   patient_id: string
   patient_name: string
@@ -90,7 +98,7 @@ export interface Field {
   //TODO arreglar el error de typescript en el Patient form puede ser que los imports no sean los adecuados
   format: ((value: User | Box | string) => string | Promise<string | null>) | null
   component_type: string
-  value: string | null | Date
+  value: string | null | Date | Box | User
   handlerHelperFunction: Box | User | string | number | null | Boolean
   formatdata: ((value: string | null) => string | null) | null
 }
