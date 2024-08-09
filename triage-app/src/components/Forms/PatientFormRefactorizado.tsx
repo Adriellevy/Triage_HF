@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Field, Patient } from '@/interfaces/Patinet'
+import { Field, Patient, PatientSymptom, TriageLevel } from '@/interfaces/Patinet'
 import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
 import { Box, BoxStatus, BoxType } from '@/interfaces/Boxes'
@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@mui/material'
 import React from 'react'
-import _ from 'lodash'
+import _, { isEqual } from 'lodash'
 import {
   IndiceObjeto,
   returnBoxCode,
@@ -51,7 +51,7 @@ function PatientFormRefactorizado() {
     doctor_id: User[]
     nurse_id: User[]
     box_id: Box[]
-    patient_symptom: string[]
+    patient_symptom: PatientSymptom[]
   } | null>(null)
   // Checkbox state
   const [checked, setChecked] = React.useState(false)
@@ -265,37 +265,26 @@ function PatientFormRefactorizado() {
         setDoctorOptions(docs)
         setNurseOptions(nurses)
         setBoxesOptions(boxes)
-        const TotalOptions_local = {
-          doctor_id: docs,
-          nurse_id: nurses,
-          box_id: [hardcodedBox, ...(boxes || [])] as Box[],
-          patient_symptom: PatientSintoms
-        }
-        
-        setTotalOptions(TotalOptions_local)
-
+        ActualizarTotalOptions(docs,nurses,boxes,PatientSintoms)
         
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
 
         const nurse = nurses?.find((nurse) => nurse.user_name === edditingPatient?.nurse_name)
 
         formInterfaz[IndiceObjeto(Formulario_estandar, 'doctor_id')].value = doctor || ''
-        // formData[IndiceObjeto(Formulario_estandar, 'doctor_id')].value = doctor || ''
 
         formInterfaz[IndiceObjeto(Formulario_estandar, 'nurse_id')].value = nurse || ''
-        // formData[IndiceObjeto(Formulario_estandar, 'nurse_id')].value = nurse || ''
 
-
+        console.log("Informacion recibida:\n",edditingPatient)
         if(edditingPatient?.box_code){
           const box = allBoxes?.find((box) => edditingPatient?.box_code.includes(box.box_code))
-          if (box) setBoxOcupiedByPatient([box])           
+          console.log("Box encontrado: \n",box)
+          if (box) ActualizarTotalOptions(null, null, box);
           formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
-          // formData[IndiceObjeto(Formulario_estandar, 'box_id')].value = box || ''
         }else{
-          setBoxOcupiedByPatient(TotalOptions['box_id'][0])
-          formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = TotalOptions['box_id'][0]
+          setBoxOcupiedByPatient(TotalOptions_local['box_id'][0])
+          formInterfaz[IndiceObjeto(Formulario_estandar, 'box_id')].value = TotalOptions_local['box_id'][0]
         }
-       
       } catch (error) {
         console.log(error)
       }
@@ -363,13 +352,7 @@ function PatientFormRefactorizado() {
     
     const fetchData = async () => {
       const [docs, nurses, boxes] = await Promise.all([fetchDoctors(), fetchNurses(), fetchBoxes()]);
-      const TotalOptions_local = {
-        doctor_id: docs || [],
-        nurse_id: nurses || [],
-        box_id: [hardcodedBox, ...(boxes || [])] as Box[], // Asegurar que sea de tipo Box[]
-        patient_symptom: PatientSintoms || []
-      };
-      setTotalOptions(TotalOptions_local);
+      ActualizarTotalOptions(docs,nurses,boxes,PatientSintoms);
     };
   
     fetchData();
@@ -404,7 +387,7 @@ function PatientFormRefactorizado() {
 
   //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
-  const PatientSintoms = [
+  const PatientSintoms:PatientSymptom[] = [
     { _id: 1, name: 'Convulsiones' },
     { _id: 2, name: 'Trauma de Cráneo' },
     { _id: 3, name: 'Dolor torácico / dorsal' },
@@ -419,7 +402,7 @@ function PatientFormRefactorizado() {
     { _id: 12, name: 'Sangrado Digestivo' },
     { _id: 13, name: 'Fiebre >38°' }
   ]
-  const TriageLevels = [
+  const TriageLevels:TriageLevel[] = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
     { _id: 2, name: 'II', color: '255,51,0' },
     { _id: 3, name: 'III', color: '255,255,102' },
@@ -613,17 +596,50 @@ function PatientFormRefactorizado() {
     resetErrors()
   }
 
-  //----------------------------------------------  Deseleccion Box ---------------------------------
+  //----------------------------------------------  Deseleccion Box ------------------------------------
   // Función para cancelar el cambio de box y agregar el box previo a la lista
-  const cancelBoxPreviousSelected = () => {
-    // Verificar que BoxesOptions y formData.box_id tengan valores válidos
-    if (BoxesOptions && formData.box_id) {
-      // Agregar el box previo a la lista solo si no está ya en la lista
-      if (!BoxesOptions.includes(formData.box_id)) {
-        setBoxesOptions([...BoxesOptions, formData.box_id])
-      }
-    }
-  }
+  // // // const cancelBoxPreviousSelected = () => {
+  // // //   // Verificar que BoxesOptions y formData.box_id tengan valores válidos
+  // // //   if (BoxesOptions && formData.box_id) {
+  // // //     // Agregar el box previo a la lista solo si no está ya en la lista
+  // // //     if (!BoxesOptions.includes(formData.box_id)) {
+  // // //       setBoxesOptions([...BoxesOptions, formData.box_id])
+  // // //     }
+  // // //   }
+  // // // }
+  //----------------------------------------------  Actualizacion de las opciones-----------------------
+  function ActualizarTotalOptions(
+    docs: User | User[] | null = [],
+    nurses: User | User[] | null = [],
+    boxes: Box | Box[] | null = [],
+    PatientSintoms: PatientSymptom | PatientSymptom[] | null = []
+) {
+    setTotalOptions((prevOptions) => {
+        // Si prevOptions no existe, inicializa las opciones con los valores actuales
+        if (!prevOptions) {
+            return {
+                doctor_id: docs ? (Array.isArray(docs) ? docs : [docs]) : [],
+                nurse_id: nurses ? (Array.isArray(nurses) ? nurses : [nurses]) : [],
+                box_id: boxes ? [hardcodedBox, ...(Array.isArray(boxes) ? boxes : [boxes])] : [hardcodedBox],
+                patient_symptom: PatientSintoms ? (Array.isArray(PatientSintoms) ? PatientSintoms : [PatientSintoms]) : [],
+            };
+        }
+
+        // Si se pasa un array, se reemplaza la lista previa, de lo contrario, se agrega el objeto
+        const newDocs = Array.isArray(docs) ? docs : docs ? [...prevOptions.doctor_id, docs] : prevOptions.doctor_id;
+        const newNurses = Array.isArray(nurses) ? nurses : nurses ? [...prevOptions.nurse_id, nurses] : prevOptions.nurse_id;
+        const newBoxes = Array.isArray(boxes) ? [hardcodedBox, ...boxes] : boxes ? [...prevOptions.box_id, boxes] : prevOptions.box_id;
+        const newPatientSymptoms = Array.isArray(PatientSintoms) ? PatientSintoms : PatientSintoms ? [...prevOptions.patient_symptom, PatientSintoms] : prevOptions.patient_symptom;
+
+        return {
+            doctor_id: newDocs,
+            nurse_id: newNurses,
+            box_id: newBoxes,
+            patient_symptom: newPatientSymptoms,
+        };
+    });
+}
+
   //--------------------------------------  Handler Conflictos -----------------------------------------
   const handleResolveConflict = (mergedData: Record<string, string>) => {
     console.log("MERGED DATA:\n",mergedData)
@@ -768,7 +784,7 @@ function PatientFormRefactorizado() {
                         index: number
                       ) => (
                         <option
-                          value={option.user_id || option.box_id || (!edditingPatient&&option._id)|| option.name  }
+                          value={option.user_id || option.box_id || (!edditingPatient&&option._id)|| option.name }
                           data-index={index}
                           key={index + 1}
                           id={index.toString()}
@@ -852,9 +868,13 @@ function PatientFormRefactorizado() {
         })}
 
         <div className='flex items-end gap-4 '>
-          <Button type='submit' color='green' onClick={handleButtonClick}>
+          {(formData && (<Button type='submit' color='green' onClick={handleButtonClick}>
             {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
-          </Button>
+          </Button>)) || (<Link to={`/patients`} >
+              <Button type='button' color='grey' >
+                {edditingPatient ? t('SavePatientButton') : t('AddNewPatientButton')}
+              </Button>
+            </Link>)}
           {edditingPatient && (
             <Link to={`/patients`}>
               <Button type='button' color='grey'>
