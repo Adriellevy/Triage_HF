@@ -321,4 +321,20 @@ export class PatientController {
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
+
+  static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
+    try {
+      const { number } = req.params;
+      const pageNumber = parseInt(number, 10);
+      console.log('llego a la paginacion');
+      if (isNaN(pageNumber) || pageNumber < 1) {
+        return res.status(400).json({ message: 'Invalid page number' });
+      }
+
+      const paginatedPatients = await PatientsModel.getPaginatedPatients(pageNumber);
+      return res.json(paginatedPatients);
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
 }

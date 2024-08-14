@@ -368,8 +368,8 @@ export class PatientsModel {
     console.log('Data en el metodo AddUpdateHistory:\n', data);
     let { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
       data;
-    //TODO: ver si es que es el valor patient_new_value debería ser nulo
-    if (patient_updated_column == 'box_id' && patient_new_value == null) patient_new_value = ' ';
+    // TODO: ver si es que es el valor patient_new_value debería ser nulo
+    if (patient_updated_column === 'box_id' && patient_new_value == null) patient_new_value = ' ';
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (
           updated_id, 
@@ -422,5 +422,19 @@ export class PatientsModel {
     const conn = await connect();
     const [result] = await conn.query(patientsQuery);
     return result[0].cantidad;
+  }
+
+  static async getPaginatedPatients(page: number): Promise<Patient[]> {
+    const patientsPerPage = 60;
+    const offset = (page - 1) * patientsPerPage;
+    const patientsQuery = `
+      SELECT *
+      FROM Patient
+      ORDER BY patient_entry_time DESC
+      LIMIT ${patientsPerPage} OFFSET ${offset};
+    `;
+    const conn = await connect();
+    const [rows] = await conn.query<Patient[] & RowDataPacket[]>(patientsQuery);
+    return rows as Patient[];
   }
 }
