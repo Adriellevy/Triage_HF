@@ -132,6 +132,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
   const [RawData, setRawData] = useState<Patient[] | null>(null)
   const [hasExecuted, setHasExecuted] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   const predefinedOptionsVar: ColourOption[] = [
@@ -202,7 +203,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
         socket.off(SocketEvent.UPDATE)
       }
     }
-  }, [socket, predefinedOptions])
+  }, [socket, predefinedOptions, currentPage])
 
   const handleonSearch = ({ term, by }: { term: string; by: string }) => {
     setSearchTerm(term)
