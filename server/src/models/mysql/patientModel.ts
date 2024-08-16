@@ -435,6 +435,7 @@ export class PatientsModel {
     `;
     const conn = await connect();
     const [rows] = await conn.query<Patient[] & RowDataPacket[]>(patientsQuery);
+    if (rows) console.log('Se obtuvieron los pacientes paginados');
     return rows as Patient[];
   }
 }

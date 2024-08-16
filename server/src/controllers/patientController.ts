@@ -324,13 +324,12 @@ export class PatientController {
 
   static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
     try {
-      const { number } = req.params;
-      const pageNumber = parseInt(number, 10);
-      console.log('llego a la paginacion');
+      const { batch } = req.params;
+      const pageNumber = parseInt(batch, 10);
       if (isNaN(pageNumber) || pageNumber < 1) {
         return res.status(400).json({ message: 'Invalid page number' });
       }
-
+      console.log('llego a la paginacion');
       const paginatedPatients = await PatientsModel.getPaginatedPatients(pageNumber);
       return res.json(paginatedPatients);
     } catch (error) {
