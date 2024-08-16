@@ -31,26 +31,28 @@ CREATE TABLE Box
     PRIMARY KEY (box_id)
 );
 
-CREATE TABLE Patient
-(
-    patient_id                BINARY(16)   NOT NULL,
-    patient_name              VARCHAR(50)  NOT NULL,
-    patient_age               TIMESTAMP    NOT NULL,
-    patient_entry_time        TIMESTAMP    NOT NULL,
-    patient_exit_time         TIMESTAMP,
-    patient_triage_time       TIMESTAMP    NOT NULL,
-    patient_triage_level      INT          NOT NULL,
-    patient_isolated          BOOLEAN      NOT NULL,
-    patient_status            ENUM ('ALTA', 'EN OBSERVACION', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA'),
-    patient_symptom           VARCHAR(500) NOT NULL,
-    patient_healthcare_system VARCHAR(50),
-    doctor_id                 BINARY(16),
-    nurse_id                  BINARY(16),
-    box_id                    BINARY(16),
-    FOREIGN KEY (box_id) REFERENCES Box (box_id),
-    FOREIGN KEY (doctor_id) REFERENCES User (user_id),
-    FOREIGN KEY (nurse_id) REFERENCES User (user_id),
-    PRIMARY KEY (patient_id)
+CREATE TABLE Patient (
+  patient_id BINARY(16) NOT NULL,
+  patient_name VARCHAR(50) NOT NULL,
+  patient_age DATETIME NOT NULL,
+  patient_entry_time TIMESTAMP NOT NULL,
+  patient_exit_time TIMESTAMP,
+  patient_triage_time TIMESTAMP NOT NULL,
+  patient_triage_level INT NOT NULL,
+  patient_isolated BOOLEAN NOT NULL,
+  patient_status ENUM('ALTA', 'EN OBSERVACION', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA'),
+  patient_symptom VARCHAR(500) NOT NULL,
+  patient_healthcare_system VARCHAR(50),
+  doctor_procedure VARCHAR(50) DEFAULT NULL,
+  doctor_studies_solicitated VARCHAR(50) DEFAULT NULL,
+  nurse_coment VARCHAR(50) DEFAULT NULL,
+  doctor_id BINARY(16),
+  nurse_id BINARY(16),
+  box_id BINARY(16),
+  FOREIGN KEY (box_id) REFERENCES Box(box_id),
+  FOREIGN KEY (doctor_id) REFERENCES User(user_id),
+  FOREIGN KEY (nurse_id) REFERENCES User(user_id),
+  PRIMARY KEY(patient_id)
 );
 
 CREATE TABLE PatientUpdateHistory
