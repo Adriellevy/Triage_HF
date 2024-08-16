@@ -3,7 +3,7 @@ import { PatientController } from '../controllers/patientController';
 
 export const patientRouter = Router();
 
-patientRouter.get('/:number', (req: Request, res: Response) => {
+patientRouter.get('/:batch', (req: Request, res: Response) => {
   void PatientController.getPaginatedPatients(req, res);
 });
 

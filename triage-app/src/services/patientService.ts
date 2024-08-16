@@ -45,6 +45,27 @@ export const getPatients = async (): Promise<Patient[]> => {
   }
 }
 
+export const getPaginatedPatients= async (batch: number): Promise<Patient[]> => {
+  try {
+    const token = Cookies.get('authToken')
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/${batch}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+    if (!response.ok) {
+      throw new Error(`Error in GET request to /patient: ${response.statusText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching patients:', error)
+    throw new Error('Error fetching patients')
+  }
+}
+
 export const getPatientById = async (patient_id: string | undefined): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
