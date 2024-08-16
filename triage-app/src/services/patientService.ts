@@ -26,7 +26,7 @@ export const getPatients = async (): Promise<Patient[]> => {
 export const getPaginatedPatients = async (batch: number): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/${batch}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/page/${batch}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
