@@ -1,5 +1,7 @@
 {
   "EditBox": "Edditing Boxes",
+  "ExpandList": "Expanda la lista de boxes:",
+  "MinimizeList": "Minimize la lista de boxes:",
   "BoxStatus": { "DISPONIBLE": "DISPONIBLE", "OCUPADO": "OCUPADO" },
   "PatientInfoButton": "Ver datos del paciente"
 }

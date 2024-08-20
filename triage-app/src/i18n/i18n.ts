@@ -29,7 +29,8 @@ import Boxes_es from './locales/es/Boxes.json'
 import Boxes_en from './locales/en/Boxes.json'
 import WarningBox_es from './locales/es/WarningBox.json'
 import WarningBox_en from './locales/en/WarningBox.json'
-
+import BoxEditor_es from './locales/es/BoxEditor.json'
+import BoxEditor_en from './locales/en/BoxEditor.json'
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -56,7 +57,8 @@ i18n
         BoxList: BoxList_es,
         BoxItem: BoxItem_es,
         Boxes: Boxes_es,
-        WarningBox: WarningBox_es
+        WarningBox: WarningBox_es,
+        BoxEditor: BoxEditor_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -71,7 +73,8 @@ i18n
         BoxList: BoxList_en,
         BoxItem: BoxItem_en,
         Boxes: Boxes_en,
-        WarningBox: WarningBox_en
+        WarningBox: WarningBox_en,
+        BoxEditor: BoxEditor_en
       }
     }
   })
