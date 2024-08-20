@@ -13,8 +13,9 @@
   "AddNewPatientButton": "Agregar Paciente",
   "SavePatientButton": "Guardar Paciente",
   "CancelButton": "Cancelar",
-  "NurseComent":"Comentario Enfermero",
-  "patient_healthcare_system":"Cobertura Médica",
-  "doctor_procedure":"Indicaciones del Doctor",
-  "doctor_coment":"Comentarios del Doctor" 
+  "NurseComent": "Comentario Enfermero",
+  "patient_healthcare_system": "Cobertura Médica",
+  "doctor_procedure": "Indicaciones del Doctor",
+  "doctor_coment": "Comentarios del Doctor",
+  "AddingPatient": "Agregando paciente, por favor espere"
 }

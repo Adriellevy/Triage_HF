@@ -40,6 +40,8 @@ import { Console } from 'console'
 import { SocketContext } from '@/contex/SocketContext'
 import { UpdateEvent } from '@/interfaces/Socket'
 import WarningBox from '../ui/WarningBox'
+import LoaderSpin from '../LoaderSpin'
+import LoaderOverlay from '../ui/LoaderOverlay'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -47,6 +49,7 @@ function PatientFormRefactorizado() {
   const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+  const [loadingIcon, setloadingIcon] = useState<boolean>(false)
   const [TotalOptions, setTotalOptions] = useState<{
     doctor_id: User[]
     nurse_id: User[]
@@ -410,6 +413,7 @@ function PatientFormRefactorizado() {
 
   //-----------------------------------  HANDLERS ---------------------------------
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
+    setloadingIcon(true)
     const index_box = formInterfaz.findIndex((item) => item.key === 'box_id')
     if (!formInterfaz[index_box].value || formInterfaz[index_box].value === 'AFUERA'|| formInterfaz[index_box].value?.box_id === 'hardcoded-box-id') {
       console.log("Entro al handle AFUERA")
@@ -547,6 +551,7 @@ function PatientFormRefactorizado() {
             edditingPatient.patient_id,
             updatedFormData
           )
+          setloadingIcon(false)
           // console.log('Conflict Data:\n', { currentData, newData })
           // // Si newData != null significa que hubo un conflicto por lo tanto hay que solucionarlo
           if (newData && currentData) {
@@ -560,6 +565,7 @@ function PatientFormRefactorizado() {
 
         } else {
           const { data, errors } = await addNewPatient(updatedFormData)
+          setloadingIcon(false)
           if (errors) {
             console.error('Errores en el formulario al agregar nuevo paciente:', errors)
             toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
@@ -582,6 +588,7 @@ function PatientFormRefactorizado() {
         }
       }
     } catch (error) {
+      setloadingIcon(false)
       toast.error('Error al intentar agregar un nuevo paciente', { duration: 2000 })
       console.error('Error al intentar agregar un nuevo paciente:\n')
       console.error(error)
@@ -708,6 +715,11 @@ function PatientFormRefactorizado() {
         {edditingPatient ? t('title.EditMode') : t('title.AddMode')}
       </h2>
       {SeEditoMismoPaciente &&<WarningBox message={'EditedUser'} shouldStopCounter={showConflictModal}></WarningBox>}
+      {loadingIcon&& (
+        <div className='flex justify-center items-center'>
+          <LoaderOverlay loadingMessage={t('AddingPatient')} />
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
@@ -896,6 +908,7 @@ function PatientFormRefactorizado() {
           )}
         </div>
       </form>
+      
       {/*--------------------- Modal de conflicto de datos ----------------------- */}
       {showConflictModal && conflictData && (
         <ConflictResolver

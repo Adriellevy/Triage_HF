@@ -13,8 +13,9 @@
   "AddNewPatientButton": "Add Patient",
   "SavePatientButton": "Save Patient",
   "CancelButton": "Cancel",
-  "NurseComent":"Nurse coment",
-  "patient_healthcare_system":"Health Insurance",
-  "doctor_procedure":"Doctor Indications",
-  "doctor_coment":"Doctor Coments" 
+  "NurseComent": "Nurse coment",
+  "patient_healthcare_system": "Health Insurance",
+  "doctor_procedure": "Doctor Indications",
+  "doctor_coment": "Doctor Coments",
+  "AddingPatient": "Adding Patient, please wait"
 }
