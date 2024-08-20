@@ -1,0 +1,5 @@
+{
+  "EditBox": "Edditing Boxes",
+  "BoxStatus": { "DISPONIBLE": "AVAILABLE", "OCUPADO": "BUSY" },
+  "PatientInfoButton": "Get Patient Info"
+}

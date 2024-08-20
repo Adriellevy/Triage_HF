@@ -1,0 +1,5 @@
+{
+  "EditBox": "Edditing Boxes",
+  "BoxStatus": { "DISPONIBLE": "DISPONIBLE", "OCUPADO": "OCUPADO" },
+  "PatientInfoButton": "Ver datos del paciente"
+}
