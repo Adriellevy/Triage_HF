@@ -7,7 +7,6 @@ import LoaderSpin from '@/components/LoaderSpin';
 import BoxEdittingList from '../../components/BoxSettingsComponents/BoxEdittingList';
 
 function BoxSettings() {
-  const { t } = useTranslation('Boxes');
   const [isLoading, setIsLoading] = useState(false);
   const [boxesData, setboxesData] = useState<Box[]>([]);
 
