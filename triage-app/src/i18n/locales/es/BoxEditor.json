@@ -1,7 +1,14 @@
 {
   "EditBox": "Edditing Boxes",
-  "ExpandList": "Expanda la lista de boxes:",
-  "MinimizeList": "Minimize la lista de boxes:",
+  "ExpandList": "Expanda la lista  de lugares de atencion al paciente del tipo:",
+  "MinimizeList": "Minimize la lista de lugares de atencion al paciente del tipo:",
+  "AddAtentionPlace": "Agregar lugar de atencion:",
+  "Save": "Guardar",
+  "Add": "Agregar",
+  "Delete": "Eliminar",
+  "Cancel": "Cancelar",
+  "Boxcode": "Código del Box",
+  "TypeBox": "Tipo box",
   "BoxStatus": { "DISPONIBLE": "DISPONIBLE", "OCUPADO": "OCUPADO" },
   "PatientInfoButton": "Ver datos del paciente"
 }

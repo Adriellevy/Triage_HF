@@ -2,6 +2,13 @@
   "EditBox": "Edditing Boxes",
   "ExpandList": "Expand the box type list:",
   "MinimizeList": "Minimize the box type list:",
+  "AddAtentionPlace": "Add atention place:",
+  "Save": "Save",
+  "Add": "Add",
+  "Delete": "Delete",
+  "Cancel": "Cancel",
+  "Boxcode": "Code box",
+  "TypeBox": "Type box",
   "BoxStatus": { "DISPONIBLE": "AVAILABLE", "OCUPADO": "BUSY" },
   "PatientInfoButton": "Get Patient Info"
 }

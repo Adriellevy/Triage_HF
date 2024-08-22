@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { SocketContext } from '@/contex/SocketContext';
+import  { useState, useEffect } from 'react';
 import { getAllBoxes } from '@/services/boxService';
 import { Box } from '@/interfaces/Boxes';
-import { useTranslation } from 'react-i18next';
 import LoaderSpin from '@/components/LoaderSpin';
 import BoxEdittingList from '../../components/BoxSettingsComponents/BoxEdittingList';
 
