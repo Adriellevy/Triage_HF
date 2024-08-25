@@ -83,24 +83,29 @@ export class BoxModel {
 
   // Método para actualizar un box existente
   static async updateBox(boxId: string, updatedBoxData: Partial<IBox>): Promise<IBox | null> {
-    const updateBoxQuery = `
-      UPDATE Box
-      SET
-        box_code = ?,
-        box_type = ?,
-        box_time = ?,
-        box_status = ?
-      WHERE box_id = UUID_TO_BIN(?);
-    `;
-    const conn = await connect();
-    await conn.query(updateBoxQuery, [
-      updatedBoxData.box_code,
-      updatedBoxData.box_type,
-      updatedBoxData.box_time,
-      updatedBoxData.box_status,
-      boxId
-    ]);
-    const updatedBox = await this.getBoxCodeById(boxId);
-    return updatedBox;
+    try {
+      const updateBoxQuery = `
+        UPDATE Box
+        SET
+          box_code = ?,
+          box_type = ?,
+          box_time = ?,
+          box_status = ?
+        WHERE box_id = UUID_TO_BIN(?);
+      `;
+      const conn = await connect();
+      await conn.query(updateBoxQuery, [
+        updatedBoxData.box_code,
+        updatedBoxData.box_type,
+        updatedBoxData.box_time,
+        updatedBoxData.box_status,
+        boxId
+      ]);
+      const updatedBox = await this.getBoxCodeById(boxId);
+      return updatedBox;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

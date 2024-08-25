@@ -1,14 +1,13 @@
 import z from 'zod';
 import { BoxStatus, BoxType } from '../interface/box';
 
-// Esquema de validación para un box
 const boxSchema = z.object({
   box_code: z.string(),
   box_type: z.nativeEnum(BoxType),
   box_status: z.nativeEnum(BoxStatus).optional(),
-  box_time: z.string().optional(),
-  patient_id: z.string().optional(),
-  patient_name: z.string().optional()
+  box_time: z.union([z.string(), z.null()]).optional(),
+  patient_id: z.union([z.string(), z.null()]).optional(),
+  patient_name: z.union([z.string(), z.null()]).optional()
 });
 
 type Box = z.infer<typeof boxSchema>;

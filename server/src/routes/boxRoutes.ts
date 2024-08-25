@@ -21,7 +21,7 @@ boxRouter.post('/add', (req: Request, res: Response) => {
   void BoxController.createNewBox(req, res);
 });
 
-// // Ruta para actualizar un box existente
-// boxRouter.put('/update/:id', (req: Request, res: Response) => {
-//   void BoxController.updateBox(req, res);
-// });
+// Ruta para actualizar un box existente
+boxRouter.patch('/update/:id', (req: Request, res: Response) => {
+  void BoxController.updateBox(req, res);
+});
