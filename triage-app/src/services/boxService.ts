@@ -141,3 +141,47 @@ export const CreateNewBox = async (
     throw new Error('Error al agregar nuevo box')
   }
 }
+
+export const updateBox = async (
+  box_id: string,
+  updatedData: Partial<Box>
+): Promise<{
+  message?: string
+  updatedBox?: Box | null
+}> => {
+  try {
+    const token = Cookies.get('authToken')
+    const apiUrl = `${import.meta.env.VITE_API_URL}/box/update/${box_id}`
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body: any = {} // Initialize an empty object for the request body
+
+    // Agregar cada key-value pair al cuerpo de la solicitud
+    Object.keys(updatedData).forEach((fieldName) => {
+      body[fieldName] = updatedData[fieldName]
+    })
+
+    const response = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body) // Pasar el objeto body construido
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud PATCH a ${apiUrl}: ${response.statusText}`)
+    }
+
+    return {
+      message: 'Box actualizado exitosamente',
+      updatedBox: data.box
+    }
+  } catch (error) {
+    console.error('Error al actualizar el box:', error)
+    throw new Error('Error al actualizar el box')
+  }
+}

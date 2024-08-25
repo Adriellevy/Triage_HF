@@ -11,7 +11,6 @@ export enum BoxStatus {
 }
 
 export interface Box {
-  userId: string
   box_id: string
   box_code: string
   box_type: BoxType

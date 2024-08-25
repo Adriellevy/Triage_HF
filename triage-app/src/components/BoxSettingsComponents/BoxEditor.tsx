@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, BoxType, PartialBox } from '@/interfaces/Boxes'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { useTranslation } from 'react-i18next'
-import { CreateNewBox } from '@/services/boxService'
+import { CreateNewBox, updateBox } from '@/services/boxService'
 import { toast } from 'sonner'
 
 interface BoxEditorProps {
@@ -32,7 +32,6 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
   }
 
   const handleCreate = async () => {
-    console.log('se Creo')
     try {
       await CreateNewBox(editableBox)
     } catch (error) {
@@ -41,11 +40,17 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
     }
   }
 
-  const handleSave = () => {
-    onUpdate(editableBox)
-    setIsModified(false)
-    if (addBox) {
-      setAddBox(false) // Cerrar la ventana después de guardar
+  const handleSave = async () => {
+    try {
+      onUpdate(editableBox)
+      await updateBox(editableBox.box_id, editableBox)
+      setIsModified(false)
+      if (addBox) {
+        setAddBox(false) // Cerrar la ventana después de guardar
+      }
+    } catch (error) {
+      toast.error('Error al intentar editar un box', { duration: 2000 })
+      console.log(error)
     }
   }
 

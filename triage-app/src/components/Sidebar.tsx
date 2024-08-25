@@ -163,17 +163,18 @@ function Sidebar() {
           })
         }
       } else if (data.box) {
-        if (data.box.userAdded !== token) {
-          if (data.message === UpdateEvent.BOX_UPDATE) {
-            toast.info('Uno de sus Boxes ha sido modificado', {
-              action: {
-                label: 'Ver la lista de Boxes',
-                onClick: () => {
-                  navigate(`/settings/box`)
-                }
+        //En el caso de que el box lo haya agregado el mismo usuario
+        // if (data.box.userAdded !== token) {
+        if (data.message === UpdateEvent.BOX_UPDATE) {
+          toast.info('Uno de sus Boxes ha sido modificado', {
+            action: {
+              label: 'Ver la lista de Boxes',
+              onClick: () => {
+                navigate(`/settings/box`)
               }
-            })
-          }
+            }
+          })
+          // }
         }
       } else {
         console.error('LLego una notificacion por socket que no es Box ni Patient')
