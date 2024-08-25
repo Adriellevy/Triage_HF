@@ -1,6 +1,6 @@
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../config/db';
-import { type User } from '../../interface/user';
+import { UserRole, type User } from '../../interface/user';
 
 export interface IUser extends User, RowDataPacket {}
 
@@ -99,6 +99,40 @@ export class UserModel {
       return user;
     } catch (error) {
       console.error('Error en la consulta getUserByUserName:', error);
+      throw error;
+    }
+  }
+
+  static async getUsersByRole(role: UserRole): Promise<User[]> {
+    try {
+      const usersQuery = `
+        SELECT 
+          BIN_TO_UUID(User.user_id) AS user_id,
+          User.user_name,
+          User.user_full_name,
+          User.user_email,
+          User.user_specialization,
+          User.user_type
+        FROM User
+        WHERE user_type = ?;
+      `;
+
+      const conn = await connect();
+      const [rows] = await conn.query<RowDataPacket[]>(usersQuery, [role]);
+
+      // Convertir y validar que cada fila cumple con la estructura de User
+      const users: User[] = rows.map((row) => ({
+        user_id: row.user_id as string,
+        user_name: row.user_name as string,
+        user_full_name: row.user_full_name as string,
+        user_email: row.user_email as string,
+        user_specialization: row.user_specialization as string | undefined,
+        user_type: row.user_type as UserRole
+      }));
+
+      return users;
+    } catch (error) {
+      console.error('Error en la consulta getUsersByRole:', error);
       throw error;
     }
   }

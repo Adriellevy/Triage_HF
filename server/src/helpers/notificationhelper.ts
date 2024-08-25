@@ -1,5 +1,7 @@
 import { type Request } from 'express';
 import { type Patient } from '../interface/patient';
+import { type Box } from '../interface/box';
+import { type User } from '../interface/user';
 
 enum SocketEvent {
   GLOBAL_NOTIFICATION = 'notification',
@@ -92,5 +94,32 @@ export function SendUpdatePatientNotifications(
       patient_name: UpdatedPatient.patient_name,
       patient_id: UpdatedPatient.patient_id
     }
+  });
+}
+
+export function SendNewBoxNotifications(
+  req: Request,
+  newBox: Box,
+  hospitalUsers: User[],
+  usuarioMandoreq: string
+): void {
+  const io = req.io;
+
+  // Notifica a todos los clientes que se ha creado un nuevo box
+  io?.emit(SocketEvent.UPDATE, {
+    message: UpdateEvent.BOX_UPDATE
+  });
+
+  hospitalUsers.forEach((user) => {
+    io?.emit(`${user.user_id}`, {
+      message: UpdateEvent.BOX_UPDATE,
+      box: {
+        box_id: newBox.box_id,
+        box_code: newBox.box_code,
+        box_type: newBox.box_type,
+        box_status: newBox.box_status,
+        userAdded: usuarioMandoreq
+      }
+    });
   });
 }

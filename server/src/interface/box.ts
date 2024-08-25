@@ -6,7 +6,7 @@ export enum BoxType {
 }
 
 export enum BoxStatus {
-  LIBRE = 'LIBRE',
+  DISPONIBLE = 'DISPONIBLE',
   OCUPADO = 'OCUPADO'
 }
 

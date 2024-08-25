@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { UserModel } from '../models/mysql/userModel';
 import { verifyToken } from '../helpers/authhelper';
+import { UserRole } from '../interface/user';
 
 export class UserController {
   static async getUserIdByToken(req: Request, res: Response): Promise<Response> {
@@ -47,4 +48,14 @@ export class UserController {
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
+
+  // static async getAllHospitalUser(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const users = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+  //     const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
+  //     return res.json(newusers);
+  //   } catch (error) {
+  //     return res.status(500).json({ message: 'Something goes wrong' });
+  //   }
+  // }
 }
