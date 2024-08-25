@@ -1,4 +1,4 @@
-import { Box } from '../interfaces/Boxes'
+import { Box, PartialBox } from '../interfaces/Boxes'
 import Cookies from 'js-cookie'
 
 export const getAllBoxes = async (): Promise<Box[]> => {
@@ -97,6 +97,47 @@ export const getBoxCodeById = async (boxId: string): Promise<Box | null> => {
     console.error(`Error al obtener la caja con ID ${boxId}:`, error)
     throw new Error('Error al obtener la caja')
   }
+}
 
-  
+export const CreateNewBox = async (
+  newBoxData: PartialBox
+): Promise<{
+  data?: PartialBox | null
+  errors?: { message: string; path: string }[] | null
+}> => {
+  const token = Cookies.get('authToken')
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/box/add/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(newBoxData)
+    })
+
+    console.log('body del mensaje enviado \n', newBoxData)
+
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      if (errorResponse.errors) {
+        const simplifiedErrors = errorResponse.errors.map(
+          ({ message, path }: { message: string; path: string[] }) => ({
+            message,
+            path: path[0]
+          })
+        )
+        return { data: null, errors: simplifiedErrors }
+      }
+
+      throw new Error(`Error en la solicitud POST a /box/add/: ${errorResponse}`)
+    }
+
+    const data = await response.json()
+    return { data, errors: null }
+  } catch (error) {
+    console.error('Error al agregar nuevo box:', JSON.stringify(error, null, 2))
+    throw new Error('Error al agregar nuevo box')
+  }
 }

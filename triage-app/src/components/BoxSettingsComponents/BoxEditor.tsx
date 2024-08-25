@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Box, BoxType } from '@/interfaces/Boxes'
+import { Box, BoxType, PartialBox } from '@/interfaces/Boxes'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { useTranslation } from 'react-i18next'
+import { CreateNewBox } from '@/services/boxService'
+import { toast } from 'sonner'
 
 interface BoxEditorProps {
-  box: Box
+  box: Box | PartialBox
   onUpdate: (updatedBox: Box) => void
   onDelete: (boxId: string) => void
   addBox: boolean | null
@@ -27,6 +29,16 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
       [field]: value
     }))
     setIsModified(true)
+  }
+
+  const handleCreate = async () => {
+    console.log('se Creo')
+    try {
+      await CreateNewBox(editableBox)
+    } catch (error) {
+      toast.error('Error al intentar agregar un nuevo box', { duration: 2000 })
+      console.log(error)
+    }
   }
 
   const handleSave = () => {
@@ -85,7 +97,7 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
 
       <div className='flex justify-between'>
         <Button
-          onClick={handleSave}
+          onClick={box.box_code ? handleSave : handleCreate}
           className={`bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300`}
           color={'green'}
         >

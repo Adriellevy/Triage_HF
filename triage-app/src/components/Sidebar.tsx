@@ -23,6 +23,7 @@ import DoctorImg from '../assets/doctor.jpeg'
 import { UpdateEvent } from '@/interfaces/Socket'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
+import { Box } from '@/interfaces/Boxes'
 
 interface MenuItem {
   icon?: string
@@ -137,27 +138,46 @@ function Sidebar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const handleSocketEvent = (data: { patient: Patient; message: UpdateEvent }) => {
-      const { patient_id } = data.patient
-      console.log(patient_id)
-      if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
-        toast.info('Nuevo paciente asignado', {
-          action: {
-            label: 'Ver datos del paciente',
-            onClick: () => {
-              navigate(`/patients/${patient_id}`)
+    const handleSocketEvent = (data: { patient?: Patient; message: UpdateEvent; box?: Box }) => {
+      if (data.patient) {
+        const { patient_id } = data.patient
+        console.log(patient_id)
+
+        if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
+          toast.info('Nuevo paciente asignado', {
+            action: {
+              label: 'Ver datos del paciente',
+              onClick: () => {
+                navigate(`/patients/${patient_id}`)
+              }
             }
-          }
-        })
-      } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
-        toast.info('Uno de tus pacientes ha sido editado', {
-          action: {
-            label: 'Ver datos del paciente',
-            onClick: () => {
-              navigate(`/patients/${patient_id}`)
+          })
+        } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
+          toast.info('Uno de tus pacientes ha sido editado', {
+            action: {
+              label: 'Ver datos del paciente',
+              onClick: () => {
+                navigate(`/patients/${patient_id}`)
+              }
             }
+          })
+        }
+      } else if (data.box) {
+        if (data.box.userAdded !== token) {
+          if (data.message === UpdateEvent.BOX_UPDATE) {
+            toast.info('Uno de sus Boxes ha sido modificado', {
+              action: {
+                label: 'Ver la lista de Boxes',
+                onClick: () => {
+                  navigate(`/settings/box`)
+                }
+              }
+            })
           }
-        })
+        }
+      } else {
+        console.error('LLego una notificacion por socket que no es Box ni Patient')
+        console.log('Data recibida del socket:', data)
       }
     }
     const setupSocket = () => {

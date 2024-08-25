@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import BoxEditor from '@/components/BoxSettingsComponents/BoxEditor'
-import { Box, BoxType, BoxStatus } from '@/interfaces/Boxes'
+import { Box, BoxType, BoxStatus, PartialBox } from '@/interfaces/Boxes'
 import { useTranslation } from 'react-i18next'
 
 interface BoxEdittingListProps {
@@ -11,7 +11,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   const { t } = useTranslation('BoxEditor')
   const [boxes, setBoxes] = useState<Box[]>(initialBoxes)
   const [addBox, setAddBox] = useState<boolean>(false)
-  const [boxAuxiliar, setboxAuxiliar] = useState<Box>()
+  const [boxAuxiliar, setboxAuxiliar] = useState<PartialBox>()
   const [visibleTypes, setVisibleTypes] = useState<Record<BoxType, boolean>>({
     [BoxType.CONSULTORIO]: false
   })
@@ -26,19 +26,14 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
 
   const handleAddBox = () => {
     setAddBox(true)
-    const newBox: Box = {
-      box_id: `new- ${Date.now()}`,
+    const newBox: PartialBox = {
       box_code: '',
       box_type: BoxType.CONSULTORIO,
-      box_status: BoxStatus.LIBRE,
-      box_time: new Date().toISOString(),
-      patient_name: '',
       [Symbol.iterator]: function (): IterableIterator<Box> {
         throw new Error('Function not implemented.')
       }
     }
     setboxAuxiliar(newBox)
-    // setBoxes(prev => [...prev, newBox]);
   }
 
   const toggleVisibility = (type: BoxType) => {
@@ -54,8 +49,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
         <h2 className='text-xl font-semibold text-gray-800'>Lista de Boxes</h2>
       </div>
 
-      {Object.keys(BoxType).map((type) => {
-        const boxType = type as BoxType
+      {Object.values(BoxType).map((boxType) => {
         return (
           <div key={boxType}>
             <button
