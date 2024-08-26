@@ -108,4 +108,31 @@ export class BoxModel {
       return null;
     }
   }
+
+  static async deleteBox(boxId: string): Promise<boolean> {
+    try {
+      const deleteBoxQuery = `
+        DELETE FROM Box
+        WHERE box_id = UUID_TO_BIN(?);
+      `;
+
+      const conn = await connect();
+      const [result] = await conn.query(deleteBoxQuery, [boxId]);
+      try {
+        const box_exist = await BoxModel.getBoxCodeById(boxId);
+        // Verificar si se eliminó alguna fila
+        if (!box_exist) {
+          return true; // Box eliminado correctamente
+        } else {
+          return false; // No se encontró el box con el ID proporcionado
+        }
+      } catch (error) {
+        console.log('no se encontro el nombre del box (esta bien) y explota');
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false; // Error en la operación
+    }
+  }
 }

@@ -5,6 +5,7 @@ import { verifyToken } from '../helpers/authhelper';
 import { UserModel } from '../models/mysql/userModel';
 import { type User, UserRole } from '../interface/user';
 import {
+  SendDeletedBoxNotifications,
   SendNewBoxNotifications,
   SendUpdatedBoxNotifications
 } from '../helpers/notificationhelper';
@@ -143,6 +144,55 @@ export class BoxController {
       }
 
       return res.status(500).json({ message: 'No se pudo actualizar el box' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Algo salió mal' });
+    }
+  }
+
+  static async deleteBox(req: Request, res: Response): Promise<Response> {
+    const { id: box_id } = req.params; // Obtener el ID del box desde los parámetros de la ruta
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+
+    const decoded = verifyToken(token);
+    console.log('Decoded: ', decoded);
+
+    const userID = decoded.id;
+    const userType_verificado = (await UserModel.getUserByID({ id: userID }))?.user_type;
+
+    if (userType_verificado !== UserRole.HOSPITAL) {
+      return res.status(401).json({ error: 'Usuario con acceso denegado' });
+    }
+
+    try {
+      // Verificar si el box existe
+      const boxExists = await BoxModel.getBoxCodeById(box_id);
+
+      if (!boxExists) {
+        return res.status(404).json({ error: 'Box no encontrado' });
+      }
+
+      // Eliminar el box
+      const deletedBox = await BoxModel.deleteBox(box_id);
+
+      if (deletedBox) {
+        // Obtener usuarios con rol 'HOSPITAL'
+        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+
+        // Enviar notificaciones sobre el box eliminado
+        SendDeletedBoxNotifications(req, boxExists, Users, token);
+
+        return res.status(200).json({
+          message: 'Box eliminado correctamente',
+          boxId: box_id,
+          deletedBy: token // Opcional: puedes devolver el userId para indicar quién eliminó el box
+        });
+      }
+
+      return res.status(500).json({ message: 'Error al eliminar el box' });
     } catch (error) {
       return res.status(500).json({ message: 'Algo salió mal' });
     }
