@@ -185,3 +185,34 @@ export const updateBox = async (
     throw new Error('Error al actualizar el box')
   }
 }
+
+export const deleteBox = async (
+  boxId: string
+): Promise<{
+  success: boolean
+  message: string
+}> => {
+  const token = Cookies.get('authToken')
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/box/delete/${boxId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      throw new Error(
+        `Error en la solicitud DELETE a /box/delete/: ${errorResponse.message || 'Unknown error'}`
+      )
+    }
+
+    return { success: true, message: 'Box eliminado correctamente' }
+  } catch (error) {
+    console.error('Error al eliminar box:', JSON.stringify(error, null, 2))
+    return { success: false, message: 'Error al eliminar box' }
+  }
+}

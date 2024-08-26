@@ -10,5 +10,11 @@
   "Boxcode": "Code box",
   "TypeBox": "Type box",
   "BoxStatus": { "DISPONIBLE": "AVAILABLE", "OCUPADO": "BUSY" },
-  "PatientInfoButton": "Get Patient Info"
+  "PatientInfoButton": "Get Patient Info",
+  "StatusBoxString": "Status Box",
+  "Confirm": "Confirm",
+  "PatientName": "Patient Name",
+  "ConfirmDeleteTitle": "Confirm to delete box",
+  "ConfirmDeleteMessage": "This action can not be undone",
+  "ChangeLocationRecommendation": "For avoiding problems please change the patient place before deleting the box"
 }

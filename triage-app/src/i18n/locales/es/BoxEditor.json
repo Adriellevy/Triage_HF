@@ -1,5 +1,5 @@
 {
-  "EditBox": "Edditing Boxes",
+  "EditBox": "Editando la lista de lugares de atencion al paciente",
   "ExpandList": "Expanda la lista  de lugares de atencion al paciente del tipo:",
   "MinimizeList": "Minimize la lista de lugares de atencion al paciente del tipo:",
   "AddAtentionPlace": "Agregar lugar de atencion:",
@@ -10,5 +10,11 @@
   "Boxcode": "Código del Box",
   "TypeBox": "Tipo box",
   "BoxStatus": { "DISPONIBLE": "DISPONIBLE", "OCUPADO": "OCUPADO" },
-  "PatientInfoButton": "Ver datos del paciente"
+  "PatientInfoButton": "Ver datos del paciente",
+  "StatusBoxString": "Status del box",
+  "Confirm": "Confirmar",
+  "PatientName": "Nombre del paciente",
+  "ConfirmDeleteTitle": "Confirmar para eliminar el lugar de atencion",
+  "ConfirmDeleteMessage": "Esta acción no es revertible",
+  "ChangeLocationRecommendation": "Para evitar inconvenientes por favor cambiar la ubicacion del paciente"
 }
