@@ -428,7 +428,24 @@ export class PatientsModel {
     const patientsPerPage = 60;
     const offset = (page - 1) * patientsPerPage;
     const patientsQuery = `
-      SELECT *
+      SELECT
+        BIN_TO_UUID(patient_id) AS patient_id,
+        patient_name,
+        patient_age,
+        patient_entry_time,
+        patient_exit_time,
+        patient_triage_time,
+        patient_triage_level,
+        patient_isolated,
+        patient_status,
+        patient_symptom,
+        patient_healthcare_system,
+        doctor_procedure,
+        doctor_studies_solicitated,
+        nurse_coment,
+        BIN_TO_UUID(doctor_id) AS doctor_id,
+        BIN_TO_UUID(nurse_id) AS nurse_id,
+        BIN_TO_UUID(box_id) AS box_id
       FROM Patient
       ORDER BY patient_entry_time DESC
       LIMIT ${patientsPerPage} OFFSET ${offset};
