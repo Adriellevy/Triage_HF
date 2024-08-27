@@ -31,6 +31,12 @@ import WarningBox_es from './locales/es/WarningBox.json'
 import WarningBox_en from './locales/en/WarningBox.json'
 import BoxEditor_es from './locales/es/BoxEditor.json'
 import BoxEditor_en from './locales/en/BoxEditor.json'
+
+import UserList_es from './locales/es/UserList.json'
+import UserList_en from './locales/en/UserList.json'
+
+import UserItem_es from './locales/es/UserItem.json'
+import UserItem_en from './locales/en/UserItem.json'
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -58,7 +64,9 @@ i18n
         BoxItem: BoxItem_es,
         Boxes: Boxes_es,
         WarningBox: WarningBox_es,
-        BoxEditor: BoxEditor_es
+        BoxEditor: BoxEditor_es,
+        UserItem: UserItem_es,
+        UserList: UserList_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -74,7 +82,9 @@ i18n
         BoxItem: BoxItem_en,
         Boxes: Boxes_en,
         WarningBox: WarningBox_en,
-        BoxEditor: BoxEditor_en
+        BoxEditor: BoxEditor_en,
+        UserItem: UserItem_en,
+        UserList: UserList_en
       }
     }
   })

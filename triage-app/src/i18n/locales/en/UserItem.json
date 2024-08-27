@@ -1,0 +1,9 @@
+{
+  "Active": "Active",
+  "Inactive": "Inactive",
+  "UserInfoButton": "User information",
+  "NoSpecialization": "Without especialisation",
+  "UserRole.HOSPITAL": "Administrator",
+  "UserRole.DOCTOR": "Doctor",
+  "UserRole.NURSE": "Nursing"
+}
