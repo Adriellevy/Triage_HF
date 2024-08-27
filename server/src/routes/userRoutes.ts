@@ -18,3 +18,7 @@ userRouter.get('/doctor', (req: Request, res: Response) => {
 userRouter.get('/nurse', (req: Request, res: Response) => {
   void UserController.getAllNurse(req, res);
 });
+
+userRouter.get('/users', (req: Request, res: Response) => {
+  void UserController.getAllUsers(req, res);
+});

@@ -21,6 +21,13 @@ export class UserController {
   static async getUserById(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const User = await UserModel.getUserByID({ id });
       if (User) return res.json(User);
       return res.status(404).json({ message: 'User not found' });
@@ -32,6 +39,13 @@ export class UserController {
   static async getAllDoctors(req: Request, res: Response): Promise<Response> {
     try {
       const users = await UserModel.getAllDoctors();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
       return res.json(newusers);
     } catch (error) {
@@ -42,6 +56,30 @@ export class UserController {
   static async getAllNurse(req: Request, res: Response): Promise<Response> {
     try {
       const users = await UserModel.getAllNurse();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
+      const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
+      return res.json(newusers);
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async getAllUsers(req: Request, res: Response): Promise<Response> {
+    try {
+      const users = await UserModel.getAllUsers();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
       return res.json(newusers);
     } catch (error) {

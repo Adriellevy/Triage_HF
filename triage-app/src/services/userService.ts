@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 export const getAllUsers = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
