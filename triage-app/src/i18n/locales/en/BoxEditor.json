@@ -16,5 +16,8 @@
   "PatientName": "Patient Name",
   "ConfirmDeleteTitle": "Confirm to delete box",
   "ConfirmDeleteMessage": "This action can not be undone",
-  "ChangeLocationRecommendation": "For avoiding problems please change the patient place before deleting the box"
+  "ChangeLocationRecommendation": "For avoiding problems please change the patient place before deleting the box",
+  "Patientid": "User identification code",
+  "Boxid": "Box identification code ",
+  "Warning": "Warning"
 }

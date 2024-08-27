@@ -5,5 +5,21 @@
   "NoSpecialization": "Sin especializacion",
   "UserRole.HOSPITAL": "Administracion",
   "UserRole.DOCTOR": "Doctor",
-  "UserRole.NURSE": "Enfermeria"
+  "UserRole.NURSE": "Enfermeria",
+  "Delete": "Eliminar",
+  "ConfirmDeleteTitle": "Confirmar para eliminar usuario",
+  "ConfirmDeleteMessage": "Esta accion no se puede deshacer",
+  "ChangeLocationRecommendation": "Para evitar problemas por vaor reasigne los pacientes del usuario",
+  "Save": "Guardar",
+  "Add": "Agregar",
+  "Cancel": "Cancelar",
+  "Warning": "Advertencia",
+  "Confirm": "Confirmar",
+  "Name": "Nombe",
+  "FullName": "Nombre Completo",
+  "Email": "Email",
+  "Role": "Rol",
+  "Specialization": "Especializacion",
+  "State": "Estado",
+  "Action": "Accion"
 }

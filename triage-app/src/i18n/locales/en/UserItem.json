@@ -5,5 +5,21 @@
   "NoSpecialization": "Without especialisation",
   "UserRole.HOSPITAL": "Administrator",
   "UserRole.DOCTOR": "Doctor",
-  "UserRole.NURSE": "Nursing"
+  "UserRole.NURSE": "Nursing",
+  "Delete": "Delete",
+  "ConfirmDeleteTitle": "Confirm to delete box",
+  "ConfirmDeleteMessage": "This action can not be undone",
+  "ChangeLocationRecommendation": "For avoiding problems please reasing the patients of this user",
+  "Warning": "Warning",
+  "Save": "Save",
+  "Add": "Add",
+  "Cancel": "Cancel",
+  "Confirm": "Confirm",
+  "Name": "Name",
+  "FullName": "Full Name",
+  "Email": "Email",
+  "Role": "Role",
+  "Specialization": "Specialization",
+  "State": "State",
+  "Action": "Action"
 }

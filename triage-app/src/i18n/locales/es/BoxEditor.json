@@ -16,5 +16,8 @@
   "PatientName": "Nombre del paciente",
   "ConfirmDeleteTitle": "Confirmar para eliminar el lugar de atencion",
   "ConfirmDeleteMessage": "Esta acción no es revertible",
-  "ChangeLocationRecommendation": "Para evitar inconvenientes por favor cambiar la ubicacion del paciente"
+  "ChangeLocationRecommendation": "Para evitar inconvenientes por favor cambiar la ubicacion del paciente",
+  "Patientid": "Codigo de identificacion del paciente",
+  "Boxid": "Codigo de identificacion del box",
+  "Warning": "Advertencia"
 }
