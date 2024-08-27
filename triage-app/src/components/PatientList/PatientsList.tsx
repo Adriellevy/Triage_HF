@@ -6,14 +6,15 @@ import Pagination from '../Pagination/Pagination'
 
 interface PropsPatientsList {
   patients: Patient[]
+  currentPage: number
+  setCurrentPage: (page: number) => void
 }
 
-function PatientsList({ patients }: PropsPatientsList) {
+function PatientsList({ patients, currentPage, setCurrentPage }: PropsPatientsList) {
   const { t } = useTranslation('PatientList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const patientsPerPage = 15
+  const patientsPerPage = 20
 
   const columns = [
     { label: t('NameLabel'), field: 'patient_name', sortable: true, showOnLargeScreen: true },
@@ -86,7 +87,6 @@ function PatientsList({ patients }: PropsPatientsList) {
   const indexOfLastPatient = currentPage * patientsPerPage;
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
   const currentPatients = sortedPatients.slice(indexOfFirstPatient, indexOfLastPatient);
-
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>

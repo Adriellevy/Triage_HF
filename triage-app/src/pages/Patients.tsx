@@ -4,7 +4,7 @@ import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
 import Search from '@/components/Search'
-import { getPatients } from '../services/patientService'
+import { getPaginatedPatients, getPatients } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
@@ -203,7 +203,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
         socket.off(SocketEvent.UPDATE)
       }
     }
-  }, [socket, predefinedOptions, currentPage])
+  }, [socket, predefinedOptions])
 
   const handleonSearch = ({ term, by }: { term: string; by: string }) => {
     setSearchTerm(term)
@@ -223,7 +223,10 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getPatients()
+          const batch = Math.ceil(currentPage / 3);
+          console.log(batch)
+          const data = await getPaginatedPatients(batch)
+          console.log(data)
           const sortedData = data.sort((a, b) => {
             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
           })
@@ -248,7 +251,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       }
     }
     fetchData()
-  }, [token])
+  }, [token, currentPage])
 
   return (
     <div className='bg-white pb-4'>
@@ -269,9 +272,9 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       </div>
 
       {searchTerm === '' && patientsData ? (
-        <PatientsList patients={patientsData} />
+        <PatientsList patients={patientsData} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       ) : searchTerm !== '' && filteredPatients ? (
-        <PatientsList patients={filteredPatients} />
+        <PatientsList patients={filteredPatients} currentPage={currentPage} setCurrentPage={setCurrentPage} />
       ) : (
         <p>No se encontraron pacientes.</p>
       )}
