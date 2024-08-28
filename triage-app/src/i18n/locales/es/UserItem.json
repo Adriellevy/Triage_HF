@@ -18,8 +18,13 @@
   "Name": "Nombe",
   "FullName": "Nombre Completo",
   "Email": "Email",
-  "Role": "Rol",
+  "Role": "Rol / Permisos",
+  "Password": "Contraseña del usuario",
+  "user_cellphone": "Numero de telefono",
   "Specialization": "Especializacion",
   "State": "Estado",
-  "Action": "Accion"
+  "Action": "Accion",
+  "EditUserTitle": "Editar Usuario",
+  "NotAveilableFeatures": "Este campo por ahora no provee ninguna funcionalidad",
+  "Security": "Aunque pueda existir una contraseña, por motivos de seguridad se ignora su despliegue. Si desea editarla, escriba la nueva contraseña."
 }

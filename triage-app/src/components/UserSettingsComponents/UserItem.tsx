@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo, faPenToSquare, faXmark } from '@fortawesome/free-solid-svg-icons'
-import EditUserModal from '../UserSettingsComponents/EditUserModal'
 import ConfirmationDialog from '../ConfirmationDialog'
+import EditModal from './EditModal'
 
 interface PropsUserItem {
   user: User
@@ -17,14 +17,42 @@ function UserItem({ user, index }: PropsUserItem) {
   const { t } = useTranslation('UserItem')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState(false)
-  const { user_id, user_name, user_full_name, user_email, user_type, user_specialization, state } =
-    user
+  const { user_name, user_full_name, user_email, user_type, user_specialization, state } = user
+
   const fieldTranslations = {
     user_name: t('Name'),
+    user_password: t('Password'),
     user_full_name: t('FullName'),
+    user_type: t('Role'),
     user_specialization: t('Specialization'),
-    user_type: t('Role')
+    user_email: t('Email'),
+    state: t('State'),
+    user_cellphone: t('user_cellphone')
   }
+
+  const userWithPasswordAndCellphone = {
+    user_name: user.user_name,
+    user_password: '', // Inicializa el campo de contraseña
+    user_full_name: user.user_full_name,
+    user_type: user.user_type,
+    user_specialization: user.user_specialization,
+    user_email: user.user_email,
+    //state: user.state,
+    user_cellphone: null // Inicializa el campo de celular
+  }
+
+  const warningFunctionalityFieldsArray = [
+    'user_specialization',
+    'user_email',
+    'state',
+    'user_cellphone'
+  ]
+
+  const warningMessages = warningFunctionalityFieldsArray.reduce((acc, field) => {
+    acc[field] = t('NotAveilableFeatures')
+    return acc
+  }, {} as { [key: string]: string })
+
   const isOdd = index % 2 !== 0
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
   const handleEdit = () => {
@@ -36,8 +64,6 @@ function UserItem({ user, index }: PropsUserItem) {
   }
 
   const confirmDelete = async () => {
-    await deleteBox(editableBox.box_id)
-    onDelete(editableBox.box_id)
     setShowDeleteConfirm(false)
   }
 
@@ -47,6 +73,11 @@ function UserItem({ user, index }: PropsUserItem) {
   const handleDelete = async () => {
     setShowDeleteConfirm(true)
   }
+
+  const handleSaveUser = async () => {
+    setIsEditing(false)
+  }
+
   return (
     <tr className={bgClass}>
       <td className='border p-2 '>{user_name}</td>
@@ -71,7 +102,7 @@ function UserItem({ user, index }: PropsUserItem) {
         <div className='flex gap-2'>
           <div>
             <div className='mb-2'>
-              <Link to={`/users/${user_id}`}>
+              <Link to={`/users/${user.user_id}`}>
                 <Button color='green'>
                   <FontAwesomeIcon icon={faCircleInfo}></FontAwesomeIcon>
                 </Button>
@@ -89,7 +120,20 @@ function UserItem({ user, index }: PropsUserItem) {
         </div>
       </td>
 
-      {isEditing && <EditUserModal user={user} onClose={handleClose} />}
+      {isEditing && (
+        <EditModal
+          object={userWithPasswordAndCellphone}
+          onClose={handleClose}
+          title={t('EditUserTitle')}
+          onSave={handleSaveUser}
+          fieldTranslations={fieldTranslations}
+          confirm={t('Confirm')}
+          cancel={t('Cancel')}
+          warningFields={warningMessages}
+          ignoreFields={['user_id']}
+          security={t('Security')}
+        />
+      )}
       {
         <ConfirmationDialog
           show={showDeleteConfirm}

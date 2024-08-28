@@ -8,7 +8,7 @@ interface PropsUserList {
 }
 
 function UserList({ users }: PropsUserList) {
-  const { t } = useTranslation('UserList')
+  const { t } = useTranslation('UserItem')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
