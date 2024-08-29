@@ -14,7 +14,8 @@ enum UpdateEvent {
   BOX_UPDATE = 'Box Update',
   UPDATE_PATIENT = 'Updated patient',
   BOX_MODIFICATION_UPDATE = 'Box modification Update',
-  NEW_BOX = 'New Box'
+  NEW_BOX = 'New Box',
+  USER_UPDATE = 'User Update'
 }
 
 export function SendNewPatientNotifications(
@@ -174,6 +175,32 @@ export function SendDeletedBoxNotifications(
         box_code: newBox.box_code,
         box_type: newBox.box_type,
         box_status: newBox.box_status,
+        userAdded: usuarioMandoreq
+      }
+    });
+  });
+}
+
+export function SendUpdatedUserNotifications(
+  req: Request,
+  newUser: User,
+  hospitalUsers: User[],
+  usuarioMandoreq: string
+): void {
+  const io = req.io;
+
+  // Notifica a todos los clientes que se ha creado un nuevo box
+  io?.emit(SocketEvent.UPDATE, {
+    message: UpdateEvent.USER_UPDATE
+  });
+
+  hospitalUsers.forEach((user) => {
+    io?.emit(`${user.user_id}`, {
+      message: UpdateEvent.USER_UPDATE,
+      user: {
+        user_id: newUser.user_id,
+        user_full_name: newUser.user_full_name,
+        user_type: newUser.user_type,
         userAdded: usuarioMandoreq
       }
     });

@@ -1,9 +1,12 @@
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../config/db';
-import { UserRole, type User } from '../../interface/user';
+import { type UserRole, type User } from '../../interface/user';
 
 export interface IUser extends User, RowDataPacket {}
 
+interface UUIDResult extends RowDataPacket {
+  uuid: string;
+}
 export class UserModel {
   static async getUserByUserName(user_name: string): Promise<User | undefined> {
     try {
@@ -151,5 +154,127 @@ export class UserModel {
     `);
 
     return rows;
+  }
+
+  static async addUser(newUserData: Partial<User>): Promise<User | null> {
+    try {
+      const conn = await connect();
+      const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
+      const [{ uuid }] = uuidResult;
+
+      const addUserQuery = `
+        INSERT INTO User (user_id, user_name, user_full_name, user_email, user_specialization, user_password, user_type)
+        VALUES (UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?);
+      `;
+
+      await conn.execute(addUserQuery, [
+        uuid,
+        newUserData.user_name,
+        newUserData.user_full_name,
+        newUserData.user_email,
+        newUserData.user_specialization,
+        newUserData.user_password,
+        newUserData.user_type
+      ]);
+
+      const newUser = await this.getUserById(uuid);
+      return newUser;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  // Método para actualizar un usuario existente
+  static async updateUser(userId: string, updatedUserData: Partial<User>): Promise<User | null> {
+    try {
+      if (!userId) {
+        throw new Error('userId is required.');
+      }
+
+      const fieldsMap: { [key in keyof Partial<User>]: string } = {
+        user_name: 'user_name = ?',
+        user_full_name: 'user_full_name = ?',
+        user_specialization: 'user_specialization = ?',
+        user_password: 'user_password = ?',
+        user_type: 'user_type = ?'
+      };
+
+      const updateFields = Object.keys(updatedUserData)
+        .filter(
+          (key) =>
+            updatedUserData[key as keyof User] !== undefined &&
+            key !== 'user_cellphone' &&
+            key !== 'user_email' &&
+            updatedUserData[key as keyof User] !== null
+        )
+        .map((key) => fieldsMap[key as keyof User]);
+
+      const updateValues = Object.keys(updatedUserData)
+        .filter(
+          (key) =>
+            updatedUserData[key as keyof User] !== undefined &&
+            key !== 'user_cellphone' &&
+            key !== 'user_email' &&
+            updatedUserData[key as keyof User] !== null
+        )
+        .map((key) => updatedUserData[key as keyof User]);
+
+      if (updateFields.length === 0) {
+        return null; // No hay campos para actualizar
+      }
+
+      updateValues.push(userId); // Agregamos el userId al final para la cláusula WHERE
+
+      const updateUserQuery = `
+            UPDATE User
+            SET ${updateFields.join(', ')}
+            WHERE user_id = UUID_TO_BIN(?);
+        `;
+
+      const conn = await connect();
+      await conn.query(updateUserQuery, updateValues);
+
+      return await this.getUserById(userId);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  // Método para eliminar un usuario
+  static async deleteUser(userId: string): Promise<boolean> {
+    try {
+      const deleteUserQuery = `
+        DELETE FROM User
+        WHERE user_id = UUID_TO_BIN(?);
+      `;
+      const conn = await connect();
+      await conn.query(deleteUserQuery, [userId]);
+
+      const userExists = await this.getUserById(userId);
+      return !userExists;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  // Método para obtener un usuario por ID
+  static async getUserById(userId: string): Promise<User | null> {
+    try {
+      const getUserQuery = `
+        SELECT BIN_TO_UUID(user_id) AS user_id, user_name, user_full_name, user_email, user_specialization, user_password, user_type
+        FROM User
+        WHERE user_id = UUID_TO_BIN(?);
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(getUserQuery, [userId]);
+
+      return rows.length > 0 ? rows[0] : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }
