@@ -18,7 +18,7 @@ export interface User {
 }
 
 export interface PartialUser {
-  user_id: string
+  user_id?: string
   user_name?: string
   user_full_name?: string
   user_email?: string
@@ -26,4 +26,7 @@ export interface PartialUser {
   user_type?: UserRole
   user_specialization?: string
   state?: boolean
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [Symbol.iterator]?(): IterableIterator<any>
 }

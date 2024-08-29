@@ -1,4 +1,4 @@
-import { User, UserRole } from '@/interfaces/User'
+import { PartialUser, User, UserRole } from '@/interfaces/User'
 import { Button } from '../ui'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo, faPenToSquare, faXmark } from '@fortawesome/free-solid-svg-icons'
 import ConfirmationDialog from '../ConfirmationDialog'
 import EditModal from './EditModal'
+import { updateUser } from '@/services/userService'
+import LoaderSpin from '../LoaderSpin'
+import { Partial } from 'lodash'
 
 interface PropsUserItem {
   user: User
@@ -17,6 +20,7 @@ function UserItem({ user, index }: PropsUserItem) {
   const { t } = useTranslation('UserItem')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { user_name, user_full_name, user_email, user_type, user_specialization, state } = user
 
   const fieldTranslations = {
@@ -74,8 +78,16 @@ function UserItem({ user, index }: PropsUserItem) {
     setShowDeleteConfirm(true)
   }
 
-  const handleSaveUser = async () => {
-    setIsEditing(false)
+  const handleSaveUser = async (updatedUser: User) => {
+    setIsLoading(true) // Mostrar Loader
+    try {
+      await updateUser(user.user_id, updatedUser)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error)
+    } finally {
+      setIsLoading(false) // Ocultar Loader
+    }
   }
 
   return (
@@ -119,9 +131,9 @@ function UserItem({ user, index }: PropsUserItem) {
           </Button>
         </div>
       </td>
-
       {isEditing && (
         <EditModal
+          // La advertencia sucede porque no esta el campo user_id, user_email y user_cellphone
           object={userWithPasswordAndCellphone}
           onClose={handleClose}
           title={t('EditUserTitle')}
@@ -132,8 +144,10 @@ function UserItem({ user, index }: PropsUserItem) {
           warningFields={warningMessages}
           ignoreFields={['user_id']}
           security={t('Security')}
+          loading={isLoading}
         />
       )}
+
       {
         <ConfirmationDialog
           show={showDeleteConfirm}

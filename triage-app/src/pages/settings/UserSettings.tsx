@@ -37,7 +37,7 @@ function UserSettings() {
       }
       if (socket) {
         socket.on(SocketEvent.UPDATE, (data) => {
-          if (data.message == UpdateEvent.BOX_UPDATE) {
+          if (data.message == UpdateEvent.USER_UPDATE) {
             fetchData()
           }
         })

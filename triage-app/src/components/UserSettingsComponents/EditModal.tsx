@@ -7,6 +7,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { Tooltip } from '@mui/material'
+import LoaderSpin from '../LoaderSpin'
 
 interface PropsEditModal<T> {
   title: string
@@ -19,6 +20,7 @@ interface PropsEditModal<T> {
   ignoreFields?: string[]
   warningFields?: { [key: string]: string }
   security?: string
+  loading?: boolean
 }
 
 function EditModal<T extends User | Box | Patient>({
@@ -31,7 +33,8 @@ function EditModal<T extends User | Box | Patient>({
   confirm,
   ignoreFields = [],
   warningFields = {},
-  security
+  security,
+  loading
 }: PropsEditModal<T>) {
   const [editedObject, setEditedObject] = useState<T>(object)
 
@@ -40,8 +43,7 @@ function EditModal<T extends User | Box | Patient>({
   }
 
   const handleSave = () => {
-    onSave(editedObject)
-    onClose()
+    onSave(editedObject) // Pasar el objeto editado al método onSave
   }
 
   const objectEntries = Object.entries(editedObject)
@@ -56,66 +58,69 @@ function EditModal<T extends User | Box | Patient>({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className='text-xl mb-4'>{title}</h2>
-        <form>
-          {objectEntries
-            .filter(([key]) => !ignoreFields.includes(key)) // Filtrar campos a ignorar
-            .map(([key, value]) => (
-              <div key={key} className='mb-4'>
-                <label className='block text-gray-700 text-sm font-bold mb-2'>
-                  {fieldTranslations[key] || key}
-                  {key.includes('password') && (
-                    <Tooltip id='password-tooltip' title={security}>
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        className='text-blue-500 ml-2 cursor-pointer'
-                        data-tooltip-id='password-tooltip'
-                        data-tooltip-content=''
-                      />
-                    </Tooltip>
-                  )}
-                </label>
+        {loading && <LoaderSpin></LoaderSpin>}
+        {!loading && (
+          <form>
+            {objectEntries
+              .filter(([key]) => !ignoreFields.includes(key)) // Filtrar campos a ignorar
+              .map(([key, value]) => (
+                <div key={key} className='mb-4'>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>
+                    {fieldTranslations[key] || key}
+                    {key.includes('password') && (
+                      <Tooltip id='password-tooltip' title={security}>
+                        <FontAwesomeIcon
+                          icon={faCircleInfo}
+                          className='text-blue-500 ml-2 cursor-pointer'
+                          data-tooltip-id='password-tooltip'
+                          data-tooltip-content=''
+                        />
+                      </Tooltip>
+                    )}
+                  </label>
 
-                <div className='relative'>
-                  {typeof value === 'string' || typeof value === 'number' ? (
-                    <>
-                      <input
-                        type={key.includes('password') ? 'password' : 'text'}
+                  <div className='relative'>
+                    {typeof value === 'string' || typeof value === 'number' ? (
+                      <>
+                        <input
+                          type={key.includes('password') ? 'password' : 'text'}
+                          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                          value={value as string}
+                          onChange={(e) => handleChange(key as keyof T, e.target.value)}
+                        />
+                      </>
+                    ) : key === 'user_type' ? (
+                      <select
                         className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         value={value as string}
                         onChange={(e) => handleChange(key as keyof T, e.target.value)}
-                      />
-                    </>
-                  ) : key === 'user_type' ? (
-                    <select
-                      className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                      value={value as string}
-                      onChange={(e) => handleChange(key as keyof T, e.target.value)}
-                    >
-                      <option value={UserRole.DOCTOR}>Doctor</option>
-                      <option value={UserRole.NURSE}>Nurse</option>
-                      <option value={UserRole.HOSPITAL}>Hospital</option>
-                    </select>
-                  ) : null}
-                </div>
-
-                {/* Mostrar advertencia si el campo está en warningFields */}
-                {warningFields[key] && (
-                  <div className='mt-2 p-2 bg-yellow-100 text-yellow-800 border border-yellow-500 rounded flex items-center'>
-                    <ExclamationTriangleIcon className='w-5 h-5 mr-2' />
-                    <p className='text-sm'>{warningFields[key]}</p>
+                      >
+                        <option value={UserRole.DOCTOR}>Doctor</option>
+                        <option value={UserRole.NURSE}>Nurse</option>
+                        <option value={UserRole.HOSPITAL}>Hospital</option>
+                      </select>
+                    ) : null}
                   </div>
-                )}
-              </div>
-            ))}
-          <div className='flex justify-end'>
-            <Button color='red' onClick={onClose}>
-              {cancel}
-            </Button>
-            <Button color='green' onClick={handleSave} className='ml-2'>
-              {confirm}
-            </Button>
-          </div>
-        </form>
+
+                  {/* Mostrar advertencia si el campo está en warningFields */}
+                  {warningFields[key] && (
+                    <div className='mt-2 p-2 bg-yellow-100 text-yellow-800 border border-yellow-500 rounded flex items-center'>
+                      <ExclamationTriangleIcon className='w-5 h-5 mr-2' />
+                      <p className='text-sm'>{warningFields[key]}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            <div className='flex justify-end'>
+              <Button color='red' onClick={onClose}>
+                {cancel}
+              </Button>
+              <Button color='green' onClick={handleSave} className='ml-2'>
+                {confirm}
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   )

@@ -6,7 +6,7 @@ import { getUserById, getUserIdByToken } from '@/services/userService'
 import { SocketContext } from '@/contex/SocketContext'
 import { useAuth } from '@/contex/AuthContext'
 import { useRoleContext } from '@/contex/RoleContext'
-import { PartialUser, UserRole } from '@/interfaces/User'
+import { PartialUser, User, UserRole } from '@/interfaces/User'
 import GuidedEntryIcon from '@/icons/guided-entry-icon.svg'
 import BoxesIcon from '@/icons/boxes-icon.svg'
 import PatientsIcon from '@/icons/patients.svg'
@@ -138,7 +138,12 @@ function Sidebar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const handleSocketEvent = (data: { patient?: Patient; message: UpdateEvent; box?: Box }) => {
+    const handleSocketEvent = (data: {
+      user?: User
+      patient?: Patient
+      message: UpdateEvent
+      box?: Box
+    }) => {
       if (data.patient) {
         const { patient_id } = data.patient
         console.log(patient_id)
@@ -167,6 +172,20 @@ function Sidebar() {
         // if (data.box.userAdded !== token) {
         if (data.message === UpdateEvent.BOX_UPDATE) {
           toast.info('Uno de sus Boxes ha sido modificado', {
+            action: {
+              label: 'Ver la lista de Boxes',
+              onClick: () => {
+                navigate(`/settings/box`)
+              }
+            }
+          })
+          // }
+        }
+      } else if (data.user) {
+        //En el caso de que el box lo haya agregado el mismo usuario
+        // if (data.box.userAdded !== token) {
+        if (data.message === UpdateEvent.USER_UPDATE) {
+          toast.info('Uno de sus Usuarios ha sido modificado', {
             action: {
               label: 'Ver la lista de Boxes',
               onClick: () => {
