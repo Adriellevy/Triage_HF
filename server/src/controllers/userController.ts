@@ -99,15 +99,19 @@ export class UserController {
     }
 
     const decoded = verifyToken(token);
-    const result = validateUser(userData);
+    const result = validatePartialUpdateUser(userData);
 
     if (!result.success) {
       return res.status(500).json({ errors: result.error.errors });
     }
 
+    console.log('Informacion que llego:', userData);
     try {
-      const newUser = await UserModel.addUser(result.data);
+      const newUser = await UserModel.addUser(userData as User);
       if (newUser) {
+        // Obtener usuarios con rol 'HOSPITAL'
+        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+        SendUpdatedUserNotifications(req, newUser, Users, token);
         return res.status(201).json({
           message: 'Nuevo usuario creado exitosamente',
           userId: newUser.user_id,
@@ -132,7 +136,6 @@ export class UserController {
 
     const decoded = verifyToken(token);
     const result = validatePartialUpdateUser(userData);
-    console.log('Informacion que llego:', userData);
     if (!result.success) {
       return res.status(500).json({ errors: result.error.errors });
     }

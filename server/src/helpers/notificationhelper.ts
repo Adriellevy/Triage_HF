@@ -206,3 +206,29 @@ export function SendUpdatedUserNotifications(
     });
   });
 }
+
+export function SendDeletedUserNotifications(
+  req: Request,
+  newUser: User,
+  hospitalUsers: User[],
+  usuarioMandoreq: string
+): void {
+  const io = req.io;
+
+  // Notifica a todos los clientes que se ha creado un nuevo box
+  io?.emit(SocketEvent.UPDATE, {
+    message: UpdateEvent.USER_UPDATE
+  });
+
+  hospitalUsers.forEach((user) => {
+    io?.emit(`${user.user_id}`, {
+      message: UpdateEvent.USER_UPDATE,
+      user: {
+        user_id: newUser.user_id,
+        user_full_name: newUser.user_full_name,
+        user_type: newUser.user_type,
+        userAdded: usuarioMandoreq
+      }
+    });
+  });
+}
