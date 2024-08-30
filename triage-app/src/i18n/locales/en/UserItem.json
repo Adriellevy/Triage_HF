@@ -15,7 +15,7 @@
   "Add": "Add",
   "Cancel": "Cancel",
   "Confirm": "Confirm",
-  "Name": "Name",
+  "Name": "User Name",
   "FullName": "Full Name",
   "Email": "Email",
   "Password": "User password",
@@ -26,5 +26,9 @@
   "Action": "Action",
   "EditUserTitle": "Edit User",
   "NotAveilableFeatures": "This camp for now do not provide any feature",
-  "Security": "Although a password may exist, for security reasons its deployment is ignored. If you want to edit it, write it"
+  "Security": "Although a password may exist, for security reasons its deployment is ignored. If you want to edit it, write it",
+  "AddUser": "Add a memember to the team",
+  "AddUserSimple": "Add",
+  "ChequearPassword": "Repeat password",
+  "Password_err": "Passwords do not match"
 }

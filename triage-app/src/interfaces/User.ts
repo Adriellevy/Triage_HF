@@ -13,8 +13,8 @@ export interface User {
   user_type: UserRole
   user_specialization?: string
   state?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [Symbol.iterator](): IterableIterator<any>
+  userAdded?: string
+  [Symbol.iterator](): IterableIterator<User>
 }
 
 export interface PartialUser {
@@ -26,7 +26,7 @@ export interface PartialUser {
   user_type?: UserRole
   user_specialization?: string
   state?: boolean
-
+  user_password_check?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Symbol.iterator]?(): IterableIterator<any>
 }

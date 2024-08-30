@@ -15,7 +15,7 @@
   "Cancel": "Cancelar",
   "Warning": "Advertencia",
   "Confirm": "Confirmar",
-  "Name": "Nombe",
+  "Name": "Nombre de usuario",
   "FullName": "Nombre Completo",
   "Email": "Email",
   "Role": "Rol / Permisos",
@@ -26,5 +26,9 @@
   "Action": "Accion",
   "EditUserTitle": "Editar Usuario",
   "NotAveilableFeatures": "Este campo por ahora no provee ninguna funcionalidad",
-  "Security": "Aunque pueda existir una contraseña, por motivos de seguridad se ignora su despliegue. Si desea editarla, escriba la nueva contraseña."
+  "Security": "Aunque pueda existir una contraseña, por motivos de seguridad se ignora su despliegue. Si desea editarla, escriba la nueva contraseña.",
+  "AddUser": "Agregar miembro al equipo",
+  "AddUserSimple": "Agregar",
+  "ChequearPassword": "Repetir contraseña",
+  "Password_err": "Contraseñas no coinciden"
 }

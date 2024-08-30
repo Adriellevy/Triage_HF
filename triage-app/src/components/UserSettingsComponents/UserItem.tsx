@@ -7,9 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo, faPenToSquare, faXmark } from '@fortawesome/free-solid-svg-icons'
 import ConfirmationDialog from '../ConfirmationDialog'
 import EditModal from './EditModal'
-import { updateUser } from '@/services/userService'
-import LoaderSpin from '../LoaderSpin'
-import { Partial } from 'lodash'
+import { deleteUser, updateUser } from '@/services/userService'
+import { toast } from 'sonner'
 
 interface PropsUserItem {
   user: User
@@ -48,7 +47,7 @@ function UserItem({ user, index }: PropsUserItem) {
   const warningFunctionalityFieldsArray = [
     'user_specialization',
     'user_email',
-    'state',
+    // 'state',
     'user_cellphone'
   ]
 
@@ -69,12 +68,22 @@ function UserItem({ user, index }: PropsUserItem) {
 
   const confirmDelete = async () => {
     setShowDeleteConfirm(false)
+    try {
+      await deleteUser(user.user_id)
+      setIsEditing(false)
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error)
+      toast.error('Error al intentar eliminar un nuevo Usuario', { duration: 2000 })
+    } finally {
+      setIsLoading(false) // Ocultar Loader
+      toast.success('Usuario eliminado', { duration: 2000 })
+    }
   }
 
   const cancelDelete = () => {
     setShowDeleteConfirm(false)
   }
-  const handleDelete = async () => {
+  const handleShowDeleteConfirmation = async () => {
     setShowDeleteConfirm(true)
   }
 
@@ -85,8 +94,10 @@ function UserItem({ user, index }: PropsUserItem) {
       setIsEditing(false)
     } catch (error) {
       console.error('Error al actualizar el usuario:', error)
+      toast.error('Error al intentar agregar un nuevo Usuario', { duration: 2000 })
     } finally {
       setIsLoading(false) // Ocultar Loader
+      toast.success('Usuario actualizado', { duration: 2000 })
     }
   }
 
@@ -126,7 +137,7 @@ function UserItem({ user, index }: PropsUserItem) {
               </Button>
             </div>
           </div>
-          <Button wfull color='red' onClick={handleDelete}>
+          <Button wfull color='red' onClick={handleShowDeleteConfirmation}>
             <FontAwesomeIcon icon={faXmark} />
           </Button>
         </div>

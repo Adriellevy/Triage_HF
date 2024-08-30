@@ -49,6 +49,8 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
     } catch (error) {
       toast.error('Error al intentar agregar un nuevo box', { duration: 2000 })
       console.log(error)
+    } finally {
+      toast.success('Box Creado', { duration: 2000 })
     }
   }
 
@@ -63,6 +65,8 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
     } catch (error) {
       toast.error('Error al intentar editar un box', { duration: 2000 })
       console.log(error)
+    } finally {
+      toast.success('Box actualizado', { duration: 2000 })
     }
   }
 
