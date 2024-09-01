@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import BoxEditor from '@/components/BoxSettingsComponents/BoxEditor'
 import { Box, BoxType, BoxStatus, PartialBox } from '@/interfaces/Boxes'
 import { useTranslation } from 'react-i18next'
+import BoxEdittingItem from './BoxEdittingItem'
 
 interface BoxEdittingListProps {
   initialBoxes: Box[]
@@ -13,7 +14,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   const [addBox, setAddBox] = useState<boolean>(false)
   const [boxAuxiliar, setboxAuxiliar] = useState<PartialBox>()
   const [visibleTypes, setVisibleTypes] = useState<Record<BoxType, boolean>>({
-    [BoxType.CONSULTORIO]: false
+    [BoxType.CONSULTORIO]: true
   })
 
   const handleUpdate = (updatedBox: Box) => {
@@ -28,12 +29,13 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
     setAddBox(true)
     const newBox: PartialBox = {
       box_code: '',
-      box_type: BoxType.CONSULTORIO,
-      [Symbol.iterator]: function (): IterableIterator<Box> {
-        throw new Error('Function not implemented.')
-      }
+      box_type: BoxType.CONSULTORIO
     }
     setboxAuxiliar(newBox)
+  }
+
+  const handleCancel = () => {
+    setAddBox(false)
   }
 
   const toggleVisibility = (type: BoxType) => {
@@ -44,54 +46,16 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   }
 
   return (
-    <div className='box-list-container p-4 bg-white shadow rounded-lg'>
-      <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-xl font-semibold text-gray-800'>Lista de Boxes</h2>
-      </div>
+    <div className='mx-0 mt-4 lg:mx-8'>
+      <button
+        className='bg-green-500 text-white my-3 py-2 px-4 rounded hover:bg-blue-600 transition duration-300'
+        onClick={handleAddBox}
+      >
+        {t('AddAtentionPlace')}
+      </button>
 
-      {Object.values(BoxType).map((boxType) => {
-        return (
-          <div key={boxType}>
-            <button
-              className='bg-gray-200 text-gray-800 my-2 py-2 px-4 rounded hover:bg-gray-300 transition duration-300'
-              onClick={() => toggleVisibility(boxType)}
-            >
-              {visibleTypes[boxType]
-                ? `${t('MinimizeList')} ${boxType}`
-                : `${t('ExpandList')} ${boxType}`}
-            </button>
-
-            {visibleTypes[boxType] && (
-              <ul className='space-y-4'>
-                {boxes
-                  .filter((box) => box.box_type === boxType)
-                  .map((box) => (
-                    <li key={box.box_id} className='box-item bg-gray-100 p-4 rounded-lg shadow'>
-                      <BoxEditor
-                        box={box}
-                        onUpdate={handleUpdate}
-                        onDelete={handleDelete}
-                        addBox={null}
-                        setAddBox={setAddBox}
-                      />
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
-        )
-      })}
-      {!addBox && (
-        <button
-          className='bg-green-500 text-white my-3 py-2 px-4 rounded hover:bg-blue-600 transition duration-300'
-          onClick={handleAddBox}
-        >
-          {t('AddAtentionPlace')}
-        </button>
-      )}
       {addBox && boxAuxiliar && (
         <div className='space-y-4 my-3 '>
-          <h2 className='text-2xl font-semibold mb-5'>{t('AddAtentionPlace')}</h2>
           <BoxEditor
             box={boxAuxiliar}
             onUpdate={handleUpdate}
@@ -101,6 +65,22 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
           />
         </div>
       )}
+      <table className='w-full border border-gray-300 mt-4'>
+        <thead>
+          <tr className='min-w-full bg-blue-800 text-white'>
+            <th className='border p-2'>{t('BoxCode')}</th>
+            <th className='border p-2'>{t('TypeBox')}</th>
+            <th className='border p-2'>{t('StatusBoxString')}</th>
+            <th className='border p-2'>{t('PatientName')}</th>
+            <th className='border p-2'>{t('Actions')}</th>
+          </tr>
+        </thead>
+        <tbody className='text-center text-black'>
+          {boxes.map((box, index) => (
+            <BoxEdittingItem box={box} index={index}></BoxEdittingItem>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

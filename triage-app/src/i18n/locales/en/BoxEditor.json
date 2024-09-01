@@ -2,7 +2,7 @@
   "EditBox": "Edditing Boxes",
   "ExpandList": "Expand the box type list:",
   "MinimizeList": "Minimize the box type list:",
-  "AddAtentionPlace": "Add atention place:",
+  "AddAtentionPlace": "Add atention place",
   "Save": "Save",
   "Add": "Add",
   "Delete": "Delete",
@@ -19,5 +19,6 @@
   "ChangeLocationRecommendation": "For avoiding problems please change the patient place before deleting the box",
   "Patientid": "User identification code",
   "Boxid": "Box identification code ",
-  "Warning": "Warning"
+  "Warning": "Warning",
+  "NoPatient": "Free"
 }
