@@ -149,18 +149,18 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
 
       <ConfirmationDialog
         show={showDeleteConfirm}
-        title={t('ConfirmDeleteTitle')}
-        message={t('ConfirmDeleteMessage')}
-        recomendation={t('ChangeLocationRecommendation')}
-        warning={t('Warning')}
-        confirm={t('Confirm')}
-        cancel={t('Cancel')}
-        object={editableBox}
-        confirmDelete={confirmDelete}
-        cancelDelete={cancelDelete}
+        title={t('ConfirmDeleteTitle')} //Titulo del modal
+        message={t('ConfirmDeleteMessage')} //texto mensaje de cancelacion
+        recomendation={t('ChangeLocationRecommendation')} // texto accion recomendada
+        warning={t('Warning')} // texto advertencia
+        confirm={t('Confirm')} //texto  confirmar
+        cancel={t('Cancel')} //texto cancelar
+        object={editableBox} //Objeto a confirmar la eliminacion
+        confirmDelete={confirmDelete} //funcion en este mismo compónente que sirve para mandar el request
+        cancelDelete={cancelDelete} //funcion en este mismo compónente que sirve para cerrar el modal
         warningField='patient_name' // Campo de advertencia opcional
         fieldTranslations={fieldTranslations} // Pasa las traducciones aquí
-        ignoreFields={ignoreFields}
+        ignoreFields={ignoreFields} //campos que se ignoran (quizas pq estan vacios o porque la informacion no aporta nada al usuario como el id)
       />
     </div>
   )

@@ -30,7 +30,10 @@ function UserItem({ user, index }: PropsUserItem) {
     user_specialization: t('Specialization'),
     user_email: t('Email'),
     state: t('State'),
-    user_cellphone: t('user_cellphone')
+    user_cellphone: t('user_cellphone'),
+    'UserRole.HOSPITAL': t('UserRole.HOSPITAL'),
+    'UserRole.DOCTOR': t('UserRole.DOCTOR'),
+    'UserRole.NURSE': t('UserRole.NURSE')
   }
 
   const userWithPasswordAndCellphone = {

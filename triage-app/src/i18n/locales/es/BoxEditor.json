@@ -1,5 +1,6 @@
 {
   "EditBox": "Editando la lista de lugares de atencion al paciente",
+  "EditBoxTitle": "Editando Box",
   "ExpandList": "Expanda la lista  de lugares de atencion al paciente del tipo:",
   "MinimizeList": "Minimize la lista de lugares de atencion al paciente del tipo:",
   "AddAtentionPlace": "Agregar lugar de atencion",
@@ -20,5 +21,9 @@
   "Patientid": "Codigo de identificacion del paciente",
   "Boxid": "Codigo de identificacion del box",
   "Warning": "Advertencia",
-  "NoPatient": "Libre"
+  "NoPatient": "Libre",
+  "BoxType.CONSULTORIO": "Consultorio",
+  "BoxType.SHOOCKROOM": "Shock Room",
+  "BoxType.HOSPITALIZATION": "Hospitalizacion",
+  "BoxType.OBSERVACION": "Observacion"
 }

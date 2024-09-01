@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Button } from './ui/Button'
 import { User } from '../interfaces/User'
@@ -38,6 +38,9 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 }) => {
   if (!show) return null
 
+  // VARIABLE DE ESTADO PARA PROBAR COMO SE RECIBE EL OBJETO
+  const [showNullFields, setShowNullFields] = useState(false)
+
   const objectEntries = Object.entries(object)
 
   return (
@@ -48,13 +51,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
         <div className='mb-4'>
           {objectEntries
-            .filter(([key]) => !ignoreFields.includes(key)) // Filtrar campos a ignorar
+            .filter(([key, value]) => !ignoreFields.includes(key)) // Filtrar campos a ignorar
+            .filter(([key, value]) => showNullFields || value !== null) // Filtrar campos nulos si showNullFields es false
             .map(([key, value]) => (
               <p key={key}>
                 {fieldTranslations[key] || key}: {value}
               </p>
             ))}
-          {/*EslintDisabledforNet */}
           {warningField && object[warningField] && (
             <div className='p-4 border border-yellow-500 bg-yellow-100 rounded'>
               <div className='flex items-center text-yellow-600 mb-2'>

@@ -1,5 +1,6 @@
 {
   "EditBox": "Edditing Boxes",
+  "EditBoxTitle": "Edditing Box",
   "ExpandList": "Expand the box type list:",
   "MinimizeList": "Minimize the box type list:",
   "AddAtentionPlace": "Add atention place",
@@ -20,5 +21,9 @@
   "Patientid": "User identification code",
   "Boxid": "Box identification code ",
   "Warning": "Warning",
-  "NoPatient": "Free"
+  "NoPatient": "Free",
+  "BoxType.CONSULTORIO": "Consulting Room",
+  "BoxType.SHOOCKROOM": "Shock Room",
+  "BoxType.HOSPITALIZATION": "Hospitalization",
+  "BoxType.OBSERVACION": "Observation"
 }

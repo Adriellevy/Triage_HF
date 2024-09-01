@@ -8,7 +8,7 @@ import ConfirmationDialog from '../ConfirmationDialog'
 import EditModal from '../UserSettingsComponents/EditModal'
 import { deleteBox, updateBox } from '@/services/boxService'
 import { toast } from 'sonner'
-import { Box, BoxStatus } from '../../interfaces/Boxes'
+import { Box, BoxStatus, BoxType } from '../../interfaces/Boxes'
 
 interface PropsBoxItem {
   box: Box
@@ -23,11 +23,15 @@ function BoxItem({ box, index }: PropsBoxItem) {
   const { box_code, box_type, box_time, box_status, patient_name } = box
 
   const fieldTranslations = {
-    box_code: t('Code'),
-    box_type: t('Type'),
+    box_code: t('Boxcode'),
+    box_type: t('TypeBox'),
     box_time: t('Time'),
-    box_status: t('Status'),
-    patient_name: t('PatientName')
+    box_status: t('StatusBoxString'),
+    patient_name: t('PatientName'),
+    'BoxType.CONSULTORIO': t('BoxType.CONSULTORIO'),
+    'BoxType.SHOOCKROOM': t('BoxType.SHOOCKROOM'),
+    'BoxType.HOSPITALIZATION': t('BoxType.HOSPITALIZATION'),
+    'BoxType.OBSERVACION': t('BoxType.OBSERVACION')
   }
 
   const boxWithDetails = {
@@ -93,7 +97,7 @@ function BoxItem({ box, index }: PropsBoxItem) {
       <td className='border p-2 '>
         <div
           className={`rounded-md p-2 text-white ${
-            box_status === BoxStatus.OCUPADO ? 'bg-green-500 shadow-md' : 'bg-red-500 shadow-md'
+            box_status === BoxStatus.OCUPADO ? 'bg-red-500 shadow-md' : 'bg-green-500 shadow-md'
           }`}
         >
           {t(`BoxStatus.${box_status}`)}
@@ -104,7 +108,8 @@ function BoxItem({ box, index }: PropsBoxItem) {
         <div className='flex gap-2'>
           <div>
             <div className='mb-2'>
-              <Link to={`/boxes/${box.box_id}`}>
+              {/* TODO:PASARLE EL ID DEL BOX PARA QUE SE ILUMINE */}
+              <Link to={`/boxes`}>
                 <Button color='green'>
                   <FontAwesomeIcon icon={faCircleInfo}></FontAwesomeIcon>
                 </Button>
@@ -131,6 +136,7 @@ function BoxItem({ box, index }: PropsBoxItem) {
           confirm={t('Confirm')}
           cancel={t('Cancel')}
           loading={isLoading}
+          ignoreFields={['patient_name', 'box_time']}
         />
       )}
 
@@ -144,8 +150,10 @@ function BoxItem({ box, index }: PropsBoxItem) {
         confirmDelete={confirmDelete}
         cancelDelete={cancelDelete}
         fieldTranslations={fieldTranslations}
-        recomendation={''}
-        warning={''}
+        recomendation={t('ChangeLocationRecommendation')}
+        warning={t('Warning')}
+        warningField='patient_name'
+        ignoreFields={['box_id', 'box_time', 'patient_id']}
       />
     </tr>
   )
