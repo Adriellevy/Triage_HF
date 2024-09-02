@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom' // Importamos la función navigate para la redirección
 
 function Settings() {
-  const { t } = useTranslation('SideBar')
+  const { t } = useTranslation('Sidebar')
 
   const navigate = useNavigate()
   const handleBoxSettingsClick = () => {
