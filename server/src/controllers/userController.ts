@@ -93,6 +93,7 @@ export class UserController {
   static async createNewUser(req: Request, res: Response): Promise<Response> {
     const { ...userData } = req.body;
 
+    console.log('Informacion que llego:', userData);
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       return res.status(401).json({ error: 'Token no proporcionado' });
@@ -102,10 +103,10 @@ export class UserController {
     const result = validatePartialUpdateUser(userData);
 
     if (!result.success) {
+      // Respuesta enviada, se detiene la ejecución
       return res.status(500).json({ errors: result.error.errors });
     }
 
-    console.log('Informacion que llego:', userData);
     try {
       const newUser = await UserModel.addUser(userData as User);
       if (newUser) {
@@ -118,8 +119,10 @@ export class UserController {
           createdBy: decoded.id
         });
       }
+      // Respuesta de error si no se pudo crear el usuario
       return res.status(500).json({ message: 'Error al crear el usuario' });
     } catch (error) {
+      // Manejo de errores generales
       return res.status(500).json({ message: 'Algo salió mal' });
     }
   }
@@ -183,6 +186,8 @@ export class UserController {
 
       const deleted = await UserModel.deleteUser(userId);
       if (deleted) {
+        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+        SendUpdatedUserNotifications(req, existingUser, Users, token);
         return res.status(200).json({
           message: 'Usuario eliminado correctamente',
           userId,
