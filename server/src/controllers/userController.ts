@@ -6,6 +6,7 @@ import { validatePartialUpdateUser, validateUser } from '../schemas/userSchema';
 import { IUser } from '../models/mysql/patientModel';
 import { User, UserRole } from '../interface/user';
 import { SendUpdatedUserNotifications } from '../helpers/notificationhelper';
+import { encrypt } from '../helpers/handleBcrypt';
 
 export class UserController {
   static async getUserIdByToken(req: Request, res: Response): Promise<Response> {
@@ -108,16 +109,23 @@ export class UserController {
     }
 
     try {
-      const newUser = await UserModel.addUser(userData as User);
-      if (newUser) {
-        // Obtener usuarios con rol 'HOSPITAL'
-        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
-        SendUpdatedUserNotifications(req, newUser, Users, token);
-        return res.status(201).json({
-          message: 'Nuevo usuario creado exitosamente',
-          userId: newUser.user_id,
-          createdBy: decoded.id
-        });
+      const { user_password } = result.data;
+      if (user_password) {
+        const hash_password = await encrypt(user_password);
+        userData.user_password = hash_password;
+        console.log('Hash pass:', hash_password);
+        console.log('userData.user_password:', userData.user_password);
+        const newUser = await UserModel.addUser(userData as User);
+        if (newUser) {
+          // Obtener usuarios con rol 'HOSPITAL'
+          const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+          SendUpdatedUserNotifications(req, newUser, Users, token);
+          return res.status(201).json({
+            message: 'Nuevo usuario creado exitosamente',
+            userId: newUser.user_id,
+            createdBy: decoded.id
+          });
+        }
       }
       // Respuesta de error si no se pudo crear el usuario
       return res.status(500).json({ message: 'Error al crear el usuario' });
