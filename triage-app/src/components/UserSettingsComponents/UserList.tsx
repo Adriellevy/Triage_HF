@@ -27,7 +27,10 @@ function UserList({ users }: PropsUserList) {
     user_email: t('Email'),
     state: t('State'),
     user_cellphone: t('user_cellphone'),
-    user_password_check: t('ChequearPassword')
+    user_password_check: t('ChequearPassword'),
+    'UserRole.HOSPITAL': t('UserRole.HOSPITAL'),
+    'UserRole.DOCTOR': t('UserRole.DOCTOR'),
+    'UserRole.NURSE': t('UserRole.NURSE')
   }
   const handleSort = (column: string) => {
     if (sortColumn === column) {

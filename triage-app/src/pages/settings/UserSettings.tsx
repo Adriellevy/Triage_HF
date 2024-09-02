@@ -35,6 +35,7 @@ function UserSettings() {
       } catch (error) {
         console.error((error as Error).message)
       }
+
       if (socket) {
         socket.on(SocketEvent.UPDATE, (data) => {
           if (data.message == UpdateEvent.USER_UPDATE) {
