@@ -11,7 +11,7 @@ const Pagination: React.FC<PaginationProps> = ({ patientsPerPage, length, curren
     const paginationNumbers: number[] = [1,2,3,4,5,6,7,8,9,10];
 
     if(length > 150) {
-        for (let i = 1; i <= Math.ceil(length / patientsPerPage); i++) {
+        for (let i = 11; i <= Math.ceil(length / patientsPerPage); i++) {
             paginationNumbers.push(i);
         }
     }

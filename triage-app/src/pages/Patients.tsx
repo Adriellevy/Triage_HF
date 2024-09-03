@@ -133,6 +133,8 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [RawData, setRawData] = useState<Patient[] | null>(null)
   const [hasExecuted, setHasExecuted] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [dataBatch, setDataBatch] = useState([])
+  const [filteredDataBatch, setfilteredDataBatch] = useState([])
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   const predefinedOptionsVar: ColourOption[] = [
@@ -174,20 +176,24 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getPatients()
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-          })
-          console.log('Predifined Options em use efect', predefinedOptions)
-          const filteredPatients = filterPatients(
-            sortedData,
-            predefinedOptions,
-            searchTerm,
-            'name',
-            actual_user
-          )
-          setRawData(sortedData)
-          setPatientsData(filteredPatients)
+          const batch = Math.ceil(currentPage / 3);
+          if(!(filteredDataBatch.includes(batch))) {
+            const data = await getPaginatedPatients(batch)
+            const sortedData = data.sort((a, b) => {
+              return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+              console.log('Predifined Options em use efect', predefinedOptions)
+            })
+            setRawData(sortedData)
+            const filteredPatients = filterPatients(
+              sortedData,
+              predefinedOptions,
+              searchTerm,
+              'name',
+              actual_user
+            )
+            setPatientsData([...patientsData, ...filteredPatients])
+            setfilteredDataBatch([...dataBatch, batch])
+          }
         }
       } catch (error) {
         console.error((error as Error).message)
@@ -219,33 +225,35 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     else setFilteredPatients(filtered)
   }
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (token) {
           const batch = Math.ceil(currentPage / 3);
-          console.log(batch)
-          const data = await getPaginatedPatients(batch)
-          console.log(data)
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-          })
-          setRawData(sortedData)
-          if (!hasExecuted) {
-            setHasExecuted(true)
-            const initialFilteredData = filterPatients(
-              sortedData,
-              predefinedOptions,
-              searchTerm,
-              'name',
-              actual_user
-            )
-            setPatientsData(initialFilteredData)
-            setFilteredPatients(initialFilteredData)
+          if(!(dataBatch.includes(batch))) {
+            const data = await getPaginatedPatients(batch)
+            const sortedData = data.sort((a, b) => {
+              return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+            })
+            setRawData(sortedData)
+            if (!hasExecuted) {
+              setHasExecuted(true)
+              const initialFilteredData = filterPatients(
+                sortedData,
+                predefinedOptions,
+                searchTerm,
+                'name',
+                actual_user
+              )
+              setPatientsData(initialFilteredData)
+              setFilteredPatients(initialFilteredData)
           } else {
-            setPatientsData(sortedData)
+            setPatientsData([...patientsData, ...sortedData])
           }
+          setDataBatch([...dataBatch, batch])
         }
+      }
       } catch (error) {
         console.error((error as Error).message)
       }
@@ -253,6 +261,20 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     fetchData()
   }, [token, currentPage])
 
+  const initialFetch= async() => {
+    const data = await getPaginatedPatients(1)
+    const sortedData = data.sort((a, b) => {
+      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+    })
+    setRawData(sortedData)
+    setPatientsData(RawData)
+    setDataBatch([1])
+  }
+
+  useEffect(() => {
+   initialFetch() 
+  }, [])
+  
   return (
     <div className='bg-white pb-4'>
       <div>
