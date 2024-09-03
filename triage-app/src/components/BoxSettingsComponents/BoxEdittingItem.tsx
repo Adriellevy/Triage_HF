@@ -20,12 +20,11 @@ function BoxItem({ box, index }: PropsBoxItem) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { box_code, box_type, box_time, box_status, patient_name } = box
+  const { box_code, box_type, box_status, patient_name } = box
 
   const fieldTranslations = {
     box_code: t('Boxcode'),
     box_type: t('TypeBox'),
-    box_time: t('Time'),
     box_status: t('StatusBoxString'),
     patient_name: t('PatientName'),
     'BoxType.CONSULTORIO': t('BoxType.CONSULTORIO'),

@@ -68,7 +68,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
       <table className='w-full border border-gray-300 mt-4'>
         <thead>
           <tr className='min-w-full bg-blue-800 text-white'>
-            <th className='border p-2'>{t('BoxCode')}</th>
+            <th className='border p-2'>{t('Boxcode')}</th>
             <th className='border p-2'>{t('TypeBox')}</th>
             <th className='border p-2'>{t('StatusBoxString')}</th>
             <th className='border p-2'>{t('PatientName')}</th>
@@ -77,7 +77,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
         </thead>
         <tbody className='text-center text-black'>
           {boxes.map((box, index) => (
-            <BoxEdittingItem box={box} index={index}></BoxEdittingItem>
+            <BoxEdittingItem box={box} key={index} index={index}></BoxEdittingItem>
           ))}
         </tbody>
       </table>

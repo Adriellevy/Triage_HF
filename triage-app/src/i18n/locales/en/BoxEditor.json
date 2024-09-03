@@ -25,5 +25,9 @@
   "BoxType.CONSULTORIO": "Consulting Room",
   "BoxType.SHOOCKROOM": "Shock Room",
   "BoxType.HOSPITALIZATION": "Hospitalization",
-  "BoxType.OBSERVACION": "Observation"
+  "BoxType.OBSERVACION": "Observation",
+  "CONSULTORIO": "CONSULTING ROOM",
+  "SHOCK ROOM": "SHOCK ROOM",
+  "OBSERVACION": "OBSERVATION",
+  "Actions": "Actions"
 }

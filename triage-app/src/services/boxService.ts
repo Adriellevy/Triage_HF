@@ -169,7 +169,7 @@ export const updateBox = async (
       },
       body: JSON.stringify(body) // Pasar el objeto body construido
     })
-
+    console.log('Informacion mandada:', body)
     const data = await response.json()
 
     if (!response.ok) {
