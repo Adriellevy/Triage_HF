@@ -23,6 +23,7 @@ import StatsPatientTriage from './pages/stats/StatsPatientTriage'
 import PatientsMeanTimeNurse from './pages/stats/PatientsMeanTimeNurse'
 import PatientsMeanAge from './pages/stats/PatientsMeanAge'
 import Settings from './pages/settings/Settings'
+import ProtectedRouteWithVerification from './components/ProtectedRouteWithVerification'
 function App() {
   const { isAuthenticated, login } = useAuth()
   const { role, setRole } = useRoleContext()
@@ -88,24 +89,102 @@ function App() {
                     <Route path='/boxes' element={<Boxes />} />
                     {role === UserRole.HOSPITAL && (
                       <>
-                        <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
-                        <Route path='/stats/top_consultas_fecha' element={<StatsTopConsultas />} />
+                        <Route
+                          path='/stats/cant_pacientes_fecha'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsPatinet />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/stats/top_consultas_fecha'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsTopConsultas />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
                         <Route
                           path='/stats/patients_mean_time_doctor'
-                          element={<StatsPatientTriage />}
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsPatientTriage />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
                         <Route
                           path='/stats/patients_mean_time_nurse'
-                          element={<PatientsMeanTimeNurse />}
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <PatientsMeanTimeNurse />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
                         <Route
-                          path='/stats/number_patients_date/age/'
-                          element={<PatientsMeanAge />}
+                          path='/stats/number_patients_date/age'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <PatientsMeanAge />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
-                        <Route path='/settings/user' element={<UserSettings />} />
-                        <Route path='/settings/box' element={<BoxSettings />} />
-
-                        <Route path='/settings/' element={<Settings />} />
+                        <Route
+                          path='/settings/user'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <UserSettings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/settings/box'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <BoxSettings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/settings/'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <Settings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
                       </>
                     )}
                     <Route path='*' element={<NotFound />} />
