@@ -15,6 +15,10 @@ patientRouter.get('/:id', (req: Request, res: Response) => {
   void PatientController.getPatientById(req, res);
 });
 
+patientRouter.get('/patientName/:name', (req: Request, res: Response) => {
+  void PatientController.getPatientByName(req, res);
+});
+
 patientRouter.patch('/:id', (req: Request, res: Response) => {
   void PatientController.updatePatient(req, res);
 });

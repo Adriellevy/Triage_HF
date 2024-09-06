@@ -83,6 +83,43 @@ export class PatientsModel {
     return pat;
   }
 
+  static async getPatientsByName(patientName: string): Promise<IUser[]> {
+    try {
+      const patientsQuery = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(Patient.box_id) AS box_id,
+          Box.box_code,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment,
+          Doctor.user_name AS doctor_name,
+          Nurse.user_name AS nurse_name
+        FROM Patient
+        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        LEFT JOIN Box ON Patient.box_id = Box.box_id
+        WHERE patient_name = ?;
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(patientsQuery, [patientName]);
+      return rows;
+    } catch (error) {
+      console.error('Error al obtener los pacientes por nombre:', error);
+      throw error;
+    }
+  }
+
   // eslint-disable-next-line consistent-return, @typescript-eslint/no-explicit-any
   static async createNewPatient({ data }): Promise<any> {
     try {
@@ -342,6 +379,7 @@ export class PatientsModel {
     return PatientUpdateHistory;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async getLastPatientUpdateHistory({ id }: { id: string }): Promise<any> {
     const PatientUpdateHistoryQuery = ` 
     SELECT 
