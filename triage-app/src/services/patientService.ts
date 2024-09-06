@@ -62,6 +62,27 @@ export const getPatientById = async (patient_id: string | undefined): Promise<Pa
     throw new Error('Error fetching patient')
   }
 }
+export const getPatientByName = async (patient_name: string | undefined): Promise<Patient> => {
+  const token = Cookies.get('authToken')
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/patient/patientName/${patient_name}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    if (!response.ok) {
+      throw new Error(`Error in GET request to /patient:${response.status}`)
+    }
+    return (await response.json()) as Patient
+  } catch (error) {
+    console.error('Error fetching patient:', error)
+    throw new Error('Error fetching patient')
+  }
+}
 
 export const updatePatient = async (
   patient_id: string,
