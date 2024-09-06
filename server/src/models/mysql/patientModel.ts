@@ -109,7 +109,7 @@ export class PatientsModel {
         LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
         LEFT JOIN Box ON Patient.box_id = Box.box_id
-        WHERE patient_name = ?;
+        WHERE patient_name LIKE ?;
       `;
       const conn = await connect();
       const [rows] = await conn.query<IUser[]>(patientsQuery, [patientName]);
