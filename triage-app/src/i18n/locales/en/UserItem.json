@@ -19,6 +19,7 @@
   "FullName": "Full Name",
   "Email": "Email",
   "Password": "User password",
+  "NewPassword": "New user password",
   "user_cellphone": "cellphone number",
   "Role": "Role / Permissions",
   "Specialization": "Specialization",

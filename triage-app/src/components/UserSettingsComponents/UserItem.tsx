@@ -24,7 +24,7 @@ function UserItem({ user, index }: PropsUserItem) {
 
   const fieldTranslations = {
     user_name: t('Name'),
-    user_password: t('Password'),
+    user_password: t('NewPassword'),
     user_full_name: t('FullName'),
     user_type: t('Role'),
     user_specialization: t('Specialization'),

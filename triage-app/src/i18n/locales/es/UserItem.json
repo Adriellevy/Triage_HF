@@ -20,6 +20,7 @@
   "Email": "Email",
   "Role": "Rol / Permisos",
   "Password": "Contraseña del usuario",
+  "NewPassword": "Nueva contraseña del usuario",
   "user_cellphone": "Numero de telefono",
   "Specialization": "Especializacion",
   "State": "Estado",
