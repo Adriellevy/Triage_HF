@@ -112,7 +112,7 @@ export class PatientsModel {
         WHERE patient_name LIKE ?;
       `;
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(patientsQuery, [patientName]);
+      const [rows] = await conn.query<IUser[]>(patientsQuery, [`%${patientName}%`]);
       return rows;
     } catch (error) {
       console.error('Error al obtener los pacientes por nombre:', error);
