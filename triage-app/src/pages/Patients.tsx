@@ -4,7 +4,7 @@ import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
 import Search from '@/components/Search'
-import { getPaginatedPatients, getPatients } from '../services/patientService'
+import { getPaginatedPatients,  getPatientByName } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
@@ -13,6 +13,10 @@ import { UserRole } from '@/interfaces/User'
 import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
+import { Button } from '@/components/ui'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+
 
 const colourStyles: StylesConfig<ColourOption, true> = {
   control: (styles) => ({ ...styles, backgroundColor: 'white' }),
@@ -135,29 +139,30 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [currentPage, setCurrentPage] = useState(1)
   const [dataBatch, setDataBatch] = useState([])
   const [filteredDataBatch, setfilteredDataBatch] = useState([])
+  const [searchName, setSearchName] = useState('')
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
-  const predefinedOptionsVar: ColourOption[] = [
-    {
-      value: 'patient_status',
-      item: 'TODOS MENOS ALTA',
-      label: 'TODOS MENOS ALTA',
-      color: '#525252',
-      isFixed: true
-    }
-  ]
+  // const predefinedOptionsVar: ColourOption[] = [
+  //   {
+  //     value: 'patient_status',
+  //     item: 'TODOS MENOS ALTA',
+  //     label: 'TODOS MENOS ALTA',
+  //     color: '#525252',
+  //     isFixed: true
+  //   }
+  // ]
 
-  if (role === UserRole.DOCTOR) {
-    predefinedOptionsVar.push({
-      value: 'type_user',
-      item: 'MÍOS',
-      label: 'MÍOS',
-      color: '#525252',
-      isFixed: true
-    })
-  }
+  // if (role === UserRole.DOCTOR) {
+  //   predefinedOptionsVar.push({
+  //     value: 'type_user',
+  //     item: 'MÍOS',
+  //     label: 'MÍOS',
+  //     color: '#525252',
+  //     isFixed: true
+  //   })
+  // }
 
-  const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>(predefinedOptionsVar)
+  const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>([])
 
   //hardoceado ver como obtenerlo de otra forma
 
@@ -171,45 +176,45 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     }
   }
 
-  useEffect(() => {
-    const token = Cookies.get('authToken')
-    const fetchData = async () => {
-      try {
-        if (token) {
-          const batch = Math.ceil(currentPage / 3);
-          if(!(filteredDataBatch.includes(batch))) {
-            const data = await getPaginatedPatients(batch)
-            const sortedData = data.sort((a, b) => {
-              return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-              console.log('Predifined Options em use efect', predefinedOptions)
-            })
-            setRawData(sortedData)
-            const filteredPatients = filterPatients(
-              sortedData,
-              predefinedOptions,
-              searchTerm,
-              'name',
-              actual_user
-            )
-            setPatientsData([...patientsData, ...filteredPatients])
-            setfilteredDataBatch([...dataBatch, batch])
-          }
-        }
-      } catch (error) {
-        console.error((error as Error).message)
-      }
-    }
-    if (socket) {
-      socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
-          fetchData()
-        }
-      })
-      return () => {
-        socket.off(SocketEvent.UPDATE)
-      }
-    }
-  }, [socket, predefinedOptions])
+  // useEffect(() => {
+  //   const token = Cookies.get('authToken')
+  //   const fetchData = async () => {
+  //     try {
+  //       if (token) {
+  //         const batch = Math.ceil(currentPage / 3);
+  //         if(!(filteredDataBatch.includes(batch))) {
+  //           const data = await getPaginatedPatients(batch)
+  //           const sortedData = data.sort((a, b) => {
+  //             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+  //             console.log('Predifined Options em use efect', predefinedOptions)
+  //           })
+  //           setRawData(sortedData)
+  //           const filteredPatients = filterPatients(
+  //             sortedData,
+  //             predefinedOptions,
+  //             searchTerm,
+  //             'name',
+  //             actual_user
+  //           )
+  //           setPatientsData([...patientsData, ...filteredPatients])
+  //           setfilteredDataBatch([...dataBatch, batch])
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error((error as Error).message)
+  //     }
+  //   }
+  //   if (socket) {
+  //     socket.on(SocketEvent.UPDATE, (data) => {
+  //       if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
+  //         fetchData()
+  //       }
+  //     })
+  //     return () => {
+  //       socket.off(SocketEvent.UPDATE)
+  //     }
+  //   }
+  // }, [socket, predefinedOptions])
 
   const handleonSearch = ({ term, by }: { term: string; by: string }) => {
     setSearchTerm(term)
@@ -261,25 +266,34 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     fetchData()
   }, [token, currentPage])
 
-  const initialFetch= async() => {
-    const data = await getPaginatedPatients(1)
+
+  const searchPatient = async (name) => {
+    const data = await getPatientByName(name)
     const sortedData = data.sort((a, b) => {
       return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
     })
     setRawData(sortedData)
-    setPatientsData(RawData)
-    setDataBatch([1])
+    setPatientsData(sortedData)
   }
-
-  useEffect(() => {
-   initialFetch() 
-  }, [])
   
   return (
-    <div className='bg-white pb-4'>
-      <div>
-        <Search onSearch={handleonSearch} options={SearchOption} />
-        <div className='bg-white pl-4 pr-4'>
+    <div className='bg-white p-4'>
+      <div className='flex  flex-col'>
+        <div className='flex-1 pl-4 pr-4'>
+          <label className='block text-sm font-medium text-gray-700 mb-1'>Buscar paciente por nombre</label>
+          <input 
+                  className='w-[90%] p-2 border rounded-md'
+                  type="text" 
+                  id="namesearch" 
+                  value={searchName} 
+                  onChange={(e) => setSearchName(e.target.value)} 
+                  placeholder="Buscar paciente..."
+                  />
+                <Button className='rounded-md ml-4 py-2 px-4 text-white bg-green-500 hover:bg-green-700' color='green'  onClick={() => searchPatient(searchName)}>
+                <FontAwesomeIcon icon={faMagnifyingGlass} /> 
+                </Button> 
+          </div>
+        <div className='bg-white pr-4 flex-1 pl-4'>
           <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
           <Select
             className='w-full'
