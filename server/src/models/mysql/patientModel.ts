@@ -493,4 +493,67 @@ export class PatientsModel {
     if (rows) console.log('Se obtuvieron los pacientes paginados');
     return rows as Patient[];
   }
+
+  static async getPatientsByUserAndStatus(userId: string, statuses: string[]): Promise<IUser[]> {
+    try {
+      const query = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(box_id) AS box_id,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment
+        FROM Patient
+        WHERE (doctor_id = UUID_TO_BIN(?) OR nurse_id = UUID_TO_BIN(?))
+        AND patient_status IN (?);
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(query, [userId, userId, statuses]);
+      return rows;
+    } catch (error) {
+      console.error('Error fetching patients by user and status:', error);
+      throw error;
+    }
+  }
+
+  static async getPatientsByStatus(statuses: string[]): Promise<IUser[]> {
+    try {
+      const query = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(box_id) AS box_id,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment
+        FROM Patient
+        WHERE patient_status IN (?);
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(query, [statuses]);
+      return rows;
+    } catch (error) {
+      console.error('Error fetching patients by status:', error);
+      throw error;
+    }
+  }
 }

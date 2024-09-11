@@ -8,6 +8,7 @@ import {
   SendNewPatientNotifications,
   SendUpdatePatientNotifications
 } from '../helpers/notificationhelper';
+import { string } from 'zod';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -190,6 +191,40 @@ export class PatientController {
       return res.json(paginatedPatients);
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async getUsersByFilter(req: Request, res: Response): Promise<Response> {
+    try {
+      const { PatientsOfThisUser, Filters, userId } = req.body;
+      if (typeof userId !== 'string')
+        res.status(404).json({ message: 'UserId is not correct format' });
+
+      if (!Array.isArray(Filters)) res.status(404).json({ message: 'Filters should be an array' });
+
+      // Si PatientsOfThisUser es verdadero, buscar pacientes asignados a este usuario (doctor o enfermero)
+      if (PatientsOfThisUser) {
+        const patients = await PatientsModel.getPatientsByUserAndStatus(userId, Filters);
+        if (patients.length > 0) {
+          return res.json(patients);
+        } else {
+          return res
+            .status(404)
+            .json({ message: 'No patients found for this user with the given statuses' });
+        }
+      }
+      // Si PatientsOfThisUser es falso, buscar pacientes por los estados especificados en Filters
+      else {
+        const patients = await PatientsModel.getPatientsByStatus(Filters);
+        if (patients.length > 0) {
+          return res.json(patients);
+        } else {
+          return res.status(404).json({ message: 'No patients found with the given statuses' });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
     }
   }
 }

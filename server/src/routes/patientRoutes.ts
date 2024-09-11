@@ -19,6 +19,10 @@ patientRouter.get('/patientName/:name', (req: Request, res: Response) => {
   void PatientController.getPatientByName(req, res);
 });
 
+patientRouter.get('/patientsByFilters/', (req: Request, res: Response) => {
+  void PatientController.getUsersByFilter(req, res);
+});
+
 patientRouter.patch('/:id', (req: Request, res: Response) => {
   void PatientController.updatePatient(req, res);
 });
