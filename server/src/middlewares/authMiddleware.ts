@@ -45,7 +45,6 @@ const authenticateToken = async (
         };
 
         const newAccessToken = signTokenWithExpiration(userForToken, 10 / 60);
-        res.setHeader('Authorization', `Bearer ${newAccessToken}`);
         res.status(206).json({ newAccessToken });
       } else {
         // Manejo del caso en que 'decoded' sea un string o no sea válido
