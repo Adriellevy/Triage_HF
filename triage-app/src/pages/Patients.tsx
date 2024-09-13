@@ -90,13 +90,6 @@ const options: Option[] = [
       { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
       { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
       { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
-      {
-        value: 'patient_triage_level',
-        item: '1-4',
-        label: 'Triage Level 1-4',
-        color: '#5243AA',
-        isFixed: true
-      }
     ]
   },
   {
@@ -123,7 +116,6 @@ const options: Option[] = [
   {
     label: 'From Who',
     options: [
-      { value: 'type_user', label: 'TODOS', color: '#525252' },
       { value: 'type_user', label: 'MÍOS', color: '#525252' }
     ]
   }
