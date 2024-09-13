@@ -2,8 +2,9 @@ import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { compare } from '../helpers/handleBcrypt';
 import { UserModel } from '../models/mysql/userModel';
-import { signToken } from '../helpers/authhelper';
+import { signToken, signTokenWithExpiration } from '../helpers/authhelper';
 import { validateAuth } from '../schemas/authSchema';
+import TokensModel from '../models/mysql/TokensModel';
 
 export class AuthController {
   static async login(req: Request, res: Response): Promise<Response> {
@@ -14,47 +15,49 @@ export class AuthController {
     try {
       const { user_name, user_password } = result.data;
       const UserData = await UserModel.getUserByUserName(user_name);
+
       if (!UserData?.user_password) {
         return res.status(401).json({ message: 'User not found' });
       }
+
       const checkPassword = await compare(user_password, UserData.user_password);
-      if (checkPassword) {
-        const userForToken = {
-          id: UserData.user_id,
-          name: user_name
-        };
-        const token = signToken(userForToken);
-        return res.send({
-          name: user_name,
-          token
-        });
+      if (!checkPassword) {
+        return res.status(401).json({ message: 'Invalid password' });
       }
-      return res.status(401).json({ message: 'Invalid password' });
+
+      // Crear token de acceso
+      const userForToken = {
+        id: UserData.user_id,
+        name: user_name
+      };
+      const token = signTokenWithExpiration(userForToken, 1 / 3600); //TODO CAMBIAR LINEA
+
+      // Verificar si existe un refresh token en la base de datos
+      const existingToken = await TokensModel.findTokenByUserId(UserData.user_id);
+      const RefreshToken = signTokenWithExpiration(userForToken, 1); // Token de refresco
+
+      if (existingToken) {
+        // Si existe, actualiza el refresh token
+        const updated = await TokensModel.updateToken(existingToken.token_id, RefreshToken);
+        if (!updated) {
+          return res.status(500).json({ message: 'Failed to update refresh token' });
+        }
+      } else {
+        // Si no existe, crea uno nuevo
+        const added = await TokensModel.addToken(UserData.user_id, RefreshToken);
+        if (!added) {
+          return res.status(500).json({ message: 'Failed to create refresh token' });
+        }
+      }
+
+      // Enviar respuesta con token de acceso y nombre de usuario
+      return res.send({
+        name: user_name,
+        token
+      });
     } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' });
+      console.error('Login error:', error); // Log para depuración
+      return res.status(500).json({ message: 'Something went wrong during login' });
     }
   }
-  /* 
-  static async register(req: Request, res: Response): Promise<Response> {
-    const result = validateUser(req.body);
-    if (!result.success) {
-      return res.status(400).json({ error: JSON.parse(result.error.message) });
-    }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { user_name, user_email, user_password, user_password_confirmation, user_rol } =
-      result.data;
-    const hash_password = await encrypt(user_password);
-    if (user_password === user_password_confirmation) {
-      // eslint-disable-next-line object-curly-newline
-      const data = { user_name, user_email, hash_password, user_rol };
-      try {
-        const newUser = await UserModel.createNewUser(data);
-        return res.status(201).json(newUser);
-      } catch (error) {
-        return res.status(500).json({ message: 'Something goes wrong' });
-      }
-    }
-    return res.status(500).json({ message: 'Something goes wrong' });
-  }
-  */
 }
