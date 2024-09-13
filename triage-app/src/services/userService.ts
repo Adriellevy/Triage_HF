@@ -38,6 +38,7 @@ export const getUserIdByToken = async (): Promise<number> => {
       },
       body: JSON.stringify(tokenpost)
     })
+
     if (!responsedocs.ok) {
       throw new Error(`Error in GET request to /Users: ${responsedocs.statusText}`)
     }
@@ -221,12 +222,22 @@ export const getUserById = async (user_id: string | undefined): Promise<User> =>
         Authorization: `Bearer ${token}`
       }
     })
+    if (response.status === 206) {
+      const data = await response.json()
+      const newAccessToken = data.newAccessToken
+
+      if (newAccessToken) {
+        Cookies.set('authToken', newAccessToken)
+        console.log('Token actualizado:', newAccessToken)
+        return await getUserById(user_id)
+      }
+    }
     if (!response.ok) {
       throw new Error(`Error in GET request to /user:${response.status}`)
     }
     return (await response.json()) as User
   } catch (error) {
-    console.error('Error fetching user:', error)
+    // console.error('Error fetching user:', error)
     throw new Error('Error fetching user')
   }
 }

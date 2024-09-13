@@ -226,8 +226,17 @@ function Sidebar() {
           const user = await getUserById(String(data))
           setUserInfo(user)
         }
-      } catch (error) {
-        console.error((error as Error).message)
+      } catch (err) {
+        if (err.message.includes('404')) {
+          console.error('Error 404: Usuario no encontrado')
+          // setShowConfirmModal(true) // Mostrar modal para que confirme su presencia
+        } else if (err.message.includes('Unauthorized')) {
+          // Si el token es inválido o no autorizado
+          // console.error('Error: No autorizado')
+          // setShowConfirmModal(true) // Mostrar modal para que vuelva a iniciar sesión
+        } else {
+          console.error('Error al obtener el usuario:', err.message)
+        }
       }
     }
     fetchData()

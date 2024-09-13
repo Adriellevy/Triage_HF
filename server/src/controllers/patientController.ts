@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { PatientsModel } from '../models/mysql/patientModel';
 import { validatePartialPatient, validatePatient } from '../schemas/patientSchema';
-import { verifyToken } from '../helpers/authhelper';
+import { verifyRefreshToken, verifyToken } from '../helpers/authhelper';
 import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
 import {
   SendNewPatientNotifications,
@@ -31,6 +31,8 @@ export class PatientController {
 
     const decoded = verifyToken(token);
     const userID = decoded.id;
+    // const DatabaseToken = await verifyRefreshToken(token, userID);
+    // if (!DatabaseToken) res.status(401).json({ error: 'Token no proporcionado' });
 
     if (!result.success) {
       return res.status(500).json({ errors: result.error.errors });
@@ -95,7 +97,8 @@ export class PatientController {
 
     const tokendecoded = verifyToken(token);
     const userID = tokendecoded.id;
-
+    // const DatabaseToken = await verifyRefreshToken(token, userID);
+    // if (!DatabaseToken) res.status(401).json({ error: 'Token no proporcionado' });
     try {
       const { id } = req.params;
       const { Merge_Complete } = req.body; // Destructurar Merge_complete del cuerpo del request

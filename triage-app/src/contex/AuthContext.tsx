@@ -4,6 +4,7 @@ interface AuthContextProps {
   isAuthenticated: boolean
   login: (token: string) => void
   logout: () => void
+  setAutenticationCookie: (Verification_token: string) => void
   setVerificationCookie: (Verification_token: string) => void // Nueva función para manejar la cookie de verificación
 }
 
@@ -31,12 +32,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthenticated(false)
   }
 
+  const setAutenticationCookie = (Verification_token: string) => {
+    Cookies.set('authToken', Verification_token, { expires: 1 / 144 }) // 10 minutos
+  }
+
   const setVerificationCookie = (Verification_token: string) => {
     Cookies.set('verificationToken', Verification_token, { expires: 1 / 144 }) // 10 minutos
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, setVerificationCookie }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, setAutenticationCookie, setVerificationCookie }}
+    >
       {children}
     </AuthContext.Provider>
   )
