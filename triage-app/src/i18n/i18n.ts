@@ -35,6 +35,8 @@ import UserItem_es from './locales/es/UserItem.json'
 import UserItem_en from './locales/en/UserItem.json'
 import VerifyUser_es from './locales/es/VerifyUser.json'
 import VerifyUser_en from './locales/en/VerifyUser.json'
+import TimeExpireModalAndErrors_es from './locales/es/TimeExpireModalAndErrors.json'
+import TimeExpireModalAndErrors_en from './locales/en/TimeExpireModalAndErrors.json'
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -64,7 +66,8 @@ i18n
         WarningBox: WarningBox_es,
         BoxEditor: BoxEditor_es,
         UserItem: UserItem_es,
-        VerifyUser: VerifyUser_es
+        VerifyUser: VerifyUser_es,
+        TimeExpireModalAndErrors: TimeExpireModalAndErrors_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -82,7 +85,8 @@ i18n
         WarningBox: WarningBox_en,
         BoxEditor: BoxEditor_en,
         UserItem: UserItem_en,
-        VerifyUser: VerifyUser_en
+        VerifyUser: VerifyUser_en,
+        TimeExpireModalAndErrors: TimeExpireModalAndErrors_en
       }
     }
   })
