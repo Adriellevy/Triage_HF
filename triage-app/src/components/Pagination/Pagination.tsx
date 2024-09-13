@@ -10,7 +10,7 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({ patientsPerPage, length, currentPage, onPageChange }) => {
     const paginationNumbers: number[] = [1];
 
-    if(length > 20) {
+    if(length >= 20) {
         for (let i = 2; i <= Math.ceil(length / patientsPerPage); i++) {
             paginationNumbers.push(i);
         }

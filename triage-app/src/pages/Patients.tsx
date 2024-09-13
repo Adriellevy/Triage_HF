@@ -3,7 +3,6 @@ import Cookies from 'js-cookie'
 import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
-import Search from '@/components/Search'
 import { getPaginatedPatients,  getPatientByName } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
@@ -13,9 +12,7 @@ import { UserRole } from '@/interfaces/User'
 import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
-import { Button } from '@/components/ui'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import PatientSearchBar from '@/components/PatientList/PatientSearchBar'
 
 
 const colourStyles: StylesConfig<ColourOption, true> = {
@@ -132,6 +129,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [dataBatch, setDataBatch] = useState([])
   const [filteredDataBatch, setfilteredDataBatch] = useState([])
   const [searchName, setSearchName] = useState('')
+  const [refreshSearch, setrefreshSearch] = useState(false)
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // const predefinedOptionsVar: ColourOption[] = [
@@ -208,20 +206,6 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   //   }
   // }, [socket, predefinedOptions])
 
-  const handleonSearch = ({ term, by }: { term: string; by: string }) => {
-    setSearchTerm(term)
-    const filterOptions: Record<string, (patient: Patient) => boolean> = {
-      name: (patient) => patient.patient_name.toLowerCase().includes(term.toLowerCase()),
-      date_of_birth: () => false
-    }
-    const filtered = patientsData?.filter((patient) => {
-      const filterFunction = filterOptions[by]
-      return filterFunction(patient)
-    })
-    if (filtered?.length === 0 || filtered === undefined) setFilteredPatients(null)
-    else setFilteredPatients(filtered)
-  }
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -256,7 +240,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       }
     }
     fetchData()
-  }, [token, currentPage])
+  }, [token, currentPage, refreshSearch])
 
 
   const searchPatient = async (name) => {
@@ -267,24 +251,18 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     setRawData(sortedData)
     setPatientsData(sortedData)
   }
+
+  const clearData = () => {
+    setDataBatch([])
+    setPatientsData([])
+    setrefreshSearch(!refreshSearch)
+  }
+  
   
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
-        <div className='flex-1 pl-4 pr-4'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>Buscar paciente por nombre</label>
-          <input 
-                  className='w-[90%] p-2 border rounded-md'
-                  type="text" 
-                  id="namesearch" 
-                  value={searchName} 
-                  onChange={(e) => setSearchName(e.target.value)} 
-                  placeholder="Buscar paciente..."
-                  />
-                <Button className='rounded-md ml-4 py-2 px-4 text-white bg-green-500 hover:bg-green-700' color='green'  onClick={() => searchPatient(searchName)}>
-                <FontAwesomeIcon icon={faMagnifyingGlass} /> 
-                </Button> 
-          </div>
+        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData}  />
         <div className='bg-white pr-4 flex-1 pl-4'>
           <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
           <Select
