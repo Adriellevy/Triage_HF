@@ -75,14 +75,12 @@ function PatientItem({ patient, index }: PropsPatientItem) {
     console.log('alta confirmada')
     setPatientToDischarge(null)
     if (patient) {
-      console.log(patient)
       patient.patient_status = PatientStatus.DISCHARGED
       updatePatient(patient.patient_id, patient)
     } else {
       console.log('Error en dar de ALTA al paciente')
     }
   }
-  console.log(patient)
   return (
     <tr className={bgClass}>
       <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
