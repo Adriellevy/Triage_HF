@@ -3,8 +3,7 @@ import Cookies from 'js-cookie'
 import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
-import Search from '@/components/Search'
-import { getPatients } from '../services/patientService'
+import { getPaginatedPatients,  getPatientByName } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
@@ -13,6 +12,8 @@ import { UserRole } from '@/interfaces/User'
 import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
+import PatientSearchBar from '@/components/PatientList/PatientSearchBar'
+
 
 const colourStyles: StylesConfig<ColourOption, true> = {
   control: (styles) => ({ ...styles, backgroundColor: 'white' }),
@@ -86,13 +87,6 @@ const options: Option[] = [
       { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
       { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
       { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
-      {
-        value: 'patient_triage_level',
-        item: '1-4',
-        label: 'Triage Level 1-4',
-        color: '#5243AA',
-        isFixed: true
-      }
     ]
   },
   {
@@ -119,7 +113,6 @@ const options: Option[] = [
   {
     label: 'From Who',
     options: [
-      { value: 'type_user', label: 'TODOS', color: '#525252' },
       { value: 'type_user', label: 'MÍOS', color: '#525252' }
     ]
   }
@@ -132,29 +125,34 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(null)
   const [RawData, setRawData] = useState<Patient[] | null>(null)
   const [hasExecuted, setHasExecuted] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [dataBatch, setDataBatch] = useState([])
+  const [filteredDataBatch, setfilteredDataBatch] = useState([])
+  const [searchName, setSearchName] = useState('')
+  const [refreshSearch, setrefreshSearch] = useState(false)
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
-  const predefinedOptionsVar: ColourOption[] = [
-    {
-      value: 'patient_status',
-      item: 'TODOS MENOS ALTA',
-      label: 'TODOS MENOS ALTA',
-      color: '#525252',
-      isFixed: true
-    }
-  ]
+  // const predefinedOptionsVar: ColourOption[] = [
+  //   {
+  //     value: 'patient_status',
+  //     item: 'TODOS MENOS ALTA',
+  //     label: 'TODOS MENOS ALTA',
+  //     color: '#525252',
+  //     isFixed: true
+  //   }
+  // ]
 
-  if (role === UserRole.DOCTOR) {
-    predefinedOptionsVar.push({
-      value: 'type_user',
-      item: 'MÍOS',
-      label: 'MÍOS',
-      color: '#525252',
-      isFixed: true
-    })
-  }
+  // if (role === UserRole.DOCTOR) {
+  //   predefinedOptionsVar.push({
+  //     value: 'type_user',
+  //     item: 'MÍOS',
+  //     label: 'MÍOS',
+  //     color: '#525252',
+  //     isFixed: true
+  //   })
+  // }
 
-  const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>(predefinedOptionsVar)
+  const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>([])
 
   //hardoceado ver como obtenerlo de otra forma
 
@@ -168,92 +166,104 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     }
   }
 
-  useEffect(() => {
-    const token = Cookies.get('authToken')
-    const fetchData = async () => {
-      try {
-        if (token) {
-          const data = await getPatients()
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-          })
-          console.log('Predifined Options em use efect', predefinedOptions)
-          const filteredPatients = filterPatients(
-            sortedData,
-            predefinedOptions,
-            searchTerm,
-            'name',
-            actual_user
-          )
-          setRawData(sortedData)
-          setPatientsData(filteredPatients)
-        }
-      } catch (error) {
-        console.error((error as Error).message)
-      }
-    }
-    if (socket) {
-      socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
-          fetchData()
-        }
-      })
-      return () => {
-        socket.off(SocketEvent.UPDATE)
-      }
-    }
-  }, [socket, predefinedOptions])
+  // useEffect(() => {
+  //   const token = Cookies.get('authToken')
+  //   const fetchData = async () => {
+  //     try {
+  //       if (token) {
+  //         const batch = Math.ceil(currentPage / 3);
+  //         if(!(filteredDataBatch.includes(batch))) {
+  //           const data = await getPaginatedPatients(batch)
+  //           const sortedData = data.sort((a, b) => {
+  //             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+  //             console.log('Predifined Options em use efect', predefinedOptions)
+  //           })
+  //           setRawData(sortedData)
+  //           const filteredPatients = filterPatients(
+  //             sortedData,
+  //             predefinedOptions,
+  //             searchTerm,
+  //             'name',
+  //             actual_user
+  //           )
+  //           setPatientsData([...patientsData, ...filteredPatients])
+  //           setfilteredDataBatch([...dataBatch, batch])
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error((error as Error).message)
+  //     }
+  //   }
+  //   if (socket) {
+  //     socket.on(SocketEvent.UPDATE, (data) => {
+  //       if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
+  //         fetchData()
+  //       }
+  //     })
+  //     return () => {
+  //       socket.off(SocketEvent.UPDATE)
+  //     }
+  //   }
+  // }, [socket, predefinedOptions])
 
-  const handleonSearch = ({ term, by }: { term: string; by: string }) => {
-    setSearchTerm(term)
-    const filterOptions: Record<string, (patient: Patient) => boolean> = {
-      name: (patient) => patient.patient_name.toLowerCase().includes(term.toLowerCase()),
-      date_of_birth: () => false
-    }
-    const filtered = patientsData?.filter((patient) => {
-      const filterFunction = filterOptions[by]
-      return filterFunction(patient)
-    })
-    if (filtered?.length === 0 || filtered === undefined) setFilteredPatients(null)
-    else setFilteredPatients(filtered)
-  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getPatients()
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-          })
-          setRawData(sortedData)
-          if (!hasExecuted) {
-            setHasExecuted(true)
-            const initialFilteredData = filterPatients(
-              sortedData,
-              predefinedOptions,
-              searchTerm,
-              'name',
-              actual_user
-            )
-            setPatientsData(initialFilteredData)
-            setFilteredPatients(initialFilteredData)
+          const batch = Math.ceil(currentPage / 3);
+          if(!(dataBatch.includes(batch))) {
+            const data = await getPaginatedPatients(batch)
+            const sortedData = data.sort((a, b) => {
+              return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+            })
+            setRawData(sortedData)
+            if (!hasExecuted) {
+              setHasExecuted(true)
+              const initialFilteredData = filterPatients(
+                sortedData,
+                predefinedOptions,
+                searchTerm,
+                'name',
+                actual_user
+              )
+              setPatientsData(initialFilteredData)
+              setFilteredPatients(initialFilteredData)
           } else {
-            setPatientsData(sortedData)
+            setPatientsData([...patientsData, ...sortedData])
           }
+          setDataBatch([...dataBatch, batch])
         }
+      }
       } catch (error) {
         console.error((error as Error).message)
       }
     }
     fetchData()
-  }, [token])
+  }, [token, currentPage, refreshSearch])
 
+
+  const searchPatient = async (name) => {
+    const data = await getPatientByName(name)
+    const sortedData = data.sort((a, b) => {
+      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+    })
+    setRawData(sortedData)
+    setPatientsData(sortedData)
+  }
+
+  const clearData = () => {
+    setDataBatch([])
+    setPatientsData([])
+    setrefreshSearch(!refreshSearch)
+  }
+  
+  
   return (
-    <div className='bg-white pb-4'>
-      <div>
-        <Search onSearch={handleonSearch} options={SearchOption} />
-        <div className='bg-white pl-4 pr-4'>
+    <div className='bg-white p-4'>
+      <div className='flex  flex-col'>
+        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData}  />
+        <div className='bg-white pr-4 flex-1 pl-4'>
           <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
           <Select
             className='w-full'
@@ -268,9 +278,9 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       </div>
 
       {searchTerm === '' && patientsData ? (
-        <PatientsList patients={patientsData} />
+        <PatientsList patients={patientsData} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       ) : searchTerm !== '' && filteredPatients ? (
-        <PatientsList patients={filteredPatients} />
+        <PatientsList patients={filteredPatients} currentPage={currentPage} setCurrentPage={setCurrentPage} />
       ) : (
         <p>No se encontraron pacientes.</p>
       )}

@@ -83,6 +83,43 @@ export class PatientsModel {
     return pat;
   }
 
+  static async getPatientsByName(patientName: string): Promise<IUser[]> {
+    try {
+      const patientsQuery = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(Patient.box_id) AS box_id,
+          Box.box_code,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment,
+          Doctor.user_name AS doctor_name,
+          Nurse.user_name AS nurse_name
+        FROM Patient
+        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        LEFT JOIN Box ON Patient.box_id = Box.box_id
+        WHERE patient_name LIKE ?;
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(patientsQuery, [`%${patientName}%`]);
+      return rows;
+    } catch (error) {
+      console.error('Error al obtener los pacientes por nombre:', error);
+      throw error;
+    }
+  }
+
   // eslint-disable-next-line consistent-return, @typescript-eslint/no-explicit-any
   static async createNewPatient({ data }): Promise<any> {
     try {
@@ -205,7 +242,10 @@ export class PatientsModel {
       const [result] = await conn.execute<OkPacket>(patientsUpdateQuery, updateValues);
 
       if (result.affectedRows > 0) {
-        if (data.patient_status === 'ALTA' && data.box_id !== null) {
+        if (
+          (data.patient_status === 'ALTA' && data.box_id !== null) ||
+          data.patient_status === 'AFUERA'
+        ) {
           await conn.query(
             `
             UPDATE Patient
@@ -339,6 +379,7 @@ export class PatientsModel {
     return PatientUpdateHistory;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async getLastPatientUpdateHistory({ id }: { id: string }): Promise<any> {
     const PatientUpdateHistoryQuery = ` 
     SELECT 
@@ -362,9 +403,11 @@ export class PatientsModel {
     const conn = await connect();
     const [uuidResult] = await conn.query<UUIDResult[]>('SELECT UUID() uuid;');
     const [{ uuid }] = uuidResult;
-    console.log(data);
-    const { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
+    console.log('Data en el metodo AddUpdateHistory:\n', data);
+    let { patient_id, patient_updated_column, patient_old_value, patient_new_value, user_id } =
       data;
+    // TODO: ver si es que es el valor patient_new_value debería ser nulo
+    if (patient_updated_column === 'box_id' && patient_new_value == null) patient_new_value = ' ';
     const insertQuery = `
         INSERT INTO PatientUpdateHistory (
           updated_id, 
@@ -417,5 +460,104 @@ export class PatientsModel {
     const conn = await connect();
     const [result] = await conn.query(patientsQuery);
     return result[0].cantidad;
+  }
+
+  static async getPaginatedPatients(page: number): Promise<Patient[]> {
+    const patientsPerPage = 60;
+    const offset = (page - 1) * patientsPerPage;
+    const patientsQuery = `
+      SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(Patient.box_id) AS box_id,
+          Box.box_code,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment,
+          Doctor.user_name AS doctor_name,
+          Nurse.user_name AS nurse_name
+      FROM Patient
+      LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+      LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+      LEFT JOIN Box ON Patient.box_id = Box.box_id
+      ORDER BY patient_entry_time DESC
+      LIMIT ${patientsPerPage} OFFSET ${offset};
+    `;
+    const conn = await connect();
+    const [rows] = await conn.query<Patient[] & RowDataPacket[]>(patientsQuery);
+    if (rows) console.log('Se obtuvieron los pacientes paginados');
+    return rows as Patient[];
+  }
+
+  static async getPatientsByUserAndStatus(userId: string, statuses: string[]): Promise<IUser[]> {
+    try {
+      const query = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(box_id) AS box_id,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment
+        FROM Patient
+        WHERE (doctor_id = UUID_TO_BIN(?) OR nurse_id = UUID_TO_BIN(?))
+        AND patient_status IN (?);
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(query, [userId, userId, statuses]);
+      return rows;
+    } catch (error) {
+      console.error('Error fetching patients by user and status:', error);
+      throw error;
+    }
+  }
+
+  static async getPatientsByStatus(statuses: string[]): Promise<IUser[]> {
+    try {
+      const query = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(box_id) AS box_id,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment
+        FROM Patient
+        WHERE patient_status IN (?);
+      `;
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(query, [statuses]);
+      return rows;
+    } catch (error) {
+      console.error('Error fetching patients by status:', error);
+      throw error;
+    }
   }
 }

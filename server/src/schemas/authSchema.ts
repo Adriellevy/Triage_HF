@@ -21,3 +21,13 @@ export function validateAuth(input: unknown): SafeParseReturnType<
 > {
   return authSchema.safeParse(input);
 }
+export function validateRefresh(input: unknown): SafeParseReturnType<
+  {
+    user_name: string;
+  },
+  {
+    user_name: string;
+  }
+> {
+  return authSchema.safeParse(input);
+}

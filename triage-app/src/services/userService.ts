@@ -1,10 +1,10 @@
-import { User } from '../interfaces/User'
+import { PartialUser, User } from '../interfaces/User'
 import Cookies from 'js-cookie'
 
 export const getAllUsers = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -38,6 +38,7 @@ export const getUserIdByToken = async (): Promise<number> => {
       },
       body: JSON.stringify(tokenpost)
     })
+
     if (!responsedocs.ok) {
       throw new Error(`Error in GET request to /Users: ${responsedocs.statusText}`)
     }
@@ -93,6 +94,124 @@ export const getAllNurses = async (): Promise<User[]> => {
   }
 }
 
+export const CreateNewUser = async (
+  newUserData: PartialUser
+): Promise<{
+  data?: PartialUser | null
+  errors?: { message: string; path: string }[] | null
+}> => {
+  const token = Cookies.get('authToken')
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/add/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(newUserData)
+    })
+
+    console.log('body del mensaje enviado \n', newUserData)
+
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      if (errorResponse.errors) {
+        const simplifiedErrors = errorResponse.errors.map(
+          ({ message, path }: { message: string; path: string[] }) => ({
+            message,
+            path: path[0]
+          })
+        )
+        return { data: null, errors: simplifiedErrors }
+      }
+
+      throw new Error(`Error en la solicitud POST a /User/add/: ${errorResponse}`)
+    }
+
+    const data = await response.json()
+    return { data, errors: null }
+  } catch (error) {
+    console.error('Error al agregar nuevo User:', JSON.stringify(error, null, 2))
+    throw new Error('Error al agregar nuevo User')
+  }
+}
+
+export const updateUser = async (
+  user_id: string,
+  updatedData: Partial<User>
+): Promise<{
+  message?: string
+  updatedUser?: User | null
+}> => {
+  try {
+    const token = Cookies.get('authToken')
+    const apiUrl = `${import.meta.env.VITE_API_URL}/users/update/${user_id}`
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body: any = {} // Initialize an empty object for the request body
+
+    // Agregar cada key-value pair al cuerpo de la solicitud
+    Object.keys(updatedData).forEach((fieldName) => {
+      body[fieldName] = updatedData[fieldName]
+    })
+
+    const response = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body) // Pasar el objeto body construido
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud PATCH a ${apiUrl}: ${response.statusText}`)
+    }
+
+    return {
+      message: 'User actualizado exitosamente',
+      updatedUser: data.User
+    }
+  } catch (error) {
+    console.error('Error al actualizar el User:', error)
+    throw new Error('Error al actualizar el User')
+  }
+}
+
+export const deleteUser = async (
+  UserId: string
+): Promise<{
+  success: boolean
+  message: string
+}> => {
+  const token = Cookies.get('authToken')
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/Users/delete/${UserId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      throw new Error(
+        `Error en la solicitud DELETE a /users/delete/: ${errorResponse.message || 'Unknown error'}`
+      )
+    }
+
+    return { success: true, message: 'User eliminado correctamente' }
+  } catch (error) {
+    console.error('Error al eliminar User:', JSON.stringify(error, null, 2))
+    return { success: false, message: 'Error al eliminar User' }
+  }
+}
+
 export const getUserById = async (user_id: string | undefined): Promise<User> => {
   const token = Cookies.get('authToken')
   try {
@@ -103,12 +222,22 @@ export const getUserById = async (user_id: string | undefined): Promise<User> =>
         Authorization: `Bearer ${token}`
       }
     })
+    if (response.status === 206) {
+      const data = await response.json()
+      const newAccessToken = data.newAccessToken
+
+      if (newAccessToken) {
+        Cookies.set('authToken', newAccessToken)
+        console.log('Token actualizado:', newAccessToken)
+        return await getUserById(user_id)
+      }
+    }
     if (!response.ok) {
       throw new Error(`Error in GET request to /user:${response.status}`)
     }
     return (await response.json()) as User
   } catch (error) {
-    console.error('Error fetching user:', error)
+    // console.error('Error fetching user:', error)
     throw new Error('Error fetching user')
   }
 }

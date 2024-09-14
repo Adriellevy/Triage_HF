@@ -96,7 +96,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
   return (
     <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
       <div className='bg-white p-8 rounded-lg'>
-        {conflictData ? (
+        {conflictData && (
           <>
             <h1 className="text-center font-bold mb-4">Conflicto de Datos</h1>
             <p className="mb-4 text-center">Selecciona los valores que deseas conservar e ignorar</p>
@@ -146,8 +146,6 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
               </button>
             </div>
           </>
-        ) : (
-          <p>No hay datos de conflicto para resolver</p>
         )}
       </div>
     </div>

@@ -22,17 +22,21 @@ import PatientEdit from './pages/PatientEdit'
 import StatsPatientTriage from './pages/stats/StatsPatientTriage'
 import PatientsMeanTimeNurse from './pages/stats/PatientsMeanTimeNurse'
 import PatientsMeanAge from './pages/stats/PatientsMeanAge'
+import Settings from './pages/settings/Settings'
+import ProtectedRouteWithVerification from './components/ProtectedRouteWithVerification'
+import TimeExpireModalAndErrors from './components/TimeExpireModalAndErrors'
+
 function App() {
   const { isAuthenticated, login } = useAuth()
   const { role, setRole } = useRoleContext()
   const [User, setUser] = useState<string>('')
   const [Actual_user, setActualUser] = useState<User>()
+  const [showWarning, setShowWarning] = useState(false) // Estado para controlar el modal
+  const [errorMessage, setErrorMessage] = useState('') // Estado para almacenar el mensaje de error
 
   useEffect(() => {
     const valor_token = Cookies.get('authToken')
     if (valor_token) {
-      //aca se puede mandar la solicitud aca o en login para chequear si el token es bueno o es shit (quiero que se vaya fijando cada vez que se haga algo en la app eso)
-      //ver si esto nos generaria algun cuello de botella
       setUser(valor_token)
       login(valor_token)
     }
@@ -47,16 +51,27 @@ function App() {
           setRole(user.user_type)
           setActualUser(user)
         }
-      } catch (error) {
-        console.error((error as Error).message)
+      } catch (error: any) {
+        // Mostrar el modal con el error
+        setErrorMessage(error.message || 'Unknown error occurred')
+        setShowWarning(true)
+        console.error('el error que llego es: ', error)
       }
     }
     fetchData()
-  })
+  }, [User, setRole])
 
   return (
     <Suspense>
       <Toaster richColors closeButton visibleToasts={7} />
+      {/* Mostrar el modal si hay un error */}
+      {showWarning && (
+        <TimeExpireModalAndErrors
+          message={errorMessage}
+          onClose={() => setShowWarning(false)} // Cierra el modal al hacer clic en el botón
+        />
+      )}
+
       <Routes>
         {isAuthenticated ? (
           <Route
@@ -74,10 +89,7 @@ function App() {
                         element={<Patients actual_user={Actual_user} role={role} />}
                       />
                     )}
-                    <Route path='/patients/:patient_id' element={<PatientDetail />} />{' '}
-                    {
-                      //le paso el parametro del tipo de usario para saber que ventana de edicion de paciente cargar
-                    }
+                    <Route path='/patients/:patient_id' element={<PatientDetail />} />
                     <Route
                       path='/edit_patient/:edditingPatientID'
                       element={<PatientEdit user_tipe={role} />}
@@ -87,22 +99,102 @@ function App() {
                     <Route path='/boxes' element={<Boxes />} />
                     {role === UserRole.HOSPITAL && (
                       <>
-                        <Route path='/stats/cant_pacientes_fecha' element={<StatsPatinet />} />
-                        <Route path='/stats/top_consultas_fecha' element={<StatsTopConsultas />} />
+                        <Route
+                          path='/stats/cant_pacientes_fecha'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsPatinet />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/stats/top_consultas_fecha'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsTopConsultas />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
                         <Route
                           path='/stats/patients_mean_time_doctor'
-                          element={<StatsPatientTriage />}
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <StatsPatientTriage />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
                         <Route
                           path='/stats/patients_mean_time_nurse'
-                          element={<PatientsMeanTimeNurse />}
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <PatientsMeanTimeNurse />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
                         <Route
-                          path='/stats/number_patients_date/age/'
-                          element={<PatientsMeanAge />}
+                          path='/stats/number_patients_date/age'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <PatientsMeanAge />
+                            </ProtectedRouteWithVerification>
+                          }
                         />
-                        <Route path='/settings/user' element={<UserSettings />} />
-                        <Route path='/settings/box' element={<BoxSettings />} />
+                        <Route
+                          path='/settings/user'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <UserSettings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/settings/box'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <BoxSettings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
+                        <Route
+                          path='/settings/'
+                          element={
+                            <ProtectedRouteWithVerification
+                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                              role={role}
+                              allowedRole={UserRole.HOSPITAL}
+                            >
+                              <Settings />
+                            </ProtectedRouteWithVerification>
+                          }
+                        />
                       </>
                     )}
                     <Route path='*' element={<NotFound />} />

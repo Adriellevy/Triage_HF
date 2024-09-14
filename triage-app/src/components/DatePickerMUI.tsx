@@ -23,13 +23,9 @@ export const DatePickerMUI: React.FC<DatePickerMUIProps> = ({
     // Update the local state when the selected date changes from the parent
     setSelectedDate(selectedDateExt ? dayjs(selectedDateExt) : null)
   }, [selectedDateExt])
-
   const getFormatTime = (date: dayjs.Dayjs | null) => {
     if (date) {
-      const dia = date.format('DD')
-      const mes = date.format('MM')
-      const anio = date.format('YYYY')
-      return `${anio}-${mes}-${dia}`
+      return date.toDate()
     }
     return null
   }

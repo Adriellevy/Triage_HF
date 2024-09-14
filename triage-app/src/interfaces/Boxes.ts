@@ -1,6 +1,6 @@
 export enum BoxType {
   CONSULTORIO = 'CONSULTORIO',
-  SHOOCKROOM = 'SHOOCK ROOM',
+  SHOOCKROOM = 'SHOCK ROOM',
   HOSPITALIZATION = 'INTERNACION',
   OBSERVACION = 'OBSERVACION'
 }
@@ -18,7 +18,17 @@ export interface Box {
   box_status: BoxStatus
   patient_id?: string
   patient_name?: string
+  userAdded?: string
   [Symbol.iterator](): IterableIterator<Box>
 }
-
+export interface PartialBox {
+  box_id?: string
+  box_code: string
+  box_type: BoxType
+  box_time?: string
+  box_status?: BoxStatus
+  patient_id?: string
+  patient_name?: string
+  [Symbol.iterator](): IterableIterator<Box>
+}
 export type NullableBox = Box | null

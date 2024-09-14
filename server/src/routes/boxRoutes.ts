@@ -15,3 +15,18 @@ boxRouter.get('/available', (req: Request, res: Response) => {
 boxRouter.get('/searchid/:id', (req: Request, res: Response) => {
   void BoxController.getBoxCodeById(req, res);
 });
+
+// Ruta para agregar un nuevo box
+boxRouter.post('/add', (req: Request, res: Response) => {
+  void BoxController.createNewBox(req, res);
+});
+
+// Ruta para actualizar un box existente
+boxRouter.patch('/update/:id', (req: Request, res: Response) => {
+  void BoxController.updateBox(req, res);
+});
+
+// Ruta para agregar un nuevo box
+boxRouter.delete('/delete/:id', (req: Request, res: Response) => {
+  void BoxController.deleteBox(req, res);
+});

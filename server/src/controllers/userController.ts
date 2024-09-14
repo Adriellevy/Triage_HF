@@ -2,6 +2,11 @@ import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { UserModel } from '../models/mysql/userModel';
 import { verifyToken } from '../helpers/authhelper';
+import { validatePartialUpdateUser, validateUser } from '../schemas/userSchema';
+import { IUser } from '../models/mysql/patientModel';
+import { User, UserRole } from '../interface/user';
+import { SendUpdatedUserNotifications } from '../helpers/notificationhelper';
+import { encrypt } from '../helpers/handleBcrypt';
 
 export class UserController {
   static async getUserIdByToken(req: Request, res: Response): Promise<Response> {
@@ -20,6 +25,13 @@ export class UserController {
   static async getUserById(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const User = await UserModel.getUserByID({ id });
       if (User) return res.json(User);
       return res.status(404).json({ message: 'User not found' });
@@ -31,6 +43,13 @@ export class UserController {
   static async getAllDoctors(req: Request, res: Response): Promise<Response> {
     try {
       const users = await UserModel.getAllDoctors();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
       return res.json(newusers);
     } catch (error) {
@@ -41,10 +60,161 @@ export class UserController {
   static async getAllNurse(req: Request, res: Response): Promise<Response> {
     try {
       const users = await UserModel.getAllNurse();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
       const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
       return res.json(newusers);
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
+
+  static async getAllUsers(req: Request, res: Response): Promise<Response> {
+    try {
+      const users = await UserModel.getAllUsers();
+      const token = req.headers.authorization?.split(' ')[1];
+      if (token) {
+        const tokendecoded = verifyToken(token.toString());
+        if (!tokendecoded) {
+          return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+      }
+      const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
+      return res.json(newusers);
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async createNewUser(req: Request, res: Response): Promise<Response> {
+    const { ...userData } = req.body;
+
+    console.log('Informacion que llego:', userData);
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+
+    const decoded = verifyToken(token);
+    const result = validatePartialUpdateUser(userData);
+
+    if (!result.success) {
+      // Respuesta enviada, se detiene la ejecución
+      return res.status(500).json({ errors: result.error.errors });
+    }
+
+    try {
+      const { user_password } = result.data;
+      if (user_password) {
+        const hash_password = await encrypt(user_password);
+        userData.user_password = hash_password;
+        console.log('Hash pass:', hash_password);
+        console.log('userData.user_password:', userData.user_password);
+        const newUser = await UserModel.addUser(userData as User);
+        if (newUser) {
+          // Obtener usuarios con rol 'HOSPITAL'
+          const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+          SendUpdatedUserNotifications(req, newUser, Users, token);
+          return res.status(201).json({
+            message: 'Nuevo usuario creado exitosamente',
+            userId: newUser.user_id,
+            createdBy: decoded.id
+          });
+        }
+      }
+      // Respuesta de error si no se pudo crear el usuario
+      return res.status(500).json({ message: 'Error al crear el usuario' });
+    } catch (error) {
+      // Manejo de errores generales
+      return res.status(500).json({ message: 'Algo salió mal' });
+    }
+  }
+
+  // Actualizar un usuario existente
+  static async updateUser(req: Request, res: Response): Promise<Response> {
+    const { id: userId } = req.params;
+    const { ...userData } = req.body;
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+
+    const decoded = verifyToken(token);
+    const result = validatePartialUpdateUser(userData);
+    if (!result.success) {
+      return res.status(500).json({ errors: result.error.errors });
+    }
+
+    try {
+      const existingUser = await UserModel.getUserById(userId);
+      if (!existingUser) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      const updatedUser = await UserModel.updateUser(userId, result.data as User);
+
+      if (updatedUser) {
+        // Obtener usuarios con rol 'HOSPITAL'
+        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+        SendUpdatedUserNotifications(req, existingUser, Users, token);
+        return res.status(200).json({
+          message: 'Usuario actualizado exitosamente',
+          userId: updatedUser.user_id,
+          updatedBy: decoded.id
+        });
+      }
+
+      return res.status(500).json({ message: 'Error al actualizar el usuario' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Algo salió mal' });
+    }
+  }
+
+  // Eliminar un usuario
+  static async deleteUser(req: Request, res: Response): Promise<Response> {
+    const { id: userId } = req.params;
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+
+    const decoded = verifyToken(token);
+
+    try {
+      const existingUser = await UserModel.getUserById(userId);
+      if (!existingUser) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      const deleted = await UserModel.deleteUser(userId);
+      if (deleted) {
+        const Users: User[] = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+        SendUpdatedUserNotifications(req, existingUser, Users, token);
+        return res.status(200).json({
+          message: 'Usuario eliminado correctamente',
+          userId,
+          deletedBy: decoded.id
+        });
+      }
+
+      return res.status(500).json({ message: 'Error al eliminar el usuario' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Algo salió mal' });
+    }
+  }
+  // static async getAllHospitalUser(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const users = await UserModel.getUsersByRole(UserRole.HOSPITAL);
+  //     const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
+  //     return res.json(newusers);
+  //   } catch (error) {
+  //     return res.status(500).json({ message: 'Something goes wrong' });
+  //   }
+  // }
 }

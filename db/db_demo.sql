@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Box;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS PatientUpdateHistory;
+DROP TABLE IF EXISTS Tokens;
 
 CREATE TABLE User (
   user_id BINARY(16) NOT NULL,
@@ -63,6 +64,15 @@ CREATE TABLE PatientUpdateHistory (
   user_id BINARY(16) NOT NULL,
   PRIMARY KEY(updated_id),
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
+  FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+CREATE TABLE Tokens (
+  token_id BINARY(16) NOT NULL,
+  refresh_token VARCHAR(255) NOT NULL,
+  user_id BINARY(16) NOT NULL,
+  issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  PRIMARY KEY(token_id),
   FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
 

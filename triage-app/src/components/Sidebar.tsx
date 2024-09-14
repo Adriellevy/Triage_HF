@@ -6,7 +6,7 @@ import { getUserById, getUserIdByToken } from '@/services/userService'
 import { SocketContext } from '@/contex/SocketContext'
 import { useAuth } from '@/contex/AuthContext'
 import { useRoleContext } from '@/contex/RoleContext'
-import { PartialUser, UserRole } from '@/interfaces/User'
+import { PartialUser, User, UserRole } from '@/interfaces/User'
 import GuidedEntryIcon from '@/icons/guided-entry-icon.svg'
 import BoxesIcon from '@/icons/boxes-icon.svg'
 import PatientsIcon from '@/icons/patients.svg'
@@ -23,6 +23,7 @@ import DoctorImg from '../assets/doctor.jpeg'
 import { UpdateEvent } from '@/interfaces/Socket'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
+import { Box } from '@/interfaces/Boxes'
 
 interface MenuItem {
   icon?: string
@@ -137,27 +138,66 @@ function Sidebar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const handleSocketEvent = (data: { patient: Patient; message: UpdateEvent }) => {
-      const { patient_id } = data.patient
-      console.log(patient_id)
-      if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
-        toast.info('Nuevo paciente asignado', {
-          action: {
-            label: 'Ver datos del paciente',
-            onClick: () => {
-              navigate(`/patients/${patient_id}`)
+    const handleSocketEvent = (data: {
+      user?: User
+      patient?: Patient
+      message: UpdateEvent
+      box?: Box
+    }) => {
+      if (data.patient) {
+        const { patient_id } = data.patient
+        console.log(patient_id)
+
+        if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
+          toast.info('Nuevo paciente asignado', {
+            action: {
+              label: 'Ver datos del paciente',
+              onClick: () => {
+                navigate(`/patients/${patient_id}`)
+              }
             }
-          }
-        })
-      } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
-        toast.info('Uno de tus pacientes ha sido editado', {
-          action: {
-            label: 'Ver datos del paciente',
-            onClick: () => {
-              navigate(`/patients/${patient_id}`)
+          })
+        } else if (data.message === UpdateEvent.UPDATE_PATIENT) {
+          toast.info('Uno de tus pacientes ha sido editado', {
+            action: {
+              label: 'Ver datos del paciente',
+              onClick: () => {
+                navigate(`/patients/${patient_id}`)
+              }
             }
+          })
+        }
+      } else if (data.box) {
+        //En el caso de que el box lo haya agregado el mismo usuario
+        if (data.box.userAdded !== token) {
+          if (data.message === UpdateEvent.BOX_UPDATE) {
+            toast.info('Uno de sus Boxes ha sido modificado', {
+              action: {
+                label: 'Ver la lista de Boxes',
+                onClick: () => {
+                  navigate(`/settings/box`)
+                }
+              }
+            })
           }
-        })
+        }
+      } else if (data.user) {
+        //En el caso de que el box lo haya agregado el mismo usuario
+        if (data.user.userAdded !== token) {
+          if (data.message === UpdateEvent.USER_UPDATE) {
+            toast.info('Uno de sus Usuarios ha sido modificado', {
+              action: {
+                label: 'Ver la lista de Boxes',
+                onClick: () => {
+                  navigate(`/settings/box`)
+                }
+              }
+            })
+          }
+        }
+      } else {
+        console.error('LLego una notificacion por socket que no es Box ni Patient')
+        console.log('Data recibida del socket:', data)
       }
     }
     const setupSocket = () => {
@@ -186,8 +226,17 @@ function Sidebar() {
           const user = await getUserById(String(data))
           setUserInfo(user)
         }
-      } catch (error) {
-        console.error((error as Error).message)
+      } catch (err) {
+        if (err.message.includes('404')) {
+          console.error('Error 404: Usuario no encontrado')
+          // setShowConfirmModal(true) // Mostrar modal para que confirme su presencia
+        } else if (err.message.includes('Unauthorized')) {
+          // Si el token es inválido o no autorizado
+          // console.error('Error: No autorizado')
+          // setShowConfirmModal(true) // Mostrar modal para que vuelva a iniciar sesión
+        } else {
+          console.error('Error al obtener el usuario:', err.message)
+        }
       }
     }
     fetchData()

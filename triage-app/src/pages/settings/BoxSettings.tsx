@@ -1,7 +1,57 @@
+import { useState, useEffect, useContext } from 'react'
+import { getAllBoxes } from '@/services/boxService'
+import { Box } from '@/interfaces/Boxes'
+import LoaderSpin from '@/components/LoaderSpin'
+import BoxEdittingList from '../../components/BoxSettingsComponents/BoxEdittingList'
+import { SocketContext } from '@/contex/SocketContext'
+import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
+
 function BoxSettings() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [boxesData, setboxesData] = useState<Box[]>([])
+  const socket = useContext(SocketContext)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const data = await getAllBoxes()
+        setboxesData(data)
+        setIsLoading(false)
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const data = await getAllBoxes()
+        setboxesData(data)
+        setIsLoading(false)
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+      if (socket) {
+        socket.on(SocketEvent.UPDATE, (data) => {
+          if (data.message == UpdateEvent.BOX_UPDATE) {
+            fetchData()
+          }
+        })
+        return () => {
+          socket.off(SocketEvent.UPDATE)
+        }
+      }
+    }
+    fetchData()
+  }, [socket])
+
   return (
-    <div>
-      <h1>Box settings</h1>
+    <div className='bg-white pb-4'>
+      {isLoading ? <LoaderSpin /> : <BoxEdittingList initialBoxes={boxesData} />}
     </div>
   )
 }

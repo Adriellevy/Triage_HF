@@ -7,6 +7,8 @@ import { getAllBoxes } from '@/services/boxService'
 import { Box } from '@/interfaces/Boxes'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { useTranslation } from 'react-i18next'
+import LoaderSpin from '@/components/LoaderSpin'
+import { Link } from 'react-router-dom'
 
 function Boxes() {
   const { t } = useTranslation('Boxes')
@@ -84,7 +86,7 @@ function Boxes() {
     <div className='bg-white pb-4'>
       <Search onSearch={handleonSearch} options={SearchOption} />
       {isLoading ? (
-        <p>Cargando...</p>
+        <LoaderSpin></LoaderSpin>
       ) : searchTerm === '' && boxesData ? (
         <BoxList boxes={boxesData} />
       ) : searchTerm !== '' && filteredBoxes ? (

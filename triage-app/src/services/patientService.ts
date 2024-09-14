@@ -23,6 +23,27 @@ export const getPatients = async (): Promise<Patient[]> => {
   }
 }
 
+export const getPaginatedPatients = async (batch: number): Promise<Patient[]> => {
+  try {
+    const token = Cookies.get('authToken')
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/page/${batch}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+    if (!response.ok) {
+      throw new Error(`Error in GET request to /patient: ${response.statusText}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching patients:', error)
+    throw new Error('Error fetching patients')
+  }
+}
+
 export const getPatientById = async (patient_id: string | undefined): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
@@ -32,6 +53,27 @@ export const getPatientById = async (patient_id: string | undefined): Promise<Pa
         Authorization: `Bearer ${token}`
       }
     })
+    if (!response.ok) {
+      throw new Error(`Error in GET request to /patient:${response.status}`)
+    }
+    return (await response.json()) as Patient
+  } catch (error) {
+    console.error('Error fetching patient:', error)
+    throw new Error('Error fetching patient')
+  }
+}
+export const getPatientByName = async (patient_name: string | undefined): Promise<Patient> => {
+  const token = Cookies.get('authToken')
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/patient/patientName/${patient_name}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient:${response.status}`)
     }
@@ -160,7 +202,7 @@ export const addNewPatient = async (
     const data = await response.json()
     return { data, errors: null }
   } catch (error) {
-    console.error('Error al agregar nuevo paciente:', error)
+    console.error('Error al agregar nuevo paciente:', JSON.stringify(error, null, 2))
     throw new Error('Error al agregar nuevo paciente')
   }
 }

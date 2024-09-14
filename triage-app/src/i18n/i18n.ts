@@ -29,7 +29,14 @@ import Boxes_es from './locales/es/Boxes.json'
 import Boxes_en from './locales/en/Boxes.json'
 import WarningBox_es from './locales/es/WarningBox.json'
 import WarningBox_en from './locales/en/WarningBox.json'
-
+import BoxEditor_es from './locales/es/BoxEditor.json'
+import BoxEditor_en from './locales/en/BoxEditor.json'
+import UserItem_es from './locales/es/UserItem.json'
+import UserItem_en from './locales/en/UserItem.json'
+import VerifyUser_es from './locales/es/VerifyUser.json'
+import VerifyUser_en from './locales/en/VerifyUser.json'
+import TimeExpireModalAndErrors_es from './locales/es/TimeExpireModalAndErrors.json'
+import TimeExpireModalAndErrors_en from './locales/en/TimeExpireModalAndErrors.json'
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -56,7 +63,11 @@ i18n
         BoxList: BoxList_es,
         BoxItem: BoxItem_es,
         Boxes: Boxes_es,
-        WarningBox: WarningBox_es
+        WarningBox: WarningBox_es,
+        BoxEditor: BoxEditor_es,
+        UserItem: UserItem_es,
+        VerifyUser: VerifyUser_es,
+        TimeExpireModalAndErrors: TimeExpireModalAndErrors_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -71,7 +82,11 @@ i18n
         BoxList: BoxList_en,
         BoxItem: BoxItem_en,
         Boxes: Boxes_en,
-        WarningBox: WarningBox_en
+        WarningBox: WarningBox_en,
+        BoxEditor: BoxEditor_en,
+        UserItem: UserItem_en,
+        VerifyUser: VerifyUser_en,
+        TimeExpireModalAndErrors: TimeExpireModalAndErrors_en
       }
     }
   })

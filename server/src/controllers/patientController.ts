@@ -2,12 +2,13 @@ import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { PatientsModel } from '../models/mysql/patientModel';
 import { validatePartialPatient, validatePatient } from '../schemas/patientSchema';
-import { verifyToken } from '../helpers/authhelper';
+import { verifyRefreshToken, verifyToken } from '../helpers/authhelper';
 import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
 import {
   SendNewPatientNotifications,
   SendUpdatePatientNotifications
 } from '../helpers/notificationhelper';
+import { string } from 'zod';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -30,6 +31,8 @@ export class PatientController {
 
     const decoded = verifyToken(token);
     const userID = decoded.id;
+    // const DatabaseToken = await verifyRefreshToken(token, userID);
+    // if (!DatabaseToken) res.status(401).json({ error: 'Token no proporcionado' });
 
     if (!result.success) {
       return res.status(500).json({ errors: result.error.errors });
@@ -67,6 +70,17 @@ export class PatientController {
     }
   }
 
+  static async getPatientByName(req: Request, res: Response): Promise<Response> {
+    try {
+      const { name } = req.params;
+      const User = await PatientsModel.getPatientsByName(name.toString());
+      if (User) return res.json(User);
+      return res.status(404).json({ message: 'Patient not found' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
   static async updatePatient(req: Request, res: Response): Promise<Response> {
     const result = validatePartialPatient(req.body);
 
@@ -83,12 +97,13 @@ export class PatientController {
 
     const tokendecoded = verifyToken(token);
     const userID = tokendecoded.id;
-
+    // const DatabaseToken = await verifyRefreshToken(token, userID);
+    // if (!DatabaseToken) res.status(401).json({ error: 'Token no proporcionado' });
     try {
       const { id } = req.params;
       const { Merge_Complete } = req.body; // Destructurar Merge_complete del cuerpo del request
       console.log('Body mensaje:\n ', req.body);
-      console.log('\nHay merge complete\n', Merge_Complete);
+      console.log('\nHay merge complete?:', Merge_Complete);
       const UserAntiguo = await PatientsModel.getPatientById({ id });
 
       if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
@@ -115,8 +130,8 @@ export class PatientController {
 
             const timeDifference = Math.abs(currentUpdateDate.getTime() - lastUpdatedAt.getTime());
 
-            if (timeDifference <= 30000) {
-              // 1000 Milisegundos = 1 segundo. Son 30 segs
+            if (timeDifference <= 10000) {
+              // 1000 Milisegundos = 1 segundo. Son 10 segs
               return res.status(409).json({
                 message: 'Conflict detected',
                 currentData: UserAntiguo,
@@ -157,161 +172,6 @@ export class PatientController {
     }
   }
 
-  /*
-
-  static async updatePatient(req: Request, res: Response): Promise<Response> {
-    const result = validatePartialPatient(req.body);
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ error: 'Token no proporcionado' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as ExtendedJwtPayload;
-    const userID = decoded.id;
-
-    if (!result.success) {
-      return res.status(400).json({ error: JSON.parse(result.error.message) });
-    }
-    try {
-      const { id } = req.params;
-
-      const [UserAntiguo] = await PatientsModel.getPatientById({ id });
-
-      if (result.data.patient_age) {
-        result.data.patient_age = new Date(result.data.patient_age);
-      }
-      if (result.data.patient_triage_time) {
-        result.data.patient_triage_time = new Date(result.data.patient_triage_time);
-      }
-      if (result.data.patient_entry_time) {
-        result.data.patient_entry_time = new Date(result.data.patient_entry_time);
-      }
-      if (result.data.patient_exit_time) {
-        result.data.patient_exit_time = new Date(result.data.patient_exit_time);
-      }
-      const UserNuevo = result.data;
-      const cambios = [];
-      const tiempoActual = new Date();
-
-      console.log(UserNuevo);
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const key in UserNuevo) {
-        if (key === 'patient_exit_time') {
-          
-            cambios.push({
-            patient_id: UserAntiguo.patient_id,
-            updated_column: key,
-            old_value: 'null',
-            new_value: UserNuevo[key],
-            update_date: tiempoActual,
-            user_id: userID,
-          })
-          
-        } else if (
-          key === 'patient_triage_time' ||
-          key === 'patient_entry_time' ||
-          key === 'patient_age'
-        ) {
-          if (UserAntiguo[key].getTime() !== UserNuevo[key].getTime()) {
-            cambios.push({
-              patient_id: UserAntiguo.patient_id,
-              updated_column: key,
-              old_value: UserAntiguo[key],
-              new_value: UserNuevo[key],
-              update_date: tiempoActual,
-              user_id: userID
-            });
-          }
-        } else if (key === 'patient_isolated') {
-          if (
-            // eslint-disable-next-line no-prototype-builtins
-            UserAntiguo.hasOwnProperty(key) &&
-            Boolean(UserAntiguo[key]) !== Boolean(UserNuevo[key])
-          ) {
-            cambios.push({
-              patient_id: UserAntiguo.patient_id,
-              updated_column: key,
-              old_value: UserAntiguo[key],
-              new_value: UserNuevo[key],
-              update_date: tiempoActual,
-              user_id: userID
-            });
-          }
-        } else if (
-          // eslint-disable-next-line no-prototype-builtins
-          UserAntiguo.hasOwnProperty(key) &&
-          UserAntiguo[key] !== UserNuevo[key]
-        ) {
-          cambios.push({
-            patient_id: UserAntiguo.patient_id,
-            updated_column: key,
-            old_value: UserAntiguo[key],
-            new_value: UserNuevo[key],
-            update_date: tiempoActual,
-            user_id: userID
-          });
-        }
-      }
-      console.log(cambios);
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of cambios) {
-        // eslint-disable-next-line no-await-in-loop
-        await PatientsModel.AddUpdateHistory({ data: item });
-      }
-
-      const updatedUser = await PatientsModel.updatePatient({
-        id,
-        data: result.data
-      });
-
-      if (updatedUser === false) {
-        return res.status(404).json({ message: 'Patient not found' });
-      }
-
-      const { io } = req;
-      io?.emit('update', {
-        message: 'Updated patient'
-      });
-      try {
-        const [Patient] = await PatientsModel.getPatientById({ id });
-
-        if (userID !== result.data.doctor_id) {
-          io?.emit(`${result.data.doctor_id}`, {
-            message: 'Updated patient',
-            patient: {
-              patient_name: Patient.patient_name,
-              patient_id: id
-            }
-          });
-        }
-
-        if (userID !== result.data.nurse_id) {
-          io?.emit(`${result.data.nurse_id}`, {
-            message: 'Updated patient',
-            patient: {
-              patient_name: Patient.patient_name,
-              patient_id: id
-            }
-          });
-        }
-
-        io?.emit('update', {
-          message: 'Box Update'
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      return res.json(updatedUser);
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' });
-    }
-  }
-
-  */
-
   static async getPatientUpdateHistory(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
@@ -319,6 +179,55 @@ export class PatientController {
       return res.json(UpdateHistory);
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
+    try {
+      const { batch } = req.params;
+      const pageNumber = parseInt(batch, 10);
+      if (isNaN(pageNumber) || pageNumber < 1) {
+        return res.status(400).json({ message: 'Invalid page number' });
+      }
+      console.log('llego a la paginacion');
+      const paginatedPatients = await PatientsModel.getPaginatedPatients(pageNumber);
+      return res.json(paginatedPatients);
+    } catch (error) {
+      return res.status(500).json({ message: 'Something goes wrong' });
+    }
+  }
+
+  static async getUsersByFilter(req: Request, res: Response): Promise<Response> {
+    try {
+      const { PatientsOfThisUser, Filters, userId } = req.body;
+      if (typeof userId !== 'string')
+        res.status(404).json({ message: 'UserId is not correct format' });
+
+      if (!Array.isArray(Filters)) res.status(404).json({ message: 'Filters should be an array' });
+
+      // Si PatientsOfThisUser es verdadero, buscar pacientes asignados a este usuario (doctor o enfermero)
+      if (PatientsOfThisUser) {
+        const patients = await PatientsModel.getPatientsByUserAndStatus(userId, Filters);
+        if (patients.length > 0) {
+          return res.json(patients);
+        } else {
+          return res
+            .status(404)
+            .json({ message: 'No patients found for this user with the given statuses' });
+        }
+      }
+      // Si PatientsOfThisUser es falso, buscar pacientes por los estados especificados en Filters
+      else {
+        const patients = await PatientsModel.getPatientsByStatus(Filters);
+        if (patients.length > 0) {
+          return res.json(patients);
+        } else {
+          return res.status(404).json({ message: 'No patients found with the given statuses' });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
     }
   }
 }

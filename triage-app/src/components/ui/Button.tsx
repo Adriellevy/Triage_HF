@@ -1,7 +1,8 @@
+import { grey } from '@mui/material/colors'
 import React from 'react'
 
 interface PropsInput extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color: 'red' | 'blue' | 'green' | 'yellow' | 'grey' | 'grey_disabled'
+  color: 'red' | 'blue' | 'green' | 'yellow' | 'grey' | 'grey_disabled' | null
   wfull?: boolean
 }
 
@@ -14,7 +15,7 @@ export function Button({ children, color, wfull = false, ...props }: PropsInput)
     grey: 'bg-slate-500 hover:bg-slate-700',
     grey_disabled: 'bg-slate-500'
   }
-
+  if (!color) color = 'grey_disabled'
   return (
     <button
       className={`

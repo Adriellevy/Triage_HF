@@ -12,5 +12,6 @@ export interface User {
   user_password?: string;
   user_type: UserRole;
   user_specialization?: string;
+  user_cellphone?: string;
   state?: boolean;
 }

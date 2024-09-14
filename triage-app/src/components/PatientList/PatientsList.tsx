@@ -2,15 +2,19 @@ import { useState } from 'react'
 import PatientItem from '@/components/PatientList/PatientItem'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
+import Pagination from '../Pagination/Pagination'
 
 interface PropsPatientsList {
   patients: Patient[]
+  currentPage: number
+  setCurrentPage: (page: number) => void
 }
 
-function PatientsList({ patients }: PropsPatientsList) {
+function PatientsList({ patients, currentPage, setCurrentPage }: PropsPatientsList) {
   const { t } = useTranslation('PatientList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const patientsPerPage = 20
 
   const columns = [
     { label: t('NameLabel'), field: 'patient_name', sortable: true, showOnLargeScreen: true },
@@ -59,6 +63,10 @@ function PatientsList({ patients }: PropsPatientsList) {
     }
   }
 
+  const handlePagination = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   const sortedPatients = [...patients].sort((a, b) => {
     if (!sortColumn) {
       return 0
@@ -76,6 +84,9 @@ function PatientsList({ patients }: PropsPatientsList) {
     }
   })
 
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatients = sortedPatients.slice(indexOfFirstPatient, indexOfLastPatient);
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <table className='w-full border border-gray-300'>
@@ -96,15 +107,21 @@ function PatientsList({ patients }: PropsPatientsList) {
           </tr>
         </thead>
         <tbody>
-          {sortedPatients.map((patient, index) => (
-            <PatientItem key={patient?.patient_id} patient={patient} index={index} />
+          {currentPatients.map((patient, index) => (
+            <PatientItem key={patient.patient_id} patient={patient} index={index} />
           ))}
-          {/*quitALTApatients.map((patient, index) => (
-          ))*/}
         </tbody>
       </table>
+      <div className='flex justify-center'>
+      <Pagination
+        patientsPerPage={patientsPerPage}
+        length={patients.length}
+        currentPage={currentPage}
+        onPageChange={handlePagination} 
+        />
+      </div>
     </div>
-  )
+  );
 }
 
 export default PatientsList
