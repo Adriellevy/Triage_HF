@@ -28,11 +28,12 @@ const authenticateToken = async (
     return;
   }
 
-  // Vemos si el token JWT del usuario sigue siendo válido, tira excepcion si vence
+  // Vemos si el token JWT del usuario sigue siendo válido, tira excepcion si vence y le
+  // devuelve al mismo un nuevo token
   try {
     verifyToken(token);
   } catch (err) {
-    if (err.name === 'TokenExpiredError') {
+    if (err.name === 'TokenExpiredError' || err.message === 'jwt expired') {
       const decoded = jwt.decode(token);
 
       // Verificamos que 'decoded' es un objeto y no un string
@@ -57,8 +58,8 @@ const authenticateToken = async (
     }
   }
 
+  // Verificamos si el refresh token de la base de datos es valido
   try {
-    // Verificamos el token JWT para ver si es válido
     const user = verifyToken(token);
 
     if (!user) {
@@ -69,21 +70,21 @@ const authenticateToken = async (
     // Asignamos el usuario al request para usarlo en rutas protegidas
     req.user = user;
     console.log('Usario que pidio la req', user);
-    // Verificamos si el refresh token del usuario sigue siendo válido
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const refresh_token_database = await TokensModel.findTokenByUserId(user.id);
     if (refresh_token_database) {
-      const es_valido = verifyToken(refresh_token_database.refresh_token);
+      // Verificamos si el refresh token del usuario sigue siendo válido
+      verifyToken(refresh_token_database.refresh_token);
       console.log('refresh token database:', refresh_token_database);
-      if (!es_valido) {
-        res.status(407).json({ error: 'Hay que crear un nuevo refreshtoken' }); // Puedes enviar el nuevo refresh token en la respuesta
-      }
     }
     // Continuamos con la siguiente middleware o ruta
     next();
   } catch (err) {
     // Manejamos los distintos tipos de errores que pueden ocurrir
-    if (err.message === 'Token expired') {
+    if (err.name === 'TokenExpiredError') {
+      console.log('Se envio el 207');
+      res.status(207).json({ error: '207' }); // Puedes enviar el nuevo refresh token en la respuesta
+    } else if (err.message === 'Token expired') {
       res.status(401).json({ error: 'Access Denied - Token Expired' });
     } else if (err.message === 'Token not found in database' || err.message === 'Invalid Token') {
       res.status(401).json({ error: 'Access Denied - Invalid Token' });

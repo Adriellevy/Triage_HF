@@ -30,11 +30,11 @@ export class AuthController {
         id: UserData.user_id,
         name: user_name
       };
-      const token = signTokenWithExpiration(userForToken, 1 / 3600); //TODO CAMBIAR LINEA
+      const token = signTokenWithExpiration(userForToken, 10 / 60); //TODO CAMBIAR TIEMPO LOGIN
 
       // Verificar si existe un refresh token en la base de datos
       const existingToken = await TokensModel.findTokenByUserId(UserData.user_id);
-      const RefreshToken = signTokenWithExpiration(userForToken, 1); // Token de refresco
+      const RefreshToken = signTokenWithExpiration(userForToken, 1 / 3600); // Token de refresco //TODO CAMBIAR TIEMPO REFRESH
 
       if (existingToken) {
         // Si existe, actualiza el refresh token
