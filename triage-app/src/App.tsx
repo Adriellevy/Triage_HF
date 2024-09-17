@@ -27,7 +27,7 @@ import ProtectedRouteWithVerification from './components/ProtectedRouteWithVerif
 import TimeExpireModalAndErrors from './components/TimeExpireModalAndErrors'
 
 function App() {
-  const { isAuthenticated, login } = useAuth()
+  const { isAuthenticated, login, logout } = useAuth()
   const { role, setRole } = useRoleContext()
   const [User, setUser] = useState<string>('')
   const [Actual_user, setActualUser] = useState<User>()
@@ -52,10 +52,14 @@ function App() {
           setActualUser(user)
         }
       } catch (error: any) {
-        // Mostrar el modal con el error
-        setErrorMessage(error.message || 'Unknown error occurred')
-        setShowWarning(true)
-        console.error('el error que llego es: ', error)
+        if (error.message === 'Cerrar sesion') {
+          logout()
+        } else {
+          // Mostrar el modal con el error
+          setErrorMessage(error.message || 'Unknown error occurred')
+          setShowWarning(true)
+          console.error('el error que llego es: ', error)
+        }
       }
     }
     fetchData()
@@ -68,7 +72,10 @@ function App() {
       {showWarning && (
         <TimeExpireModalAndErrors
           message={errorMessage}
-          onClose={() => setShowWarning(false)} // Cierra el modal al hacer clic en el botón
+          onClose={() => {
+            logout()
+            setShowWarning(false)
+          }} // Cierra el modal al hacer clic en el botón
         />
       )}
 

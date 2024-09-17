@@ -26,7 +26,7 @@ function ProtectedRouteWithVerification({
   // Verificamos si existe la cookie de verificación cuando se monta el componente
   useEffect(() => {
     const verificationToken = Cookies.get('verificationToken')
-
+    //TODO ver de como hacer para proteger el acceso a todas estas rutas es una posible forma de no tener que hacer muchos cambios
     if (isAuthenticated && verificationToken) {
       setVerified(true)
     } else {

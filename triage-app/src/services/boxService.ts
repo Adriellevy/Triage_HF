@@ -11,15 +11,24 @@ export const getAllBoxes = async (): Promise<Box[]> => {
         Authorization: `Bearer ${token}`
       }
     })
-
+    // Verificamos el estado de la respuesta antes de procesarla
+    console.log('response status', responsedocs.status)
+    if (responsedocs.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
+    }
     if (!response.ok) {
       throw new Error(`Error en la solicitud GET a /box: ${response.statusText}`)
     }
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error al obtener boxes:', error)
-    throw new Error('Error al obtener boxes')
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.error('Error al obtener boxes:', error)
+      throw new Error('Error al obtener boxes')
+    }
   }
 }
 

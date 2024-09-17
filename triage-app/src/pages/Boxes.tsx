@@ -9,6 +9,7 @@ import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { useTranslation } from 'react-i18next'
 import LoaderSpin from '@/components/LoaderSpin'
 import { Link } from 'react-router-dom'
+import { useAuth } from '@/contex/AuthContext'
 
 function Boxes() {
   const { t } = useTranslation('Boxes')
@@ -17,6 +18,7 @@ function Boxes() {
   const [boxesData, setboxesData] = useState<Box[] | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [filteredBoxes, setFilteredBoxes] = useState<Box[] | null>(null)
+  const { logout } = useAuth()
 
   const SearchOption = [
     {
@@ -67,7 +69,11 @@ function Boxes() {
           setboxesData(data)
         }
       } catch (error) {
-        console.error((error as Error).message)
+        if (error.message === 'Cerrar sesion') {
+          logout()
+        } else {
+          console.error((error as Error).message)
+        }
       }
     }
     if (socket) {

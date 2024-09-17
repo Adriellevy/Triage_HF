@@ -11,6 +11,12 @@ export const getAllUsers = async (): Promise<User[]> => {
         Authorization: `Bearer ${token}`
       }
     })
+    // Verificamos el estado de la respuesta antes de procesarla
+    console.log('response status', responsedocs.status)
+    if (responsedocs.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
+    }
 
     if (!responsedocs.ok) {
       throw new Error(`Error in GET request to /Users: ${responsedocs.statusText}`)
@@ -19,8 +25,12 @@ export const getAllUsers = async (): Promise<User[]> => {
 
     return data
   } catch (error) {
-    console.error('Error fetching Users:', error)
-    throw new Error('Error fetching Users')
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.error('Error fetching Users:', error)
+      throw new Error('Error fetching Users')
+    }
   }
 }
 
@@ -38,15 +48,26 @@ export const getUserIdByToken = async (): Promise<number> => {
       },
       body: JSON.stringify(tokenpost)
     })
-
+    // Verificamos el estado de la respuesta antes de procesarla
+    console.log('response status', responsedocs.status)
+    if (responsedocs.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
+    }
     if (!responsedocs.ok) {
+      console.log("Se lanzo el error en: 'getUserIdByToken' ")
       throw new Error(`Error in GET request to /Users: ${responsedocs.statusText}`)
     }
     const data = await responsedocs.json()
     return data
   } catch (error) {
-    console.error('Error fetching Users:', error)
-    throw new Error('Error fetching Users')
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.log("catch el error en: 'getUserIdByToken' ")
+      console.error('Error fetching Users:', error)
+      throw new Error('Error fetching Users')
+    }
   }
 }
 
@@ -60,15 +81,23 @@ export const getAllDoctors = async (): Promise<User[]> => {
         Authorization: `Bearer ${token}`
       }
     })
-
+    console.log('response status', response.status)
+    if (response.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
+    }
     if (!response.ok) {
       throw new Error(`Error in GET request to /Users: ${response.statusText}`)
     }
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching Users:', error)
-    throw new Error('Error fetching Users')
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.error('Error fetching Users:', error)
+      throw new Error('Error fetching Users')
+    }
   }
 }
 
@@ -222,13 +251,13 @@ export const getUserById = async (user_id: string | undefined): Promise<User> =>
         Authorization: `Bearer ${token}`
       }
     })
+
     if (response.status === 206) {
       const data = await response.json()
       const newAccessToken = data.newAccessToken
-
+      console.log('Se refresco el token del usuario')
       if (newAccessToken) {
         Cookies.set('authToken', newAccessToken)
-        console.log('Token actualizado:', newAccessToken)
         return await getUserById(user_id)
       }
     }

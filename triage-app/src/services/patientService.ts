@@ -33,14 +33,22 @@ export const getPaginatedPatients = async (batch: number): Promise<Patient[]> =>
         Authorization: `Bearer ${token}`
       }
     })
+    if (response.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
+    }
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient: ${response.statusText}`)
     }
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching patients:', error)
-    throw new Error('Error fetching patients')
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.error('Error fetching patients:', error)
+      throw new Error('Error fetching patients')
+    }
   }
 }
 

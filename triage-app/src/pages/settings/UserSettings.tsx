@@ -5,11 +5,13 @@ import UserList from '../../components/UserSettingsComponents/UserList'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { User } from '@/interfaces/User'
+import { useAuth } from '@/contex/AuthContext'
 
 function UserSettings() {
   const [isLoading, setIsLoading] = useState(false)
   const [UsersData, setUsersData] = useState<User[]>([])
   const socket = useContext(SocketContext)
+  const { logout } = useAuth()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +21,11 @@ function UserSettings() {
         setUsersData(data)
         setIsLoading(false)
       } catch (error) {
-        console.error((error as Error).message)
+        if (error.message === 'Cerrar sesion') {
+          logout()
+        } else {
+          console.error((error as Error).message)
+        }
       }
     }
     fetchData()
@@ -33,7 +39,11 @@ function UserSettings() {
         setUsersData(data)
         setIsLoading(false)
       } catch (error) {
-        console.error((error as Error).message)
+        if (error.message === 'Cerrar sesion') {
+          logout()
+        } else {
+          console.error((error as Error).message)
+        }
       }
 
       if (socket) {
