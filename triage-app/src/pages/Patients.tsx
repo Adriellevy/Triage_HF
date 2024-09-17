@@ -88,33 +88,6 @@ const options: Option[] = [
       { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
       { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
     ]
-  },
-  {
-    label: 'PATIENT STATE',
-    options: [
-      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
-      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
-      {
-        value: 'patient_isolated',
-        item: 'EN AISLAMIENTO',
-        label: 'EN AISLAMIENTO',
-        color: '#525252'
-      },
-      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
-      {
-        value: 'patient_status',
-        item: 'TODOS MENOS ALTA',
-        label: 'TODOS MENOS ALTA',
-        color: '#525252'
-      },
-      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
-    ]
-  },
-  {
-    label: 'From Who',
-    options: [
-      { value: 'type_user', label: 'MÍOS', color: '#525252' }
-    ]
   }
 ]
 function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) {
@@ -211,7 +184,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     const fetchData = async () => {
       try {
         if (token) {
-          const batch = Math.ceil(currentPage / 3);
+          const batch = Math.ceil(currentPage / 2);
           if(!(dataBatch.includes(batch))) {
             const data = await getPaginatedPatients(batch)
             const sortedData = data.sort((a, b) => {
@@ -250,19 +223,21 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     })
     setRawData(sortedData)
     setPatientsData(sortedData)
+    setCurrentPage(1)
   }
 
   const clearData = () => {
     setDataBatch([])
     setPatientsData([])
     setrefreshSearch(!refreshSearch)
+    setSearchName('')
   }
   
   
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
-        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData}  />
+        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData} />
         <div className='bg-white pr-4 flex-1 pl-4'>
           <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
           <Select
