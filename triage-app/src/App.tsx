@@ -25,6 +25,7 @@ import PatientsMeanAge from './pages/stats/PatientsMeanAge'
 import Settings from './pages/settings/Settings'
 import ProtectedRouteWithVerification from './components/ProtectedRouteWithVerification'
 import TimeExpireModalAndErrors from './components/TimeExpireModalAndErrors'
+import ProtectedRouteAutentication from './components/ProtectedRouteAutentication'
 
 function App() {
   const { isAuthenticated, login, logout } = useAuth()
@@ -88,118 +89,184 @@ function App() {
                 <Sidebar />
                 <div className='flex-1 overflow-y-auto bg-gray-100 mt-16 md:mt-0 lg:mt-0'>
                   <Routes>
-                    <Route path='/' element={<GuidedEntry />} />
-                    <Route path='/guidedentry' element={<GuidedEntry />} />
+                    <Route
+                      path='/'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <GuidedEntry />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
+                    <Route
+                      path='/guidedentry'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <GuidedEntry />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
                     {Actual_user && (
                       <Route
                         path='/patients'
-                        element={<Patients actual_user={Actual_user} role={role} />}
+                        element={
+                          <ProtectedRouteAutentication>
+                            <Patients actual_user={Actual_user} role={role} />
+                          </ProtectedRouteAutentication>
+                        }
                       />
                     )}
-                    <Route path='/patients/:patient_id' element={<PatientDetail />} />
+                    <Route
+                      path='/patients/:patient_id'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <PatientDetail />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
                     <Route
                       path='/edit_patient/:edditingPatientID'
-                      element={<PatientEdit user_tipe={role} />}
+                      element={
+                        <ProtectedRouteAutentication>
+                          <PatientEdit user_tipe={role} />
+                        </ProtectedRouteAutentication>
+                      }
                     />
-                    <Route path='/users' element={<UserDetail />} />
-                    <Route path='/users/:user_id' element={<UserDetail />} />
-                    <Route path='/boxes' element={<Boxes />} />
+                    <Route
+                      path='/users'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <UserDetail />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
+                    <Route
+                      path='/users/:user_id'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <UserDetail />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
+                    <Route
+                      path='/boxes'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <Boxes />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
                     {role === UserRole.HOSPITAL && (
                       <>
                         <Route
                           path='/stats/cant_pacientes_fecha'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <StatsPatinet />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <StatsPatinet />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/stats/top_consultas_fecha'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <StatsTopConsultas />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <StatsTopConsultas />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/stats/patients_mean_time_doctor'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <StatsPatientTriage />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <StatsPatientTriage />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/stats/patients_mean_time_nurse'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <PatientsMeanTimeNurse />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <PatientsMeanTimeNurse />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/stats/number_patients_date/age'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <PatientsMeanAge />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <PatientsMeanAge />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/settings/user'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <UserSettings />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <UserSettings />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/settings/box'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <BoxSettings />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <BoxSettings />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                         <Route
                           path='/settings/'
                           element={
-                            <ProtectedRouteWithVerification
-                              Username={Actual_user?.user_name ? Actual_user.user_name : ''}
-                              role={role}
-                              allowedRole={UserRole.HOSPITAL}
-                            >
-                              <Settings />
-                            </ProtectedRouteWithVerification>
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <Settings />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
                           }
                         />
                       </>
