@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
-import { getPaginatedPatients,  getPatientByName } from '../services/patientService'
+import { getFilteredPatients, getPaginatedPatients,  getPatientByName } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
@@ -13,6 +13,8 @@ import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
 import PatientSearchBar from '@/components/PatientList/PatientSearchBar'
+import { Button } from '@/components/ui'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 const colourStyles: StylesConfig<ColourOption, true> = {
@@ -80,16 +82,47 @@ const SearchOption = [
 ]
 
 const options: Option[] = [
+  // {
+  //   label: 'TRIAGE LEVEL',
+  //   options: [
+  //     { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#bdbebe' },
+  //     { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
+  //     { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
+  //     { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
+  //   ]
+  // },
   {
-    label: 'TRIAGE LEVEL',
+    label: 'Estado del paciente',
     options: [
-      { value: 'patient_triage_level', item: '1', label: 'Triage Level 1', color: '#bdbebe' },
-      { value: 'patient_triage_level', item: '2', label: 'Triage Level 2', color: '#FF3300' },
-      { value: 'patient_triage_level', item: '3', label: 'Triage Level 3', color: '#CCCC52' },
-      { value: 'patient_triage_level', item: '4', label: 'Triage Level 4', color: '#69A84F' },
+      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
+      { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
+      { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
+      {
+        value: 'patient_status',
+        item: 'TODOS MENOS ALTA',
+        label: 'TODOS MENOS ALTA',
+        color: '#525252'
+      },
+      { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
+    ]
+  },
+  {
+    label: 'Esta aislado?',
+    options: [
+      {value: 'patient_isolated',
+      item: 'EN AISLAMIENTO',
+      label: 'EN AISLAMIENTO',
+      color: '#525252'}
+    ]
+  },
+  {
+    label: 'De quien?',
+    options: [
+      { value: 'type_user', label: 'MÍOS', color: '#525252' }
     ]
   }
 ]
+
 function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) {
   const socket = useContext(SocketContext)
   const token = Cookies.get('authToken')
@@ -100,9 +133,9 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [hasExecuted, setHasExecuted] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [dataBatch, setDataBatch] = useState([])
-  const [filteredDataBatch, setfilteredDataBatch] = useState([])
   const [searchName, setSearchName] = useState('')
   const [refreshSearch, setrefreshSearch] = useState(false)
+  const [filterOptions, setfilterOptions] =  useState<ColourOption[]>([])
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // const predefinedOptionsVar: ColourOption[] = [
@@ -130,13 +163,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   //hardoceado ver como obtenerlo de otra forma
 
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
-    console.log('predefined options debería cambiar a:\n', selectedOptions)
-    setPredefinedOptions(selectedOptions as ColourOption[])
-    if (RawData) {
-      const filteredData = filterPatients(RawData, selectedOptions, searchTerm, 'name', actual_user)
-      setPatientsData(filteredData)
-      setFilteredPatients(filteredData)
-    }
+    setfilterOptions(selectedOptions as ColourOption[])
   }
 
   // useEffect(() => {
@@ -233,13 +260,45 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     setSearchName('')
   }
   
-  
+  const filterPatientsTrigger = async (ops) => {
+    if(ops) {
+      const reqBody = []
+      const filters = []
+      for (let i = 0; i < ops.length; i++) {
+        if (ops[i].label == 'MÍOS') {
+          reqBody.push(true)
+          break
+        } else {
+          reqBody.push(false)
+          break
+        }
+      }
+      for (let i = 0; i < ops.length; i++) {
+        if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
+          filters.push(ops[i].label);
+        }
+      }      
+      reqBody.push(filters)
+      if(reqBody[0] === true) {
+        reqBody.push(actual_user.user_id)
+      }
+      console.log(reqBody)
+      const data = await getFilteredPatients(reqBody)
+      const sortedData = data.sort((a, b) => {
+        return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+      })
+      setRawData(sortedData)
+      setPatientsData(sortedData)
+      setCurrentPage(1)
+    }
+  }
+
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
         <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData} />
-        <div className='bg-white pr-4 flex-1 pl-4'>
-          <label className='text-sm font-medium text-gray-700 mb-2'>Patient filters:</label>
+        <label className='text-sm font-medium text-gray-700 mb-2 px-4'>Patient filters:</label>
+        <div className='bg-white flex px-4'>
           <Select
             className='w-full'
             options={options}
@@ -249,6 +308,11 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
             styles={colourStyles}
             defaultValue={predefinedOptions}
           />
+          <Button
+            className='ml-4 py-2 px-4 text-white bg-green-500 hover:bg-green-700 flex-shrink-0 rounded-lg'
+            color='green'
+            onClick={() => filterPatientsTrigger(filterOptions)}>Filtrar
+        </Button>
         </div>
       </div>
 
