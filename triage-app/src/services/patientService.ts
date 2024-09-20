@@ -95,7 +95,7 @@ export const getPatientByName = async (patient_name: string | undefined): Promis
 export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patientsByFilters/`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patientsByFilters`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -104,7 +104,6 @@ export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> =
       body: JSON.stringify({
         PatientsOfThisUser: ops[0],
         Filters: ops[1],
-        userId: ops[2]
       })
     })
     if (response.status === 207) {
@@ -112,7 +111,7 @@ export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> =
       throw new Error('Cerrar sesion')
     }
     if (!response.ok) {
-      throw new Error(`Error in GET request to /patient: ${response.statusText}`)
+      throw new Error(`Error in POST request to /patientByFilters: ${response.statusText}`)
     }
     const data = await response.json()
     return data

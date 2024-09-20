@@ -19,7 +19,7 @@ patientRouter.get('/patientName/:name', (req: Request, res: Response) => {
   void PatientController.getPatientByName(req, res);
 });
 
-patientRouter.post('/patientsByFilters/', (req: Request, res: Response) => {
+patientRouter.post('/patientsByFilters', (req: Request, res: Response) => {
   void PatientController.getUsersByFilter(req, res);
 });
 

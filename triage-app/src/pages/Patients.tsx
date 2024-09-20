@@ -109,7 +109,8 @@ const options: Option[] = [
   {
     label: 'Esta aislado?',
     options: [
-      {value: 'patient_isolated',
+      {
+      value: 'patient_isolated',
       item: 'EN AISLAMIENTO',
       label: 'EN AISLAMIENTO',
       color: '#525252'}
@@ -243,7 +244,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }, [token, currentPage, refreshSearch])
 
 
-  const searchPatient = async (name) => {
+  const searchPatientByName = async (name) => {
     const data = await getPatientByName(name)
     const sortedData = data.sort((a, b) => {
       return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
@@ -275,13 +276,14 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
       }
       for (let i = 0; i < ops.length; i++) {
         if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
-          filters.push(ops[i].label);
+          if( ops[i].value === 'patient_isolated') {
+            filters.push(true)
+          } else {
+            filters.push(ops[i].label);
+          }
         }
       }      
       reqBody.push(filters)
-      if(reqBody[0] === true) {
-        reqBody.push(actual_user.user_id)
-      }
       console.log(reqBody)
       const data = await getFilteredPatients(reqBody)
       const sortedData = data.sort((a, b) => {
@@ -296,7 +298,8 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
-        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatient} clearData={clearData} />
+        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatientByName} clearData={clearData} />
+        
         <label className='text-sm font-medium text-gray-700 mb-2 px-4'>Patient filters:</label>
         <div className='bg-white flex px-4'>
           <Select
