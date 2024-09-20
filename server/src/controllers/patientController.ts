@@ -235,10 +235,7 @@ export class PatientController {
 
   static async getUsersByDate(req: Request, res: Response): Promise<Response> {
     try {
-      console.log('Request Body:', req.body);
       const { StartDate, EndDate } = req.body;
-      console.log('\nStartDate:', StartDate);
-      console.log('\nEndDate:', EndDate);
       const token = req.headers.authorization?.split(' ')[1];
       if (!token) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -263,15 +260,11 @@ export class PatientController {
       const formattedStartDate = format(new Date(StartDate), 'yyyy-MM-dd 00:00:00');
       // Convertir el EndDate al formato YYYY-MM-DD 23:59:59 para incluir todo el día
       const formattedEndDate = format(new Date(EndDate), 'yyyy-MM-dd 23:59:59');
-
-      console.log('\formattedStartDate:', formattedStartDate);
-      console.log('\formattedEndDate:', formattedEndDate);
       const patients = await PatientsModel.getPatientsByEntryDate(
         formattedStartDate,
         formattedEndDate
       );
 
-      console.log('pacientes entre fechas', patients);
       return res.json(patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
