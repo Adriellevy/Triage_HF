@@ -554,8 +554,8 @@ export class PatientsModel {
   }
 
   static async getPatientsByStatus(statuses: Array<string | boolean>): Promise<IUser[]> {
-  try {
-    let query = `
+    try {
+      let query = `
       SELECT 
         BIN_TO_UUID(patient_id) AS patient_id,
         patient_name,
@@ -575,26 +575,29 @@ export class PatientsModel {
       FROM Patient
       WHERE 1=1`; // Inicia con una condición verdadera
 
-    let queryParams: (string | boolean)[] = [];
+      let queryParams: (string | boolean)[] = [];
 
-    const isolatedStatus = statuses.find(item => typeof item === 'boolean') as boolean | undefined;
-    const statusList = statuses.filter(item => typeof item === 'string') as string[];
+      const isolatedStatus = statuses.find((item) => typeof item === 'boolean') as
+        | boolean
+        | undefined;
+      const statusList = statuses.filter((item) => typeof item === 'string') as string[];
 
-    if (statusList.length > 0) {
-      query += ` AND patient_status IN (?)`;
-      queryParams.push(statusList);
+      if (statusList.length > 0) {
+        query += ` AND patient_status IN (?)`;
+        queryParams.push(statusList);
+      }
+
+      if (isolatedStatus !== undefined) {
+        query += ` AND patient_isolated = ?`;
+        queryParams.push(isolatedStatus);
+      }
+
+      const conn = await connect();
+      const [rows] = await conn.query<IUser[]>(query, queryParams);
+      return rows;
+    } catch (error) {
+      console.error('Error fetching patients by status:', error);
+      throw error;
     }
-
-    if (isolatedStatus !== undefined) {
-      query += ` AND patient_isolated = ?`;
-      queryParams.push(isolatedStatus);
-    }
-
-    const conn = await connect();
-    const [rows] = await conn.query<IUser[]>(query, queryParams);
-    return rows;
-  } catch (error) {
-    console.error('Error fetching patients by status:', error);
-    throw error;
   }
 }
