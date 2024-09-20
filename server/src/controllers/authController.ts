@@ -34,7 +34,7 @@ export class AuthController {
 
       // Verificar si existe un refresh token en la base de datos
       const existingToken = await TokensModel.findTokenByUserId(UserData.user_id);
-      const RefreshToken = signTokenWithExpiration(userForToken, 1 / 3600); // Token de refresco //TODO CAMBIAR TIEMPO REFRESH
+      const RefreshToken = signTokenWithExpiration(userForToken, 10 / 60); // Token de refresco //TODO CAMBIAR TIEMPO REFRESH
 
       if (existingToken) {
         // Si existe, actualiza el refresh token
