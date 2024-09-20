@@ -23,6 +23,10 @@ patientRouter.post('/patientsByFilters', (req: Request, res: Response) => {
   void PatientController.getUsersByFilter(req, res);
 });
 
+patientRouter.post('/patientsByDate', (req: Request, res: Response) => {
+  void PatientController.getUsersByDate(req, res);
+});
+
 patientRouter.patch('/:id', (req: Request, res: Response) => {
   void PatientController.updatePatient(req, res);
 });

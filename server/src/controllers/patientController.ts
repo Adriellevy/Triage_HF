@@ -225,7 +225,43 @@ export class PatientController {
         patients = await PatientsModel.getPatientsByStatus(Filters);
       }
 
-      console.log('Pacientes devueltos: \n', patients);
+      return res.json(patients);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+
+  static async getUsersByDate(req: Request, res: Response): Promise<Response> {
+    try {
+      const { StartDate, EndDate } = req.body;
+
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
+
+      const tokendecoded = verifyToken(token);
+      const userID = tokendecoded.id;
+      if (!userID) {
+        return res.status(404).json({ message: 'UserId is not correct format' });
+      }
+
+      // Validar que las fechas sean cadenas de texto
+      if (typeof StartDate !== 'string' || typeof EndDate !== 'string') {
+        return res.status(400).json({ message: 'StartDate y EndDate deben ser cadenas de texto' });
+      }
+
+      // Verificar si las fechas son válidas
+      const startDateValid = !isNaN(Date.parse(StartDate));
+      const endDateValid = !isNaN(Date.parse(EndDate));
+
+      if (!startDateValid || !endDateValid) {
+        return res.status(400).json({ message: 'Las fechas proporcionadas no son válidas' });
+      }
+
+      const patients = await PatientsModel.getPatientsByEntryDate(StartDate, EndDate);
+
       return res.json(patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
