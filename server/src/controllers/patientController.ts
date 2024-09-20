@@ -213,6 +213,7 @@ export class PatientController {
       }
 
       if (!Array.isArray(Filters)) {
+        console.log('Error en como recibo los filtros');
         return res.status(404).json({ message: 'Filters should be an array' });
       }
 
@@ -225,6 +226,7 @@ export class PatientController {
       }
 
       if (patients.length > 0) {
+        console.log('Pacientes devueltos: \n', patients);
         return res.json(patients);
       } else {
         return res.status(404).json({ message: 'No patients found with the given filters' });
