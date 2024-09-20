@@ -621,9 +621,7 @@ export class PatientsModel {
           doctor_studies_solicitated,
           nurse_coment
         FROM Patient
-        WHERE patient_entry_time BETWEEN 
-          STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ') AND 
-          STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ');
+        WHERE patient_entry_time BETWEEN ? AND ?;
       `;
 
       const conn = await connect();

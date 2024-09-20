@@ -9,6 +9,7 @@ import {
   SendUpdatePatientNotifications
 } from '../helpers/notificationhelper';
 import { string } from 'zod';
+import { format } from 'date-fns';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -258,7 +259,17 @@ export class PatientController {
         return res.status(400).json({ message: 'Las fechas proporcionadas no son válidas' });
       }
 
-      const patients = await PatientsModel.getPatientsByEntryDate(StartDate, EndDate);
+      // Convertir el StartDate al formato YYYY-MM-DD 00:00:00
+      const formattedStartDate = format(new Date(StartDate), 'yyyy-MM-dd 00:00:00');
+      // Convertir el EndDate al formato YYYY-MM-DD 23:59:59 para incluir todo el día
+      const formattedEndDate = format(new Date(EndDate), 'yyyy-MM-dd 23:59:59');
+
+      console.log('\formattedStartDate:', formattedStartDate);
+      console.log('\formattedEndDate:', formattedEndDate);
+      const patients = await PatientsModel.getPatientsByEntryDate(
+        formattedStartDate,
+        formattedEndDate
+      );
 
       console.log('pacientes entre fechas', patients);
       return res.json(patients);
