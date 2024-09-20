@@ -252,7 +252,9 @@ export class PatientController {
         console.log('No pasaron las strings');
         return res.status(400).json({ message: 'StartDate y EndDate deben ser cadenas de texto' });
       }
+      console.log('\nStartDate:', StartDate);
 
+      console.log('\nEndDate:', EndDate);
       // Verificar si las fechas son válidas
       const startDateValid = !isNaN(Date.parse(StartDate));
       const endDateValid = !isNaN(Date.parse(EndDate));
