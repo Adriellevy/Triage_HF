@@ -257,11 +257,13 @@ export class PatientController {
       const endDateValid = !isNaN(Date.parse(EndDate));
 
       if (!startDateValid || !endDateValid) {
+        console.log('No pasaron las fechas');
         return res.status(400).json({ message: 'Las fechas proporcionadas no son válidas' });
       }
 
       const patients = await PatientsModel.getPatientsByEntryDate(StartDate, EndDate);
 
+      console.log('pacientes entre fechas', patients);
       return res.json(patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
