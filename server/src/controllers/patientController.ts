@@ -225,12 +225,8 @@ export class PatientController {
         patients = await PatientsModel.getPatientsByStatus(Filters);
       }
 
-      if (patients.length > 0) {
-        console.log('Pacientes devueltos: \n', patients);
-        return res.json(patients);
-      } else {
-        return res.status(404).json({ message: 'No patients found with the given filters' });
-      }
+      console.log('Pacientes devueltos: \n', patients);
+      return res.json(patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       return res.status(500).json({ message: 'Something went wrong' });
