@@ -1,3 +1,4 @@
+import { Dayjs } from 'dayjs'
 import { PartialPatient, Patient, PatientHistoryItemType } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
 
@@ -92,10 +93,42 @@ export const getPatientByName = async (patient_name: string | undefined): Promis
   }
 }
 
+export const getPatientsByDate= async (startDate: Dayjs | undefined, endDate: Dayjs | undefined): Promise<Patient> => {
+  const token = Cookies.get('authToken')
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/patient/patientsByDate`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify ({
+          StartDate: startDate,
+          EndDate: endDate
+        })
+      }
+    )
+    const testBody = JSON.stringify ({
+      StartDate: startDate,
+      EndDate: endDate
+    })
+    console.log(testBody)
+    if (!response.ok) {
+      throw new Error(`Error in POST request to /patient:${response.status}`)
+    }
+    return (await response.json()) as Patient
+  } catch (error) {
+    console.error('Error fetching patient:', error)
+    throw new Error('Error fetching patient')
+  }
+}
+
 export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patientsByFilters`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByFilters`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

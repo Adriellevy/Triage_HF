@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import Select, { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
-import { getFilteredPatients, getPaginatedPatients,  getPatientByName } from '../services/patientService'
+import { getFilteredPatients, getPaginatedPatients,  getPatientByName, getPatientsByDate } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
 import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
@@ -15,6 +15,8 @@ import { filterPatients } from '@/helpers/HelperPatientList'
 import PatientSearchBar from '@/components/PatientList/PatientSearchBar'
 import { Button } from '@/components/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import PatientByDatePicker from '@/components/PatientList/PatientByDatePicker'
+import { Dayjs } from 'dayjs'
 
 
 const colourStyles: StylesConfig<ColourOption, true> = {
@@ -137,6 +139,8 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [searchName, setSearchName] = useState('')
   const [refreshSearch, setrefreshSearch] = useState(false)
   const [filterOptions, setfilterOptions] =  useState<ColourOption[]>([])
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // const predefinedOptionsVar: ColourOption[] = [
@@ -254,6 +258,18 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     setCurrentPage(1)
   }
 
+  const searchPatientByDate = async ([startDate, endDate]) => {
+    console.log(startDate)
+    console.log(endDate)
+    const data = await getPatientsByDate(startDate, endDate)
+    const sortedData = data.sort((a, b) => {
+      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+    })
+    setRawData(sortedData)
+    setPatientsData(sortedData)
+    setCurrentPage(1)
+  }
+
   const clearData = () => {
     setDataBatch([])
     setPatientsData([])
@@ -299,7 +315,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
         <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatientByName} clearData={clearData} />
-        
+        <PatientByDatePicker startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} searchPatientByDate={searchPatientByDate} />
         <label className='text-sm font-medium text-gray-700 mb-2 px-4'>Patient filters:</label>
         <div className='bg-white flex px-4'>
           <Select
@@ -310,6 +326,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
             onChange={onChangeSelect}
             styles={colourStyles}
             defaultValue={predefinedOptions}
+            deselect-option={() => filterPatientsTrigger(filterOptions)}
           />
           <Button
             className='ml-4 py-2 px-4 text-white bg-green-500 hover:bg-green-700 flex-shrink-0 rounded-lg'
