@@ -12,8 +12,8 @@ export const getAllBoxes = async (): Promise<Box[]> => {
       }
     })
     // Verificamos el estado de la respuesta antes de procesarla
-    console.log('response status', responsedocs.status)
-    if (responsedocs.status === 207) {
+    console.log('response status', response.status)
+    if (response.status === 207) {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
     }
