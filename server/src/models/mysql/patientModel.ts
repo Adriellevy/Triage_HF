@@ -534,8 +534,8 @@ export class PatientsModel {
       const statusList = statuses.filter((item) => typeof item === 'string') as string[];
 
       if (statusList.length > 0) {
-        query += ` AND patient_status IN (?)`;
-        queryParams.push(statusList);
+        query += ` AND patient_status IN (${statusList.map(() => '?').join(', ')})`; // genera un placeholder por cada estado
+        queryParams.push(...statusList); // expande el array de statusList como múltiples parámetros
       }
 
       // Filtra por el valor de "aislado" si se recibe un booleano
