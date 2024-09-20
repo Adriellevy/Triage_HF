@@ -234,8 +234,10 @@ export class PatientController {
 
   static async getUsersByDate(req: Request, res: Response): Promise<Response> {
     try {
+      console.log('Request Body:', req.body);
       const { StartDate, EndDate } = req.body;
-
+      console.log('\nStartDate:', StartDate);
+      console.log('\nEndDate:', EndDate);
       const token = req.headers.authorization?.split(' ')[1];
       if (!token) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -247,9 +249,6 @@ export class PatientController {
         return res.status(404).json({ message: 'UserId is not correct format' });
       }
 
-      console.log('\nStartDate:', StartDate);
-
-      console.log('\nEndDate:', EndDate);
       // Verificar si las fechas son válidas
       const startDateValid = !isNaN(Date.parse(StartDate));
       const endDateValid = !isNaN(Date.parse(EndDate));
