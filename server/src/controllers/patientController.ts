@@ -249,6 +249,7 @@ export class PatientController {
 
       // Validar que las fechas sean cadenas de texto
       if (typeof StartDate !== 'string' || typeof EndDate !== 'string') {
+        console.log('No pasaron las strings');
         return res.status(400).json({ message: 'StartDate y EndDate deben ser cadenas de texto' });
       }
 
