@@ -498,31 +498,54 @@ export class PatientsModel {
     return rows as Patient[];
   }
 
-  static async getPatientsByUserAndStatus(userId: string, statuses: string[]): Promise<IUser[]> {
+  static async getPatientsByUserAndStatus(
+    userId: string,
+    statuses: Array<string | boolean>
+  ): Promise<IUser[]> {
     try {
-      const query = `
-        SELECT 
-          BIN_TO_UUID(patient_id) AS patient_id,
-          patient_name,
-          patient_age,
-          patient_entry_time,
-          patient_exit_time,
-          patient_triage_time,
-          patient_triage_level,
-          patient_isolated,
-          BIN_TO_UUID(box_id) AS box_id,
-          patient_status,
-          patient_symptom,
-          patient_healthcare_system,
-          doctor_procedure,
-          doctor_studies_solicitated,
-          nurse_coment
-        FROM Patient
-        WHERE (doctor_id = UUID_TO_BIN(?) OR nurse_id = UUID_TO_BIN(?))
-        AND patient_status IN (?);
-      `;
+      let query = `
+      SELECT 
+        BIN_TO_UUID(patient_id) AS patient_id,
+        patient_name,
+        patient_age,
+        patient_entry_time,
+        patient_exit_time,
+        patient_triage_time,
+        patient_triage_level,
+        patient_isolated,
+        BIN_TO_UUID(box_id) AS box_id,
+        patient_status,
+        patient_symptom,
+        patient_healthcare_system,
+        doctor_procedure,
+        doctor_studies_solicitated,
+        nurse_coment
+      FROM Patient
+      WHERE (doctor_id = UUID_TO_BIN(?) OR nurse_id = UUID_TO_BIN(?))`;
+
+      let queryParams: (string | boolean)[] = [userId, userId];
+
+      // Verifica si el segundo valor del array es un booleano
+      const isolatedStatus = statuses.find((item) => typeof item === 'boolean') as
+        | boolean
+        | undefined;
+
+      // Verifica si hay algún array no vacío con estados de pacientes
+      const statusList = statuses.filter((item) => typeof item === 'string') as string[];
+
+      if (statusList.length > 0) {
+        query += ` AND patient_status IN (?)`;
+        queryParams.push(statusList);
+      }
+
+      // Filtra por el valor de "aislado" si se recibe un booleano
+      if (isolatedStatus !== undefined) {
+        query += ` AND patient_isolated = ?`;
+        queryParams.push(isolatedStatus);
+      }
+
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(query, [userId, userId, statuses]);
+      const [rows] = await conn.query<IUser[]>(query, queryParams);
       return rows;
     } catch (error) {
       console.error('Error fetching patients by user and status:', error);
@@ -530,34 +553,48 @@ export class PatientsModel {
     }
   }
 
-  static async getPatientsByStatus(statuses: string[]): Promise<IUser[]> {
-    try {
-      const query = `
-        SELECT 
-          BIN_TO_UUID(patient_id) AS patient_id,
-          patient_name,
-          patient_age,
-          patient_entry_time,
-          patient_exit_time,
-          patient_triage_time,
-          patient_triage_level,
-          patient_isolated,
-          BIN_TO_UUID(box_id) AS box_id,
-          patient_status,
-          patient_symptom,
-          patient_healthcare_system,
-          doctor_procedure,
-          doctor_studies_solicitated,
-          nurse_coment
-        FROM Patient
-        WHERE patient_status IN (?);
-      `;
-      const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(query, [statuses]);
-      return rows;
-    } catch (error) {
-      console.error('Error fetching patients by status:', error);
-      throw error;
+  static async getPatientsByStatus(statuses: Array<string | boolean>): Promise<IUser[]> {
+  try {
+    let query = `
+      SELECT 
+        BIN_TO_UUID(patient_id) AS patient_id,
+        patient_name,
+        patient_age,
+        patient_entry_time,
+        patient_exit_time,
+        patient_triage_time,
+        patient_triage_level,
+        patient_isolated,
+        BIN_TO_UUID(box_id) AS box_id,
+        patient_status,
+        patient_symptom,
+        patient_healthcare_system,
+        doctor_procedure,
+        doctor_studies_solicitated,
+        nurse_coment
+      FROM Patient
+      WHERE 1=1`; // Inicia con una condición verdadera
+
+    let queryParams: (string | boolean)[] = [];
+
+    const isolatedStatus = statuses.find(item => typeof item === 'boolean') as boolean | undefined;
+    const statusList = statuses.filter(item => typeof item === 'string') as string[];
+
+    if (statusList.length > 0) {
+      query += ` AND patient_status IN (?)`;
+      queryParams.push(statusList);
     }
+
+    if (isolatedStatus !== undefined) {
+      query += ` AND patient_isolated = ?`;
+      queryParams.push(isolatedStatus);
+    }
+
+    const conn = await connect();
+    const [rows] = await conn.query<IUser[]>(query, queryParams);
+    return rows;
+  } catch (error) {
+    console.error('Error fetching patients by status:', error);
+    throw error;
   }
 }

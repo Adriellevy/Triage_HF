@@ -199,31 +199,35 @@ export class PatientController {
 
   static async getUsersByFilter(req: Request, res: Response): Promise<Response> {
     try {
-      const { PatientsOfThisUser, Filters, userId } = req.body;
-      if (typeof userId !== 'string')
-        res.status(404).json({ message: 'UserId is not correct format' });
+      const { PatientsOfThisUser, Filters } = req.body;
 
-      if (!Array.isArray(Filters)) res.status(404).json({ message: 'Filters should be an array' });
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
 
+      const tokendecoded = verifyToken(token);
+      const userID = tokendecoded.id;
+      if (!userID) {
+        return res.status(404).json({ message: 'UserId is not correct format' });
+      }
+
+      if (!Array.isArray(Filters)) {
+        return res.status(404).json({ message: 'Filters should be an array' });
+      }
+
+      let patients;
       // Si PatientsOfThisUser es verdadero, buscar pacientes asignados a este usuario (doctor o enfermero)
       if (PatientsOfThisUser) {
-        const patients = await PatientsModel.getPatientsByUserAndStatus(userId, Filters);
-        if (patients.length > 0) {
-          return res.json(patients);
-        } else {
-          return res
-            .status(404)
-            .json({ message: 'No patients found for this user with the given statuses' });
-        }
+        patients = await PatientsModel.getPatientsByUserAndStatus(userID, Filters);
+      } else {
+        patients = await PatientsModel.getPatientsByStatus(Filters);
       }
-      // Si PatientsOfThisUser es falso, buscar pacientes por los estados especificados en Filters
-      else {
-        const patients = await PatientsModel.getPatientsByStatus(Filters);
-        if (patients.length > 0) {
-          return res.json(patients);
-        } else {
-          return res.status(404).json({ message: 'No patients found with the given statuses' });
-        }
+
+      if (patients.length > 0) {
+        return res.json(patients);
+      } else {
+        return res.status(404).json({ message: 'No patients found with the given filters' });
       }
     } catch (error) {
       console.error('Error fetching patients:', error);
