@@ -12,11 +12,13 @@ import { UserRole } from '@/interfaces/User'
 import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
-import PatientSearchBar from '@/components/PatientList/PatientSearchBar'
+import PatientSearchBar from '@/components/PatientSearch/PatientSearchBar'
 import { Button } from '@/components/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import PatientByDatePicker from '@/components/PatientList/PatientByDatePicker'
+import PatientByDatePicker from '@/components/PatientSearch/PatientByDatePicker'
 import { Dayjs } from 'dayjs'
+import FilterPatientsComponent from '@/components/PatientSearch/FilterPatientsComponent'
+import SearchTypeSelector from '@/components/PatientSearch/SearchTypeSelector'
 
 
 const colourStyles: StylesConfig<ColourOption, true> = {
@@ -141,6 +143,8 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [filterOptions, setfilterOptions] =  useState<ColourOption[]>([])
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [selectedOptions, setselectedOptions] = useState<ColourOption[]>([])
+  const [searchType, setSearchType] = useState('Nombre')
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // const predefinedOptionsVar: ColourOption[] = [
@@ -278,62 +282,56 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }
   
   const filterPatientsTrigger = async (ops) => {
-    if(ops) {
-      const reqBody = []
-      const filters = []
-      for (let i = 0; i < ops.length; i++) {
-        if (ops[i].label == 'MÍOS') {
-          reqBody.push(true)
-          break
+    if (ops.length === 0) {
+      clearData(); // Llama a clearData si ops es un array vacío
+      return;
+    }
+  
+    const reqBody = [];
+    const filters = [];
+  
+    for (let i = 0; i < ops.length; i++) {
+      if (ops[i].label === 'MÍOS') {
+        reqBody.push(true);
+        break;
+      } else {
+        reqBody.push(false);
+        break;
+      }
+    }
+  
+    for (let i = 0; i < ops.length; i++) {
+      if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
+        if (ops[i].value === 'patient_isolated') {
+          filters.push(true);
         } else {
-          reqBody.push(false)
-          break
+          filters.push(ops[i].label);
         }
       }
-      for (let i = 0; i < ops.length; i++) {
-        if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
-          if( ops[i].value === 'patient_isolated') {
-            filters.push(true)
-          } else {
-            filters.push(ops[i].label);
-          }
-        }
-      }      
-      reqBody.push(filters)
-      console.log(reqBody)
-      const data = await getFilteredPatients(reqBody)
-      const sortedData = data.sort((a, b) => {
-        return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-      })
-      setRawData(sortedData)
-      setPatientsData(sortedData)
-      setCurrentPage(1)
     }
-  }
+  
+    reqBody.push(filters);
+    console.log(reqBody);
+  
+    const data = await getFilteredPatients(reqBody);
+    const sortedData = data.sort((a, b) => {
+      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime();
+    });
+  
+    setRawData(sortedData);
+    setPatientsData(sortedData);
+    setCurrentPage(1);
+  };
+  
 
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
-        <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatientByName} clearData={clearData} />
-        <PatientByDatePicker startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} searchPatientByDate={searchPatientByDate} />
-        <label className='text-sm font-medium text-gray-700 mb-2 px-4'>Patient filters:</label>
-        <div className='bg-white flex px-4'>
-          <Select
-            className='w-full'
-            options={options}
-            isMulti
-            closeMenuOnSelect={true}
-            onChange={onChangeSelect}
-            styles={colourStyles}
-            defaultValue={predefinedOptions}
-            deselect-option={() => filterPatientsTrigger(filterOptions)}
-          />
-          <Button
-            className='ml-4 py-2 px-4 text-white bg-green-500 hover:bg-green-700 flex-shrink-0 rounded-lg'
-            color='green'
-            onClick={() => filterPatientsTrigger(filterOptions)}>Filtrar
-        </Button>
-        </div>
+        <SearchTypeSelector searchType={searchType} setSearchType={setSearchType} />
+        {searchType == 'Nombre' ? <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatientByName} clearData={clearData} /> : null }
+        {searchType == 'Fecha' ? <PatientByDatePicker startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} searchPatientByDate={searchPatientByDate} clearData={clearData}/> :null }
+        {searchType == 'Filtro' ? <FilterPatientsComponent options={options} onChangeSelect={onChangeSelect} filterPatientsTrigger={filterPatientsTrigger} filterOptions={filterOptions}/>: null}
+        
       </div>
 
       {searchTerm === '' && patientsData ? (
