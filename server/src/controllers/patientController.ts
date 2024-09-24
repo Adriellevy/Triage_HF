@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { type Request, type Response } from 'express';
-import { PatientsModel } from '../models/mysql/patientModel';
+import { IPatinet, PatientsModel } from '../models/mysql/patientModel';
 import { validatePartialPatient, validatePatient } from '../schemas/patientSchema';
 import { verifyRefreshToken, verifyToken } from '../helpers/authhelper';
 import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
@@ -10,16 +10,23 @@ import {
 } from '../helpers/notificationhelper';
 import { string } from 'zod';
 import { format } from 'date-fns';
+import {
+  decryptPatientData,
+  dencryptstring,
+  encryptPatientData,
+  encryptstring
+} from '../helpers/handleEncription-Decription';
+import { Patient } from '../interface/patient';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
-  static async getAllPatients(req: Request, res: Response): Promise<Response> {
-    try {
-      const users = await PatientsModel.getAllPatients();
-      return res.json(users);
-    } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' });
-    }
-  }
+  // static async getAllPatients(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const users = await PatientsModel.getAllPatients();
+  //     return res.json(users);
+  //   } catch (error) {
+  //     return res.status(500).json({ message: 'Something goes wrong' });
+  //   }
+  // }
 
   static async createNewPatient(req: Request, res: Response): Promise<Response> {
     const result = validatePatient(req.body);
@@ -41,7 +48,7 @@ export class PatientController {
 
     try {
       const newPatientId: string = await PatientsModel.createNewPatient({
-        data: result.data
+        data: encryptPatientData(result.data as unknown as Patient)
       });
       const newPatient = {
         ...result.data,
@@ -64,7 +71,7 @@ export class PatientController {
     try {
       const { id } = req.params;
       const User = await PatientsModel.getPatientById({ id });
-      if (User) return res.json(User);
+      if (User) return res.json(decryptPatientData(User));
       return res.status(404).json({ message: 'Patient not found' });
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
@@ -74,7 +81,7 @@ export class PatientController {
   static async getPatientByName(req: Request, res: Response): Promise<Response> {
     try {
       const { name } = req.params;
-      const User = await PatientsModel.getPatientsByName(name.toString());
+      const User = await PatientsModel.getPatientsByName(encryptstring(name.toString()));
       if (User) return res.json(User);
       return res.status(404).json({ message: 'Patient not found' });
     } catch (error) {
@@ -100,19 +107,19 @@ export class PatientController {
     const userID = tokendecoded.id;
     // const DatabaseToken = await verifyRefreshToken(token, userID);
     // if (!DatabaseToken) res.status(401).json({ error: 'Token no proporcionado' });
+
     try {
       const { id } = req.params;
       const { Merge_Complete } = req.body; // Destructurar Merge_complete del cuerpo del request
       console.log('Body mensaje:\n ', req.body);
       console.log('\nHay merge complete?:', Merge_Complete);
-      const UserAntiguo = await PatientsModel.getPatientById({ id });
+      let UserAntiguo = await PatientsModel.getPatientById({ id });
 
       if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
-
-      const UserNuevo = {
+      let UserNuevo: Patient = {
         ...result.data,
         patient_id: UserAntiguo.patient_id
-      };
+      } as Patient;
 
       // Si se resulve el merge se ignora el codigo
       if (!Merge_Complete) {
@@ -146,7 +153,13 @@ export class PatientController {
       }
 
       const tiempoActual = new Date();
-      const cambios = GeneratePatientHistoryItem(UserNuevo, UserAntiguo, tiempoActual, userID);
+      console.log('userAntiguo: ', decryptPatientData(UserAntiguo));
+      const cambios = GeneratePatientHistoryItem(
+        UserNuevo,
+        decryptPatientData(UserAntiguo),
+        tiempoActual,
+        userID
+      );
 
       for (const item of cambios) {
         await PatientsModel.AddUpdateHistory({ data: item });
@@ -177,7 +190,20 @@ export class PatientController {
     try {
       const { id } = req.params;
       const UpdateHistory = await PatientsModel.getPatientUpdateHistory({ id });
-      return res.json(UpdateHistory);
+      const decryptedHistory = UpdateHistory.map((item) => {
+        if (
+          item.patient_updated_column === 'patient_name' ||
+          item.patient_updated_column === 'patient_age'
+        ) {
+          return {
+            ...item,
+            patient_old_value: dencryptstring(item.patient_old_value),
+            patient_new_value: dencryptstring(item.patient_new_value)
+          };
+        }
+        return item;
+      });
+      return res.json(decryptedHistory);
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
     }
@@ -192,8 +218,19 @@ export class PatientController {
       }
       console.log('llego a la paginacion');
       const paginatedPatients = await PatientsModel.getPaginatedPatients(pageNumber);
-      return res.json(paginatedPatients);
+      const decryptedPatients = paginatedPatients.map((patient) => {
+        try {
+          return decryptPatientData(patient);
+        } catch (decryptError) {
+          console.error('Error desencriptando datos del paciente:', decryptError);
+          // Devuelve el paciente original sin desencriptar si hay un error
+          return patient;
+        }
+      });
+
+      return res.json(decryptedPatients);
     } catch (error) {
+      console.log('Error: ', error);
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
@@ -226,7 +263,11 @@ export class PatientController {
         patients = await PatientsModel.getPatientsByStatus(Filters);
       }
 
-      return res.json(patients);
+      // Desencriptar todos los pacientes
+      const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
+
+      // Retornar la respuesta con los pacientes desencriptados
+      return res.json(decryptedPatients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       return res.status(500).json({ message: 'Something went wrong' });
@@ -256,16 +297,18 @@ export class PatientController {
         return res.status(400).json({ message: 'Las fechas proporcionadas no son válidas' });
       }
 
-      // Convertir el StartDate al formato YYYY-MM-DD 00:00:00
       const formattedStartDate = format(new Date(StartDate), 'yyyy-MM-dd 00:00:00');
-      // Convertir el EndDate al formato YYYY-MM-DD 23:59:59 para incluir todo el día
+
       const formattedEndDate = format(new Date(EndDate), 'yyyy-MM-dd 23:59:59');
       const patients = await PatientsModel.getPatientsByEntryDate(
         formattedStartDate,
         formattedEndDate
       );
+      // Desencriptar todos los pacientes
+      const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
 
-      return res.json(patients);
+      // Retornar la respuesta con los pacientes desencriptados
+      return res.json(decryptedPatients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       return res.status(500).json({ message: 'Something went wrong' });

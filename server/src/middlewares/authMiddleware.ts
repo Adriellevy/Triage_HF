@@ -38,7 +38,7 @@ const authenticateToken = async (
 
       // Verificamos que 'decoded' es un objeto y no un string
       if (decoded && typeof decoded !== 'string') {
-        console.log('Se actualizo el token del usuario: ', decoded.name);
+        // console.log('Se actualizo el token del usuario: ', decoded.name);
         // Accedemos a las propiedades del token decodificado
         const userForToken = {
           id: decoded.id, // Verificamos que es JwtPayload y accedemos a 'id'
@@ -69,13 +69,13 @@ const authenticateToken = async (
 
     // Asignamos el usuario al request para usarlo en rutas protegidas
     req.user = user;
-    console.log('Usario que pidio la req', user);
+    // console.log('Usario que pidio la req', user);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const refresh_token_database = await TokensModel.findTokenByUserId(user.id);
     if (refresh_token_database) {
       // Verificamos si el refresh token del usuario sigue siendo válido
       verifyToken(refresh_token_database.refresh_token);
-      console.log('refresh token database:', refresh_token_database);
+      // console.log('refresh token database:', refresh_token_database);
     }
     // Continuamos con la siguiente middleware o ruta
     next();

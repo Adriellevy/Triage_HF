@@ -3,11 +3,13 @@ import { type Request, type Response } from 'express';
 import { UserModel } from '../models/mysql/userModel';
 import { verifyToken } from '../helpers/authhelper';
 import { validatePartialUpdateUser, validateUser } from '../schemas/userSchema';
-import { IUser } from '../models/mysql/patientModel';
 import { User, UserRole } from '../interface/user';
 import { SendUpdatedUserNotifications } from '../helpers/notificationhelper';
 import { encrypt } from '../helpers/handleBcrypt';
+import { RowDataPacket } from 'mysql2';
+import { Patient } from '../interface/patient';
 
+export interface IUser extends Patient, RowDataPacket {}
 export class UserController {
   static async getUserIdByToken(req: Request, res: Response): Promise<Response> {
     const token: string = req.body.token;

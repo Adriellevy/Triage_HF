@@ -4,50 +4,50 @@ import { type Patient } from '../../interface/patient';
 import { type OkPacket, type RowDataPacket } from 'mysql2/promise';
 import { type IBox } from './boxModel';
 
-export interface IUser extends Patient, RowDataPacket {}
+export interface IPatinet extends Patient, RowDataPacket {}
 
 interface UUIDResult extends RowDataPacket {
   uuid: string;
 }
 
 export class PatientsModel {
-  static async getAllPatients(): Promise<IUser[]> {
-    try {
-      const patientsQuery = `
-        SELECT 
-          BIN_TO_UUID(patient_id) AS patient_id,
-          patient_name,
-          patient_age,
-          patient_entry_time,
-          patient_exit_time,
-          patient_triage_time,
-          patient_triage_level,
-          patient_isolated,
-          BIN_TO_UUID(Patient.box_id) AS box_id,
-          Box.box_code,
-          patient_status,
-          patient_symptom,
-          patient_healthcare_system,
-          doctor_procedure,
-          doctor_studies_solicitated,
-          nurse_coment,
-          Doctor.user_name AS doctor_name,
-          Nurse.user_name AS nurse_name
-        FROM Patient
-        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
-        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
-        LEFT JOIN Box ON Patient.box_id = Box.box_id;
-      `;
-      const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(patientsQuery);
-      return rows;
-    } catch (error) {
-      console.error('Error al obtener todos los pacientes:', error);
-      throw error;
-    }
-  }
+  // static async getAllPatients(): Promise<IPatinet[]> {
+  //   try {
+  //     const patientsQuery = `
+  //       SELECT
+  //         BIN_TO_UUID(patient_id) AS patient_id,
+  //         patient_name,
+  //         patient_age,
+  //         patient_entry_time,
+  //         patient_exit_time,
+  //         patient_triage_time,
+  //         patient_triage_level,
+  //         patient_isolated,
+  //         BIN_TO_UUID(Patient.box_id) AS box_id,
+  //         Box.box_code,
+  //         patient_status,
+  //         patient_symptom,
+  //         patient_healthcare_system,
+  //         doctor_procedure,
+  //         doctor_studies_solicitated,
+  //         nurse_coment,
+  //         Doctor.user_name AS doctor_name,
+  //         Nurse.user_name AS nurse_name
+  //       FROM Patient
+  //       LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+  //       LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+  //       LEFT JOIN Box ON Patient.box_id = Box.box_id;
+  //     `;
+  //     const conn = await connect();
+  //     const [rows] = await conn.query<IPatinet[]>(patientsQuery);
+  //     return rows;
+  //   } catch (error) {
+  //     console.error('Error al obtener todos los pacientes:', error);
+  //     throw error;
+  //   }
+  // }
 
-  static async getPatientById({ id }: { id: string }): Promise<IUser | undefined> {
+  static async getPatientById({ id }: { id: string }): Promise<IPatinet | undefined> {
     const patientsQuery = `
         SELECT 
         BIN_TO_UUID(patient_id) AS patient_id,
@@ -77,13 +77,13 @@ export class PatientsModel {
         WHERE Patient.patient_id = UUID_TO_BIN(?);
     `;
     const conn = await connect();
-    const [patients] = await conn.query<IUser[]>(patientsQuery, [id]);
+    const [patients] = await conn.query<IPatinet[]>(patientsQuery, [id]);
     if (patients.length === 0) return undefined;
     const pat = patients[0];
     return pat;
   }
 
-  static async getPatientsByName(patientName: string): Promise<IUser[]> {
+  static async getPatientsByName(patientName: string): Promise<IPatinet[]> {
     try {
       const patientsQuery = `
         SELECT 
@@ -112,7 +112,7 @@ export class PatientsModel {
         WHERE patient_name LIKE ?;
       `;
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(patientsQuery, [`%${patientName}%`]);
+      const [rows] = await conn.query<IPatinet[]>(patientsQuery, [`%${patientName}%`]);
       return rows;
     } catch (error) {
       console.error('Error al obtener los pacientes por nombre:', error);
@@ -149,7 +149,7 @@ export class PatientsModel {
             VALUES (
                     UUID_TO_BIN(?), 
                     ?,
-                    STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
+                    ?, 
                     ?, 
                     ?,
                     STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), 
@@ -501,7 +501,7 @@ export class PatientsModel {
   static async getPatientsByUserAndStatus(
     userId: string,
     statuses: Array<string | boolean>
-  ): Promise<IUser[]> {
+  ): Promise<IPatinet[]> {
     try {
       let query = `
       SELECT 
@@ -545,7 +545,7 @@ export class PatientsModel {
       }
 
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(query, queryParams);
+      const [rows] = await conn.query<IPatinet[]>(query, queryParams);
       return rows;
     } catch (error) {
       console.error('Error fetching patients by user and status:', error);
@@ -553,7 +553,7 @@ export class PatientsModel {
     }
   }
 
-  static async getPatientsByStatus(statuses: Array<string | boolean>): Promise<IUser[]> {
+  static async getPatientsByStatus(statuses: Array<string | boolean>): Promise<IPatinet[]> {
     try {
       let query = `
       SELECT 
@@ -593,7 +593,7 @@ export class PatientsModel {
       }
 
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(query, queryParams);
+      const [rows] = await conn.query<IPatinet[]>(query, queryParams);
       return rows;
     } catch (error) {
       console.error('Error fetching patients by status:', error);
@@ -601,7 +601,7 @@ export class PatientsModel {
     }
   }
 
-  static async getPatientsByEntryDate(startDate: string, endDate: string): Promise<IUser[]> {
+  static async getPatientsByEntryDate(startDate: string, endDate: string): Promise<IPatinet[]> {
     try {
       const query = `
         SELECT 
@@ -625,7 +625,7 @@ export class PatientsModel {
       `;
 
       const conn = await connect();
-      const [rows] = await conn.query<IUser[]>(query, [startDate, endDate]);
+      const [rows] = await conn.query<IPatinet[]>(query, [startDate, endDate]);
       return rows;
     } catch (error) {
       console.error('Error fetching patients by entry date:', error);

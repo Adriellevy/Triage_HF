@@ -3,9 +3,9 @@ import { PatientController } from '../controllers/patientController';
 
 export const patientRouter = Router();
 
-patientRouter.get('/', (req: Request, res: Response) => {
-  void PatientController.getAllPatients(req, res);
-});
+// patientRouter.get('/', (req: Request, res: Response) => {
+//   void PatientController.getAllPatients(req, res);
+// });
 
 patientRouter.post('/', (req: Request, res: Response) => {
   void PatientController.createNewPatient(req, res);
