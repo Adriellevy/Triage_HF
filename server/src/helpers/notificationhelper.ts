@@ -15,7 +15,8 @@ enum UpdateEvent {
   UPDATE_PATIENT = 'Updated patient',
   BOX_MODIFICATION_UPDATE = 'Box modification Update',
   NEW_BOX = 'New Box',
-  USER_UPDATE = 'User Update'
+  USER_UPDATE = 'User Update',
+  REFRESH_TOKEN_EXPIRED = 'Refresh Token expired'
 }
 
 export function SendNewPatientNotifications(
@@ -230,5 +231,19 @@ export function SendDeletedUserNotifications(
         userAdded: usuarioMandoreq
       }
     });
+  });
+}
+
+export function SendRefreshTokenExpiredNotification(req: Request, userID: string): void {
+  const io = req.io;
+
+  // Emitir un evento general de actualización si es necesario
+  io?.emit(SocketEvent.UPDATE, {
+    message: UpdateEvent.REFRESH_TOKEN_EXPIRED
+  });
+
+  // Enviar el mensaje específicamente al usuario cuyo token expiró
+  io?.emit(`${userID}`, {
+    message: UpdateEvent.REFRESH_TOKEN_EXPIRED
   });
 }

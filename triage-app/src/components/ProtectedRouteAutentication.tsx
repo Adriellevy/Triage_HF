@@ -24,6 +24,7 @@ function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationPr
           console.log('llego al route auth')
           if (error.message === 'Cerrar sesion') {
             logout()
+            window.location.reload()
           } else {
             // Mostrar el modal con el error
             setErrorMessage(error.message || 'Unknown error occurred')
@@ -33,6 +34,8 @@ function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationPr
         }
       }
       fetchData()
+    } else {
+      window.location.reload()
     }
   }, [isAuthenticated, Cookies.get('authToken')])
 

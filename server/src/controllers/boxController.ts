@@ -10,11 +10,21 @@ import {
   SendUpdatedBoxNotifications
 } from '../helpers/notificationhelper';
 import 'dotenv/config';
+import { dencryptstring } from '../helpers/handleEncription-Decription';
 export class BoxController {
   static async getAllBoxes(req: Request, res: Response): Promise<Response> {
     try {
       const boxes = await BoxModel.getAllBoxes();
-      if (boxes) return res.json(boxes);
+      if (boxes) {
+        // Desencripta el nombre del paciente para cada box si existe
+        const decryptedBoxes = boxes.map((box) => {
+          if (box.patient_name) {
+            box.patient_name = dencryptstring(box.patient_name);
+          }
+          return box;
+        });
+        return res.json(decryptedBoxes);
+      }
       return res.status(404).json({ message: 'boxes not found' });
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });
@@ -35,7 +45,16 @@ export class BoxController {
     try {
       const { id } = req.params;
       const boxes = await BoxModel.getBoxCodeById(id);
-      if (boxes) return res.json(boxes);
+      if (boxes) {
+        // Desencripta el nombre del paciente para cada box si existe
+        const decryptedBoxes = boxes.map((box) => {
+          if (box.patient_name) {
+            box.patient_name = dencryptstring(box.patient_name);
+          }
+          return box;
+        });
+        return res.json(decryptedBoxes);
+      }
       return res.status(404).json({ message: 'boxes not found' });
     } catch (error) {
       return res.status(500).json({ message: 'Something goes wrong' });

@@ -1,25 +1,26 @@
 import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-import Select, { StylesConfig, MultiValue } from 'react-select'
+import { StylesConfig, MultiValue } from 'react-select'
 import chroma from 'chroma-js'
 import PatientsList from '@/components/PatientList/PatientsList'
-import { getFilteredPatients, getPaginatedPatients,  getPatientByName, getPatientsByDate } from '../services/patientService'
+import {
+  getFilteredPatients,
+  getPaginatedPatients,
+  getPatientByName,
+  getPatientsByDate
+} from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
 import { SocketContext } from '@/contex/SocketContext'
-import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { User } from '@/interfaces/User'
 import { UserRole } from '@/interfaces/User'
 import { ColourOption } from '@/interfaces/PatientList'
 import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
 import PatientSearchBar from '@/components/PatientSearch/PatientSearchBar'
-import { Button } from '@/components/ui'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PatientByDatePicker from '@/components/PatientSearch/PatientByDatePicker'
 import { Dayjs } from 'dayjs'
 import FilterPatientsComponent from '@/components/PatientSearch/FilterPatientsComponent'
 import SearchTypeSelector from '@/components/PatientSearch/SearchTypeSelector'
-
 
 const colourStyles: StylesConfig<ColourOption, true> = {
   control: (styles) => ({ ...styles, backgroundColor: 'white' }),
@@ -114,17 +115,16 @@ const options: Option[] = [
     label: 'Esta aislado?',
     options: [
       {
-      value: 'patient_isolated',
-      item: 'EN AISLAMIENTO',
-      label: 'EN AISLAMIENTO',
-      color: '#525252'}
+        value: 'patient_isolated',
+        item: 'EN AISLAMIENTO',
+        label: 'EN AISLAMIENTO',
+        color: '#525252'
+      }
     ]
   },
   {
     label: 'De quien?',
-    options: [
-      { value: 'type_user', label: 'MÍOS', color: '#525252' }
-    ]
+    options: [{ value: 'type_user', label: 'MÍOS', color: '#525252' }]
   }
 ]
 
@@ -140,9 +140,9 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [dataBatch, setDataBatch] = useState([])
   const [searchName, setSearchName] = useState('')
   const [refreshSearch, setrefreshSearch] = useState(false)
-  const [filterOptions, setfilterOptions] =  useState<ColourOption[]>([])
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [filterOptions, setfilterOptions] = useState<ColourOption[]>([])
+  const [startDate, setStartDate] = useState<Dayjs | null>(null)
+  const [endDate, setEndDate] = useState<Dayjs | null>(null)
   const [selectedOptions, setselectedOptions] = useState<ColourOption[]>([])
   const [searchType, setSearchType] = useState('Nombre')
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
@@ -215,13 +215,12 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   //   }
   // }, [socket, predefinedOptions])
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (token) {
-          const batch = Math.ceil(currentPage / 2);
-          if(!(dataBatch.includes(batch))) {
+          const batch = Math.ceil(currentPage / 2)
+          if (!dataBatch.includes(batch)) {
             const data = await getPaginatedPatients(batch)
             const sortedData = data.sort((a, b) => {
               return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
@@ -238,19 +237,18 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
               )
               setPatientsData(initialFilteredData)
               setFilteredPatients(initialFilteredData)
-          } else {
-            setPatientsData([...patientsData, ...sortedData])
+            } else {
+              setPatientsData([...patientsData, ...sortedData])
+            }
+            setDataBatch([...dataBatch, batch])
           }
-          setDataBatch([...dataBatch, batch])
         }
-      }
       } catch (error) {
         console.error((error as Error).message)
       }
     }
     fetchData()
   }, [token, currentPage, refreshSearch])
-
 
   const searchPatientByName = async (name) => {
     const data = await getPatientByName(name)
@@ -280,64 +278,93 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     setrefreshSearch(!refreshSearch)
     setSearchName('')
   }
-  
+
   const filterPatientsTrigger = async (ops) => {
     if (ops.length === 0) {
-      clearData(); // Llama a clearData si ops es un array vacío
-      return;
+      clearData() // Llama a clearData si ops es un array vacío
+      return
     }
-  
-    const reqBody = [];
-    const filters = [];
-  
+
+    const reqBody = []
+    const filters = []
+
     for (let i = 0; i < ops.length; i++) {
       if (ops[i].label === 'MÍOS') {
-        reqBody.push(true);
-        break;
+        reqBody.push(true)
+        break
       } else {
-        reqBody.push(false);
-        break;
+        reqBody.push(false)
+        break
       }
     }
-  
+
     for (let i = 0; i < ops.length; i++) {
       if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
         if (ops[i].value === 'patient_isolated') {
-          filters.push(true);
+          filters.push(true)
         } else {
-          filters.push(ops[i].label);
+          filters.push(ops[i].label)
         }
       }
     }
-  
-    reqBody.push(filters);
-    console.log(reqBody);
-  
-    const data = await getFilteredPatients(reqBody);
+
+    reqBody.push(filters)
+    console.log(reqBody)
+
+    const data = await getFilteredPatients(reqBody)
     const sortedData = data.sort((a, b) => {
-      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime();
-    });
-  
-    setRawData(sortedData);
-    setPatientsData(sortedData);
-    setCurrentPage(1);
-  };
-  
+      return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
+    })
+
+    setRawData(sortedData)
+    setPatientsData(sortedData)
+    setCurrentPage(1)
+  }
 
   return (
     <div className='bg-white p-4'>
       <div className='flex  flex-col'>
         <SearchTypeSelector searchType={searchType} setSearchType={setSearchType} />
-        {searchType == 'Nombre' ? <PatientSearchBar searchName={searchName} setSearchName={setSearchName} searchPatient={searchPatientByName} clearData={clearData} /> : null }
-        {searchType == 'Fecha' ? <PatientByDatePicker startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} searchPatientByDate={searchPatientByDate} clearData={clearData}/> :null }
-        {searchType == 'Filtro' ? <FilterPatientsComponent options={options} onChangeSelect={onChangeSelect} filterPatientsTrigger={filterPatientsTrigger} filterOptions={filterOptions}/>: null}
-        
+        {searchType == 'Nombre' ? (
+          <PatientSearchBar
+            searchName={searchName}
+            setSearchName={setSearchName}
+            searchPatient={searchPatientByName}
+            clearData={clearData}
+          />
+        ) : null}
+        {searchType == 'Fecha' ? (
+          <PatientByDatePicker
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            searchPatientByDate={searchPatientByDate}
+            clearData={clearData}
+          />
+        ) : null}
+        {searchType == 'Filtro' ? (
+          <FilterPatientsComponent
+            options={options}
+            onChangeSelect={onChangeSelect}
+            filterPatientsTrigger={filterPatientsTrigger}
+            filterOptions={filterOptions}
+          />
+        ) : null}
       </div>
 
       {searchTerm === '' && patientsData ? (
-        <PatientsList patients={patientsData} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+        <PatientsList
+          patients={patientsData}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       ) : searchTerm !== '' && filteredPatients ? (
-        <PatientsList patients={filteredPatients} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <PatientsList
+          patients={filteredPatients}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       ) : (
         <p>No se encontraron pacientes.</p>
       )}

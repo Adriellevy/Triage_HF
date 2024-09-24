@@ -144,10 +144,18 @@ function Sidebar() {
       message: UpdateEvent
       box?: Box
     }) => {
+      if (data.message === UpdateEvent.REFRESH_TOKEN_EXPIRED) {
+        console.log('Token caducado, cerrando sesión y recargando la página...')
+        logout()
+        toast.error('Sesión caducada', {})
+        // setTimeout(() => {
+        //   window.location.reload() // Fuerza la recarga de la página
+        // }, 2000) // Espera dos segundos antes de recargar la página
+        return
+      }
       if (data.patient) {
         const { patient_id } = data.patient
         console.log(patient_id)
-
         if (data.message === UpdateEvent.NEW_PATIENT_ASSIGNED) {
           toast.info('Nuevo paciente asignado', {
             action: {

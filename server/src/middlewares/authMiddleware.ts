@@ -4,6 +4,7 @@ import { verifyToken, verifyRefreshToken, signTokenWithExpiration } from '../hel
 import tokensController from '../controllers/tokensController';
 import TokensModel from '../models/mysql/TokensModel';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { SendRefreshTokenExpiredNotification } from '../helpers/notificationhelper';
 
 interface AuthenticatedRequest extends Request {
   user?: unknown; // Define la propiedad user en el tipo Request
@@ -83,6 +84,8 @@ const authenticateToken = async (
     // Manejamos los distintos tipos de errores que pueden ocurrir
     if (err.name === 'TokenExpiredError') {
       console.log('Se envio el 207');
+      const user = verifyToken(token);
+      SendRefreshTokenExpiredNotification(req, user.id);
       res.status(207).json({ error: '207' }); // Puedes enviar el nuevo refresh token en la respuesta
     } else if (err.message === 'Token expired') {
       res.status(401).json({ error: 'Access Denied - Token Expired' });
