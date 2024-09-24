@@ -217,7 +217,6 @@ export class PatientsModel {
           if (key === 'box_id' || key === 'nurse_id' || key === 'doctor_id') {
             return `${key} = UUID_TO_BIN(?)`;
           } else if (
-            key === 'patient_age' ||
             key === 'patient_entry_time' ||
             key === 'patient_triage_time' ||
             key === 'patient_exit_time'

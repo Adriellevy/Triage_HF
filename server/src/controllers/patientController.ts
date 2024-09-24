@@ -114,7 +114,7 @@ export class PatientController {
       console.log('Body mensaje:\n ', req.body);
       console.log('\nHay merge complete?:', Merge_Complete);
       let UserAntiguo = await PatientsModel.getPatientById({ id });
-
+      //UserAntiguo = decryptPatientData(UserAntiguo as Patient) as IPatinet;
       if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
       let UserNuevo: Patient = {
         ...result.data,
@@ -153,10 +153,10 @@ export class PatientController {
       }
 
       const tiempoActual = new Date();
-      console.log('userAntiguo: ', decryptPatientData(UserAntiguo));
+      console.log('userAntiguo: ', UserAntiguo);
       const cambios = GeneratePatientHistoryItem(
-        UserNuevo,
-        decryptPatientData(UserAntiguo),
+        encryptPatientData(UserNuevo),
+        UserAntiguo,
         tiempoActual,
         userID
       );
@@ -167,7 +167,7 @@ export class PatientController {
 
       const updatedUser = await PatientsModel.updatePatient({
         id,
-        data: result.data
+        data: encryptPatientData(result.data as Patient) as Patient
       });
 
       if (!updatedUser) {
