@@ -4,7 +4,7 @@ import { Button } from '../ui';
 
 const FilterPatientsComponent = ({options, onChangeSelect, filterPatientsTrigger,filterOptions }) => {
   return (
-    <div className='my-4'>
+    <div className='mt-4'>
       <label className='text-sm font-medium text-gray-700 mb-2 px-4'>Filtrar pacientes:</label>
       <div className='bg-white flex px-4'>
         <Select

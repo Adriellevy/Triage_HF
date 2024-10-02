@@ -4,8 +4,8 @@ import { Button } from '../ui';
 
 const PatientSearchBar = ({ searchName, setSearchName, searchPatient, clearData }) => {
   return (
-    <div className='w-full px-4 my-4'>
-    <label className='block text-sm font-medium text-gray-700 mb-2'>Buscar paciente por nombre</label>
+    <div className='w-full px-4 mt-4'>
+    <label className='block text-sm font-medium text-gray-700 mb-1'>Buscar paciente por nombre</label>
     <div className='flex items-center'>
       <input
         className='flex-1 p-[0.44rem] border rounded-s-lg'

@@ -145,6 +145,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [endDate, setEndDate] = useState<Dayjs | null>(null)
   const [selectedOptions, setselectedOptions] = useState<ColourOption[]>([])
   const [searchType, setSearchType] = useState('Nombre')
+  const [animation, setAnimation] = useState('')
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
   // const predefinedOptionsVar: ColourOption[] = [
@@ -322,18 +323,21 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }
 
   return (
-    <div className='bg-white p-4'>
-      <div className='flex  flex-col'>
-        <SearchTypeSelector searchType={searchType} setSearchType={setSearchType} />
+    <div className='bg-white '>
+      <div className='flex  flex-col p-4'>
+        <SearchTypeSelector searchType={searchType} setSearchType={setSearchType} setAnimation={setAnimation} />
         {searchType == 'Nombre' ? (
+          <div className={`${animation}`}>
           <PatientSearchBar
             searchName={searchName}
             setSearchName={setSearchName}
             searchPatient={searchPatientByName}
             clearData={clearData}
-          />
+            />
+            </div>
         ) : null}
         {searchType == 'Fecha' ? (
+          <div className={`${animation}`}>
           <PatientByDatePicker
             startDate={startDate}
             setStartDate={setStartDate}
@@ -341,15 +345,18 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
             setEndDate={setEndDate}
             searchPatientByDate={searchPatientByDate}
             clearData={clearData}
-          />
+            />
+          </div>
         ) : null}
         {searchType == 'Filtro' ? (
+          <div className={`${animation}`}>
           <FilterPatientsComponent
             options={options}
             onChangeSelect={onChangeSelect}
             filterPatientsTrigger={filterPatientsTrigger}
             filterOptions={filterOptions}
-          />
+            />
+          </div>
         ) : null}
       </div>
 

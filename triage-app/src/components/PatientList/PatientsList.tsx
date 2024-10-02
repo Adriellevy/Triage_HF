@@ -88,10 +88,10 @@ function PatientsList({ patients, currentPage, setCurrentPage }: PropsPatientsLi
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
   const currentPatients = sortedPatients.slice(indexOfFirstPatient, indexOfLastPatient);
   return (
-    <div className='mx-0 mt-4 lg:mx-8'>
+    <div className=' text-xs md:text-sm mt-4 lg:mx-8 '>
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='min-w-full bg-blue-800 text-white'>
+          <tr className=' bg-blue-800 text-white'>
             {columns.map((column) => (
               <th
                 key={column.field}
