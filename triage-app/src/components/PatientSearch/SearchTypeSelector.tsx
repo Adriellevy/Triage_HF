@@ -20,7 +20,7 @@ const SearchTypeSelector = ({ searchType, setSearchType , setAnimation}) => {
         break;
       default:
         animationIn = 'animate-slideInFromRight'; 
-        animationOut = 'animate-slideOutToRight'; 
+        animationOut = 'animate-slideOutToLeft'; 
         break;
     }
     setAnimation(animationOut);  // Definir animación de salida
