@@ -1,24 +1,26 @@
 import { type Request, type Response } from 'express';
 import TokensModel from '../models/mysql/TokensModel';
-import jwt, { type Secret } from 'jsonwebtoken';
+import jwt, { verify, type Secret } from 'jsonwebtoken';
+import { signTokenWithExpiration, verifyToken } from '../helpers/authhelper';
+import { string } from 'zod';
 
 class TokensController {
-  static async createToken(
-    req: Request,
-    res: Response,
-    expiration_hours: number
-  ): Promise<Response> {
-    try {
-      const { userId }: { userId: string } = req.body; // Aseguramos el tipado de userId
-      const refreshToken = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, {
-        expiresIn: '' + expiration_hours + 'h'
-      });
-      const tokenData = await TokensModel.addToken(userId, refreshToken);
-      return res.status(201).json(tokenData);
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al crear el token.' });
-    }
-  }
+  // static async createToken(
+  //   req: Request,
+  //   res: Response,
+  //   expiration_hours: number
+  // ): Promise<Response> {
+  //   try {
+  //     const { userId }: { userId: string } = req.body; // Aseguramos el tipado de userId
+  //     const refreshToken = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, {
+  //       expiresIn: '' + expiration_hours + 'h'
+  //     });
+  //     const tokenData = await TokensModel.addToken(userId, refreshToken);
+  //     return res.status(201).json(tokenData);
+  //   } catch (error) {
+  //     return res.status(500).json({ error: 'Error al crear el token.' });
+  //   }
+  // }
 
   static async deleteToken(req: Request, res: Response): Promise<Response> {
     try {
@@ -30,23 +32,68 @@ class TokensController {
     }
   }
 
-  static async updateToken(
-    req: Request,
-    res: Response,
-    expiration_hours: number
-  ): Promise<Response> {
-    try {
-      const { tokenId } = req.params;
-      const { userId }: { userId: string } = req.body; // Tipado explícito de `userId`
-      const newRefreshToken = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, {
-        expiresIn: '' + expiration_hours + 'h'
-      });
+  // static async updateToken(
+  //   req: Request,
+  //   res: Response,
+  //   expiration_hours: number
+  // ): Promise<Response> {
+  //   try {
+  //     const { tokenId } = req.params;
+  //     const { userId }: { userId: string } = req.body; // Tipado explícito de `userId`
+  //     const newRefreshToken = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, {
+  //       expiresIn: '' + expiration_hours + 'h'
+  //     });
 
-      await TokensModel.updateToken(tokenId, newRefreshToken);
-      return res.status(200).json({ tokenId, newRefreshToken });
-    } catch (error) {
-      return res.status(500).json({ error: 'Error al actualizar el token.' });
+  //     await TokensModel.updateToken(tokenId, newRefreshToken);
+  //     return res.status(200).json({ tokenId, newRefreshToken });
+  //   } catch (error) {
+  //     return res.status(500).json({ error: 'Error al actualizar el token.' });
+  //   }
+  // }
+
+  static async renewToken(req: Request, res: Response): Promise<Response> {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new Error('Authorization header is missing');
     }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new Error('Token is missing from the Authorization header');
+    }
+
+    const decoded = jwt.decode(token);
+
+    // Verificamos que 'decoded' es un objeto y no un string
+    if (decoded && typeof decoded !== 'string') {
+      try {
+        verifyToken(token);
+      } catch (err) {
+        if (err.name === 'TokenExpiredError' || err.message === 'jwt expired') {
+          const decoded = jwt.decode(token);
+
+          // Verificamos que 'decoded' es un objeto y no un string
+          if (decoded && typeof decoded !== 'string') {
+            // console.log('Se actualizo el token del usuario: ', decoded.name);
+            // Accedemos a las propiedades del token decodificado
+            const userForToken = {
+              id: decoded.id, // Accedemos a 'id'
+              name: decoded.name // Accedemos a 'name'
+            };
+            const newAccessToken = signTokenWithExpiration(userForToken, 10 / 60);
+            console.log('Token devuelto al renovar');
+            return res.status(200).json(newAccessToken);
+          } else {
+            // Manejo del caso en que 'decoded' sea un string o no sea válido
+            console.log('No se pudo decodificar el token correctamente.');
+            return res.status(500);
+          }
+        }
+
+        return res.status(500).json({ error: 'Error al obtener el token.' });
+      }
+    }
+    return res.status(200);
   }
 
   static async getTokenByUserId(req: Request, res: Response): Promise<Response> {

@@ -24,6 +24,7 @@ import { UpdateEvent } from '@/interfaces/Socket'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { Box } from '@/interfaces/Boxes'
+import { verifyToken } from '@/services/authService'
 
 interface MenuItem {
   icon?: string
@@ -35,7 +36,7 @@ interface MenuItem {
 
 function Sidebar() {
   const { t } = useTranslation('Sidebar')
-  const { logout } = useAuth()
+  const { logout, login } = useAuth()
   const navigate = useNavigate()
   const { role } = useRoleContext()
   const socket = useContext(SocketContext)
@@ -138,19 +139,34 @@ function Sidebar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const handleSocketEvent = (data: {
+    const handleSocketEvent = async (data: {
       user?: User
       patient?: Patient
       message: UpdateEvent
       box?: Box
     }) => {
       if (data.message === UpdateEvent.REFRESH_TOKEN_EXPIRED) {
-        console.log('Token caducado, cerrando sesión y recargando la página...')
+        console.log('Refresh Token caducado, cerrando sesión y recargando la página...')
         logout()
         toast.error('Sesión caducada', {})
         // setTimeout(() => {
         //   window.location.reload() // Fuerza la recarga de la página
         // }, 2000) // Espera dos segundos antes de recargar la página
+        return
+      }
+      if (data.message === UpdateEvent.TOKEN_EPIRED) {
+        if (token) {
+          const nuevot = await (await verifyToken(token)).serverRes
+          login(nuevot as string)
+          const data = await getUserIdByToken()
+          const user = await getUserById(String(data))
+          setUserInfo(user)
+          // setTimeout(() => {
+          //   window.location.reload() // Fuerza la recarga de la página
+          // }, 2000) // Espera dos segundos antes de recargar la página
+        } else logout
+        //mandar consulta sobre el cual resiva el token y le de como respuesta el nuevo token
+
         return
       }
       if (data.patient) {

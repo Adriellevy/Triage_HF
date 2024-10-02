@@ -20,7 +20,9 @@ function BoxList({ boxes }: PropsBoxList) {
       setSortDirection('asc')
     }
   }
-
+  if (!boxes || boxes.length === 0) {
+    return <div className='mx-0 mt-4 lg:mx-8'>{t('No boxes available')}</div>
+  }
   const sortedPatients = [...boxes].sort((a, b) => {
     if (!sortColumn) {
       return 0

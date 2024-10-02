@@ -38,6 +38,15 @@ export const getPaginatedPatients = async (batch: number): Promise<Patient[]> =>
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
     }
+    if (response.status === 206) {
+      const data = await response.json()
+      const newAccessToken = data.newAccessToken
+      console.log('Se refresco el token del usuario')
+      if (newAccessToken) {
+        Cookies.set('authToken', newAccessToken)
+        return await getPaginatedPatients(batch)
+      }
+    }
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient: ${response.statusText}`)
     }
@@ -93,24 +102,24 @@ export const getPatientByName = async (patient_name: string | undefined): Promis
   }
 }
 
-export const getPatientsByDate= async (startDate: Dayjs | undefined, endDate: Dayjs | undefined): Promise<Patient> => {
+export const getPatientsByDate = async (
+  startDate: Dayjs | undefined,
+  endDate: Dayjs | undefined
+): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/patient/patientsByDate`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify ({
-          StartDate: startDate,
-          EndDate: endDate
-        })
-      }
-    )
-    const testBody = JSON.stringify ({
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByDate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        StartDate: startDate,
+        EndDate: endDate
+      })
+    })
+    const testBody = JSON.stringify({
       StartDate: startDate,
       EndDate: endDate
     })
@@ -125,7 +134,7 @@ export const getPatientsByDate= async (startDate: Dayjs | undefined, endDate: Da
   }
 }
 
-export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> => {
+export const getFilteredPatients = async (ops: unknown[]): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
     const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByFilters`, {
@@ -136,7 +145,7 @@ export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> =
       },
       body: JSON.stringify({
         PatientsOfThisUser: ops[0],
-        Filters: ops[1],
+        Filters: ops[1]
       })
     })
     if (response.status === 207) {
@@ -157,7 +166,6 @@ export const getFilteredPatients = async (ops : unknown[]): Promise<Patient[]> =
     }
   }
 }
-
 
 export const updatePatient = async (
   patient_id: string,

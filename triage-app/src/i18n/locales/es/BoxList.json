@@ -4,5 +4,6 @@
   "Status": "Estado",
   "Patient": "Paciente",
   "Time": "Tiempo",
-  "Action": "Acción"
+  "Action": "Acción",
+  "No boxes available": "Hubo un problema con el servidor o no hay boxes"
 }

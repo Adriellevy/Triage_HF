@@ -77,6 +77,9 @@ function App() {
             logout()
             setShowWarning(false)
           }} // Cierra el modal al hacer clic en el botón
+          onrefresh={() => {
+            window.location.reload()
+          }}
         />
       )}
 

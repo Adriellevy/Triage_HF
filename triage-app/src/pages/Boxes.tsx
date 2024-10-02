@@ -42,7 +42,7 @@ function Boxes() {
       const filterFunction = filterOptions[by]
       return filterFunction(box)
     })
-    if (filtered?.length === 0 || filtered === undefined) setFilteredBoxes(null)
+    if (!filtered || filtered.length === 0) setFilteredBoxes(null)
     else setFilteredBoxes(filtered)
   }
 
@@ -51,10 +51,11 @@ function Boxes() {
       try {
         setIsLoading(true)
         const data = await getAllBoxes()
-        setboxesData(data)
+        setboxesData(data.length ? data : null) // Handle empty data
         setIsLoading(false)
       } catch (error) {
         console.error((error as Error).message)
+        setIsLoading(false)
       }
     }
     fetchData()
@@ -66,7 +67,7 @@ function Boxes() {
       try {
         if (token) {
           const data = await getAllBoxes()
-          setboxesData(data)
+          setboxesData(data.length ? data : null) // Handle empty data
         }
       } catch (error) {
         if (error.message === 'Cerrar sesion') {
@@ -78,7 +79,7 @@ function Boxes() {
     }
     if (socket) {
       socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message == UpdateEvent.BOX_UPDATE) {
+        if (data.message === UpdateEvent.BOX_UPDATE) {
           fetchData()
         }
       })
@@ -92,13 +93,15 @@ function Boxes() {
     <div className='bg-white pb-4'>
       <Search onSearch={handleonSearch} options={SearchOption} />
       {isLoading ? (
-        <LoaderSpin></LoaderSpin>
+        <LoaderSpin />
+      ) : boxesData === null ? (
+        <p>{t('No boxes available')}</p> // Message when no boxes are found
       ) : searchTerm === '' && boxesData ? (
         <BoxList boxes={boxesData} />
       ) : searchTerm !== '' && filteredBoxes ? (
         <BoxList boxes={filteredBoxes} />
       ) : (
-        <p>No se encontraron resultados.</p>
+        <p>{t('NoResultsFound')}</p> // Message when search yields no results
       )}
     </div>
   )

@@ -4,7 +4,10 @@ import { verifyToken, verifyRefreshToken, signTokenWithExpiration } from '../hel
 import tokensController from '../controllers/tokensController';
 import TokensModel from '../models/mysql/TokensModel';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { SendRefreshTokenExpiredNotification } from '../helpers/notificationhelper';
+import {
+  SendRefreshTokenExpiredNotification,
+  SendTokenExpiredNotification
+} from '../helpers/notificationhelper';
 
 interface AuthenticatedRequest extends Request {
   user?: unknown; // Define la propiedad user en el tipo Request
@@ -45,7 +48,7 @@ const authenticateToken = async (
           id: decoded.id, // Verificamos que es JwtPayload y accedemos a 'id'
           name: decoded.name // Verificamos que es JwtPayload y accedemos a 'name'
         };
-
+        SendTokenExpiredNotification(req, decoded.id as string);
         const newAccessToken = signTokenWithExpiration(userForToken, 10 / 60);
         res.status(206).json({ newAccessToken });
       } else {
@@ -82,7 +85,7 @@ const authenticateToken = async (
     next();
   } catch (err) {
     // Manejamos los distintos tipos de errores que pueden ocurrir
-    if (err.name === 'TokenExpiredError') {
+    if (err.name === 'TokenExpiredError' || err.name === 'jwt malformed') {
       console.log('Se envio el 207');
       const user = verifyToken(token);
       SendRefreshTokenExpiredNotification(req, user.id);

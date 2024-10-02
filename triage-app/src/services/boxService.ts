@@ -17,6 +17,15 @@ export const getAllBoxes = async (): Promise<Box[]> => {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
     }
+    if (response.status === 206) {
+      const data = await response.json()
+      const newAccessToken = data.newAccessToken
+      console.log('Se refresco el token del usuario')
+      if (newAccessToken) {
+        Cookies.set('authToken', newAccessToken)
+        return await getAllBoxes()
+      }
+    }
     if (!response.ok) {
       throw new Error(`Error en la solicitud GET a /box: ${response.statusText}`)
     }

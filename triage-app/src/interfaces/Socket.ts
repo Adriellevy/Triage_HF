@@ -9,5 +9,6 @@ export enum UpdateEvent {
   UPDATE_PATIENT = 'Updated patient',
   BOX_UPDATE = 'Box Update',
   USER_UPDATE = 'User Update',
-  REFRESH_TOKEN_EXPIRED = 'Refresh Token expired'
+  REFRESH_TOKEN_EXPIRED = 'Refresh Token expired',
+  TOKEN_EPIRED = 'Token expired'
 }

@@ -1,3 +1,4 @@
 {
-  "SearchOption": { "CodeText": "Code", "PatientText": "Patient" }
+  "SearchOption": { "CodeText": "Code", "PatientText": "Patient" },
+  "No boxes available": "Hubo un problema con el servidor o no hay boxes"
 }
