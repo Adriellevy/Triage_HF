@@ -33,7 +33,7 @@ CREATE TABLE Box (
 CREATE TABLE Patient (
   patient_id BINARY(16) NOT NULL,
   patient_name VARCHAR(250) NOT NULL,
-  patient_age DATETIME NOT NULL,
+  patient_age VARCHAR(250) NOT NULL,
   patient_entry_time TIMESTAMP NOT NULL,
   patient_exit_time TIMESTAMP,
   patient_triage_time TIMESTAMP NOT NULL,
