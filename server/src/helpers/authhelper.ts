@@ -1,4 +1,4 @@
-import jwt, { type Secret } from 'jsonwebtoken';
+import jwt, { JwtPayload, type Secret } from 'jsonwebtoken';
 import { type ExtendedJwtPayload } from '../interface/jsonwebtoken';
 import TokensModel from '../models/mysql/TokensModel';
 
@@ -57,3 +57,12 @@ export async function verifyRefreshToken(token: string): Promise<string | Extend
   }
   return decoded;
 }
+
+export const IsValidToken = (token: string): string | JwtPayload | null => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret);
+    return decoded;
+  } catch (error) {
+    return null; // Token no válido o expirado
+  }
+};

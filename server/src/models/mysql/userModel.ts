@@ -144,7 +144,7 @@ export class UserModel {
     const conn = await connect();
     const [rows] = await conn.query<IUser[]>(`
       SELECT 
-        HEX(user_id) as user_id, 
+        BIN_TO_UUID(user_id) as user_id, 
         user_name, 
         user_full_name, 
         user_email, 

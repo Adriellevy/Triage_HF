@@ -18,6 +18,7 @@ function UserSettings() {
       try {
         setIsLoading(true)
         const data = await getAllUsers()
+        console.log('user data recibed:', data)
         setUsersData(data)
         setIsLoading(false)
       } catch (error) {

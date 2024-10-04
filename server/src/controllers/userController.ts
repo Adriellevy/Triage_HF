@@ -1,13 +1,14 @@
 import 'dotenv/config';
 import { type Request, type Response } from 'express';
 import { UserModel } from '../models/mysql/userModel';
-import { verifyToken } from '../helpers/authhelper';
+import { IsValidToken, verifyToken } from '../helpers/authhelper';
 import { validatePartialUpdateUser, validateUser } from '../schemas/userSchema';
 import { User, UserRole } from '../interface/user';
 import { SendUpdatedUserNotifications } from '../helpers/notificationhelper';
 import { encrypt } from '../helpers/handleBcrypt';
 import { RowDataPacket } from 'mysql2';
 import { Patient } from '../interface/patient';
+import TokensModel from '../models/mysql/TokensModel';
 
 export interface IUser extends Patient, RowDataPacket {}
 export class UserController {
@@ -78,18 +79,44 @@ export class UserController {
 
   static async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {
-      const users = await UserModel.getAllUsers();
+      // Verificar si hay un token en la solicitud
       const token = req.headers.authorization?.split(' ')[1];
       if (token) {
-        const tokendecoded = verifyToken(token.toString());
+        const tokendecoded = verifyToken(token);
         if (!tokendecoded) {
-          return res.status(401).json({ error: 'Token no proporcionado' });
+          return res.status(401).json({ error: 'Token no proporcionado o inválido' });
         }
       }
-      const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
-      return res.json(newusers);
+
+      // Obtener todos los usuarios
+      const users = await UserModel.getAllUsers();
+
+      // Obtener los tokens asociados a los usuarios
+      const tokens = await TokensModel.getTokensForUsers();
+
+      // Crear un diccionario para almacenar el estado del token de cada usuario
+      const tokenMap = new Map<string, boolean>();
+
+      // Verificar cada token
+      tokens.forEach(({ user_id, refresh_token }) => {
+        try {
+          const decodedToken = IsValidToken(refresh_token); // Verificamos si el token es válido
+          tokenMap.set(user_id, !!decodedToken); // Si es válido, el estado es 'true', si no, 'false'
+        } catch (error) {
+          // Si el token es inválido o ha expirado, el estado es 'false'
+          tokenMap.set(user_id, false);
+        }
+      });
+
+      // Filtrar la información sensible y agregar el campo state basado en la validez del token
+      const newUsers = users.map(({ user_id, user_email, user_password, ...rest }) => {
+        const state = tokenMap.has(user_id) ? tokenMap.get(user_id) : false; // Si hay token, lo asigna, si no, 'false'
+        return { ...rest, user_id, state }; // Aseguramos que user_id esté presente
+      });
+
+      return res.json(newUsers);
     } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' });
+      return res.status(500).json({ message: 'Something went wrong' });
     }
   }
 

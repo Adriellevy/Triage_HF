@@ -14,6 +14,11 @@ interface Token {
 interface UUIDResult extends RowDataPacket {
   uuid: string;
 }
+
+interface TokenRow extends RowDataPacket {
+  user_id: string;
+  refresh_token: string;
+}
 class TokensModel {
   // Método para agregar un token
   static async addToken(userId: string, refreshToken: string): Promise<Token> {
@@ -77,6 +82,21 @@ class TokensModel {
     const conn = await connect();
     const [rows]: [RowDataPacket[], FieldPacket[]] = await conn.execute(query, [tokenId]);
     return rows.length ? (rows[0] as Token) : null;
+  }
+
+  static async getTokensForUsers(): Promise<Array<{ user_id: string; refresh_token: string }>> {
+    const conn = await connect();
+
+    // Consulta SQL para obtener los tokens y el ID de usuario
+    const query = `
+      SELECT BIN_TO_UUID(user_id) AS user_id, refresh_token 
+      FROM Tokens;
+    `;
+
+    const [rows] = await conn.query<TokenRow[]>(query);
+
+    // Devolver los resultados en el formato necesario
+    return rows;
   }
 }
 
