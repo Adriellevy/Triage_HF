@@ -203,14 +203,15 @@ export class PatientsModel {
   static async updatePatient({ id, data }): Promise<any> {
     try {
       const conn = await connect();
-      console.log('info');
-      console.log(data);
+
+      // Obtener la box_id actual del paciente
       const [[Box]] = await conn.query<IBox[]>(
         'SELECT BIN_TO_UUID(box_id) AS box_id FROM Patient WHERE patient_id = UUID_TO_BIN(?)',
         [id]
       );
       const prevBox = Box.box_id;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const boxIdChanged = data.box_id !== undefined && prevBox !== data.box_id;
+
       const updateFields = Object.entries(data)
         .filter(([key, value]) => value !== null && value !== undefined)
         .map(([key, value]) => {
@@ -227,12 +228,12 @@ export class PatientsModel {
           }
         })
         .join(', ');
+
       const patientsUpdateQuery = `
         UPDATE Patient
         SET ${updateFields}
         WHERE patient_id = UUID_TO_BIN(?);
       `;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const updateValues = Object.values(data).filter(
         (value) => value !== null && value !== undefined
       );
@@ -245,13 +246,10 @@ export class PatientsModel {
           (data.patient_status === 'ALTA' && data.box_id !== null) ||
           data.patient_status === 'AFUERA'
         ) {
-          await conn.query(
-            `
-            UPDATE Patient
-            SET box_id = null
-            WHERE patient_id = UUID_TO_BIN(?);`,
-            [id]
-          );
+          // Liberar el box si el paciente tiene alta o está fuera
+          await conn.query(`UPDATE Patient SET box_id = null WHERE patient_id = UUID_TO_BIN(?);`, [
+            id
+          ]);
           await conn.query(
             `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
             [prevBox]
@@ -259,21 +257,19 @@ export class PatientsModel {
           return { message: 'Patient updated successfully' };
         }
 
-        if (prevBox !== data.box_id) {
+        // Si el box_id cambió, actualizar el estado de las cajas
+        if (boxIdChanged) {
           const now = new Date();
           await conn.query(
             `UPDATE Box SET box_status = 'DISPONIBLE' WHERE box_id = UUID_TO_BIN(?);`,
             [prevBox]
           );
           await conn.query(
-            `
-            UPDATE Box
-            SET box_time = ?,
-            box_status = 'OCUPADO'
-            WHERE box_id = UUID_TO_BIN(?)`,
+            `UPDATE Box SET box_time = ?, box_status = 'OCUPADO' WHERE box_id = UUID_TO_BIN(?)`,
             [now, data.box_id]
           );
         }
+
         return { message: 'Patient updated successfully' };
       } else {
         return { error: 'Error updating the patient' };

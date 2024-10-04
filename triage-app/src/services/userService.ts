@@ -12,7 +12,6 @@ export const getAllUsers = async (): Promise<User[]> => {
       }
     })
     // Verificamos el estado de la respuesta antes de procesarla
-    console.log('response status', responsedocs.status)
     if (responsedocs.status === 207) {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
@@ -49,7 +48,6 @@ export const getUserIdByToken = async (): Promise<number> => {
       body: JSON.stringify(tokenpost)
     })
     // Verificamos el estado de la respuesta antes de procesarla
-    console.log('response status', responsedocs.status)
     if (responsedocs.status === 207) {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
@@ -81,7 +79,6 @@ export const getAllDoctors = async (): Promise<User[]> => {
         Authorization: `Bearer ${token}`
       }
     })
-    console.log('response status', response.status)
     if (response.status === 207) {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')

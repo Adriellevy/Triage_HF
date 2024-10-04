@@ -113,10 +113,10 @@ export class PatientController {
       const { Merge_Complete } = req.body; // Destructurar Merge_complete del cuerpo del request
       console.log('Body mensaje:\n ', req.body);
       console.log('\nHay merge complete?:', Merge_Complete);
-      let UserAntiguo = await PatientsModel.getPatientById({ id });
+      const UserAntiguo = await PatientsModel.getPatientById({ id });
       //UserAntiguo = decryptPatientData(UserAntiguo as Patient) as IPatinet;
       if (!UserAntiguo) return res.status(404).json({ message: 'Patient not found' });
-      let UserNuevo: Patient = {
+      const UserNuevo: Patient = {
         ...result.data,
         patient_id: UserAntiguo.patient_id
       } as Patient;
