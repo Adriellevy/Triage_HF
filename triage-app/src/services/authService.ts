@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 interface AuthResponse {
   serverRes?: string
   success: boolean
@@ -66,5 +67,36 @@ export const verifyToken = async (token: string): Promise<AuthResponse> => {
       'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; samesite=strict; secure; path=/; HttpOnly'
 
     return { success: false, error: 'Error al intentar renovar el token' }
+  }
+}
+export const logout_petition = async (): Promise<AuthResponse> => {
+  const token = Cookies.get('authToken')
+  if (!token) return { success: false, error: 'no hay token' }
+  const url = `${import.meta.env.VITE_API_URL}/auth/logout`
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        credentials: 'include' // Enviar cookies al servidor
+      }
+    })
+
+    if (response.ok) {
+      // Retorna el nuevo token al llamador
+      return { success: true, serverRes: '200' }
+    } else {
+      return { success: false, error: response.status.toString() }
+    }
+  } catch (error) {
+    console.error('Error al intentar cerrar sesion', error)
+
+    // Elimina el token almacenado en caso de error
+    document.cookie =
+      'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; samesite=strict; secure; path=/; HttpOnly'
+
+    return { success: false, error: 'Error al intentar cerrar sesion' }
   }
 }

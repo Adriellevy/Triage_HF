@@ -12,4 +12,7 @@ authRouter.post('/renewToken', (req: Request, res: Response) => {
   void TokensController.renewToken(req, res);
 });
 
+authRouter.post('/logout', (req: Request, res: Response) => {
+  void TokensController.deleteToken(req, res);
+});
 // authRouter.post('/register', AuthController.register)

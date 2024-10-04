@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import Cookies from 'js-cookie'
+import { logout_petition } from '@/services/authService'
 interface AuthContextProps {
   isAuthenticated: boolean
   login: (token: string) => void
@@ -26,7 +27,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setVerificationCookie(_token)
   }
 
-  const logout = () => {
+  const logout = async () => {
+    await logout_petition()
     document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     document.cookie = 'verificationToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     setAuthenticated(false)

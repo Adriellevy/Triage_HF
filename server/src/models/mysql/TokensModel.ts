@@ -47,6 +47,15 @@ class TokensModel {
     await conn.execute(query, [tokenId]);
   }
 
+  static async deleteTokenByUserId(userId: string): Promise<void> {
+    const query = `
+      DELETE FROM Tokens
+      WHERE user_id = UUID_TO_BIN(?)
+    `;
+    const conn = await connect();
+    await conn.execute(query, [userId]);
+  }
+
   // Método para actualizar un token
   static async updateToken(tokenId: string, newRefreshToken: string): Promise<string> {
     const query = `
