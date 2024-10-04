@@ -1,8 +1,4 @@
-DROP DATABASE IF EXISTS Triagedb;
-
-CREATE DATABASE Triagedb;
-
-USE Triagedb;
+USE Triage_db;
 
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Box;
