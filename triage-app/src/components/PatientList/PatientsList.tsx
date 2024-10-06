@@ -95,7 +95,7 @@ function PatientsList({ patients, currentPage, setCurrentPage }: PropsPatientsLi
             {columns.map((column) => (
               <th
                 key={column.field}
-                className={`border p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
+                className={`border cursor-pointer p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
                 onClick={() => (column.sortable ? handleSort(column.field) : null)}
               >
                 {column.label}{' '}
