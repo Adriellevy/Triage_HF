@@ -24,7 +24,7 @@ load_dotenv('.env')
 #         return None
 #     return connection
 
-def fetch_data_from_api(endpoint: str, params: Dict[str, Any] = None, headers: Dict[str, str] = None) -> Union[pd.DataFrame, None]:
+def fetch_data_from_api(endpoint: str, headers: Dict[str, str] = None) -> Union[pd.DataFrame, None]:
     python_server_token = os.getenv('PYTHONSERVER')
 
     if headers is None:
@@ -32,7 +32,7 @@ def fetch_data_from_api(endpoint: str, params: Dict[str, Any] = None, headers: D
     headers['Authorization'] = f'Bearer {python_server_token}'
 
     try:
-        response = requests.get(endpoint, params=params, headers=headers)
+        response = requests.get(endpoint, headers=headers)
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)
@@ -45,8 +45,8 @@ def get_table(table_name: str, condition: str = '') -> Union[pd.DataFrame, None]
     if condition != '':
         query += condition
     print('QUERY:   \"' + query + '\"')
-    endpoint='http://localhost:3000/PatientByQuery/'
-    df = fetch_data_from_api(endpoint, params=query, headers=None)
+    endpoint='http://localhost:3000/PatientByQuery/' + query
+    df = fetch_data_from_api(endpoint, headers=None)
     return df
 
 # def get_id(table_name):
