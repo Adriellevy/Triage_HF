@@ -18,7 +18,7 @@ import { Option } from '@/interfaces/PatientList'
 import { filterPatients } from '@/helpers/HelperPatientList'
 import PatientSearchBar from '@/components/PatientSearch/PatientSearchBar'
 import PatientByDatePicker from '@/components/PatientSearch/PatientByDatePicker'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import FilterPatientsComponent from '@/components/PatientSearch/FilterPatientsComponent'
 import SearchTypeSelector from '@/components/PatientSearch/SearchTypeSelector'
 
@@ -252,8 +252,11 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }, [token, currentPage, refreshSearch])
 
   const searchPatientByName = async (name) => {
-    const data = await getPatientByName(name)
-    const sortedData = data.sort((a, b) => {
+    const data = await getPatientsByDate(dayjs().subtract(2, 'week').toISOString(), dayjs().toISOString())
+    console.log(data)
+    const dataByName = data.filter((patient => patient.patient_name.toLowerCase().includes(name.toLowerCase())))
+    console.log(dataByName)
+    const sortedData = dataByName.sort((a, b) => {
       return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
     })
     setRawData(sortedData)
