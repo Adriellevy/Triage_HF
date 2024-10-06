@@ -50,16 +50,29 @@ export function returnName4Database(value: string) {
   return value
 }
 export function returnDate4Database(value: number | Date) {
-  console.log(value)
-  console.log(value instanceof Date)
-  if (!isNaN(value)) {
-    const currentYear = new Date().getFullYear()
-    const birthYear = currentYear - value
-    const birthDate = new Date(birthYear, 0, 1)
-    return birthDate
+  const currentYear = new Date().getFullYear();
+  const thresholdYear = currentYear - 140; // Año límite de hace 140 años
+
+  console.log(value);
+  console.log(value instanceof Date);
+
+  // Caso 1: Si el valor es un número
+  if (!isNaN(value as number)) {
+    const age = value as number;
+    if (age >= 140) {
+      return null; // Si el número es mayor o igual a 140, retorna null
+    }
+    const birthYear = currentYear - age;
+    const birthDate = new Date(birthYear, 0, 1);
+    return birthDate;
+
+  // Caso 2: Si el valor es una fecha
   } else {
-    const date = new Date(value)
-    return date
+    const date = new Date(value as Date);
+    if (date.getFullYear() <= thresholdYear) {
+      return null; // Si la fecha es hace 140 años o más, retorna null
+    }
+    return date;
   }
 }
 export function returnNewDate(): Date {

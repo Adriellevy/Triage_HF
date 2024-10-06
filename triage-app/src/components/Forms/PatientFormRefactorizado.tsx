@@ -676,7 +676,7 @@ function PatientFormRefactorizado() {
     patient_name: { value: null, message: 'Escriba un nombre válido' },
     patient_age: {
       value: null,
-      message: `${edditingPatient ? 'Seleccione una fecha válida' : 'Seleccione una edad válida'}`
+      message: `${edditingPatient ? 'Seleccione una fecha válida' : 'Seleccione una edad válida (0 a 140 años'}`
     },
     patient_triage_level: { value: null, message: 'Seleccione un nivel de triage' },
     patient_status: { value: null, message: 'Seleccione un estado válido' },
