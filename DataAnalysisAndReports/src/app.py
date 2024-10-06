@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request
 from pandas import DataFrame
 
+import asyncio
+import aiohttp
+
 import features.build_features as bf
 import visualization.metrics as mt
 import visualization.visualize as vl
@@ -74,7 +77,7 @@ def index() -> str:
             <br>
             <b> Métricas </b> <br>
             /number_patients_date/metrics/ <br>
-            /number_patients_date/isolated/metrics/ <br>   
+            /number_patients_date/isolated/metrics/ <br>
             /number_patients_date/status/metrics/ <br>
             /number_patients_date/age/metrics/ <br>
             /top_queries_date/metrics/ <br>
@@ -86,17 +89,17 @@ def index() -> str:
 
 
 # Getters.
-def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None) -> Union[DataFrame, None]:
+async def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None) -> Union[DataFrame, None]:
     dict = get_args()
 
-    df = bf.build_features('Patient', dict)
+    df = await bf.build_features('Patient', dict)
 
     if df is None:
         return None
     elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
         return DataFrame()
 
-    df = bf.build_number_patients_date(df, group_cond, rename)
+    df = await bf.build_number_patients_date(df, group_cond, rename)
 
     return df
 
@@ -140,8 +143,8 @@ def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = 
 
 # Charts.
 @app.route('/number_patients_date/')
-def chart_number_patients_date() -> Union[str, Response]:
-    df = get_df_number_patients('patient_triage_level')
+async def chart_number_patients_date() -> Union[str, Response]:
+    df = await get_df_number_patients('patient_triage_level')
 
     if df is None:
         return Response('There was an error connecting to DB', status=500)
@@ -792,7 +795,7 @@ def metrics_patients_mean_time_date() -> Response:
     return jsonify(data)
 
 
-# waitress-serve --host 192.168.0.99 app:app  
+# waitress-serve --host 192.168.0.99 app:app
 
 # serve(app, host='0.0.0.0', port=5000)
 

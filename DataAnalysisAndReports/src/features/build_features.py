@@ -162,7 +162,7 @@ def build_patients_mean_time(df: DataFrame, group_cond1: str, group_cond2: str) 
     return df
 
 
-def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') -> Union[DataFrame, None]:
+async def build_features(table_name: str, dictionary: Dict[str, Any], condition: str = '') -> Union[DataFrame, None]:
     pd.options.display.max_rows = None
     pd.options.display.max_columns = None
 
@@ -176,7 +176,7 @@ def build_features(table_name: str, dictionary: Dict[str, Any], condition: str =
 
         condition = join_filters(join_dictionary) + where_filters(where_dictionary)
 
-    df = md.get_table(table_name, condition)
+    df = await md.get_table(table_name, condition)
 
     if df is None:
         return None

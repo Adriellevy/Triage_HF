@@ -6,7 +6,9 @@ numpy
 pandas
 
 # WEB APP
-flask
+flask[async]
+asgiref
+aiohttp
 requests
 
 # CHART

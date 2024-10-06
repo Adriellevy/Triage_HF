@@ -1,6 +1,8 @@
 import os
-from typing import Any, Dict, Union
+from typing import Dict, Union
+import aiohttp
 import requests
+import asyncio
 import pandas as pd
 from dotenv import load_dotenv
 # import mysql.connector
@@ -24,29 +26,31 @@ load_dotenv('.env')
 #         return None
 #     return connection
 
-def fetch_data_from_api(endpoint: str, headers: Dict[str, str] = None) -> Union[pd.DataFrame, None]:
+async def fetch_data_from_api(endpoint: str, headers: Dict[str, str] = None) -> Union[pd.DataFrame, None]:
     python_server_token = os.getenv('PYTHONSERVER')
 
     if headers is None:
         headers = {}
     headers['Authorization'] = f'Bearer {python_server_token}'
 
-    try:
-        response = requests.get(endpoint, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return pd.DataFrame(data)
-    except requests.RequestException as e:
-        print(f"HTTP Request failed: {e}")
-        return None
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(endpoint, headers=headers) as response:
+                response.raise_for_status()
+                data = await response.json()
+                return pd.DataFrame(data)
+        except aiohttp.ClientError as e:
+            print(f"HTTP Request failed: {e}")
+            return None
 
-def get_table(table_name: str, condition: str = '') -> Union[pd.DataFrame, None]:
+async def get_table(table_name: str, condition: str = '') -> Union[pd.DataFrame, None]:
     query = 'SELECT * FROM ' + table_name
     if condition != '':
         query += condition
     print('QUERY:   \"' + query + '\"')
     endpoint='http://localhost:3000/PatientByQuery/' + query
-    df = fetch_data_from_api(endpoint, headers=None)
+    print('ENDPOINT: \"' + endpoint + '\"')
+    df = await fetch_data_from_api(endpoint, headers=None)
     return df
 
 # def get_id(table_name):
