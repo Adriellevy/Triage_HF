@@ -8,7 +8,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/db_demo_patient.sql:/docker-entrypoint-initdb.d/db_demo_patient.sql
     networks:
       - app-network
 
@@ -42,6 +42,7 @@ services:
       - JWT_SECRET=123
       - EMAIL_USER=Test
       - EMAIL_PASS=Test
+      - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
     ports:
       - 3000:3000
     networks:

@@ -102,7 +102,7 @@ async def get_df_number_patients(
     elif df.empty or (df.shape[0] < 200 and os.getenv("CHARTS_RESTRICTION") == "True"):
         return DataFrame()
 
-    df = await bf.build_number_patients_date(df, group_cond, rename)
+    df = bf.build_number_patients_date(df, group_cond, rename)
 
     return df
 

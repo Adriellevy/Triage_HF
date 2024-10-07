@@ -20,10 +20,10 @@ export class queryController {
 
       const patients = await queryModel.getPatientsByQuery(query);
       // Desencriptar todos los pacientes
-      const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
-      console.log('pacientes devueltos:', JSON.stringify(decryptedPatients));
+      //const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
+      console.log('pacientes devueltos:', JSON.stringify(patients, null, 2));
       // Retornar la respuesta con los pacientes desencriptados
-      return res.json(decryptedPatients);
+      return res.json(patients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       return res.status(500).json({ message: 'Something went wrong' });
