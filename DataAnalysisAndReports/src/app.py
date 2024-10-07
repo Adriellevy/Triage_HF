@@ -149,10 +149,10 @@ async def chart_number_patients_date() -> Union[str, Response]:
     print('Llamaste a la función para obtener los datos de los pacientes')
     df = await get_df_number_patients('patient_triage_level')
 
-    if df is None:
-        return Response('There was an error connecting to DB', status=500)
-    elif df.empty:
-        return Response('Not enough records to display', status=422)
+    # if df is None:
+    #     return Response('There was an error connecting to DB', status=500)
+    # elif df.empty:
+    #     return Response('Not enough records to display', status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
