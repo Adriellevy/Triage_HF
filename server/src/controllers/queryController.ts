@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { type Request, type Response } from 'express';
+import { json, type Request, type Response } from 'express';
 import { PatientsModel } from '../models/mysql/patientModel';
 import { verifyToken } from '../helpers/authhelper';
 import { format } from 'date-fns';
@@ -21,7 +21,7 @@ export class queryController {
       const patients = await queryModel.getPatientsByQuery(query);
       // Desencriptar todos los pacientes
       const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
-
+      console.log('pacientes devueltos:', JSON.stringify(decryptedPatients));
       // Retornar la respuesta con los pacientes desencriptados
       return res.json(decryptedPatients);
     } catch (error) {
