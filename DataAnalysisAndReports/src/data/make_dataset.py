@@ -48,7 +48,7 @@ async def get_table(table_name: str, condition: str = '') -> Union[pd.DataFrame,
     if condition != '':
         query += condition
     print('QUERY:   \"' + query + '\"')
-    endpoint='http://localhost:3000/PatientByQuery/' + query
+    endpoint='http://localhost:3000/PatientByQuery/?query={' + query + '}'
     print('ENDPOINT: \"' + endpoint + '\"')
     df = await fetch_data_from_api(endpoint, headers=None)
     return df

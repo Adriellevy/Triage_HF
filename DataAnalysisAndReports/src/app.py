@@ -92,6 +92,8 @@ def index() -> str:
 async def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None) -> Union[DataFrame, None]:
     dict = get_args()
 
+
+
     df = await bf.build_features('Patient', dict)
 
     if df is None:
@@ -144,6 +146,7 @@ def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = 
 # Charts.
 @app.route('/number_patients_date/')
 async def chart_number_patients_date() -> Union[str, Response]:
+    print('Llamaste a la función para obtener los datos de los pacientes')
     df = await get_df_number_patients('patient_triage_level')
 
     if df is None:
