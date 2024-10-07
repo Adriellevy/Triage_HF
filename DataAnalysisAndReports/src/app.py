@@ -13,9 +13,9 @@ import visualization.metrics as mt
 import visualization.visualize as vl
 
 app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+app.config["JSON_SORT_KEYS"] = False
 
-load_dotenv('/data/.env')
+load_dotenv("/data/.env")
 
 
 # def get_args() -> Dict[str, Any]:
@@ -45,19 +45,20 @@ load_dotenv('/data/.env')
 #     }
 #     return args
 
+
 def get_args() -> Dict[str, Any]:
     """
     from_ format: yyyy-mm-dd
     to format: yyyy-mm-dd
     """
     args = {
-        'from_': request.args.get('from', type=str),
-        'to': request.args.get('to', type=str)
+        "from_": request.args.get("from", type=str),
+        "to": request.args.get("to", type=str),
     }
     return args
 
 
-@app.route('/')
+@app.route("/")
 def index() -> str:
     return """
             <p>
@@ -89,16 +90,16 @@ def index() -> str:
 
 
 # Getters.
-async def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None) -> Union[DataFrame, None]:
+async def get_df_number_patients(
+    group_cond: str, rename: Dict[Any, str] = None
+) -> Union[DataFrame, None]:
     dict = get_args()
 
-
-
-    df = await bf.build_features('Patient', dict)
-
+    df = await bf.build_features("Patient", dict)
     if df is None:
+        print("explota en get_df_numer")
         return None
-    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
+    elif df.empty or (df.shape[0] < 200 and os.getenv("CHARTS_RESTRICTION") == "True"):
         return DataFrame()
 
     df = await bf.build_number_patients_date(df, group_cond, rename)
@@ -106,14 +107,16 @@ async def get_df_number_patients(group_cond: str, rename: Dict[Any, str] = None)
     return df
 
 
-def get_df_top_queries(group_cond: str, rename: Dict[Any, str] = None) -> Union[DataFrame, None]:
+def get_df_top_queries(
+    group_cond: str, rename: Dict[Any, str] = None
+) -> Union[DataFrame, None]:
     dict = get_args()
 
-    df = bf.build_features('Patient', dict)
+    df = bf.build_features("Patient", dict)
 
     if df is None:
         return None
-    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
+    elif df.empty or (df.shape[0] < 200 and os.getenv("CHARTS_RESTRICTION") == "True"):
         return DataFrame()
 
     # top = request.args.get('top', default=10, type=int)
@@ -123,20 +126,22 @@ def get_df_top_queries(group_cond: str, rename: Dict[Any, str] = None) -> Union[
     return df
 
 
-def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = None) -> Union[DataFrame, None]:
+def get_patients_mean_time(
+    group_cond1: str, group_cond2: str, filter_by: str = None
+) -> Union[DataFrame, None]:
     dict = get_args()
 
-    dict[filter_by] = 'all'
+    dict[filter_by] = "all"
 
     condition = bf.join_filters(dict)
 
     condition += " WHERE patient_status = 'ALTA'"
 
-    df = bf.build_features('Patient', dict, condition)
+    df = bf.build_features("Patient", dict, condition)
 
     if df is None:
         return None
-    elif df.empty or (df.shape[0] < 200 and os.getenv('CHARTS_RESTRICTION') == 'True'):
+    elif df.empty or (df.shape[0] < 200 and os.getenv("CHARTS_RESTRICTION") == "True"):
         return DataFrame()
 
     df = bf.build_patients_mean_time(df, group_cond1, group_cond2)
@@ -144,655 +149,651 @@ def get_patients_mean_time(group_cond1: str, group_cond2: str, filter_by: str = 
 
 
 # Charts.
-@app.route('/number_patients_date/')
+@app.route("/number_patients_date/")
 async def chart_number_patients_date() -> Union[str, Response]:
-    print('Llamaste a la función para obtener los datos de los pacientes')
-    df = await get_df_number_patients('patient_triage_level')
-
-    # if df is None:
-    #     return Response('There was an error connecting to DB', status=500)
-    # elif df.empty:
-    #     return Response('Not enough records to display', status=422)
-
-    # mean: bool = request.args.get('mean', default=False, type=bool)
-
-    fig = vl.line_chart(
-        df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        x_title='Fecha de Ingreso',
-        y_title='Cantidad de Pacientes',
-        title='Cantidad de Pacientes por Fecha de Ingreso',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='pacientes',
-        mean=True
-    )
-
-    return fig.to_html()
-
-
-@app.route('/number_patients_date/isolated/')
-def chart_number_patients_date_isolated() -> Union[str, Response]:
-    rename = {
-        0: 'No',
-        1: 'Si'
-    }
-
-    df = get_df_number_patients('patient_isolated', rename)
+    print("Llamaste a la función para obtener los datos de los pacientes")
+    df = await get_df_number_patients("patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.line_chart(
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        x_title='Fecha de Ingreso',
-        y_title='Cantidad de Pacientes',
-        title='Cantidad de Pacientes por Fecha de Ingreso',
-        legend_title='¿Se encuentra aislado?',
-        color='patient_isolated',
-        color_map='isolated_discrete_map',
-        y_txt='pacientes',
-        mean=True
+        x="patient_entry_time",
+        y="number_of_patients",
+        x_title="Fecha de Ingreso",
+        y_title="Cantidad de Pacientes",
+        title="Cantidad de Pacientes por Fecha de Ingreso",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="pacientes",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/number_patients_date/status/')
+@app.route("/number_patients_date/isolated/")
+def chart_number_patients_date_isolated() -> Union[str, Response]:
+    rename = {0: "No", 1: "Si"}
+
+    df = get_df_number_patients("patient_isolated", rename)
+
+    if df is None:
+        return Response("There was an error connecting to DB", status=500)
+    elif df.empty:
+        return Response("Not enough records to display", status=422)
+
+    # mean: bool = request.args.get('mean', default=False, type=bool)
+
+    fig = vl.line_chart(
+        df=df,
+        x="patient_entry_time",
+        y="number_of_patients",
+        x_title="Fecha de Ingreso",
+        y_title="Cantidad de Pacientes",
+        title="Cantidad de Pacientes por Fecha de Ingreso",
+        legend_title="¿Se encuentra aislado?",
+        color="patient_isolated",
+        color_map="isolated_discrete_map",
+        y_txt="pacientes",
+        mean=True,
+    )
+
+    return fig.to_html()
+
+
+@app.route("/number_patients_date/status/")
 def chart_number_patients_date_status() -> Union[str, Response]:
     rename = {
-        'ALTA': 'Alta',
-        'EN OBSERVACION': 'En observación',
-        'EN ESPERA DE INTERNACION': 'En espera de internación',
-        'INTERNADO': 'Internado',
-        'AFUERA': 'Afuera'
+        "ALTA": "Alta",
+        "EN OBSERVACION": "En observación",
+        "EN ESPERA DE INTERNACION": "En espera de internación",
+        "INTERNADO": "Internado",
+        "AFUERA": "Afuera",
     }
 
-    df = get_df_number_patients('patient_status', rename)
+    df = get_df_number_patients("patient_status", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.line_chart(
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        x_title='Fecha de Ingreso',
-        y_title='Cantidad de Pacientes',
-        title='Cantidad de Pacientes por Fecha de Ingreso',
-        legend_title='Estados',
-        color='patient_status',
-        color_map='status_discrete_map',
-        y_txt='pacientes',
-        mean=True
+        x="patient_entry_time",
+        y="number_of_patients",
+        x_title="Fecha de Ingreso",
+        y_title="Cantidad de Pacientes",
+        title="Cantidad de Pacientes por Fecha de Ingreso",
+        legend_title="Estados",
+        color="patient_status",
+        color_map="status_discrete_map",
+        y_txt="pacientes",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/number_patients_date/age/')
+@app.route("/number_patients_date/age/")
 def chart_number_patients_date_age() -> Union[str, Response]:
-    df = get_df_number_patients('patient_age_group')
+    df = get_df_number_patients("patient_age_group")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.line_chart(
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        x_title='Fecha de Ingreso',
-        y_title='Cantidad de Pacientes',
-        title='Cantidad de Pacientes por Fecha de Ingreso',
-        legend_title='Grupos de edades',
-        color='patient_age_group',
-        color_map='age_range_discrete_map',
-        y_txt='pacientes',
-        mean=True
+        x="patient_entry_time",
+        y="number_of_patients",
+        x_title="Fecha de Ingreso",
+        y_title="Cantidad de Pacientes",
+        title="Cantidad de Pacientes por Fecha de Ingreso",
+        legend_title="Grupos de edades",
+        color="patient_age_group",
+        color_map="age_range_discrete_map",
+        y_txt="pacientes",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/top_queries_date/')
+@app.route("/top_queries_date/")
 def chart_top_queries_date() -> Union[str, Response]:
-    df = get_df_top_queries('patient_triage_level')
+    df = get_df_top_queries("patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='consultas',
-        mean=True
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="consultas",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/top_queries_date/isolated/')
+@app.route("/top_queries_date/isolated/")
 def chart_top_queries_date_isolated() -> Union[str, Response]:
-    rename = {
-        0: 'No',
-        1: 'Si'
-    }
+    rename = {0: "No", 1: "Si"}
 
-    df = get_df_top_queries('patient_isolated', rename)
+    df = get_df_top_queries("patient_isolated", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
-        legend_title='¿Se encuentra aislado?',
-        color='patient_isolated',
-        color_map='isolated_discrete_map',
-        y_txt='consultas',
-        mean=True
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        legend_title="¿Se encuentra aislado?",
+        color="patient_isolated",
+        color_map="isolated_discrete_map",
+        y_txt="consultas",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/top_queries_date/status/')
+@app.route("/top_queries_date/status/")
 def chart_top_queries_date_status() -> Union[str, Response]:
     rename = {
-        'ALTA': 'Alta',
-        'EN OBSERVACION': 'En observación',
-        'EN ESPERA DE INTERNACION': 'En espera de internación',
-        'INTERNADO': 'Internado',
-        'AFUERA': 'Afuera'
+        "ALTA": "Alta",
+        "EN OBSERVACION": "En observación",
+        "EN ESPERA DE INTERNACION": "En espera de internación",
+        "INTERNADO": "Internado",
+        "AFUERA": "Afuera",
     }
 
-    df = get_df_top_queries('patient_status', rename)
+    df = get_df_top_queries("patient_status", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
-        legend_title='Estados',
-        color='patient_status',
-        color_map='status_discrete_map',
-        y_txt='consultas',
-        mean=True
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        legend_title="Estados",
+        color="patient_status",
+        color_map="status_discrete_map",
+        y_txt="consultas",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/top_queries_date/age/')
+@app.route("/top_queries_date/age/")
 def chart_top_queries_date_age() -> Union[str, Response]:
-    df = get_df_top_queries('patient_age_group')
+    df = get_df_top_queries("patient_age_group")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.bar_chart(
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        x_title='Motivo de Consulta',
-        y_title='Cantidad de Consultas',
-        title='Motivos de Consulta mas Frecuentes',
-        legend_title='Grupos de edades',
-        color='patient_age_group',
-        color_map='age_range_discrete_map',
-        y_txt='consultas',
-        mean=True
+        x="patient_symptom",
+        y="symptom_count",
+        x_title="Motivo de Consulta",
+        y_title="Cantidad de Consultas",
+        title="Motivos de Consulta mas Frecuentes",
+        legend_title="Grupos de edades",
+        color="patient_age_group",
+        color_map="age_range_discrete_map",
+        y_txt="consultas",
+        mean=True,
     )
 
     return fig.to_html()
 
 
-@app.route('/patients_mean_time_doctor/')
+@app.route("/patients_mean_time_doctor/")
 def patiens_mean_time_doctor() -> Union[str, Response]:
-    df = get_patients_mean_time('user_full_name', 'patient_triage_level', 'doctor_full_name')
+    df = get_patients_mean_time(
+        "user_full_name", "patient_triage_level", "doctor_full_name"
+    )
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     fig = vl.line_chart(
         df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        x_title='Doctor',
-        y_title='Tiempo Medio de Estadía',
-        title='Tiempo Medio de Estadía de Pacientes por Doctor',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='Minutos'
+        x="user_full_name",
+        y="patient_mean_delta_time",
+        x_title="Doctor",
+        y_title="Tiempo Medio de Estadía",
+        title="Tiempo Medio de Estadía de Pacientes por Doctor",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="Minutos",
     )
     return fig.to_html()
 
 
-@app.route('/patients_mean_time_nurse/')
+@app.route("/patients_mean_time_nurse/")
 def patiens_mean_time_nurse() -> Union[str, Response]:
-    df = get_patients_mean_time('user_full_name', 'patient_triage_level', 'nurse_full_name')
+    df = get_patients_mean_time(
+        "user_full_name", "patient_triage_level", "nurse_full_name"
+    )
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     fig = vl.line_chart(
         df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        x_title='Doctor',
-        y_title='Tiempo Medio de Estadía',
-        title='Tiempo Medio de Estadía de Pacientes por Doctor',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='Minutos'
+        x="user_full_name",
+        y="patient_mean_delta_time",
+        x_title="Doctor",
+        y_title="Tiempo Medio de Estadía",
+        title="Tiempo Medio de Estadía de Pacientes por Doctor",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="Minutos",
     )
     return fig.to_html()
 
 
-@app.route('/patients_mean_time_date/')
+@app.route("/patients_mean_time_date/")
 def patients_mean_time_date() -> Union[str, Response]:
-    df = get_patients_mean_time('patient_entry_time', 'patient_triage_level')
+    df = get_patients_mean_time("patient_entry_time", "patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     # mean: bool = request.args.get('mean', default=False, type=bool)
 
     fig = vl.line_chart(
         df=df,
-        x='patient_entry_time',
-        y='patient_mean_delta_time',
-        x_title='Fecha de Ingreso',
-        y_title='Tiempo Medio de Estadía',
-        title='Tiempo Medio de Estadía de Pacientes por Fecha de Ingreso',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='minutos',
-        mean=True
+        x="patient_entry_time",
+        y="patient_mean_delta_time",
+        x_title="Fecha de Ingreso",
+        y_title="Tiempo Medio de Estadía",
+        title="Tiempo Medio de Estadía de Pacientes por Fecha de Ingreso",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="minutos",
+        mean=True,
     )
 
     return fig.to_html()
 
 
 # Metrics.
-@app.route('/number_patients_date/metrics/')
+@app.route("/number_patients_date/metrics/")
 def metrics_number_patients_date() -> Response:
-    df = get_df_number_patients('patient_triage_level')
+    df = get_df_number_patients("patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'triage_I': 'Nivel I',
-        'triage_II': 'Nivel II',
-        'triage_III': 'Nivel III',
-        'triage_IV': 'Nivel IV'
+        "triage_I": "Nivel I",
+        "triage_II": "Nivel II",
+        "triage_III": "Nivel III",
+        "triage_IV": "Nivel IV",
     }
 
     data = mt.metrics_data(
-        txt='pacientes',
+        txt="pacientes",
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        z='patient_triage_level',
-        expand=expand
+        x="patient_entry_time",
+        y="number_of_patients",
+        z="patient_triage_level",
+        expand=expand,
     )
     return jsonify(data)
 
 
-@app.route('/number_patients_date/isolated/metrics/')
+@app.route("/number_patients_date/isolated/metrics/")
 def metrics_number_patients_date_isolated() -> Response:
-    rename = {
-        0: 'No',
-        1: 'Si'
-    }
+    rename = {0: "No", 1: "Si"}
 
-    df = get_df_number_patients('patient_isolated', rename)
+    df = get_df_number_patients("patient_isolated", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'no': 'No',
-        'si': 'Si',
+        "no": "No",
+        "si": "Si",
     }
 
     data = mt.metrics_data(
-        txt='pacientes',
+        txt="pacientes",
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        z='patient_isolated',
-        expand=expand
+        x="patient_entry_time",
+        y="number_of_patients",
+        z="patient_isolated",
+        expand=expand,
     )
     return jsonify(data)
 
 
-@app.route('/number_patients_date/status/metrics/')
+@app.route("/number_patients_date/status/metrics/")
 def metrics_number_patients_date_metrics() -> Response:
     rename = {
-        'ALTA': 'Alta',
-        'EN OBSERVACION': 'En observación',
-        'EN ESPERA DE INTERNACION': 'En espera de internación',
-        'INTERNADO': 'Internado',
-        'AFUERA': 'Afuera'
+        "ALTA": "Alta",
+        "EN OBSERVACION": "En observación",
+        "EN ESPERA DE INTERNACION": "En espera de internación",
+        "INTERNADO": "Internado",
+        "AFUERA": "Afuera",
     }
 
-    df = get_df_number_patients('patient_satus', rename)
+    df = get_df_number_patients("patient_satus", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'alta': 'Alta',
-        'en_observacion': 'En observación',
-        'en_espera_de_internacion': 'En espera de internación',
-        'internado': 'Internado',
-        'afuera': 'Afuera'
+        "alta": "Alta",
+        "en_observacion": "En observación",
+        "en_espera_de_internacion": "En espera de internación",
+        "internado": "Internado",
+        "afuera": "Afuera",
     }
 
     data = mt.metrics_data(
-        txt='pacientes',
+        txt="pacientes",
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        z='patient_status',
-        expand=expand
+        x="patient_entry_time",
+        y="number_of_patients",
+        z="patient_status",
+        expand=expand,
     )
     return jsonify(data)
 
 
-@app.route('/number_patients_date/age/metrics/')
+@app.route("/number_patients_date/age/metrics/")
 def metrics_number_patients_date_age() -> Union[str, Response]:
-    df = get_df_number_patients('patients_age_group')
+    df = get_df_number_patients("patients_age_group")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        '0 a 40': '0 a 40',
-        '41 a 60': '41 a 60',
-        '61 a 80': '61 a 80',
-        '+80': '+80'
+        "0 a 40": "0 a 40",
+        "41 a 60": "41 a 60",
+        "61 a 80": "61 a 80",
+        "+80": "+80",
     }
 
     data = mt.metrics_data(
-        txt='pacientes',
+        txt="pacientes",
         df=df,
-        x='patient_entry_time',
-        y='number_of_patients',
-        z='patient_age_group',
-        expand=expand
+        x="patient_entry_time",
+        y="number_of_patients",
+        z="patient_age_group",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/top_queries_date/metrics/')
+@app.route("/top_queries_date/metrics/")
 def metrics_top_queries_date() -> Response:
-    df = get_df_top_queries('patient_triage_level')
+    df = get_df_top_queries("patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'triage_I': 'Nivel I',
-        'triage_II': 'Nivel II',
-        'triage_III': 'Nivel III',
-        'triage_IV': 'Nivel IV'
+        "triage_I": "Nivel I",
+        "triage_II": "Nivel II",
+        "triage_III": "Nivel III",
+        "triage_IV": "Nivel IV",
     }
 
     data = mt.metrics_data(
-        txt='consultas',
+        txt="consultas",
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        z='patient_triage_level',
-        expand=expand
+        x="patient_symptom",
+        y="symptom_count",
+        z="patient_triage_level",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/top_queries_date/isolated/metrics/')
+@app.route("/top_queries_date/isolated/metrics/")
 def metrics_top_queries_date_isolated() -> Response:
-    rename = {
-        0: 'No',
-        1: 'Si'
-    }
+    rename = {0: "No", 1: "Si"}
 
-    df = get_df_top_queries('patient_isolated', rename)
+    df = get_df_top_queries("patient_isolated", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'no': 'No',
-        'si': 'Si',
+        "no": "No",
+        "si": "Si",
     }
 
     data = mt.metrics_data(
-        txt='consultas',
+        txt="consultas",
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        z='patient_isolated',
-        expand=expand
+        x="patient_symptom",
+        y="symptom_count",
+        z="patient_isolated",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/top_queries_date/status/metrics/')
+@app.route("/top_queries_date/status/metrics/")
 def metrics_top_queries_date_status() -> Response:
     rename = {
-        'ALTA': 'Alta',
-        'EN OBSERVACION': 'En observación',
-        'EN ESPERA DE INTERNACION': 'En espera de internación',
-        'INTERNADO': 'Internado',
-        'AFUERA': 'Afuera'
+        "ALTA": "Alta",
+        "EN OBSERVACION": "En observación",
+        "EN ESPERA DE INTERNACION": "En espera de internación",
+        "INTERNADO": "Internado",
+        "AFUERA": "Afuera",
     }
 
-    df = get_df_top_queries('patient_status', rename)
+    df = get_df_top_queries("patient_status", rename)
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'alta': 'Alta',
-        'en_observacion': 'En observación',
-        'en_espera_de_internacion': 'En espera de internación',
-        'internado': 'Internado',
-        'afuera': 'Afuera'
+        "alta": "Alta",
+        "en_observacion": "En observación",
+        "en_espera_de_internacion": "En espera de internación",
+        "internado": "Internado",
+        "afuera": "Afuera",
     }
 
     data = mt.metrics_data(
-        txt='consultas',
+        txt="consultas",
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        z='patient_status',
-        expand=expand
+        x="patient_symptom",
+        y="symptom_count",
+        z="patient_status",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/top_queries_date/age/metrics/')
+@app.route("/top_queries_date/age/metrics/")
 def metrics_top_queries_date_date_age() -> Union[str, Response]:
-    df = get_df_top_queries('patient_age_group')
+    df = get_df_top_queries("patient_age_group")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        '0 a 40': '0 a 40',
-        '41 a 60': '41 a 60',
-        '61 a 80': '61 a 80',
-        '+80': '+80'
+        "0 a 40": "0 a 40",
+        "41 a 60": "41 a 60",
+        "61 a 80": "61 a 80",
+        "+80": "+80",
     }
 
     data = mt.metrics_data(
-        txt='consultas',
+        txt="consultas",
         df=df,
-        x='patient_symptom',
-        y='symptom_count',
-        z='patient_age_group',
-        expand=expand
+        x="patient_symptom",
+        y="symptom_count",
+        z="patient_age_group",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/patients_mean_time_doctor/metrics/')
+@app.route("/patients_mean_time_doctor/metrics/")
 def metrics_patients_mean_time_doctor() -> Union[Response, str]:
-    df = get_patients_mean_time('user_full_name', 'patient_triage_level', 'doctor_full_name')
+    df = get_patients_mean_time(
+        "user_full_name", "patient_triage_level", "doctor_full_name"
+    )
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     fig = vl.line_chart(
         df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        x_title='Enfermero',
-        y_title='Tiempo Medio de Estadía',
-        title='Tiempo Medio de Estadía de Pacientes por Enfermero',
-        legend_title='Nivel de Triage',
-        color='patient_triage_level',
-        color_map='triage_color_map',
-        y_txt='Minutos'
+        x="user_full_name",
+        y="patient_mean_delta_time",
+        x_title="Enfermero",
+        y_title="Tiempo Medio de Estadía",
+        title="Tiempo Medio de Estadía de Pacientes por Enfermero",
+        legend_title="Nivel de Triage",
+        color="patient_triage_level",
+        color_map="triage_color_map",
+        y_txt="Minutos",
     )
 
     return fig.to_html()
 
 
-@app.route('/patients_mean_time_nurse/metrics/')
+@app.route("/patients_mean_time_nurse/metrics/")
 def metrics_patients_mean_time_nurse() -> Response:
-    df = get_patients_mean_time('user_full_name', 'patient_triage_level', 'nurse_full_name')
+    df = get_patients_mean_time(
+        "user_full_name", "patient_triage_level", "nurse_full_name"
+    )
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'triage_I': 'Nivel I',
-        'triage_II': 'Nivel II',
-        'triage_III': 'Nivel III',
-        'triage_IV': 'Nivel IV'
+        "triage_I": "Nivel I",
+        "triage_II": "Nivel II",
+        "triage_III": "Nivel III",
+        "triage_IV": "Nivel IV",
     }
 
     data = mt.metrics_data(
-        txt='enfermeros',
+        txt="enfermeros",
         df=df,
-        x='user_full_name',
-        y='patient_mean_delta_time',
-        z='patient_triage_level',
-        expand=expand
+        x="user_full_name",
+        y="patient_mean_delta_time",
+        z="patient_triage_level",
+        expand=expand,
     )
 
     return jsonify(data)
 
 
-@app.route('/patients_mean_time_date/metrics/')
+@app.route("/patients_mean_time_date/metrics/")
 def metrics_patients_mean_time_date() -> Response:
-    df = get_patients_mean_time('patient_entry_time', 'patient_triage_level')
+    df = get_patients_mean_time("patient_entry_time", "patient_triage_level")
 
     if df is None:
-        return Response('There was an error connecting to DB', status=500)
+        return Response("There was an error connecting to DB", status=500)
     elif df.empty:
-        return Response('Not enough records to display', status=422)
+        return Response("Not enough records to display", status=422)
 
     expand = {
-        'triage_I': 'Nivel I',
-        'triage_II': 'Nivel II',
-        'triage_III': 'Nivel III',
-        'triage_IV': 'Nivel IV'
+        "triage_I": "Nivel I",
+        "triage_II": "Nivel II",
+        "triage_III": "Nivel III",
+        "triage_IV": "Nivel IV",
     }
 
     data = mt.metrics_data(
-        txt='minutos',
+        txt="minutos",
         df=df,
-        x='patient_entry_time',
-        y='patient_mean_delta_time',
-        z='patient_triage_level',
-        expand=expand
+        x="patient_entry_time",
+        y="patient_mean_delta_time",
+        z="patient_triage_level",
+        expand=expand,
     )
 
     return jsonify(data)
@@ -802,6 +803,6 @@ def metrics_patients_mean_time_date() -> Response:
 
 # serve(app, host='0.0.0.0', port=5000)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # app.run(debug=True)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)

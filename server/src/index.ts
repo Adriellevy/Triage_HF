@@ -13,6 +13,7 @@ import { settingsRouter } from './routes/settingRoutes';
 import { dashboardRouter } from './routes/dashboardRoutes';
 import { nodemailerRouter } from './routes/nodemailerRoutes';
 import { patientPatinationRouter } from './routes/patinetPaginationRoutes';
+import { queryRoutes } from './routes/queryRoutes';
 
 const PORT = process.env.PORTAPI ?? 3000;
 
@@ -33,6 +34,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/auth', authRouter);
 app.use('/nodemailer', nodemailerRouter);
+app.use('/PatientByQuery', queryRoutes);
 app.use('/patient', authenticateToken, patientRouter);
 app.use('/patient/page', authenticateToken, patientPatinationRouter);
 app.use('/box', authenticateToken, boxRouter);
