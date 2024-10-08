@@ -10,7 +10,7 @@ from mysql.connector.connection_cext import CMySQLConnection
 from typing import Dict, Union
 import aiohttp
 
-from .helpers import transform_patient_data
+from .helpersData import transform_patient_data
 
 load_dotenv()
 
@@ -69,7 +69,7 @@ async def get_table(
     table_name: str, condition: str = ""
 ) -> typing.Union[pd.DataFrame, None]:
     json_recived = await asinc_get_table(table_name, condition)
-    dfj = pd.DataFrame(json_recived)
+    return json_recived
     # dfs = transform_patient_data(json_recived)
     # seccion sql
     connection = connect()
@@ -167,6 +167,34 @@ async def asinc_get_table(
     # endpoint = "http://localhost:3000/PatientByQuery/" + query + ""
     print('ENDPOINT: "' + endpoint + '"')
     json_recived = await fetch_data_from_api(endpoint, headers=None)
-    print("\nEl Json obtenido es:\n ")
-    print(json_recived)
+
+    if json_recived.empty:
+        return pd.DataFrame()
+
+    if table_name.lower() == "patient":
+        dfj = pd.DataFrame(json_recived)
+
+        dfj["patient_age"] = pd.to_datetime(dfj["patient_age"], errors="coerce")
+        dfj["patient_entry_time"] = pd.to_datetime(
+            dfj["patient_entry_time"], errors="coerce"
+        )
+        dfj["patient_exit_time"] = pd.to_datetime(
+            dfj["patient_exit_time"], errors="coerce"
+        )
+        dfj["patient_triage_time"] = pd.to_datetime(
+            dfj["patient_triage_time"], errors="coerce"
+        )
+
+        # Eliminar la zona horaria de las columnas datetime del JSON DataFrame
+        dfj["patient_age"] = dfj["patient_age"].dt.tz_localize(None)
+        dfj["patient_entry_time"] = dfj["patient_entry_time"].dt.tz_localize(None)
+        dfj["patient_exit_time"] = dfj["patient_exit_time"].dt.tz_localize(None)
+        dfj["patient_triage_time"] = dfj["patient_triage_time"].dt.tz_localize(None)
+
+        # Verificar nuevamente los tipos de datos después de eliminar la zona horaria
+        print(dfj.dtypes)
+        return dfj
+    else:
+        print("El dataframe no fue restructurado")
+        return None
     return json_recived

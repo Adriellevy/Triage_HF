@@ -107,12 +107,12 @@ async def get_df_number_patients(
     return df
 
 
-def get_df_top_queries(
+async def get_df_top_queries(
     group_cond: str, rename: Dict[Any, str] = None
 ) -> Union[DataFrame, None]:
     dict = get_args()
 
-    df = bf.build_features("Patient", dict)
+    df = await bf.build_features("Patient", dict)
 
     if df is None:
         return None
@@ -126,7 +126,7 @@ def get_df_top_queries(
     return df
 
 
-def get_patients_mean_time(
+async def get_patients_mean_time(
     group_cond1: str, group_cond2: str, filter_by: str = None
 ) -> Union[DataFrame, None]:
     dict = get_args()
@@ -137,7 +137,7 @@ def get_patients_mean_time(
 
     condition += " WHERE patient_status = 'ALTA'"
 
-    df = bf.build_features("Patient", dict, condition)
+    df = await bf.build_features("Patient", dict, condition)
 
     if df is None:
         return None
@@ -245,8 +245,8 @@ def chart_number_patients_date_status() -> Union[str, Response]:
 
 
 @app.route("/number_patients_date/age/")
-def chart_number_patients_date_age() -> Union[str, Response]:
-    df = get_df_number_patients("patient_age_group")
+async def chart_number_patients_date_age() -> Union[str, Response]:
+    df = await get_df_number_patients("patient_age_group")
 
     if df is None:
         return Response("There was an error connecting to DB", status=500)
@@ -273,8 +273,8 @@ def chart_number_patients_date_age() -> Union[str, Response]:
 
 
 @app.route("/top_queries_date/")
-def chart_top_queries_date() -> Union[str, Response]:
-    df = get_df_top_queries("patient_triage_level")
+async def chart_top_queries_date() -> Union[str, Response]:
+    df = await get_df_top_queries("patient_triage_level")
 
     if df is None:
         return Response("There was an error connecting to DB", status=500)
@@ -395,8 +395,8 @@ def chart_top_queries_date_age() -> Union[str, Response]:
 
 
 @app.route("/patients_mean_time_doctor/")
-def patiens_mean_time_doctor() -> Union[str, Response]:
-    df = get_patients_mean_time(
+async def patiens_mean_time_doctor() -> Union[str, Response]:
+    df = await get_patients_mean_time(
         "user_full_name", "patient_triage_level", "doctor_full_name"
     )
 
@@ -421,8 +421,8 @@ def patiens_mean_time_doctor() -> Union[str, Response]:
 
 
 @app.route("/patients_mean_time_nurse/")
-def patiens_mean_time_nurse() -> Union[str, Response]:
-    df = get_patients_mean_time(
+async def patiens_mean_time_nurse() -> Union[str, Response]:
+    df = await get_patients_mean_time(
         "user_full_name", "patient_triage_level", "nurse_full_name"
     )
 
