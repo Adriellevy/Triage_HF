@@ -192,7 +192,7 @@ async def asinc_get_table(
         dfj["patient_triage_time"] = dfj["patient_triage_time"].dt.tz_localize(None)
 
         # Verificar nuevamente los tipos de datos después de eliminar la zona horaria
-        print(dfj.dtypes)
+        # print(dfj.dtypes)
         return dfj
     else:
         print("El dataframe no fue restructurado")

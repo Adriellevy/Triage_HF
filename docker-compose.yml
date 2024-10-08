@@ -8,7 +8,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ./db/db_demo_patient.sql:/docker-entrypoint-initdb.d/db_demo_patient.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
 
