@@ -21,7 +21,7 @@ export class queryController {
       const patients = await queryModel.getPatientsByQuery(query);
       // Desencriptar todos los pacientes
       //const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
-      console.log('pacientes devueltos:', JSON.stringify(patients, null, 2));
+      console.log('pacientes devueltos:', JSON.stringify(patients[1]));
       // Retornar la respuesta con los pacientes desencriptados
       return res.json(patients);
     } catch (error) {
