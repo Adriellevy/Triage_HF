@@ -508,15 +508,19 @@ export class PatientsModel {
         patient_triage_time,
         patient_triage_level,
         patient_isolated,
-        BIN_TO_UUID(box_id) AS box_id,
+        BIN_TO_UUID(Patient.box_id) AS box_id,
         patient_status,
         patient_symptom,
         patient_healthcare_system,
         doctor_procedure,
         doctor_studies_solicitated,
-        nurse_coment
+        nurse_coment,
+        Doctor.user_name AS doctor_name,  -- Agregando el nombre del doctor
+        Nurse.user_name AS nurse_name      -- Agregando el nombre de la enfermera
       FROM Patient
-      WHERE (doctor_id = UUID_TO_BIN(?) OR nurse_id = UUID_TO_BIN(?))`;
+      LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+      LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+      WHERE (Patient.doctor_id = UUID_TO_BIN(?) OR Patient.nurse_id = UUID_TO_BIN(?));`;
 
       let queryParams: (string | boolean)[] = [userId, userId];
 
@@ -527,8 +531,9 @@ export class PatientsModel {
 
       // Verifica si hay algún array no vacío con estados de pacientes
       const statusList = statuses.filter((item) => typeof item === 'string') as string[];
-
-      if (statusList.length > 0) {
+      if (statusList.includes('TODOS MENOS ALTA')) {
+        query += ` AND patient_status != 'ALTA'`;
+      } else if (statusList.length > 0) {
         query += ` AND patient_status IN (${statusList.map(() => '?').join(', ')})`; // genera un placeholder por cada estado
         queryParams.push(...statusList); // expande el array de statusList como múltiples parámetros
       }
@@ -560,14 +565,20 @@ export class PatientsModel {
         patient_triage_time,
         patient_triage_level,
         patient_isolated,
-        BIN_TO_UUID(box_id) AS box_id,
+        BIN_TO_UUID(Patient.box_id) AS box_id,
         patient_status,
         patient_symptom,
         patient_healthcare_system,
         doctor_procedure,
         doctor_studies_solicitated,
-        nurse_coment
+        nurse_coment,
+        Doctor.user_name AS doctor_name,  -- Agregando el nombre del doctor
+        Nurse.user_name AS nurse_name,    -- Agregando el nombre de la enfermera
+        Box.box_code                      -- Agregando el código del box
       FROM Patient
+      LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+      LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+      LEFT JOIN Box ON Patient.box_id = Box.box_id
       WHERE 1=1`; // Inicia con una condición verdadera
 
       let queryParams: (string | boolean)[] = [];
@@ -577,7 +588,10 @@ export class PatientsModel {
         | undefined;
       const statusList = statuses.filter((item) => typeof item === 'string') as string[];
 
-      if (statusList.length > 0) {
+      console.log('Satuses que recibo', statuses);
+      if (statusList.includes('TODOS MENOS ALTA')) {
+        query += ` AND patient_status != 'ALTA'`;
+      } else if (statusList.length > 0) {
         query += ` AND patient_status IN (${statusList.map(() => '?').join(', ')})`; // genera un placeholder por cada estado
         queryParams.push(...statusList); // expande el array de statusList como múltiples parámetros
       }

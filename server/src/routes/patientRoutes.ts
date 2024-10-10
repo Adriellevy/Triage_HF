@@ -20,11 +20,11 @@ patientRouter.get('/patientName/:name', (req: Request, res: Response) => {
 });
 
 patientRouter.post('/patientsByFilters', (req: Request, res: Response) => {
-  void PatientController.getUsersByFilter(req, res);
+  void PatientController.getUsersByFilter(req, res); //cambiar nombre a patient
 });
 
 patientRouter.post('/patientsByDate', (req: Request, res: Response) => {
-  void PatientController.getUsersByDate(req, res);
+  void PatientController.getUsersByDate(req, res); //cambiar nombre a patient
 });
 
 patientRouter.patch('/:id', (req: Request, res: Response) => {
