@@ -1,5 +1,5 @@
 # specify start image
-FROM python
+FROM python:3.12.7-slim
 
 # all commands start from this directory
 WORKDIR /DataAnalysis

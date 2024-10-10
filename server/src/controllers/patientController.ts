@@ -238,7 +238,8 @@ export class PatientController {
   static async getUsersByFilter(req: Request, res: Response): Promise<Response> {
     try {
       const { PatientsOfThisUser, Filters } = req.body;
-
+      console.log('patients of this user', PatientsOfThisUser);
+      console.log('body:', req.body);
       const token = req.headers.authorization?.split(' ')[1];
       if (!token) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -249,7 +250,6 @@ export class PatientController {
       if (!userID) {
         return res.status(404).json({ message: 'UserId is not correct format' });
       }
-
       if (!Array.isArray(Filters)) {
         console.log('Error en como recibo los filtros');
         return res.status(404).json({ message: 'Filters should be an array' });
@@ -258,6 +258,7 @@ export class PatientController {
       let patients;
       // Si PatientsOfThisUser es verdadero, buscar pacientes asignados a este usuario (doctor o enfermero)
       if (PatientsOfThisUser) {
+        console.log('Filtros', Filters);
         patients = await PatientsModel.getPatientsByUserAndStatus(userID, Filters);
       } else {
         patients = await PatientsModel.getPatientsByStatus(Filters);

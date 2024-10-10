@@ -99,7 +99,12 @@ const options: Option[] = [
   {
     label: 'Estado del paciente',
     options: [
-      { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
+      {
+        value: 'patient_status',
+        item: 'EN OBSERVACION',
+        label: 'EN OBSERVACION',
+        color: '#525252'
+      },
       { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
       {value: 'patient_status', item: 'TODOS MENOS ALTA', label: 'TODOS MENOS ALTA', color: '#525252'},
@@ -247,9 +252,14 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }, [token, currentPage, refreshSearch])
 
   const searchPatientByName = async (name) => {
-    const data = await getPatientsByDate(dayjs().subtract(2, 'week').toISOString(), dayjs().toISOString())
+    const data = await getPatientsByDate(
+      dayjs().subtract(2, 'week').toISOString(),
+      dayjs().toISOString()
+    )
     console.log(data)
-    const dataByName = data.filter((patient => patient.patient_name.toLowerCase().includes(name.toLowerCase())))
+    const dataByName = data.filter((patient) =>
+      patient.patient_name.toLowerCase().includes(name.toLowerCase())
+    )
     console.log(dataByName)
     const sortedData = dataByName.sort((a, b) => {
       return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
@@ -305,8 +315,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     }
 
     reqBody.push(filters)
-    console.log(reqBody)
-
+    console.log('body mandado:', reqBody)
     const data = await getFilteredPatients(reqBody)
     const sortedData = data.sort((a, b) => {
       return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
@@ -320,36 +329,40 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   return (
     <div className='bg-white '>
       <div className='flex  flex-col p-4'>
-        <SearchTypeSelector searchType={searchType} setSearchType={setSearchType} setAnimation={setAnimation} />
+        <SearchTypeSelector
+          searchType={searchType}
+          setSearchType={setSearchType}
+          setAnimation={setAnimation}
+        />
         {searchType == 'Nombre' ? (
           <div className={`${animation}`}>
-          <PatientSearchBar
-            searchName={searchName}
-            setSearchName={setSearchName}
-            searchPatient={searchPatientByName}
-            clearData={clearData}
+            <PatientSearchBar
+              searchName={searchName}
+              setSearchName={setSearchName}
+              searchPatient={searchPatientByName}
+              clearData={clearData}
             />
-            </div>
+          </div>
         ) : null}
         {searchType == 'Fecha' ? (
           <div className={`${animation}`}>
-          <PatientByDatePicker
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            searchPatientByDate={searchPatientByDate}
-            clearData={clearData}
+            <PatientByDatePicker
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+              searchPatientByDate={searchPatientByDate}
+              clearData={clearData}
             />
           </div>
         ) : null}
         {searchType == 'Filtro' ? (
           <div className={`${animation}`}>
-          <FilterPatientsComponent
-            options={options}
-            onChangeSelect={onChangeSelect}
-            filterPatientsTrigger={filterPatientsTrigger}
-            filterOptions={filterOptions}
+            <FilterPatientsComponent
+              options={options}
+              onChangeSelect={onChangeSelect}
+              filterPatientsTrigger={filterPatientsTrigger}
+              filterOptions={filterOptions}
             />
           </div>
         ) : null}
