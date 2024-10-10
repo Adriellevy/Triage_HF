@@ -102,12 +102,7 @@ const options: Option[] = [
       { value: 'patient_status', item: 'EN ESPERA', label: 'EN ESPERA', color: '#525252' },
       { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
-      {
-        value: 'patient_status',
-        item: 'TODOS MENOS ALTA',
-        label: 'TODOS MENOS ALTA',
-        color: '#525252'
-      },
+      {value: 'patient_status', item: 'TODOS MENOS ALTA', label: 'TODOS MENOS ALTA', color: '#525252'},
       { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
     ]
   },
@@ -284,6 +279,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }
 
   const filterPatientsTrigger = async (ops) => {
+    console.log(ops)
     if (ops.length === 0) {
       clearData() // Llama a clearData si ops es un array vacío
       return
@@ -292,16 +288,12 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     const reqBody = []
     const filters = []
 
-    for (let i = 0; i < ops.length; i++) {
-      if (ops[i].label === 'MÍOS') {
-        reqBody.push(true)
-        break
-      } else {
-        reqBody.push(false)
-        break
-      }
+    if (ops.some(op => op.label === 'MÍOS')) {
+      reqBody.push(true);
+    } else {
+      reqBody.push(false);
     }
-
+    
     for (let i = 0; i < ops.length; i++) {
       if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
         if (ops[i].value === 'patient_isolated') {
