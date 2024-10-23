@@ -295,8 +295,9 @@ export class PatientController {
       }
 
       const patients = await PatientsModel.getPatientsByUserID(user_id);
+      const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
 
-      return res.json(patients);
+      return res.json(decryptedPatients);
     } catch (error) {
       console.error('Error fetching patients by user ID:', error);
       return res.status(500).json({ message: 'Something went wrong' });

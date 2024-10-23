@@ -9,13 +9,35 @@ import PatientsList from "./PatientList/PatientsList";
 const TurnExchangeModal = ({ onClose }) => {
     const [lastDoctor, setLastDoctor] = useState('')
     const [newDoctor, setNewDoctor] = useState('')
+    const [newDoctorName, setNewDoctorName] = useState('')
     const [lastNurse, setLastNurse] = useState('')
     const [newNurse, setNewNurse] = useState('')
+    const [newNurseName, setNewNurseName] = useState('')
     const [doctorOptions, setDoctorOptions] = useState<ColourOption[]>([])
     const [nurseOptions, setNurseOptions] = useState<ColourOption[]>([])
     const [patients, setPatients] = useState<Patient[]>([])
     const [currentPage, setCurrentPage] = useState(1)
 
+    const handleSelection = (selectedOption, slot, role) => {
+      if (selectedOption) {
+        if (role === 'doctor') {
+          if (slot === 'last') {
+            setLastDoctor(selectedOption.value);
+          } else {
+            setNewDoctor(selectedOption.value);
+            setNewDoctorName(selectedOption.label);
+          }
+        } else if (role === 'nurse') {
+          if (slot === 'last') {
+            setLastNurse(selectedOption.value);
+          } else {
+            setNewNurse(selectedOption.value);
+            setNewNurseName(selectedOption.label);
+          }
+        }
+      }
+    };
+    
     useEffect(() => {
         const fetchOptions = async () => {
           try {
@@ -83,7 +105,7 @@ const TurnExchangeModal = ({ onClose }) => {
             options={doctorOptions}
             placeholder={'Selecionar doctor/a'}
             closeMenuOnSelect={true}
-            onChange={(selectedOption) => setLastDoctor(selectedOption?.value)}
+            onChange={(selectedOption) => handleSelection(selectedOption, 'last', 'doctor')}
             />
         </div>
         </div>
@@ -92,10 +114,10 @@ const TurnExchangeModal = ({ onClose }) => {
         <div className='bg-white flex px-4'>
             <Select
             className='w-full text-black'
-            options={doctorOptions}
+            options={nurseOptions}
             placeholder={'Selecionar enfermero/a'}
             closeMenuOnSelect={true}
-            onChange={(selectedOption) => setLastNurse(selectedOption?.value)}
+            onChange={(selectedOption) => handleSelection(selectedOption, 'last', 'nurse')}
             />
         </div>
         </div>
@@ -110,7 +132,7 @@ const TurnExchangeModal = ({ onClose }) => {
             options={doctorOptions}
             placeholder={'Selecionar doctor/a'}
             closeMenuOnSelect={true}
-            onChange={(selectedOption) => setNewDoctor(selectedOption?.value)}
+            onChange={(selectedOption) => handleSelection(selectedOption, 'new', 'doctor')}
             />
         </div>
         </div>
@@ -119,31 +141,36 @@ const TurnExchangeModal = ({ onClose }) => {
         <div className='bg-white flex px-4'>
             <Select
             className='w-full text-black'
-            options={doctorOptions}
+            options={nurseOptions}
             placeholder={'Selecionar enfermero/a'}
             closeMenuOnSelect={true}
-            onChange={(selectedOption) => setNewNurse(selectedOption?.value)}
+            onChange={(selectedOption) => handleSelection(selectedOption, 'new', 'nurse')}
             />
         </div>
         </div>
     </div>
     {/* BUTTON */}
-    <div className="flex justify-end mt-2">
+    <div className="flex justify-end mt-4">
     <Button color='green' onClick={onClose} className="text-lg py-2 px-2 font-bold ">
                   Cambio de turno
     </Button>
     </div>
+    <div className="text-black flex justify-center">
     { lastDoctor ?
       <PatientsList 
       patients={patients}
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
+      turnExchange={true}
+      newDoctor={newDoctorName}
+      newNurse={newNurseName}
       />
-    : null}
+      : null}
+      </div>
     </div>
         </div>
       </div>
     );
   };
-  
+
   export default TurnExchangeModal;
