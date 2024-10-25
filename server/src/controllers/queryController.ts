@@ -23,7 +23,7 @@ export class queryController {
       const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
       console.log('pacientes devueltos:', JSON.stringify(decryptedPatients[1]));
       // Retornar la respuesta con los pacientes desencriptados
-      return res.json(patients);
+      return res.json(decryptedPatients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       return res.status(500).json({ message: 'Something went wrong' });
