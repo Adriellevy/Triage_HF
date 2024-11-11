@@ -6,7 +6,7 @@ interface PropsInput extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   wfull?: boolean
 }
 
-export function Button({ children, color, wfull = false, ...props }: PropsInput) {
+export function Button({ children, color, wfull = false, className = '',  ...props  }: PropsInput) {
   const colorVariants = {
     blue: 'bg-blue-500 hover:bg-blue-700',
     green: 'bg-green-500 hover:bg-green-700',
@@ -20,7 +20,8 @@ export function Button({ children, color, wfull = false, ...props }: PropsInput)
     <button
       className={`
     ${wfull ? 'w-full' : ' '}
-    py-2 px-4 ${colorVariants[color]} text-white rounded-md`}
+    py-2 px-4 ${colorVariants[color]} text-white rounded-md
+    ${className}`}
       {...props}
     >
       {children}

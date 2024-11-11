@@ -11,9 +11,12 @@ import { Button } from '@/components/ui'
 interface PropsPatientItem {
   patient: Patient
   index: number
+  turnExchange: boolean
+  newDoctor: string
+  newNurse: string
 }
 
-function PatientItem({ patient, index }: PropsPatientItem) {
+function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
 
@@ -83,69 +86,117 @@ function PatientItem({ patient, index }: PropsPatientItem) {
   }
   return (
     <tr className={bgClass}>
-      <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>
-      <td
-        className={`border md:p-2 text-center `}
-        style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
-      >
-        {patient_triage_level}
-      </td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{patient_symptom}</td>
-      <td className='border md:p-2 text-center'>{box_code}</td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name}</td>
-      <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>
-      <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
-      <td className='border p-2'>
-        <div className='flex gap-2'>
-          <div>
-            <div className='mb-2'>
-              <Link to={`/edit_patient/${patient_id}`}>
-                <Button wfull color='green'>
-                  <FontAwesomeIcon icon={faPenToSquare} />
-                </Button>
-              </Link>
-            </div>
-            <div>
-              <Link to={`/patients/${patient_id}`}>
-                <Button wfull color='green'>
-                  <FontAwesomeIcon icon={faCircleInfo} />
-                </Button>
-              </Link>
-            </div>
-          </div>
-          {(patient_status !== 'ALTA' && (
-            <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </Button>
-          )) || (
-            <Button wfull color='grey_disabled' disabled>
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </Button>
-          )}
-        </div>
-        {patientToDischarge?.patient_id === patient_id && (
-          <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
-            <div className='bg-white p-8 rounded-lg'>
-              <div className='text-center'>
-                Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong> ?
+      {!(turnExchange) ? (
+        <>
+          <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>
+          <td
+            className={`border md:p-2 text-center`}
+            style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
+          >
+            {patient_triage_level}
+          </td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{patient_symptom}</td>
+          <td className='border md:p-2 text-center'>{box_code}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name}</td>
+          <td className='border text-sm md:p-2 text-center'>{patient_status}</td>
+          <td className='border p-2'>
+            <div className='flex gap-2'>
+              <div>
+                <div className='mb-2'>
+                  <Link to={`/edit_patient/${patient_id}`}>
+                    <Button wfull color='green'>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                    </Button>
+                  </Link>
+                </div>
+                <div>
+                  <Link to={`/patients/${patient_id}`}>
+                    <Button wfull color='green'>
+                      <FontAwesomeIcon icon={faCircleInfo} />
+                    </Button>
+                  </Link>
+                </div>
               </div>
-              {/* Botones de confirmación */}
-              <div className='flex justify-center mt-4 gap-2'>
-                <Button color='red' onClick={handleConfirmFastDischarge}>
-                  Confirmar
+              {(patient_status !== 'ALTA' ? (
+                <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
+                  <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
-                <Button color='grey' onClick={() => setPatientToDischarge(null)}>
-                  Cancelar
+              ) : (
+                <Button wfull color='grey_disabled' disabled>
+                  <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
-              </div>
+              ))}
             </div>
-          </div>
-        )}
-      </td>
+            {patientToDischarge?.patient_id === patient_id && (
+              <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
+                <div className='bg-white p-8 rounded-lg'>
+                  <div className='text-center'>
+                    Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong>?
+                  </div>
+                  {/* Botones de confirmación */}
+                  <div className='flex justify-center mt-4 gap-2'>
+                    <Button color='red' onClick={handleConfirmFastDischarge}>
+                      Confirmar
+                    </Button>
+                    <Button color='grey' onClick={() => setPatientToDischarge(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </td>
+        </>
+      ) : (
+        <>
+          <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name} {newDoctor ? ` -> ${newDoctor}`: null}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name} {newNurse ? ` -> ${newNurse}`: null}</td>
+          <td
+            className={`border md:p-2 text-center`}
+            style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
+          >
+            {patient_triage_level}
+          </td>
+          <td className='border p-2'>
+            <div className='flex gap-2'>
+              {(patient_status !== 'ALTA' ? (
+                <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                </Button>
+              ) : (
+                <Button wfull color='grey_disabled' disabled>
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                </Button>
+              ))}
+            </div>
+            {patientToDischarge?.patient_id === patient_id && (
+              <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
+                <div className='bg-white p-8 rounded-lg'>
+                  <div className='text-center'>
+                    Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong>?
+                  </div>
+                  {/* Botones de confirmación */}
+                  <div className='flex justify-center mt-4 gap-2'>
+                    <Button color='red' onClick={handleConfirmFastDischarge}>
+                      Confirmar
+                    </Button>
+                    <Button color='grey' onClick={() => setPatientToDischarge(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </td>
+        </>
+      )}
     </tr>
-  )
+  );
+  
 }
 
 export default PatientItem

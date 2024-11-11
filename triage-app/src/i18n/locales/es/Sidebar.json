@@ -13,5 +13,6 @@
   "UsersSettings": "Configuración de usuarios",
   "BoxesSettings": "Configuración de cajas",
   "BoxSettings": "Configuración de cajas",
-  "LogoutButton": "Cerrar Sesión"
+  "LogoutButton": "Cerrar Sesión",
+  "TurnExchange": "Cambio de turno"
 }

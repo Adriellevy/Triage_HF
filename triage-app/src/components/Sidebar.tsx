@@ -25,6 +25,7 @@ import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { Box } from '@/interfaces/Boxes'
 import { verifyToken } from '@/services/authService'
+import TurnExchangeModal from './TurnExchangeModal'
 
 interface MenuItem {
   icon?: string
@@ -44,11 +45,20 @@ function Sidebar() {
   const location = useLocation()
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [UserInfo, setUserInfo] = useState<PartialUser>({
     user_id: '',
     user_name: '',
     user_type: undefined
   })
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   // TODO: GET IMG DB
   const UserProfileImage = DoctorImg
@@ -132,6 +142,10 @@ function Sidebar() {
 
   const handleSubMenuToggle = (index: number) => {
     setOpenSubMenu(openSubMenu === index ? null : index)
+  }
+
+  const handleTurnExchange = () => {
+    console.log('hola')
   }
 
   useEffect(() => {
@@ -318,7 +332,15 @@ function Sidebar() {
             ) : null
           )}
         </nav>
+          {UserInfo.user_type === 'NURSE'  ? 
+        <div className='mt-auto p-4'>
+          <Button wfull color='green' onClick={openModal}>
+            {t('TurnExchange')}
+          </Button>
+        </div>
+        : null }
         <div className='flex items-center p-4'>
+        {isModalOpen && <TurnExchangeModal onClose={closeModal} />}
           <img src={UserProfileImage} alt='Profile' className='w-10 h-10 rounded-full mr-2' />
           <div>
             <Link to={`/users/${UserInfo.user_id}`} className=' hover:underline'>

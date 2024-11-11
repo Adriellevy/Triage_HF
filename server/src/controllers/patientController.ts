@@ -274,6 +274,35 @@ export class PatientController {
       return res.status(500).json({ message: 'Something went wrong' });
     }
   }
+  static async getPatientsByUser(req: Request, res: Response): Promise<Response> {
+    try {
+      const { user_id } = req.params; 
+      if (!user_id) {
+        return res.status(400).json({ message: 'user_id is required' });
+      }
+  
+      const token = req.headers.authorization?.split(' ')[1]; 
+
+      if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
+
+      const tokendecoded = verifyToken(token);
+      const userID = tokendecoded.id;
+
+      if (!userID) {
+        return res.status(404).json({ message: 'user_id is not correct format' });
+      }
+
+      const patients = await PatientsModel.getPatientsByUserID(user_id);
+      const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
+
+      return res.json(decryptedPatients);
+    } catch (error) {
+      console.error('Error fetching patients by user ID:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
 
   static async getUsersByDate(req: Request, res: Response): Promise<Response> {
     try {

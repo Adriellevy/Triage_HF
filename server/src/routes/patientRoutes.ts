@@ -19,6 +19,9 @@ patientRouter.get('/patientName/:name', (req: Request, res: Response) => {
   void PatientController.getPatientByName(req, res);
 });
 
+patientRouter.get('/patientsByUserID/:user_id', (req: Request, res: Response) => {
+  void PatientController.getPatientsByUser(req, res)
+})
 patientRouter.post('/patientsByFilters', (req: Request, res: Response) => {
   void PatientController.getUsersByFilter(req, res); //cambiar nombre a patient
 });
@@ -31,6 +34,8 @@ patientRouter.patch('/:id', (req: Request, res: Response) => {
   void PatientController.updatePatient(req, res);
 });
 
+
 patientRouter.get('/history/:id', (req: Request, res: Response) => {
   void PatientController.getPatientUpdateHistory(req, res);
 });
+
