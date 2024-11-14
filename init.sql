@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS Box;
 DROP TABLE IF EXISTS Patient;
 DROP TABLE IF EXISTS PatientUpdateHistory;
 DROP TABLE IF EXISTS Tokens;
+DROP TABLE IF EXISTS Triage;
 
 CREATE TABLE User (
   user_id BINARY(16) NOT NULL,
@@ -71,6 +72,14 @@ CREATE TABLE Tokens (
   PRIMARY KEY(token_id),
   FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
+
+CREATE TABLE `triage` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `level` varchar(3) NOT NULL,
+  `color` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `level_UNIQUE` (`level`)
+)
 
 -- Insertar datos de ejemplo en la tabla User
 INSERT INTO User (user_id, user_name, user_full_name, user_email, user_password, user_type) 
