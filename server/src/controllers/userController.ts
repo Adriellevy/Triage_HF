@@ -214,12 +214,17 @@ export class UserController {
     }
 
     const decoded = verifyToken(token);
+    const userToken = await UserModel.getUserById(decoded.id);
+    if(userToken?.user_type !== UserRole.HOSPITAL)
+      return res.status(403).json({message: 'No tienes permisos para eliminar este usuario'});
 
     try {
       const existingUser = await UserModel.getUserById(userId);
+      
       if (!existingUser) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
+
 
       const deleted = await UserModel.deleteUser(userId);
       if (deleted) {

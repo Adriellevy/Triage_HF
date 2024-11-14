@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { TriageModel } from "../models/mysql/triageModel";
+import { UserModel } from "../models/mysql/userModel";
+import { UserRole } from "../interface/user";
 
 export class TriageController{
     static async getAllTriage(req:Request,res:Response){
@@ -11,8 +13,12 @@ export class TriageController{
         }
     }
 
-    static async createNewTriage(req:Request,res:Response){
+    static async createNewTriage(req:any,res:Response){
         const {level, color} = req.body;
+        
+        const userAdmin = await UserModel.getUserById(req.user.id)
+        if(userAdmin?.user_type !== UserRole.HOSPITAL)
+            return res.status(403).json({message:"No tienes permisos para realizar esta acción"});
 
         if(!level)
             return res.status(400).json({message:"El nivel de triage es requerido"});
@@ -23,7 +29,7 @@ export class TriageController{
             return res.status(400).json({message:`El color debe tener el formato: '012,345,678'`});
 
         const triage = await TriageModel.findByLevel(level);
-        console.log(triage);
+       
         if(triage)
             return res.status(400).json({message:`Ya existe un triage con el nivel ${level}`});
 
@@ -37,7 +43,11 @@ export class TriageController{
 
     }
 
-    static async updateTriage(req:Request,res:Response){
+    static async updateTriage(req:any,res:Response){
+        const userAdmin = await UserModel.getUserById(req.user.id)
+        if(userAdmin?.user_type !== UserRole.HOSPITAL)
+            return res.status(403).json({message:"No tienes permisos para realizar esta acción"});
+
         const levelParam = req.params.id;
         const {color} = req.body;
         const level = await TriageModel.findByLevel(levelParam);
@@ -57,7 +67,11 @@ export class TriageController{
         }
     }
 
-    static async deleteTriage(req:Request,res:Response){
+    static async deleteTriage(req:any,res:Response){
+        const userAdmin = await UserModel.getUserById(req.user.id)
+        if(userAdmin?.user_type !== UserRole.HOSPITAL)
+            return res.status(403).json({message:"No tienes permisos para realizar esta acción"});
+
         const levelParam = req.params.id;
         const level = await TriageModel.findByLevel(levelParam);
         if(!level)
