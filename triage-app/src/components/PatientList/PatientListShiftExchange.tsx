@@ -1,29 +1,29 @@
-import { useState } from 'react'
+import { useDebugValue, useEffect, useState } from 'react'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import Pagination from '../Pagination/Pagination'
-import PatientItemTurnExchange from './PatientItemTurnExchange'
+import PatientItemShiftExchange from './PatientItemShiftExchange'
 
 interface PropsPatientsList {
   patients: Patient[]
   mode: string
-  setNewDoctor?: (name: string) => void 
-  setNewNurse?: (name: string) => void
+  lastDoctor?: number
+  lastNurse?: number
 }
 
-function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }: PropsPatientsList) {
+function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: PropsPatientsList) {
   const { t } = useTranslation('PatientList')
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const patientsPerPage = 5
-
+  
   const columns = [
     { label: t('NameLabel'), 
-        field: 'patient_name', 
-        sortable: true, 
-        showOnLargeScreen: true,
-        mode: 'all'
+      field: 'patient_name', 
+      sortable: true, 
+      showOnLargeScreen: true,
+      mode: 'all'
     },
     {
       label: t('TriageLevelLabel'),
@@ -35,31 +35,31 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
     {
       label: t('LastDoctorNameLabel'),
       field: 'doctor_name',
-      sortable: true,
+      sortable: false,
       showOnLargeScreen: false,
       mode: 'doctor'
     },
     {
-        label: t('NewDoctorNameLabel'),
-        field: 'doctor_name',
-        sortable: false,
-        showOnLargeScreen: false,
-        mode: 'doctor'
-      },
+      label: t('NewDoctorNameLabel'),
+      field: 'doctor_name',
+      sortable: false,
+      showOnLargeScreen: false,
+      mode: 'doctor'
+    },
     {
       label: t('LastNurseNameLabel'),
       field: 'nurse_name',
-      sortable: true,
+      sortable: false,
       showOnLargeScreen: false,
       mode: 'nurse'
     },
     {
-        label: t('NewNurseNameLabel'),
-        field: 'nurse_name',
-        sortable: false,
-        showOnLargeScreen: false,
-        mode: 'nurse'
-      },
+      label: t('NewNurseNameLabel'),
+      field: 'nurse_name',
+      sortable: false,
+      showOnLargeScreen: false,
+      mode: 'nurse'
+    },
     {
       label: t('PatientStatusLabel'),
       field: 'patient_status',
@@ -68,13 +68,13 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
       mode: 'all'
     },
     { label: t('PatientActionsLabel'), 
-        field: 'actions',
-        sortable: false,
-        showOnLargeScreen: true,
-        mode: 'all'
-     }
+      field: 'actions',
+      sortable: false,
+      showOnLargeScreen: true,
+      mode: 'all'
+    }
   ]
-
+  
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -83,11 +83,11 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
       setSortDirection('asc')
     }
   }
-
+  
   const handlePagination = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
+  
   const sortedPatients = [...patients].sort((a, b) => {
     if (!sortColumn) {
       return 0
@@ -96,18 +96,20 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
     const columnB = b[sortColumn as keyof Patient]
     if (typeof columnA === 'string' && typeof columnB === 'string') {
       return sortDirection === 'asc'
-        ? columnA.localeCompare(columnB)
-        : columnB.localeCompare(columnA)
+      ? columnA.localeCompare(columnB)
+      : columnB.localeCompare(columnA)
     } else if (typeof columnA === 'number' && typeof columnB === 'number') {
       return sortDirection === 'asc' ? columnA - columnB : columnB - columnA
     } else {
       return 0
     }
   })
-
+  
   const indexOfLastPatient = currentPage * patientsPerPage;
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
   const currentPatients = sortedPatients.slice(indexOfFirstPatient, indexOfLastPatient);
+
+
   return (
     <>
         <div className='text-xs md:text-sm mt-4 lg:mx-8'>
@@ -118,7 +120,7 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
     .filter((column) => column.mode ===  'all' || column.mode === mode) // Filtrar columnas según el mode
     .map((column) => (
       <th
-        key={column.field}
+        key={column.label}
         className="border cursor-pointer p-2"
         onClick={() => (column.sortable ? handleSort(column.field) : null)}
       >
@@ -132,7 +134,7 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
           </thead>
           <tbody>
             {currentPatients.map((patient, index) => (
-              <PatientItemTurnExchange key={patient.patient_id} patient={patient} index={index} mode={mode} setNewDoctor={setNewDoctor} setNewNurse={setNewNurse} />
+              <PatientItemShiftExchange key={patient.patient_id} patient={patient} index={index} mode={mode} lastDoctor={lastDoctor} lastNurse={lastNurse}/>
             ))}
           </tbody>
         </table>
@@ -149,4 +151,4 @@ function PatientsListTurnExchange({ patients, mode, setNewDoctor, setNewNurse }:
   );
 }  
 
-export default PatientsListTurnExchange
+export default PatientsListShiftExchange
