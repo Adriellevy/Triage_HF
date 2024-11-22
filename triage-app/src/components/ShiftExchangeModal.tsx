@@ -2,7 +2,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import  Select  from "react-select";
 import { Button } from "./ui";
 import { getAllDoctors, getAllNurses } from "@/services/userService";
-import {  getPatientsByUserID } from "@/services/patientService";
+import {  executeShiftChange, getPatientsByUserID } from "@/services/patientService";
 import { Patient } from "@/interfaces/Patinet";
 import PatientsListTurnExchange from "./PatientList/PatientListShiftExchange";
 import { Checkbox } from "@mui/material";
@@ -70,7 +70,7 @@ const ShiftExchangeModal = ({ onClose }) => {
         fetchPatients();
       }, [lastDoctor]);
 
-      const handleShiftExchange = () => {
+      const handleShiftExchange = async () => {
         const localDoctors = localStorage.getItem('doctorSelections');
         const localNurses = localStorage.getItem('nurseSelections');
       
@@ -105,10 +105,10 @@ const ShiftExchangeModal = ({ onClose }) => {
         });
       
         // Concatenar ambos mapeos en uno solo
-        const finalMappedData = [...mappedDoctors, ...mappedNurses];
-      
-        // Mostrar en consola
-        console.log('Mapped Data:', finalMappedData);
+        const patients = [...mappedDoctors, ...mappedNurses];
+        console.log('Patients:', patients, 'Create Report?:', createReport);
+        const shiftExchange = await executeShiftChange(patients, createReport);
+        console.log(shiftExchange)
       };
       
 
@@ -176,27 +176,27 @@ const ShiftExchangeModal = ({ onClose }) => {
       checked={createReport}
       onChange={() => setCreateReport(!createReport)}
     />
-    <Button color='green' onClick={handleShiftExchange} className="text-lg py-2 px-2 font-bold ">
+    <Button color='green' onClick={async () => { await handleShiftExchange()}} className="text-lg py-2 px-2 font-bold ">
                   Cambio de turno
     </Button>
     </div>
-    <div className="text-black flex justify-center">
-    { lastDoctor ?
-      <PatientsListTurnExchange
-      patients={doctorPatients}
-      mode={'doctor'}
-      lastDoctor={lastDoctor}
-      />
-      : null}
-      { lastNurse ?
-      <PatientsListTurnExchange
-      patients={nursePatients}
-      mode={'nurse'}
-      lastNurse={lastNurse}
-      />
-      : null}
-      </div>
-    </div>
+          <div className="text-black flex justify-center">
+          { lastDoctor ?
+            <PatientsListTurnExchange
+            patients={doctorPatients}
+            mode={'doctor'}
+            lastDoctor={lastDoctor}
+            />
+            : null}
+            { lastNurse ?
+            <PatientsListTurnExchange
+            patients={nursePatients}
+            mode={'nurse'}
+            lastNurse={lastNurse}
+            />
+            : null}
+            </div>
+          </div>
         </div>
       </div>
     );
