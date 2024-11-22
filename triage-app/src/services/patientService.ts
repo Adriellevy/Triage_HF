@@ -306,6 +306,7 @@ export const addNewPatient = async (
     throw new Error('Error al agregar nuevo paciente')
   }
 }
+
 export const getPatientHistory = async (
   patient_id: string | undefined
 ): Promise<PatientHistoryItemType[]> => {
@@ -326,3 +327,37 @@ export const getPatientHistory = async (
     throw new Error('Error fetching patient')
   }
 }
+  export const executeShiftChange = async (patients: unknown[], report: boolean) => {
+    try {
+      const token = Cookies.get('authToken')
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/shiftChange`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          patients: patients,
+          report: report
+        })
+      })
+      if (response.status === 207) {
+        console.log('Llego el 207, procesando el error...')
+        throw new Error('Cerrar sesion')
+      }
+      if (!response.ok) {
+        throw new Error(`Error in POST request to /shiftChange: ${response.statusText}`)
+      }
+      const data = await response.json()
+      return data
+    } catch (error) {
+      if (error.message === 'Cerrar sesion') {
+        throw new Error('Cerrar sesion')
+      } else {
+        console.error('Error fetching patients:', error)
+        throw new Error('Error fetching patients')
+      }
+    }
+  } 
+
+  
