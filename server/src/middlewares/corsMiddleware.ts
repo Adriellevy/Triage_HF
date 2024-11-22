@@ -39,19 +39,5 @@ export const corsMiddleware: (options?: { acceptedOrigins?: string[] }) => Reque
   acceptedOrigins = ACCEPTED_ORIGINS
 } = {}) =>
   cors({
-    // Función para verificar el origen de la solicitud
-    origin: (origin, callback) => {
-      if (typeof origin === 'string') {
-        // Verifica que origin no sea undefined
-        // Si el origen de la solicitud está incluido en la lista de orígenes aceptados, se permite la solicitud
-        if (acceptedOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-        // Si el origen de la solicitud no está en la lista de orígenes aceptados, se niega la solicitud
-        return callback(new Error('Not allowed by CORS'));
-      } else {
-        // Si no se proporciona un origen (solicitud del mismo origen), se permite la solicitud
-        return callback(null, true);
-      }
-    }
+    origin:true
   });

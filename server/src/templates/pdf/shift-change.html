@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Cambios de Turnos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            font-weight: normal;
+        }
+
+        .patient {
+            border-top: 2px solid #0056b3;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .patient h2 {
+            font-size: 1.4em;
+            color: #222;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .schedule {
+            margin-top: 10px;
+        }
+
+        .schedule-item {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 0;
+            font-size: 1em;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .time {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .change {
+            color: #777;
+        }
+
+        .patient p {
+            font-size: 1em;
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reporte de Cambios de Turnos</h1>
+
+        <div class="patient">
+            <h2>Paciente: Juan Pérez</h2>
+            <div class="schedule">
+                <div class="schedule-item">
+                    <div class="time">08:00 AM</div>
+                    <div class="change">Cambio de turno: Sala A → Sala B</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time">01:00 PM</div>
+                    <div class="change">Cambio de turno: Sala B → Sala C</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="patient">
+            <h2>Paciente: María López</h2>
+            <div class="schedule">
+                <div class="schedule-item">
+                    <div class="time">09:30 AM</div>
+                    <div class="change">Cambio de turno: Sala C → Sala D</div>
+                </div>
+                <div class="schedule-item">
+                    <div class="time">03:00 PM</div>
+                    <div class="change">Cambio de turno: Sala D → Sala E</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Reporte generado por el sistema de gestión hospitalaria</p>
+            <p>Fecha: <span id="report-date"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar la fecha actual en el pie de página
+        document.getElementById('report-date').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>

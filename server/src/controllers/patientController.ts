@@ -4,6 +4,8 @@ import { IPatinet, PatientsModel } from '../models/mysql/patientModel';
 import { validatePartialPatient, validatePatient } from '../schemas/patientSchema';
 import { verifyRefreshToken, verifyToken } from '../helpers/authhelper';
 import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
+import fs from 'fs';
+import path from 'path';
 import {
   SendNewPatientNotifications,
   SendUpdatePatientNotifications
@@ -16,7 +18,10 @@ import {
   encryptPatientData,
   encryptstring
 } from '../helpers/handleEncription-Decription';
-import { Patient } from '../interface/patient';
+import { Patient, PatientShiftChange } from '../interface/patient';
+import { HistoryModel } from '../models/mysql/historyModel';
+import { ReportHistoryPerPatient } from '../interface/history';
+import puppeteer from 'puppeteer';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   // static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -208,6 +213,78 @@ export class PatientController {
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
+
+  static async shiftChange(req: any, res: Response): Promise<Response> {
+    const data:PatientShiftChange[] = req.body.patients;
+    try{
+      for(const p of data){
+        if(p.role === 'nurse'){
+          await PatientsModel.updateNurseOfPatient(p.patientID,p.newNurseID)
+          await HistoryModel.create({
+            patient_id: p.patientID,
+            patient_new_value: p.newNurseID,
+            patient_old_value: p.lastNurseID,
+            patient_updated_column: 'nurse_id',
+            patient_updated_date: new Date(),
+            user_id: req.user.id
+          })
+        }
+        if(p.role === 'doctor'){
+          await PatientsModel.updateDoctorOfPatient(p.patientID,p.newDoctorID)
+          await HistoryModel.create({
+            patient_id: p.patientID,
+            patient_new_value: p.newDoctorID,
+            patient_old_value: p.lastDoctorID,
+            patient_updated_column: 'doctor_id',
+            patient_updated_date: new Date(),
+            user_id: req.user.id
+          })
+        }
+      }
+
+      if(!req.body.report || req.body.report === false)
+        return res.status(201).json({message: 'Shift change success'})
+      
+      const historyToReport = await HistoryModel.findAllTodayToReport()
+
+      const patientIds = historyToReport.map(h => h.patient_id);
+      const patients = await PatientsModel.getPatientsByIds(patientIds);
+      const patientMap = new Map(
+        patients.map(patient => [patient.patient_id, patient])
+      );
+    
+      const historyMap: Record<string, ReportHistoryPerPatient> = {};
+      for (const h of historyToReport) {
+        const patient = patientMap.get(h.patient_id);
+        if (!patient) continue; 
+        if (!historyMap[patient.patient_id]) {
+          historyMap[patient.patient_id] = {
+            patient_id: patient.patient_id,
+            patient_name: patient.patient_name,
+            history: [],
+          };
+        }
+        historyMap[patient.patient_id].history.push(h);
+      }
+
+      const htmlContent = fs.readFileSync(`src/templates/pdf/shift-change.html`, 'utf8');
+      
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(htmlContent,{waitUntil: 'domcontentloaded'});
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+      });
+      await browser.close();
+      res.setHeader('Content-Disposition', 'attachment; filename="reporte.pdf"');
+      res.setHeader('Content-Type', 'application/pdf');
+      return res.send(pdfBuffer);
+    }catch(err){
+      return res.status(500).json(err.message)
+    }
+  }
+
 
   static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
     try {

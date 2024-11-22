@@ -35,3 +35,18 @@ export interface PatientHistoryItem {
   user_id?: string;
   user_name?: string;
 }
+
+
+export interface PatientShiftChange {
+  patientID: string;
+  role: string;
+  lastDoctorID: string;
+  newDoctorID: string;
+  lastNurseID: string;
+  newNurseID: string;
+}
+
+export interface ReportShiftChange{
+  patient_id:string
+
+}

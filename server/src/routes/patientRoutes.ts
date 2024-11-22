@@ -39,3 +39,7 @@ patientRouter.get('/history/:id', (req: Request, res: Response) => {
   void PatientController.getPatientUpdateHistory(req, res);
 });
 
+patientRouter.post('/shiftChange', (req: Request, res: Response) => {
+  void PatientController.shiftChange(req, res);
+});
+
