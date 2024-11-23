@@ -348,8 +348,24 @@ export const getPatientHistory = async (
       if (!response.ok) {
         throw new Error(`Error in POST request to /shiftChange: ${response.statusText}`)
       }
-      const data = await response.json()
-      return data
+      if(!report)
+        return await response.json()
+
+      const blob = await response.blob()
+
+      console.log(response)
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+
+      link.download = 'document.pdf';
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      return 'Reporte generado'
     } catch (error) {
       if (error.message === 'Cerrar sesion') {
         throw new Error('Cerrar sesion')

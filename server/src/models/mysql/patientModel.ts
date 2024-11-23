@@ -46,7 +46,6 @@ export class PatientsModel {
   //     throw error;
   //   }
   // }
-
   static async getPatientById({ id }: { id: string }): Promise<IPatinet | undefined> {
     const patientsQuery = `
         SELECT 
@@ -717,7 +716,7 @@ export class PatientsModel {
 
   static async getPatientsByIds(ids: string[]): Promise<IPatinet[]> {
     if (ids.length === 0) return [];
-    const placeholders = ids.map(() => 'UUID_TO_BIN(?)').join(', ');
+    const placeholders = ids.map(() => '?').join(', ');
     const patientsQuery = `
         SELECT 
         BIN_TO_UUID(patient_id) AS patient_id,
@@ -744,7 +743,7 @@ export class PatientsModel {
         LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
         LEFT JOIN Box ON Patient.box_id = Box.box_id
-        WHERE Patient.patient_id IN (${placeholders});
+        WHERE BIN_TO_UUID(Patient.patient_id) IN (${placeholders});
     `;
     
     const conn = await connect();

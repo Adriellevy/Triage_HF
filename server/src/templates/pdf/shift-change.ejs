@@ -61,6 +61,7 @@
         .time {
             font-weight: bold;
             color: #555;
+            margin-bottom: 2px;
         }
 
         .change {
@@ -85,43 +86,24 @@
     <div class="container">
         <h1>Reporte de Cambios de Turnos</h1>
 
-        <div class="patient">
-            <h2>Paciente: Juan Pérez</h2>
-            <div class="schedule">
-                <div class="schedule-item">
-                    <div class="time">08:00 AM</div>
-                    <div class="change">Cambio de turno: Sala A → Sala B</div>
-                </div>
-                <div class="schedule-item">
-                    <div class="time">01:00 PM</div>
-                    <div class="change">Cambio de turno: Sala B → Sala C</div>
+
+        <% patients.forEach(function(patient) { %>
+            <div class="patient">
+                <h2>Paciente: <%= patient.patient_name%></h2>
+                <div class="schedule">
+                    <% patient.history.forEach(function(his) { %>
+                    <div class="schedule-item">
+                        <div class="time"><%= his.patient_updated_date.getHours() %>:<%= his.patient_updated_date.getMinutes() %> </div>
+                        <div class="change">Cambio de turno: Sala C → Sala D</div>
+                    </div>
+                    <% }); %>
                 </div>
             </div>
-        </div>
-
-        <div class="patient">
-            <h2>Paciente: María López</h2>
-            <div class="schedule">
-                <div class="schedule-item">
-                    <div class="time">09:30 AM</div>
-                    <div class="change">Cambio de turno: Sala C → Sala D</div>
-                </div>
-                <div class="schedule-item">
-                    <div class="time">03:00 PM</div>
-                    <div class="change">Cambio de turno: Sala D → Sala E</div>
-                </div>
-            </div>
-        </div>
-
+        <% }); %>
         <div class="footer">
             <p>Reporte generado por el sistema de gestión hospitalaria</p>
             <p>Fecha: <span id="report-date"></span></p>
         </div>
     </div>
-
-    <script>
-        // Mostrar la fecha actual en el pie de página
-        document.getElementById('report-date').textContent = new Date().toLocaleDateString();
-    </script>
 </body>
 </html>

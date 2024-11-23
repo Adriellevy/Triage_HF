@@ -5,10 +5,11 @@ import { validatePartialPatient, validatePatient } from '../schemas/patientSchem
 import { verifyRefreshToken, verifyToken } from '../helpers/authhelper';
 import { GeneratePatientHistoryItem } from '../helpers/patienthelper';
 import fs from 'fs';
+import ejs from 'ejs';
 import path from 'path';
 import {
+  SendUpdatePatientNotifications,
   SendNewPatientNotifications,
-  SendUpdatePatientNotifications
 } from '../helpers/notificationhelper';
 import { string } from 'zod';
 import { format } from 'date-fns';
@@ -214,7 +215,7 @@ export class PatientController {
     }
   }
 
-  static async shiftChange(req: any, res: Response): Promise<Response> {
+  static async shiftChange(req: any, res: Response) {
     const data:PatientShiftChange[] = req.body.patients;
     try{
       for(const p of data){
@@ -244,42 +245,56 @@ export class PatientController {
 
       if(!req.body.report || req.body.report === false)
         return res.status(201).json({message: 'Shift change success'})
-      
       const historyToReport = await HistoryModel.findAllTodayToReport()
 
       const patientIds = historyToReport.map(h => h.patient_id);
       const patients = await PatientsModel.getPatientsByIds(patientIds);
       const patientMap = new Map(
-        patients.map(patient => [patient.patient_id, patient])
+        patients.map(patient =>{
+          return [patient.patient_id, patient]
+        })
       );
-    
-      const historyMap: Record<string, ReportHistoryPerPatient> = {};
+  
+      const historyMap = new Map<string, ReportHistoryPerPatient>();
       for (const h of historyToReport) {
         const patient = patientMap.get(h.patient_id);
-        if (!patient) continue; 
-        if (!historyMap[patient.patient_id]) {
-          historyMap[patient.patient_id] = {
+        if (!patient) continue;
+        if (!historyMap.get(patient.patient_id)) {
+          historyMap.set(patient.patient_id,{
             patient_id: patient.patient_id,
-            patient_name: patient.patient_name,
+            patient_name: decryptPatientData(patient).patient_name,
             history: [],
-          };
+          });
         }
-        historyMap[patient.patient_id].history.push(h);
+        historyMap.get(patient.patient_id)!.history.push(h);
       }
+      console.log("historyMap",historyMap);
+      const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'),{
+         title: 'Mi PDF',
+          content: 'Este es el contenido del PDF generado',
+          patients:historyMap
+      });
 
-      const htmlContent = fs.readFileSync(`src/templates/pdf/shift-change.html`, 'utf8');
-      
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setContent(htmlContent,{waitUntil: 'domcontentloaded'});
+      await page.setContent(html)
+
       const pdfBuffer = await page.pdf({
         format: 'A4',
-        printBackground: true,
+        printBackground: true
       });
       await browser.close();
-      res.setHeader('Content-Disposition', 'attachment; filename="reporte.pdf"');
-      res.setHeader('Content-Type', 'application/pdf');
-      return res.send(pdfBuffer);
+      const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
+      fs.writeFileSync(pdfPath, pdfBuffer);
+
+      res.download(pdfPath, 'generated-pdf.pdf', (err) => {
+        if (err) {
+          console.error('Error al descargar el archivo:', err);
+        }
+  
+        // Opcional: eliminar el archivo generado después de la descarga
+        fs.unlinkSync(pdfPath);
+      })
     }catch(err){
       return res.status(500).json(err.message)
     }
