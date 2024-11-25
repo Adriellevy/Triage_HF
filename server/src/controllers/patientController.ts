@@ -23,6 +23,7 @@ import { Patient, PatientShiftChange } from '../interface/patient';
 import { HistoryModel } from '../models/mysql/historyModel';
 import { ReportHistoryPerPatient } from '../interface/history';
 import puppeteer from 'puppeteer';
+import { UserModel } from '../models/mysql/userModel';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   // static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -218,6 +219,8 @@ export class PatientController {
   static async shiftChange(req: any, res: Response) {
     const data:PatientShiftChange[] = req.body.patients;
     try{
+
+      const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map(p => p.patientID));
       for(const p of data){
         if(p.role === 'nurse'){
           await PatientsModel.updateNurseOfPatient(p.patientID,p.newNurseID)
@@ -254,10 +257,15 @@ export class PatientController {
           return [patient.patient_id, patient]
         })
       );
-  
+      
+
       const historyMap = new Map<string, ReportHistoryPerPatient>();
       for (const h of historyToReport) {
         const patient = patientMap.get(h.patient_id);
+        h.column_name = h.patient_updated_column === 'nurse_id' ? 'enfermero' : 'doctor';
+        h.new_value_name = h.column_name == 'doctor' ? patient?.doctor_name : patient?.nurse_name
+        h.old_value_name = h.column_name == 'doctor' ? allPatiensToUpdate.find(pat => pat.patient_id === h.patient_id)?.doctor_name : allPatiensToUpdate.find(pat => pat.patient_id === h.patient_id)?.nurse_name
+        
         if (!patient) continue;
         if (!historyMap.get(patient.patient_id)) {
           historyMap.set(patient.patient_id,{
@@ -268,7 +276,6 @@ export class PatientController {
         }
         historyMap.get(patient.patient_id)!.history.push(h);
       }
-      console.log("historyMap",historyMap);
       const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'),{
          title: 'Mi PDF',
           content: 'Este es el contenido del PDF generado',
@@ -295,6 +302,8 @@ export class PatientController {
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
       })
+
+      await HistoryModel.updateReported(historyToReport.map(h => h.updated_id));
     }catch(err){
       return res.status(500).json(err.message)
     }

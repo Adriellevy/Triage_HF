@@ -68,12 +68,17 @@
             color: #777;
         }
 
+
         .patient p {
             font-size: 1em;
             margin-top: 5px;
             color: #555;
         }
-
+        .change span{
+            font-size: 1.4em;
+            color: #0056b3;
+            margin: 0 5px;
+        }
         .footer {
             text-align: center;
             font-size: 0.9em;
@@ -93,8 +98,10 @@
                 <div class="schedule">
                     <% patient.history.forEach(function(his) { %>
                     <div class="schedule-item">
-                        <div class="time"><%= his.patient_updated_date.getHours() %>:<%= his.patient_updated_date.getMinutes() %> </div>
-                        <div class="change">Cambio de turno: Sala C → Sala D</div>
+                        <div class="time">
+                            <%= String(his.patient_updated_date.getHours()).padStart(2, '0') %>:<%=String(his.patient_updated_date.getMinutes()).padStart(2, '0') %>
+                          </div>
+                        <div class="change">Cambio de <%=String(his.column_name)%>: <%= String(his.old_value_name)%> <span>→</span> <%= String(his.new_value_name)%></div>
                     </div>
                     <% }); %>
                 </div>

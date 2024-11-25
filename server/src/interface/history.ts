@@ -8,6 +8,10 @@ export interface History{
     patient_updated_date: Date;
     patient_id: string;
     user_id: string;
+
+    old_value_name?: string;
+    new_value_name?: string;
+    column_name?: string;
 }
 
 export interface ReportHistoryPerPatient{

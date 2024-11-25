@@ -59,6 +59,7 @@ CREATE TABLE PatientUpdateHistory (
   patient_updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   patient_id BINARY(16) NOT NULL,
   user_id BINARY(16) NOT NULL,
+  reported TINYINT(1) DEFAULT 0,
   PRIMARY KEY(updated_id),
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
   FOREIGN KEY (user_id) REFERENCES User(user_id)

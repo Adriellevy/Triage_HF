@@ -277,4 +277,22 @@ export class UserModel {
       return null;
     }
   }
+
+  static async getAllUserByIds(userIds: string[]): Promise<User[] | null> {
+    try {
+      const placeholders = userIds.map(() => 'UUID_TO_BIN(?)').join(', ');
+      const getUserQuery = `
+        SELECT BIN_TO_UUID(user_id) AS user_id, user_name, user_full_name, user_email, user_specialization, user_password, user_type
+        FROM User
+        WHERE user_id IN (${placeholders});
+      `;
+      const conn = await connect();
+      const rows = await conn.query<IUser[]>(getUserQuery, userIds);
+
+      return rows.length > 0 ? rows[0] : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
 }
