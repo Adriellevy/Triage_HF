@@ -379,6 +379,7 @@ export class PatientController {
     try {
       // Aca podria pasar por query para que no me de los de alta 
       const { user_id } = req.params; 
+
       if (!user_id) {
         return res.status(400).json({ message: 'user_id is required' });
       }
@@ -396,7 +397,14 @@ export class PatientController {
         return res.status(404).json({ message: 'user_id is not correct format' });
       }
 
-      const patients = await PatientsModel.getPatientsByUserID(user_id);
+      let patients:IPatinet[]=[];
+      if(req.query.status_not_in){
+        let status:string = req.query.status_not_in as string;
+        const allStatus = status.includes(',') ? status.split(',') : [status];
+        patients = await PatientsModel.getPatientsByUserIDWithoutStatus(user_id,allStatus);
+      }else{
+        patients = await PatientsModel.getPatientsByUserID(user_id);
+      }
       const decryptedPatients = patients.map((patient) => decryptPatientData(patient));
 
       return res.json(decryptedPatients);

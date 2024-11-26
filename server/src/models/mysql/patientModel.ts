@@ -650,6 +650,47 @@ export class PatientsModel {
     }
   }
   
+
+  static async getPatientsByUserIDWithoutStatus(userId:string,status:string[]):Promise<IPatinet[]>{
+    try {
+      let query = `
+        SELECT 
+          BIN_TO_UUID(patient_id) AS patient_id,
+          patient_name,
+          patient_age,
+          patient_entry_time,
+          patient_exit_time,
+          patient_triage_time,
+          patient_triage_level,
+          patient_isolated,
+          BIN_TO_UUID(Patient.box_id) AS box_id,
+          patient_status,
+          patient_symptom,
+          patient_healthcare_system,
+          doctor_procedure,
+          doctor_studies_solicitated,
+          nurse_coment,
+          Doctor.user_name AS doctor_name,  -- Agregando el nombre del doctor
+          Nurse.user_name AS nurse_name      -- Agregando el nombre de la enfermera
+        FROM Patient
+        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        WHERE (Patient.doctor_id = UUID_TO_BIN(?) OR Patient.nurse_id = UUID_TO_BIN(?)) AND patient_status NOT IN (?);
+      `;
+  
+      // Usar el mismo user_id para ambos parámetros en la consulta
+      const queryParams = [userId, userId,status];
+  
+      const conn = await connect();
+      const [rows] = await conn.query<IPatinet[]>(query, queryParams);
+      
+      // Asegúrate de que rows sea un array, incluso si no hay resultados
+      return rows || [];
+    } catch (error) {
+      console.error('Error fetching patients by user:', error);
+      throw error;
+    }
+  }
   
 
   static async getPatientsByEntryDate(startDate: string, endDate: string): Promise<IPatinet[]> {
