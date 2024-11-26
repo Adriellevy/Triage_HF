@@ -6,6 +6,9 @@ import {  executeShiftChange, getPatientsByUserID } from "@/services/patientServ
 import { Patient } from "@/interfaces/Patinet";
 import PatientsListTurnExchange from "./PatientList/PatientListShiftExchange";
 import { Checkbox } from "@mui/material";
+import {  useSelector } from "react-redux";
+import { RootState } from "@/redux/store/store";
+import { toast } from "sonner";
 
 const ShiftExchangeModal = ({ onClose }) => {
     const [lastDoctor, setLastDoctor] = useState(0)
@@ -15,6 +18,14 @@ const ShiftExchangeModal = ({ onClose }) => {
     const [doctorPatients, setDoctorPatients] = useState<Patient[]>([])
     const [nursePatients, setNursePatients] = useState<Patient[]>([])
     const [createReport, setCreateReport] = useState(false)
+
+
+    const selectedDoctors = useSelector(
+      (state: RootState) => state.shiftSelections.doctorSelections
+    );
+    const selectedNurses = useSelector(
+      (state: RootState) => state.shiftSelections.nurseSelections
+    );
 
     const handleSelection = (selectedOption: { value: SetStateAction<string>; label: any; }, role: string) => {
       if (selectedOption) {
@@ -70,47 +81,47 @@ const ShiftExchangeModal = ({ onClose }) => {
         fetchPatients();
       }, [lastDoctor]);
 
-      const handleShiftExchange = async () => {
-        const localDoctors = localStorage.getItem('doctorSelections');
-        const localNurses = localStorage.getItem('nurseSelections');
-      
-        // Si existen los datos en localStorage, parsearlos
-        const parsedDoctors = localDoctors ? JSON.parse(localDoctors) : {};
-        const parsedNurses = localNurses ? JSON.parse(localNurses) : {};
-      
-        // Mapeo de Doctores
-        const mappedDoctors = Object.keys(parsedDoctors).map((patientID) => {
-          const doctor = parsedDoctors[patientID];
-          const lastDoctorValue = lastDoctor?.value; // Suponiendo que tienes lastDoctor en el contexto
-      
-          return {
-            patientID,                        
-            role: 'doctor',              
-            lastDoctorID: lastDoctorValue, 
-            newDoctorID: doctor.value,     
-          };
-        });
-      
-        // Mapeo de Enfermeros
-        const mappedNurses = Object.keys(parsedNurses).map((patientID) => {
-          const nurse = parsedNurses[patientID];
-          const lastNurseValue = lastNurse?.value; // Suponiendo que tienes lastNurse en el contexto
-      
-          return {
-            patientID,                        
-            role: 'nurse',      
-            lastNurseID: lastNurseValue, 
-            newNurseID: nurse.value,
-          };
-        });
-      
-        // Concatenar ambos mapeos en uno solo
-        const patients = [...mappedDoctors, ...mappedNurses];
-        console.log('Patients:', patients, 'Create Report?:', createReport);
-        const shiftExchange = await executeShiftChange(patients, createReport);
-        console.log(shiftExchange)
-      };
-      
+
+    const handleShiftExchange = async () => {
+      // Mapeo de Doctores
+      const mappedDoctors = Object.keys(selectedDoctors).map((patientID) => {
+        const doctor = selectedDoctors[patientID];
+        const lastDoctorValue = doctor?.previousValue; // Último doctor del estado
+
+        return {
+          patientID,
+          role: 'doctor',
+          lastDoctorID: lastDoctorValue,
+          newDoctorID: doctor.newValue,
+        };
+      });
+
+      // Mapeo de Enfermeros
+      const mappedNurses = Object.keys(selectedNurses).map((patientID) => {
+        const nurse = selectedNurses[patientID];
+        const lastNurseValue = nurse?.previousValue; // Último enfermero del estado
+
+        return {
+          patientID,
+          role: 'nurse',
+          lastNurseID: lastNurseValue,
+          newNurseID: nurse.newValue,
+        };
+      });
+
+  const patients = [...mappedDoctors, ...mappedNurses];
+  console.log('Patients:', patients, 'Create Report?:', createReport);
+
+  try {
+    const shiftExchange = await executeShiftChange(patients, createReport);
+    console.log('Shift Exchange Result:', shiftExchange);
+    onClose()
+    toast.success('Cambio de turno exitoso!', { duration: 2000 })
+  } catch (error) {
+    toast.error('Hubo un error en el cambio de turno', { duration: 2000 })
+    console.error('Error executing shift exchange:', error);
+  }
+};
 
       useEffect(() => {
         const fetchPatients = async () => {
@@ -180,7 +191,7 @@ const ShiftExchangeModal = ({ onClose }) => {
                   Cambio de turno
     </Button>
     </div>
-          <div className="text-black flex justify-center">
+          <div className="text-black flex justify-between">
           { lastDoctor ?
             <PatientsListTurnExchange
             patients={doctorPatients}

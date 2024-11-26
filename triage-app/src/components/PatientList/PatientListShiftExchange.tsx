@@ -34,7 +34,7 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
     },
     {
       label: t('LastDoctorNameLabel'),
-      field: 'doctor_name',
+      field: 'last_doctor_name',
       sortable: false,
       showOnLargeScreen: false,
       mode: 'doctor'
@@ -48,7 +48,7 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
     },
     {
       label: t('LastNurseNameLabel'),
-      field: 'nurse_name',
+      field: 'last_nurse_name',
       sortable: false,
       showOnLargeScreen: false,
       mode: 'nurse'
@@ -112,16 +112,20 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
 
   return (
     <>
-        <div className='text-xs md:text-sm mt-4 lg:mx-8'>
+        <div className='text-xs lg:text-sm mt-4 lg:mx-8'>
         <table className='w-full border border-gray-300'>
           <thead>
           <tr className="bg-blue-800 text-white">
   {columns
-    .filter((column) => column.mode ===  'all' || column.mode === mode) // Filtrar columnas según el mode
-    .map((column) => (
+    .filter((column) => column.mode ===  'all' || column.mode === mode) 
+    .map((column) => {
+      const shouldHideColumn = column.field === 'patient_status' ||
+      column.field === 'last_doctor_name' || 
+      column.field === 'last_nurse_name';
+      return (
       <th
         key={column.label}
-        className="border cursor-pointer p-2"
+        className={`border cursor-pointer p-2 ${shouldHideColumn? 'hidden lg:table-cell' : ''}`}
         onClick={() => (column.sortable ? handleSort(column.field) : null)}
       >
         {column.label}{' '}
@@ -129,12 +133,12 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
           <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
         )}
       </th>
-    ))}
+      )})}
             </tr>
           </thead>
           <tbody>
             {currentPatients.map((patient, index) => (
-              <PatientItemShiftExchange key={patient.patient_id} patient={patient} index={index} mode={mode} lastDoctor={lastDoctor} lastNurse={lastNurse}/>
+              <PatientItemShiftExchange key={patient.patient_id} patient={patient} index={index} mode={mode} lastDoctor={lastDoctor} lastNurse={lastNurse} />
             ))}
           </tbody>
         </table>

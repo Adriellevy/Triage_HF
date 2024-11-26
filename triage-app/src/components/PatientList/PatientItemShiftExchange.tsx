@@ -6,8 +6,9 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@/components/ui';
 import Select from 'react-select';
 import { getAllDoctors, getAllNurses } from '@/services/userService';
-import { useDispatch } from 'react-redux';
-import { addOrUpdateChange } from '../../redux/actions/SEpatientsActions.ts';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store.ts';
+import { setDoctorSelections, setNurseSelections } from '@/redux/slices/shiftSelectionsSlice.ts';
 
 interface PropsPatientItem {
   patient: Patient;
@@ -15,25 +16,29 @@ interface PropsPatientItem {
   setNewNurse?: (_id: number) => void;
   index: number;
   mode: string;
-  lastDoctor?: string;
-  lastNurse?: string;
+  lastDoctor?: { value: string; label: string };
+  lastNurse?: { value: string; label: string };
 }
 
 function PatientItemShiftExchange({
   patient,
   index,
   mode,
-  setNewDoctor,
-  setNewNurse,
   lastDoctor,
   lastNurse,
 }: PropsPatientItem) {
   const [doctorOptions, setDoctorOptions] = useState([]);
   const [nurseOptions, setNurseOptions] = useState([]);
-  const [selectedDoctors, setSelectedDoctors] = useState<{ [key: string]: any }>({});
-  const [selectedNurses, setSelectedNurses] = useState<{ [key: string]: any }>({});
   const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null);
   const dispatch = useDispatch();
+
+
+  const selectedDoctors = useSelector(
+    (state: RootState) => state.shiftSelections.doctorSelections
+  );
+  const selectedNurses = useSelector(
+    (state: RootState) => state.shiftSelections.nurseSelections
+  );
 
   const {
     patient_id,
@@ -59,43 +64,34 @@ function PatientItemShiftExchange({
     return triageLevel ? `rgb(${triageLevel.color}, 0.6)` : 'transparent';
   };
 
-  const handleSelection = (selectedOption: unknown | null, type: 'doctor' | 'nurse') => {
+  const handleSelection = (
+    patient_id: string, // Asegúrate de pasar `patient_id` como argumento
+    selectedOption: { value: string; label: string } | null,
+    type: 'doctor' | 'nurse',
+    lastDoctor?: { value: string; label: string }, 
+    lastNurse?: { value: string; label: string } 
+  ) => {
+  
     if (selectedOption) {
-      const updater = type === 'doctor' ? setSelectedDoctors : setSelectedNurses;
-      updater((prevState) => {
-        const updatedSelections = {
-          ...prevState,
-          [patient_id]: selectedOption,
-        };
-
-        console.log(`Estado actualizado (${type}):`, updatedSelections);
-
-        localStorage.setItem(
-          `${type}Selections`,
-          JSON.stringify(updatedSelections)
-        );
-        return updatedSelections;
-      });
-
       if (type === 'doctor') {
-        dispatch(addOrUpdateChange(patient_id, lastDoctor?.value, selectedOption.value));
+        dispatch(
+          setDoctorSelections({
+            patient_id,
+            previousValue: lastDoctor?.value,
+            newValue: selectedOption.value,
+          })
+        );
       } else if (type === 'nurse') {
-        dispatch(addOrUpdateChange(patient_id, lastNurse?.value, selectedOption.value));
+        dispatch(
+          setNurseSelections({
+            patient_id,
+            previousValue: lastNurse?.value,
+            newValue: selectedOption.value,
+          })
+        );
       }
     }
   };
-
-  useEffect(() => {
-    const storedDoctorSelections = JSON.parse(
-      localStorage.getItem('doctorSelections') || '{}'
-    );
-    setSelectedDoctors(storedDoctorSelections);
-
-    const storedNurseSelections = JSON.parse(
-      localStorage.getItem('nurseSelections') || '{}'
-    );
-    setSelectedNurses(storedNurseSelections);
-  }, []);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -113,11 +109,11 @@ function PatientItemShiftExchange({
         }));
 
         const filteredDoctors = formattedDoctors.filter(
-          (doctor) => doctor.label !== lastDoctor?.label
+          (doctor) => doctor.value !== lastDoctor?.value
         );
 
         const filteredNurses = formattedNurses.filter(
-          (nurse) => nurse.label !== lastNurse?.label
+          (nurse) => nurse.value !== lastNurse?.value
         );
 
         setDoctorOptions(filteredDoctors);
@@ -156,35 +152,43 @@ function PatientItemShiftExchange({
         {patient_triage_level}
       </td>
       {mode === 'doctor' ? (
-        <>
-          <td className="border p-2 table-cell text-center">{doctor_name}</td>
-          <td className="border p-4 table-cell text-center">
-            <Select
-              className="w-full text-black"
-              options={doctorOptions}
-              placeholder="Selec. doctor/a"
-              closeMenuOnSelect={true}
-              value={selectedDoctors[patient_id] || null}
-              onChange={(selectedOption) => handleSelection(selectedOption, 'doctor')}
-            />
-          </td>
-        </>
-      ) : (
-        <>
-          <td className="border p-2 table-cell text-center">{nurse_name}</td>
-          <td className="border p-4 table-cell text-center">
-            <Select
-              className="w-full text-black"
-              options={nurseOptions}
-              placeholder="Selec. enfermero/a"
-              closeMenuOnSelect={true}
-              value={selectedNurses[patient_id] || null}
-              onChange={(selectedOption) => handleSelection(selectedOption, 'nurse')}
-            />
-          </td>
-        </>
-      )}
-      <td className="border text-sm text-center">{patient_status}</td>
+  <>
+    <td className="border p-2  text-center hidden lg:table-cell ">{doctor_name}</td>
+    <td className="border p-4 table-cell text-center">
+      <Select
+        className="w-full text-black"
+        options={doctorOptions}
+        placeholder="Selec. doctor/a"
+        closeMenuOnSelect={true}
+        value={selectedDoctors[patient_id]?.newValue 
+          ? doctorOptions.find(option => option.value === selectedDoctors[patient_id]?.newValue)
+          : null}
+        onChange={(selectedOption) =>
+          handleSelection(patient_id, selectedOption, 'doctor', lastDoctor, lastNurse)
+        }
+      />
+    </td>
+  </>
+) : (
+  <>
+    <td className="border p-2 table-cell text-center hidden lg:table-cell">{nurse_name}</td>
+    <td className="border p-4 table-cell text-center">
+      <Select
+        className="w-full text-black"
+        options={nurseOptions}
+        placeholder="Selec. enfermero/a"
+        closeMenuOnSelect={true}
+        value={selectedNurses[patient_id]?.newValue 
+          ? nurseOptions.find(option => option.value === selectedNurses[patient_id]?.newValue)
+          : null}
+        onChange={(selectedOption) =>
+          handleSelection(patient_id, selectedOption, 'nurse', lastDoctor, lastNurse)
+        }
+      />
+    </td>
+  </>
+)}
+      <td className="border text-sm text-center hidden lg:table-cell">{patient_status}</td>
       <td className="border p-2">
         <div className="flex gap-2">
           {patient_status !== 'ALTA' ? (
