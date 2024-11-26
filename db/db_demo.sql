@@ -63,6 +63,7 @@ CREATE TABLE PatientUpdateHistory (
   patient_id BINARY(16) NOT NULL,
   user_id BINARY(16) NOT NULL,
   PRIMARY KEY(updated_id),
+  reported TINYINT(1) DEFAULT 0,
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
   FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
