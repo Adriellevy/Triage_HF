@@ -377,6 +377,7 @@ export class PatientController {
   }
   static async getPatientsByUser(req: Request, res: Response): Promise<Response> {
     try {
+      // Aca podria pasar por query para que no me de los de alta 
       const { user_id } = req.params; 
       if (!user_id) {
         return res.status(400).json({ message: 'user_id is required' });
