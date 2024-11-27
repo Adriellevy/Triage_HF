@@ -132,7 +132,7 @@ export const getPatientsByDate = async (
 export const getPatientsByUserID = async (user_id: string | undefined): Promise<Patient[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByUserID/${user_id}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByUserID/${user_id}?status_not_in=ALTA`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
