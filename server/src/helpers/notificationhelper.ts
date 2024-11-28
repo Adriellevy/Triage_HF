@@ -58,7 +58,7 @@ export function SendNewPatientNotifications(
 }
 
 export function SendShiftExchangeNotifications(req: Request): void {
-  console.log('holaaaaaaaaaaaaaaaa')
+  console.log('CHE EMITIMOS O NOOOOOOOOOO')
   const io = req.io
   io?.emit(SocketEvent.UPDATE, {
     message: UpdateEvent.SHIFT_EXCHANGE 

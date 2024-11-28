@@ -220,7 +220,6 @@ export class PatientController {
   static async shiftChange(req: any, res: Response) {
     const data:PatientShiftChange[] = req.body.patients;
     try{
-      SendShiftExchangeNotifications(req)
       const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map(p => p.patientID));
       for(const p of data){
         if(p.role === 'nurse'){
@@ -246,20 +245,22 @@ export class PatientController {
           })
         }
       }
-
-      if(!req.body.report || req.body.report === false)
+      
+      if(!req.body.report || req.body.report === false) {
+        SendShiftExchangeNotifications(req)
         return res.status(201).json({message: 'Shift change success'})
-        const historyToReport = await HistoryModel.findAllTodayToReport()
-
-        const patientIds = historyToReport.map(h => h.patient_id);
-        const patients = await PatientsModel.getPatientsByIds(patientIds);
-        const patientMap = new Map(
-          patients.map(patient =>{
-            return [patient.patient_id, patient]
+      }
+      const historyToReport = await HistoryModel.findAllTodayToReport()
+      
+      const patientIds = historyToReport.map(h => h.patient_id);
+      const patients = await PatientsModel.getPatientsByIds(patientIds);
+      const patientMap = new Map(
+        patients.map(patient =>{
+          return [patient.patient_id, patient]
         })
       );
       
-
+      
       const historyMap = new Map<string, ReportHistoryPerPatient>();
       for (const h of historyToReport) {
         const patient = patientMap.get(h.patient_id);
@@ -286,7 +287,7 @@ export class PatientController {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.setContent(html)
-
+      
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true
@@ -294,12 +295,12 @@ export class PatientController {
       await browser.close();
       const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
       fs.writeFileSync(pdfPath, pdfBuffer);
-
+      SendShiftExchangeNotifications(req)
       res.download(pdfPath, 'generated-pdf.pdf', (err) => {
         if (err) {
           console.error('Error al descargar el archivo:', err);
         }
-  
+        
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
       })

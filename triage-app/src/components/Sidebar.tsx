@@ -20,7 +20,7 @@ import ArrowPrev from '@/icons/arrow-prev.svg'
 import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
-import { UpdateEvent } from '@/interfaces/Socket'
+import { SocketEvent, UpdateEvent } from '@/interfaces/Socket'
 import { Patient } from '@/interfaces/Patinet'
 import { useTranslation } from 'react-i18next'
 import { Box } from '@/interfaces/Boxes'
@@ -158,11 +158,10 @@ function Sidebar() {
     }) => {
       console.log(data)
       if (data.message === UpdateEvent.SHIFT_EXCHANGE) {
-        console.log('Cambio de turno executado')
+        toast.success('Cambio de turno executado', { duration: 5000 })
         setTimeout(() => {
           window.location.reload() 
-        }, 1000)
-        toast.success('Cambio de turno executado', { duration: 5000 })
+        }, 5000)
         return
       }
       if (data.message === UpdateEvent.REFRESH_TOKEN_EXPIRED) {
@@ -246,6 +245,8 @@ function Sidebar() {
     }
     const setupSocket = () => {
       try {
+        console.log('Configurando listener para:', `${UserInfo.user_id}`);
+        socket.on(SocketEvent.UPDATE, handleSocketEvent)
         socket.on(`${UserInfo.user_id}`, handleSocketEvent)
       } catch (error) {
         console.error((error as Error).message)
