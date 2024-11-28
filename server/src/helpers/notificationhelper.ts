@@ -17,7 +17,8 @@ enum UpdateEvent {
   NEW_BOX = 'New Box',
   USER_UPDATE = 'User Update',
   REFRESH_TOKEN_EXPIRED = 'Refresh Token expired',
-  TOKEN_EXPIRED = 'Token expired'
+  TOKEN_EXPIRED = 'Token expired',
+  SHIFT_EXCHANGE = 'Shift exchange performed'
 }
 
 export function SendNewPatientNotifications(
@@ -54,6 +55,14 @@ export function SendNewPatientNotifications(
       }
     });
   }
+}
+
+export function SendShiftExchangeNotifications(req: Request): void {
+  console.log('holaaaaaaaaaaaaaaaa')
+  const io = req.io
+  io?.emit(SocketEvent.UPDATE, {
+    message: UpdateEvent.SHIFT_EXCHANGE 
+  })
 }
 
 export function SendUpdatePatientNotifications(

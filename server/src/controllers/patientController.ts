@@ -10,6 +10,7 @@ import path from 'path';
 import {
   SendUpdatePatientNotifications,
   SendNewPatientNotifications,
+  SendShiftExchangeNotifications,
 } from '../helpers/notificationhelper';
 import { string } from 'zod';
 import { format } from 'date-fns';
@@ -219,7 +220,7 @@ export class PatientController {
   static async shiftChange(req: any, res: Response) {
     const data:PatientShiftChange[] = req.body.patients;
     try{
-
+      SendShiftExchangeNotifications(req)
       const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map(p => p.patientID));
       for(const p of data){
         if(p.role === 'nurse'){
@@ -248,13 +249,13 @@ export class PatientController {
 
       if(!req.body.report || req.body.report === false)
         return res.status(201).json({message: 'Shift change success'})
-      const historyToReport = await HistoryModel.findAllTodayToReport()
+        const historyToReport = await HistoryModel.findAllTodayToReport()
 
-      const patientIds = historyToReport.map(h => h.patient_id);
-      const patients = await PatientsModel.getPatientsByIds(patientIds);
-      const patientMap = new Map(
-        patients.map(patient =>{
-          return [patient.patient_id, patient]
+        const patientIds = historyToReport.map(h => h.patient_id);
+        const patients = await PatientsModel.getPatientsByIds(patientIds);
+        const patientMap = new Map(
+          patients.map(patient =>{
+            return [patient.patient_id, patient]
         })
       );
       
@@ -277,11 +278,11 @@ export class PatientController {
         historyMap.get(patient.patient_id)!.history.push(h);
       }
       const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'),{
-         title: 'Mi PDF',
-          content: 'Este es el contenido del PDF generado',
-          patients:historyMap
+        title: 'Mi PDF',
+        content: 'Este es el contenido del PDF generado',
+        patients:historyMap
       });
-
+      
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.setContent(html)
@@ -302,7 +303,6 @@ export class PatientController {
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
       })
-
       await HistoryModel.updateReported(historyToReport.map(h => h.updated_id));
     }catch(err){
       return res.status(500).json(err.message)

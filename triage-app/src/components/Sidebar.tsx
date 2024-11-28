@@ -144,9 +144,6 @@ function Sidebar() {
     setOpenSubMenu(openSubMenu === index ? null : index)
   }
 
-  const handleTurnExchange = () => {
-    console.log('hola')
-  }
 
   useEffect(() => {
     setOpenSubMenu(null)
@@ -159,6 +156,15 @@ function Sidebar() {
       message: UpdateEvent
       box?: Box
     }) => {
+      console.log(data)
+      if (data.message === UpdateEvent.SHIFT_EXCHANGE) {
+        console.log('Cambio de turno executado')
+        setTimeout(() => {
+          window.location.reload() 
+        }, 1000)
+        toast.success('Cambio de turno executado', { duration: 5000 })
+        return
+      }
       if (data.message === UpdateEvent.REFRESH_TOKEN_EXPIRED) {
         console.log('Refresh Token caducado, cerrando sesión y recargando la página...')
         logout()

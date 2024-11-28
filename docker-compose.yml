@@ -12,16 +12,16 @@ services:
     networks:
       - app-network
 
-  backup:
-    image: ubuntu
-    build:
-      context: ./db/
-    container_name: backup
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./db/backup.sh:/db/backup.sh
-      - ./db/backups:/db/backups
-    entrypoint: ["/db/backup.sh"]
+  # backup:
+  #   image: ubuntu
+  #   build:
+  #     context: ./db/
+  #   container_name: backup
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./db/backup.sh:/db/backup.sh
+  #     - ./db/backups:/db/backups
+  #   entrypoint: ["/db/backup.sh"]
 
 
   api:

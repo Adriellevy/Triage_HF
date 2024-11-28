@@ -10,5 +10,6 @@ export enum UpdateEvent {
   BOX_UPDATE = 'Box Update',
   USER_UPDATE = 'User Update',
   REFRESH_TOKEN_EXPIRED = 'Refresh Token expired',
-  TOKEN_EPIRED = 'Token expired'
+  TOKEN_EPIRED = 'Token expired',
+  SHIFT_EXCHANGE = 'Shift exchange performed'
 }
