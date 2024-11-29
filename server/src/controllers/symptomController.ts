@@ -7,7 +7,7 @@ export class symptomController{
     static async getAll(req:any,res:any){
         const symptoms = await symptomModel.findAll();
         if(symptoms.length>0)
-            return res.status(200).json({data:symptoms});
+            return res.status(200).json({message:"Se obtuvieron todos los sintomas",data:symptoms});
         else
             return res.status(404).json({message:"No se encontraron síntomas"});
     }
@@ -16,7 +16,7 @@ export class symptomController{
         const id = req.params.id;
         const symptom = await symptomModel.findById(id);
         if(symptom)
-            return res.status(200).json({data:symptom});
+            return res.status(200).json({message:"Se obtuvo un sintomas",data:symptom});
         else
             return res.status(404).json({message:"No se encontró el síntoma "});
     }
