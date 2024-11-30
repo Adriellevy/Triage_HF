@@ -37,6 +37,12 @@ try:
         )
         df["EDAD"] = nueva_columna
 
+    # Eliminar la columna "Aisaldo"
+    if "DESTINO" in df.columns:
+        df = df.drop(columns=["DESTINO"])
+
+    columns_to_drop = [col for col in df.columns[12:25] if col.startswith("Unnamed")]
+    df = df.drop(columns=columns_to_drop)
     # Guardar el archivo modificado
     df.to_csv(output_file, index=False)
     print(f"Archivo guardado con éxito en: {output_file}")
