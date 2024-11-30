@@ -81,6 +81,11 @@ CREATE TABLE Triage (
   UNIQUE KEY level_UNIQUE (level)
 )
 
+CREATE TABLE Symptom (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`));
+
 -- Insertar datos de ejemplo en la tabla User
 INSERT INTO User (user_id, user_name, user_full_name, user_email, user_password, user_type) 
 VALUES 

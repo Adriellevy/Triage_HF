@@ -15,6 +15,7 @@ import { nodemailerRouter } from './routes/nodemailerRoutes';
 import { patientPatinationRouter } from './routes/patinetPaginationRoutes';
 import { queryRoutes } from './routes/queryRoutes';
 import { triageRouter } from './routes/triageRoutes';
+import { symptomRouter } from './routes/symptomRoutes';
 
 const PORT = process.env.PORTAPI ?? 3000;
 
@@ -43,7 +44,7 @@ app.use('/users', authenticateToken, userRouter);
 app.use('/settings', authenticateToken, settingsRouter);
 app.use('/dashboard', authenticateToken, dashboardRouter);
 app.use('/triage',authenticateToken, triageRouter);
-
+app.use('/symptom',authenticateToken, symptomRouter);
 app.use((req: Request, res: Response) => {
   res.status(404).send('<h1>404</h1>');
 });
