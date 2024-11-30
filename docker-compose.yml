@@ -4,11 +4,11 @@ services:
     container_name: mysql_container
     environment:
       - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=Triage_db
+      - MYSQL_DATABASE=Triagedb
     ports:
       - 3307:3306
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/db_demo.sql:/docker-entrypoint-initdb.d/db_demo.sql
     networks:
       - app-network
 
@@ -37,7 +37,7 @@ services:
       - DB_USER=root
       - DB_PORT=3306
       - DB_PASSWORD=1234
-      - DB_NAME=Triage_db
+      - DB_NAME=Triagedb
       - PORTAPI=3000
       - JWT_SECRET=123
       - EMAIL_USER=Test
@@ -64,7 +64,7 @@ services:
       - DB_USER=root
       - DB_PORT=3306
       - DB_PASSWORD=1234
-      - DB_NAME=Triage_db
+      - DB_NAME=Triagedb
       - DB_CHARSET=latin1
       - CHARTS_RESTRICTION=False
       - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
