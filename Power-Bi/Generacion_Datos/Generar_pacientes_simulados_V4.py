@@ -15,12 +15,11 @@ boxes_intermedios = [f"O-{i}" for i in range(0, 19)]
 nombres = ["LUSI", "LO PINTO CARLOS", "BANDERA", "JUAREZ", "CASTILLO", "FERNANDEZ"]
 motivos = ["FIEBRE Y TOS", "DOLOR ABDOMINAL", "ACCIDENTE", "DESMAYO", "FALTA DE AIRE"]
 triage_niveles = ["I", "II", "III", "IV"]
-destinos = ["alta", "internación", "derivación", "observación", "aislamiento"]
 aislado_opciones = ["NO", "SI"]
 
 # Lista de médicos y enfermeros (tomada de tu ejemplo)
 doctors = [
-    "Dr. Smith", "Dr. Smith2", "MESSINA NAHUEL", "AVILA VALENTIN",
+    "MESSINA NAHUEL", "AVILA VALENTIN",
     "AMAYA ANALIA", "RIVAS PAULA", "RESIDENTES"
 ]
 nurses = [
@@ -67,12 +66,13 @@ for dia in range(dias):
     fecha_actual = inicio_fecha + timedelta(days=dia)
 
     # Añadir fila vacía al cambiar de día
-    registros.append([fecha_actual.strftime('%Y-%m-%d'), *["" for _ in range(12)]])
+    registros.append([fecha_actual.strftime('%Y-%m-%d'), *["" for _ in range(11)]])
 
     for paciente in range(pacientes_por_dia):
         triage = random.choice(triage_niveles)
         box = asignar_box(triage)
         hora_ingreso, hora_salida = generar_horarios(fecha_actual)
+        aislado = "SI" if random.randint(1, 20) == 1 else "NO"  # 1 en 200 probabilidad
         registro = [
             paciente + 1,
             fecha_actual.strftime('%Y-%m-%d'),
@@ -82,26 +82,21 @@ for dia in range(dias):
             triage,
             random.choice(nurses),
             random.choice(doctors),
-            random.choice(destinos),
-            random.choice(aislado_opciones),
+            aislado,
             hora_ingreso.strftime('%Y-%m-%d %H:%M:%S'),
             hora_salida.strftime('%Y-%m-%d %H:%M:%S'),
-            generar_fecha_nacimiento(),
-            *["" for _ in range(12)]  # Campos no especificados
+            generar_fecha_nacimiento()
         ]
         registros.append(registro)
 
 # Convertir a DataFrame
 columnas = [
     "PACIENTES_POR_DIA", "FECHA", "NOMBRE Y APELLIDO", "MOTIVO DE CONSULTA",
-    "BOX", "TRIAGE", "ENFERMERO", "MEDICO", "DESTINO", "AISLADO",
-    "HORA INGRESO", "HORA SALIDA", "edad", "Unnamed: 13", "Unnamed: 14",
-    "Unnamed: 15", "Unnamed: 16", "Unnamed: 17", "Unnamed: 18",
-    "Unnamed: 19", "Unnamed: 20", "Unnamed: 21", "Unnamed: 22",
-    "Unnamed: 23", "Unnamed: 24"
+    "BOX", "TRIAGE", "ENFERMERO", "MEDICO", "AISLADO",
+    "HORA INGRESO", "HORA SALIDA", "EDAD",
 ]
 df = pd.DataFrame(registros, columns=columnas)
 
 # Guardar en un archivo CSV
-df.to_csv("pacientes_simulados_V3.csv", index=False)
-print("Archivo generado: pacientes_simulados_V3.csv")
+df.to_csv("pacientes_simulados_V4.csv", index=False)
+print("Archivo generado: pacientes_simulados_V4.csv")
