@@ -1,6 +1,6 @@
 import { type RowDataPacket } from 'mysql2/promise';
 import { connect } from '../../config/db';
-import { type UserRole, type User } from '../../interface/user';
+import { UserRole, type User } from '../../interface/user';
 
 export interface IUser extends User, RowDataPacket {}
 
@@ -79,6 +79,36 @@ export class UserModel {
       `;
       const conn = await connect();
       const [user] = await conn.query<IUser[]>(usersQuery, ['DOCTOR']);
+      if (user.length === 0) return undefined;
+      return user;
+    } catch (error) {
+      console.error('Error en la consulta getUserByUserName:', error);
+      throw error;
+    }
+  }
+
+  static async getAllDoctorsWithPatients(): Promise<User[] | undefined> {
+    try{
+      const usersQuery = `
+      SELECT 
+          BIN_TO_UUID(User.user_id) AS user_id,
+          User.user_name,
+          User.user_type
+      FROM 
+          User
+      WHERE 
+          User.user_type = 'DOCTOR'
+          AND User.user_id IN (
+              SELECT 
+                  Patient.doctor_id
+              FROM 
+                  Patient
+              WHERE 
+                  Patient.patient_status != 'ALTA'
+          );
+      `;
+      const conn = await connect();
+      const [user] = await conn.query<IUser[]>(usersQuery, [UserRole.DOCTOR]);
       if (user.length === 0) return undefined;
       return user;
     } catch (error) {

@@ -45,7 +45,12 @@ export class UserController {
 
   static async getAllDoctors(req: Request, res: Response): Promise<Response> {
     try {
-      const users = await UserModel.getAllDoctors();
+      let users:User[] = [];
+      if(req.query.withPatients){
+        users = await UserModel.getAllDoctorsWithPatients() || []
+      }else{
+        users = await UserModel.getAllDoctors() || [];
+      }
       const token = req.headers.authorization?.split(' ')[1];
       if (token) {
         const tokendecoded = verifyToken(token.toString());
@@ -56,7 +61,7 @@ export class UserController {
       const newusers = users?.map(({ user_email, user_password, ...rest }) => rest);
       return res.json(newusers);
     } catch (error) {
-      return res.status(500).json({ message: 'Something goes wrong' });
+      return res.status(500).json({ message: error.message });
     }
   }
 
