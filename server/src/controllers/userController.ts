@@ -46,7 +46,7 @@ export class UserController {
   static async getAllDoctors(req: Request, res: Response): Promise<Response> {
     try {
       let users:User[] = [];
-      if(req.query.withPatients){
+      if(req.query.withPatients && req.query.withPatients === 'true'){
         users = await UserModel.getAllDoctorsWithPatients() || []
       }else{
         users = await UserModel.getAllDoctors() || [];
@@ -67,7 +67,12 @@ export class UserController {
 
   static async getAllNurse(req: Request, res: Response): Promise<Response> {
     try {
-      const users = await UserModel.getAllNurse();
+      let users:User[] = [];
+      if(req.query.withPatients && req.query.withPatients === 'true'){
+        users = await UserModel.getAllDoctorsWithPatients() || []
+      }else{
+        users = await UserModel.getAllNurse() || [];
+      }
       const token = req.headers.authorization?.split(' ')[1];
       if (token) {
         const tokendecoded = verifyToken(token.toString());
