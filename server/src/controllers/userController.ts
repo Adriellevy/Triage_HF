@@ -69,7 +69,7 @@ export class UserController {
     try {
       let users:User[] = [];
       if(req.query.withPatients && req.query.withPatients === 'true'){
-        users = await UserModel.getAllDoctorsWithPatients() || []
+        users = await UserModel.getAllNursesWithPatients() || []
       }else{
         users = await UserModel.getAllNurse() || [];
       }

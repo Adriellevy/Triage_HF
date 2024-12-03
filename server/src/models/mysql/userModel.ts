@@ -117,6 +117,38 @@ export class UserModel {
     }
   }
 
+  
+
+  static async getAllNursesWithPatients(): Promise<User[] | undefined> {
+    try{
+      const usersQuery = `
+      SELECT 
+          BIN_TO_UUID(User.user_id) AS user_id,
+          User.user_name,
+          User.user_type
+      FROM 
+          User
+      WHERE 
+          User.user_type = 'NURSE'
+          AND User.user_id IN (
+              SELECT 
+                  Patient.nurse_id
+              FROM 
+                  Patient
+              WHERE 
+                  Patient.patient_status != 'ALTA'
+          );
+      `;
+      const conn = await connect();
+      const [user] = await conn.query<IUser[]>(usersQuery, [UserRole.DOCTOR]);
+      if (user.length === 0) return undefined;
+      return user;
+    } catch (error) {
+      console.error('Error en la consulta getUserByUserName:', error);
+      throw error;
+    }
+  }
+
   static async getAllNurse(): Promise<User[] | undefined> {
     try {
       const usersQuery = `
