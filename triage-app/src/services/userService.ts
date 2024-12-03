@@ -99,10 +99,10 @@ export const getAllDoctors = async (withPatients?: boolean): Promise<User[]> => 
   }
 }
 
-export const getAllNurses = async (): Promise<User[]> => {
+export const getAllNurses = async (withPatients?: boolean): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${config.API_URL}/users/nurse`, {
+    const response = await fetch(`${config.API_URL}/users/nurse?withPatients=${withPatients || false}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -42,7 +42,7 @@ const ShiftExchangeModal = ({ onClose }) => {
         const fetchOptions = async () => {
           try {
             const doctors = await getAllDoctors(true);
-            const nurses = await getAllNurses();
+            const nurses = await getAllNurses(true);
             const formattedDoctors = doctors.map(doctor => ({
               value: doctor.user_id,  
               label: doctor.user_name  
