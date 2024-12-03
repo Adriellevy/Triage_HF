@@ -79,7 +79,7 @@ CREATE TABLE Triage (
   color varchar(45) NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY level_UNIQUE (level)
-)
+);
 
 CREATE TABLE Symptom (
   id INT NOT NULL AUTO_INCREMENT,
