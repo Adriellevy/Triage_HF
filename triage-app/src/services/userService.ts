@@ -1,10 +1,11 @@
 import { PartialUser, User } from '../interfaces/User'
 import Cookies from 'js-cookie'
+import { config } from '../config/env'
 
 export const getAllUsers = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users/users`, {
+    const responsedocs = await fetch(`${config.API_URL}/users/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -23,8 +24,8 @@ export const getAllUsers = async (): Promise<User[]> => {
     const data = await responsedocs.json()
 
     return data
-  } catch (error) {
-    if (error.message === 'Cerrar sesion') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Cerrar sesion') {
       throw new Error('Cerrar sesion')
     } else {
       console.error('Error fetching Users:', error)
@@ -39,7 +40,7 @@ export const getUserIdByToken = async (): Promise<number> => {
     token: token
   }
   try {
-    const responsedocs = await fetch(`${import.meta.env.VITE_API_URL}/users/getuseridbytoken`, {
+    const responsedocs = await fetch(`${config.API_URL}/users/getuseridbytoken`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,8 +59,8 @@ export const getUserIdByToken = async (): Promise<number> => {
     }
     const data = await responsedocs.json()
     return data
-  } catch (error) {
-    if (error.message === 'Cerrar sesion') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Cerrar sesion') {
       throw new Error('Cerrar sesion')
     } else {
       console.log("catch el error en: 'getUserIdByToken' ")
@@ -72,7 +73,7 @@ export const getUserIdByToken = async (): Promise<number> => {
 export const getAllDoctors = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/doctor`, {
+    const response = await fetch(`${config.API_URL}/users/doctor`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -88,8 +89,8 @@ export const getAllDoctors = async (): Promise<User[]> => {
     }
     const data = await response.json()
     return data
-  } catch (error) {
-    if (error.message === 'Cerrar sesion') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Cerrar sesion') {
       throw new Error('Cerrar sesion')
     } else {
       console.error('Error fetching Users:', error)
@@ -101,7 +102,7 @@ export const getAllDoctors = async (): Promise<User[]> => {
 export const getAllNurses = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/nurse`, {
+    const response = await fetch(`${config.API_URL}/users/nurse`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ export const getAllNurses = async (): Promise<User[]> => {
     }
     const data = await response.json()
     return data
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching Users:', error)
     throw new Error('Error fetching Users')
   }
@@ -129,7 +130,7 @@ export const CreateNewUser = async (
   const token = Cookies.get('authToken')
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/add/`, {
+    const response = await fetch(`${config.API_URL}/users/add/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ export const CreateNewUser = async (
 
     const data = await response.json()
     return { data, errors: null }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error al agregar nuevo User:', JSON.stringify(error, null, 2))
     throw new Error('Error al agregar nuevo User')
   }
@@ -172,14 +173,16 @@ export const updateUser = async (
 }> => {
   try {
     const token = Cookies.get('authToken')
-    const apiUrl = `${import.meta.env.VITE_API_URL}/users/update/${user_id}`
+    const apiUrl = `${config.API_URL}/users/update/${user_id}`
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const body: any = {} // Initialize an empty object for the request body
+    const body: Partial<User> = {} // Initialize an empty object for the request body
 
     // Agregar cada key-value pair al cuerpo de la solicitud
-    Object.keys(updatedData).forEach((fieldName) => {
-      body[fieldName] = updatedData[fieldName]
+    Object.entries(updatedData).forEach(([key, value]) => {
+      if (key in updatedData) {
+        body[key as keyof User] = value
+      }
     })
 
     const response = await fetch(apiUrl, {
@@ -201,7 +204,7 @@ export const updateUser = async (
       message: 'User actualizado exitosamente',
       updatedUser: data.User
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error al actualizar el User:', error)
     throw new Error('Error al actualizar el User')
   }
@@ -216,7 +219,7 @@ export const deleteUser = async (
   const token = Cookies.get('authToken')
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/Users/delete/${UserId}`, {
+    const response = await fetch(`${config.API_URL}/Users/delete/${UserId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -232,7 +235,7 @@ export const deleteUser = async (
     }
 
     return { success: true, message: 'User eliminado correctamente' }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error al eliminar User:', JSON.stringify(error, null, 2))
     return { success: false, message: 'Error al eliminar User' }
   }
@@ -241,7 +244,7 @@ export const deleteUser = async (
 export const getUserById = async (user_id: string | undefined): Promise<User> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/data/${user_id}`, {
+    const response = await fetch(`${config.API_URL}/users/data/${user_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -262,7 +265,7 @@ export const getUserById = async (user_id: string | undefined): Promise<User> =>
       throw new Error(`Error in GET request to /user:${response.status}`)
     }
     return (await response.json()) as User
-  } catch (error) {
+  } catch (error: unknown) {
     // console.error('Error fetching user:', error)
     throw new Error('Error fetching user')
   }

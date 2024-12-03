@@ -1,11 +1,12 @@
 import { Dayjs } from 'dayjs'
 import { PartialPatient, Patient, PatientHistoryItemType } from '../interfaces/Patinet'
 import Cookies from 'js-cookie'
+import { config } from '../config/env'
 
 export const getPatients = async (): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
+    const response = await fetch(`${config.API_URL}/patient`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -27,7 +28,7 @@ export const getPatients = async (): Promise<Patient[]> => {
 export const getPaginatedPatients = async (batch: number): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/page/${batch}`, {
+    const response = await fetch(`${config.API_URL}/patient/page/${batch}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ export const getPaginatedPatients = async (batch: number): Promise<Patient[]> =>
 export const getPatientById = async (patient_id: string | undefined): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/${patient_id}`, {
+    const response = await fetch(`${config.API_URL}/patient/${patient_id}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`
@@ -84,7 +85,7 @@ export const getPatientByName = async (patient_name: string | undefined): Promis
   const token = Cookies.get('authToken')
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/patient/patientName/${patient_name}`,
+      `${config.API_URL}/patient/patientName/${patient_name}`,
       {
         method: 'GET',
         headers: {
@@ -108,7 +109,7 @@ export const getPatientsByDate = async (
 ): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByDate`, {
+    const response = await fetch(`${config.API_URL}/patient/patientsByDate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ export const getPatientsByDate = async (
 export const getPatientsByUserID = async (user_id: string | undefined): Promise<Patient[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByUserID/${user_id}?status_not_in=ALTA`, {
+    const response = await fetch(`${config.API_URL}/patient/patientsByUserID/${user_id}?status_not_in=ALTA`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ export const getPatientsByUserID = async (user_id: string | undefined): Promise<
 export const getFilteredPatients = async (ops: unknown[]): Promise<Patient[]> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/patientsByFilters`, {
+    const response = await fetch(`${config.API_URL}/patient/patientsByFilters`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ export const updatePatient = async (
 ): Promise<PartialPatient> => {
   try {
     const token = Cookies.get('authToken')
-    const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
+    const apiUrl = `${config.API_URL}/patient/${patient_id}`
     console.log('api ' + apiUrl)
     const response = await fetch(apiUrl, {
       method: 'PATCH',
@@ -223,7 +224,7 @@ export const updateAnyPatient = async (
 }> => {
   try {
     const token = Cookies.get('authToken')
-    const apiUrl = `${import.meta.env.VITE_API_URL}/patient/${patient_id}`
+    const apiUrl = `${config.API_URL}/patient/${patient_id}`
     // console.log('api ' + apiUrl)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -274,7 +275,7 @@ export const addNewPatient = async (
 }> => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient`, {
+    const response = await fetch(`${config.API_URL}/patient`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -312,7 +313,7 @@ export const getPatientHistory = async (
 ): Promise<PatientHistoryItemType[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/history/${patient_id}`, {
+    const response = await fetch(`${config.API_URL}/patient/history/${patient_id}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`
@@ -330,7 +331,7 @@ export const getPatientHistory = async (
   export const executeShiftChange = async (patients: unknown[], report: boolean) => {
     try {
       const token = Cookies.get('authToken')
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/patient/shiftChange`, {
+      const response = await fetch(`${config.API_URL}/patient/shiftChange`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
