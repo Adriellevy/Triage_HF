@@ -73,7 +73,7 @@ export const getUserIdByToken = async (): Promise<number> => {
 export const getAllDoctors = async (): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${config.API_URL}/users/doctor`, {
+    const response = await fetch(`${config.API_URL}/users/doctor?withPatients=true`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
