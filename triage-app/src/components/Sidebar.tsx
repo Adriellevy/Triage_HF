@@ -366,7 +366,7 @@ function Sidebar() {
   />
   <div>
     <Link to={`/users/${UserInfo.user_id}`} className="hover:underline">
-      <div className="font-semibold text-white text-md">{UserInfo.user_name}</div>
+      <div className="font-semibold text-white text-sm lg:text-md">{UserInfo.user_name}</div>
     </Link>
     <div className="text-sm text-blue-200">
       {UserInfo.user_type === 'NURSE'
