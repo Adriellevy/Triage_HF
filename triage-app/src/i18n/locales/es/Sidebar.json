@@ -14,5 +14,8 @@
   "BoxesSettings": "Configuración de cajas",
   "BoxSettings": "Configuración de cajas",
   "LogoutButton": "Cerrar Sesión",
-  "TurnExchange": "Cambio de turno"
+  "TurnExchange": "Cambio de turno",
+  "NURSE": "Enfermero",
+  "DOCTOR": "Doctor",
+  "ADMIN": "Administrador"
 }

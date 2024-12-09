@@ -288,12 +288,18 @@ function Sidebar() {
   }, [token])
 
   return (
-    <div>
-      <div className='hidden md:flex lg:flex flex-col w-56 bg-blue-900 text-white h-full'>
-        <div className='p-4 flex items-center'>
-          <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
-          <div className='text-3xl font-bold whitespace-nowrap'>Triage App</div>
+    <div >
+      <div className='hidden md:flex lg:flex flex-col w-60 lg:w-[270px] bg-blue-900 text-white h-full '>
+      <div className="p-4 flex items-center space-x-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <img
+          src={Logo}
+          alt="Logo"
+          className="w-8 h-8 lg:w-12 lg:h-12 rounded-full border-2 border-white shadow-lg"
+        />
+        <div className="text-3xl font-extrabold tracking-wide text-white drop-shadow-md">
+          TriageApp
         </div>
+      </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
             (item.title !== 'Settings' && item.title !== 'Stats' && role !== UserRole.HOSPITAL) ||
@@ -301,7 +307,7 @@ function Sidebar() {
               item.submenu ? (
                 <div key={index} className='relative'>
                   <button
-                    className='w-full p-3 hover:bg-blue-800 text-lg text-left flex items-center justify-between'
+                    className='w-full p-3 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-md text-lg text-left flex items-center justify-between'
                     onClick={() => handleSubMenuToggle(index)}
                   >
                     <div className='flex items-center'>
@@ -320,7 +326,7 @@ function Sidebar() {
                         <Link
                           key={submenuIndex}
                           to={submenuItem.linkUrl}
-                          className=' block px-3 py-2 hover:bg-blue-800 whitespace-nowrap'
+                          className=' block px-3 py-2 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-md whitespace-nowrap'
                         >
                           {submenuItem.title}
                         </Link>
@@ -329,7 +335,7 @@ function Sidebar() {
                   )}
                 </div>
               ) : (
-                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-blue-800 text-lg'>
+                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-inner text-lg'>
                   {item.icon && (
                     <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                   )}
@@ -340,23 +346,39 @@ function Sidebar() {
           )}
         </nav>
           {UserInfo.user_type === 'NURSE'  ? 
-        <div className='mt-auto p-4'>
-          <Button wfull color='green' onClick={openModal}>
-            {t('TurnExchange')}
-          </Button>
-        </div>
+            <div className="mt-auto p-4">
+  <button
+    onClick={openModal}
+    className="flex items-center justify-center w-full py-2 px-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200"
+  >
+    <i className="fas fa-exchange-alt text-xl mr-2"></i>
+    {t('TurnExchange')}
+  </button>
+</div>
+
         : null }
-        <div className='flex items-center p-4'>
-        {isModalOpen && <ShiftExchangeModal onClose={closeModal} />}
-          <img src={UserProfileImage} alt='Profile' className='w-10 h-10 rounded-full mr-2' />
-          <div>
-            <Link to={`/users/${UserInfo.user_id}`} className=' hover:underline'>
-              <div className='font-semibold'>{UserInfo.user_name}</div>
-            </Link>
-            <div className=' text-gray-400'>{UserInfo.user_type}</div>
-          </div>
-        </div>
-        <div className='mt-auto p-4'>
+        <div className="flex items-center p-4 bg-gradient-to-r from-blue-900 to-blue-700 shadow-lg ">
+  {isModalOpen && <ShiftExchangeModal onClose={closeModal} />}
+  <img
+    src={UserProfileImage}
+    alt="Profile"
+    className="w-12 h-12 rounded-full mr-4 border-2 border-white shadow-md"
+  />
+  <div>
+    <Link to={`/users/${UserInfo.user_id}`} className="hover:underline">
+      <div className="font-semibold text-white text-md">{UserInfo.user_name}</div>
+    </Link>
+    <div className="text-sm text-blue-200">
+      {UserInfo.user_type === 'NURSE'
+        ? t('NURSE')
+        : UserInfo.user_type === 'DOCTOR'
+        ? t('DOCTOR')
+        : t('ADMIN')}
+    </div>
+  </div>
+</div>
+
+        <div className='mt-auto p-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-md'>
           <Button wfull color='red' onClick={handleLogout}>
             {t('LogoutButton')}
           </Button>
@@ -397,15 +419,25 @@ function Sidebar() {
               <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
               <span className='text-lg font-bold mx-auto'>Triage App</span>
             </div>
-            <div className='flex items-center'>
-              <img src={UserProfileImage} alt='Profile' className='w-10 h-10 rounded-full mr-2' />
-              <div>
-                <Link to={`/users/${UserInfo.user_id}`} className=' hover:underline'>
-                  <div className='font-semibold'>{UserInfo.user_name}</div>
-                </Link>
-                <div className=' text-gray-400'>{UserInfo.user_type}</div>
-              </div>
-            </div>
+            <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-lg">
+  <img
+    src={UserProfileImage}
+    alt="Profile"
+    className="w-12 h-12 rounded-full border-2 border-gray-500 shadow-md"
+  />
+  <div>
+    <Link
+      to={`/users/${UserInfo.user_id}`}
+      className="hover:underline text-white"
+    >
+      <div className="font-bold text-lg">{UserInfo.user_name}</div>
+    </Link>
+    <div className="text-gray-300 italic text-sm">
+      {UserInfo.user_type === 'NURSE' ? t('NURSE') : UserInfo.user_type === 'DOCTOR' ? t('DOCTOR') : t('ADMIN')}
+    </div>
+  </div>
+</div>
+
             <button onClick={toggleMenu} className='text-lg font-bold'>
               {menuVisible ? (
                 <img src={HamburgerCloseIcon} alt='Close Icon' className='w-8 h-8' />
