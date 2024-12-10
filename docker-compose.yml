@@ -70,6 +70,8 @@ services:
       - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
       - APP_HOST=192.168.0.83  
       - APP_PORT=5000
+      - APP_KEY=123
+      - MANAGER_SECRET=TRIAGE_APP_110112_220221
     ports:
       - 5000:5000
     networks:

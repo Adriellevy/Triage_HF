@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import './config/envvars';
-import express, { type Request, type Response } from 'express';
+import express, { type Request, type Response, type NextFunction } from 'express';
 import { createServer } from 'http';
 import authenticateToken from './middlewares/authMiddleware';
 import initializeSocketMiddleware from './middlewares/socketMiddleware';
@@ -16,6 +16,7 @@ import { patientPatinationRouter } from './routes/patinetPaginationRoutes';
 import { queryRoutes } from './routes/queryRoutes';
 import { triageRouter } from './routes/triageRoutes';
 import { symptomRouter } from './routes/symptomRoutes';
+import { validateKeyMiddleware } from './middlewares/validateKeyMiddleware';
 
 const PORT = process.env.PORTAPI ?? 3000;
 
@@ -29,7 +30,7 @@ app.use(corsMiddleware());
 const httpServer = createServer(app);
 
 app.use(initializeSocketMiddleware(httpServer));
-
+//app.use((req: Request, res: Response, next: NextFunction) => validateKeyMiddleware(req, res, next));
 app.get('/', (req: Request, res: Response) => {
   res.send('<h1>Triage Api</h1>');
 });
