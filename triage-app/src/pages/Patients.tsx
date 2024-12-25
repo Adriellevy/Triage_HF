@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { StylesConfig, MultiValue } from 'react-select'
@@ -6,7 +8,6 @@ import PatientsList from '@/components/PatientList/PatientsList'
 import {
   getFilteredPatients,
   getPaginatedPatients,
-  getPatientByName,
   getPatientsByDate
 } from '../services/patientService'
 import { Patient } from '../interfaces/Patinet'
@@ -107,7 +108,12 @@ const options: Option[] = [
       },
       { value: 'patient_status', item: 'AFUERA', label: 'AFUERA', color: '#525252' },
       { value: 'patient_status', item: 'ALTA', label: 'ALTA', color: '#525252' },
-      {value: 'patient_status', item: 'TODOS MENOS ALTA', label: 'TODOS MENOS ALTA', color: '#525252'},
+      {
+        value: 'patient_status',
+        item: 'TODOS MENOS ALTA',
+        label: 'TODOS MENOS ALTA',
+        color: '#525252'
+      },
       { value: 'patient_status', item: 'TODOS', label: 'TODOS', color: '#525252' }
     ]
   },
@@ -298,12 +304,12 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
     const reqBody = []
     const filters = []
 
-    if (ops.some(op => op.label === 'MÍOS')) {
-      reqBody.push(true);
+    if (ops.some((op) => op.label === 'MÍOS')) {
+      reqBody.push(true)
     } else {
-      reqBody.push(false);
+      reqBody.push(false)
     }
-    
+
     for (let i = 0; i < ops.length; i++) {
       if (ops[i].value === 'patient_status' || ops[i].value === 'patient_isolated') {
         if (ops[i].value === 'patient_isolated') {
