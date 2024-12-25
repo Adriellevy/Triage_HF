@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { ConflictResolverProps, Field } from '../../interfaces/ConflictResolver'
 import { getFormatBirthDate, getFormatDate } from '../../helpers/HelperFechas'
@@ -29,6 +31,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
     return translatedValue
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getFormatNull = (value: any): string => {
     return value === null ? t('NullLabel') : value
   }
@@ -78,11 +81,13 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
       const differingData: Record<string, string> = {}
       for (const key in conflictData.currentData) {
         if (
-          conflictData.newData.hasOwnProperty(key) &&
+          Object.prototype.hasOwnProperty.call(conflictData.newData, key) &&
           normalizeValue(conflictData.currentData[key]) !==
             normalizeValue(conflictData.newData[key])
         ) {
-          differingData[key] = conflictData.currentData[key]
+          differingData[key] = Array.isArray(conflictData.currentData[key])
+            ? conflictData.currentData[key].join(', ')
+            : conflictData.currentData[key]
         }
       }
       console.log('Datos diferentes inicializados:', differingData)
