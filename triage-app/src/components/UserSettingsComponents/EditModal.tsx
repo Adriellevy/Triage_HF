@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { User, UserRole } from '@/interfaces/User'
+import { PartialUser, User, UserRole } from '@/interfaces/User'
 import { Box, BoxType } from '@/interfaces/Boxes'
-import { Patient } from '@/interfaces/Patient'
+import { Patient } from '@/interfaces/Patinet'
 import { Button } from '@/components/ui'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,7 +24,7 @@ interface PropsEditModal<T> {
   loading?: boolean
 }
 
-function EditModal<T extends User | Box | Patient>({
+function EditModal<T extends PartialUser | User | Box | Patient>({
   title,
   object,
   onClose,
@@ -40,6 +40,7 @@ function EditModal<T extends User | Box | Patient>({
 }: PropsEditModal<T>) {
   const [editedObject, setEditedObject] = useState<T>(object)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (key: keyof T, value: any) => {
     setEditedObject((prevState) => ({ ...prevState, [key]: value }))
   }

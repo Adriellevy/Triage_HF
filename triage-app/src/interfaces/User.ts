@@ -27,6 +27,7 @@ export interface PartialUser {
   user_specialization?: string
   state?: boolean
   user_password_check?: string
+  user_cellphone?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Symbol.iterator]?(): IterableIterator<any>
 }

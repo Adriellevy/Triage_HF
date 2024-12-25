@@ -90,10 +90,10 @@ function UserItem({ user, index }: PropsUserItem) {
     setShowDeleteConfirm(true)
   }
 
-  const handleSaveUser = async (updatedUser: User) => {
+  const handleSaveUser = async (updatedObject: PartialUser) => {
     setIsLoading(true) // Mostrar Loader
     try {
-      await updateUser(user.user_id, updatedUser)
+      await updateUser(user.user_id, { ...user, ...updatedObject })
       setIsEditing(false)
     } catch (error) {
       console.error('Error al actualizar el usuario:', error)

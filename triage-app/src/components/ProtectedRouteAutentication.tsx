@@ -52,6 +52,9 @@ function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationPr
               logout()
               setShowWarning(false)
             }} // Cierra el modal al hacer clic en el botón
+            onrefresh={function (): void {
+              throw new Error('Function not implemented.')
+            }}
           />
         )}
       </>

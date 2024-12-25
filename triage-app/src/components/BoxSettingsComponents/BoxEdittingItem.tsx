@@ -33,7 +33,7 @@ function BoxItem({ box, index }: PropsBoxItem) {
     'BoxType.OBSERVACION': t('BoxType.OBSERVACION')
   }
 
-  const boxWithDetails = {
+  const boxWithDetails: Partial<Box> = {
     box_code: box.box_code,
     box_type: box.box_type,
     box_time: box.box_time,
