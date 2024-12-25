@@ -10,7 +10,7 @@ import path from 'path';
 import {
   SendUpdatePatientNotifications,
   SendNewPatientNotifications,
-  SendShiftExchangeNotifications,
+  SendShiftExchangeNotifications
 } from '../helpers/notificationhelper';
 import { string } from 'zod';
 import { format } from 'date-fns';
@@ -150,7 +150,7 @@ export class PatientController {
               // 1000 Milisegundos = 1 segundo. Son 10 segs
               return res.status(409).json({
                 message: 'Conflict detected',
-                currentData: UserAntiguo,
+                currentData: decryptPatientData(UserAntiguo),
                 newData: result.data
               });
             }
@@ -218,12 +218,12 @@ export class PatientController {
   }
 
   static async shiftChange(req: any, res: Response) {
-    const data:PatientShiftChange[] = req.body.patients;
-    try{
-      const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map(p => p.patientID));
-      for(const p of data){
-        if(p.role === 'nurse'){
-          await PatientsModel.updateNurseOfPatient(p.patientID,p.newNurseID)
+    const data: PatientShiftChange[] = req.body.patients;
+    try {
+      const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map((p) => p.patientID));
+      for (const p of data) {
+        if (p.role === 'nurse') {
+          await PatientsModel.updateNurseOfPatient(p.patientID, p.newNurseID);
           await HistoryModel.create({
             patient_id: p.patientID,
             patient_new_value: p.newNurseID,
@@ -231,10 +231,10 @@ export class PatientController {
             patient_updated_column: 'nurse_id',
             patient_updated_date: new Date(),
             user_id: req.user.id
-          })
+          });
         }
-        if(p.role === 'doctor'){
-          await PatientsModel.updateDoctorOfPatient(p.patientID,p.newDoctorID)
+        if (p.role === 'doctor') {
+          await PatientsModel.updateDoctorOfPatient(p.patientID, p.newDoctorID);
           await HistoryModel.create({
             patient_id: p.patientID,
             patient_new_value: p.newDoctorID,
@@ -242,52 +242,54 @@ export class PatientController {
             patient_updated_column: 'doctor_id',
             patient_updated_date: new Date(),
             user_id: req.user.id
-          })
+          });
         }
       }
-      
-      if(!req.body.report || req.body.report === false) {
-        SendShiftExchangeNotifications(req)
-        return res.status(201).json({message: 'Shift change success'})
+
+      if (!req.body.report || req.body.report === false) {
+        SendShiftExchangeNotifications(req);
+        return res.status(201).json({ message: 'Shift change success' });
       }
-      const historyToReport = await HistoryModel.findAllTodayToReport()
-      
-      const patientIds = historyToReport.map(h => h.patient_id);
+      const historyToReport = await HistoryModel.findAllTodayToReport();
+
+      const patientIds = historyToReport.map((h) => h.patient_id);
       const patients = await PatientsModel.getPatientsByIds(patientIds);
       const patientMap = new Map(
-        patients.map(patient =>{
-          return [patient.patient_id, patient]
+        patients.map((patient) => {
+          return [patient.patient_id, patient];
         })
       );
-      
-      
+
       const historyMap = new Map<string, ReportHistoryPerPatient>();
       for (const h of historyToReport) {
         const patient = patientMap.get(h.patient_id);
         h.column_name = h.patient_updated_column === 'nurse_id' ? 'enfermero' : 'doctor';
-        h.new_value_name = h.column_name == 'doctor' ? patient?.doctor_name : patient?.nurse_name
-        h.old_value_name = h.column_name == 'doctor' ? allPatiensToUpdate.find(pat => pat.patient_id === h.patient_id)?.doctor_name : allPatiensToUpdate.find(pat => pat.patient_id === h.patient_id)?.nurse_name
-        
+        h.new_value_name = h.column_name == 'doctor' ? patient?.doctor_name : patient?.nurse_name;
+        h.old_value_name =
+          h.column_name == 'doctor'
+            ? allPatiensToUpdate.find((pat) => pat.patient_id === h.patient_id)?.doctor_name
+            : allPatiensToUpdate.find((pat) => pat.patient_id === h.patient_id)?.nurse_name;
+
         if (!patient) continue;
         if (!historyMap.get(patient.patient_id)) {
-          historyMap.set(patient.patient_id,{
+          historyMap.set(patient.patient_id, {
             patient_id: patient.patient_id,
             patient_name: decryptPatientData(patient).patient_name,
-            history: [],
+            history: []
           });
         }
         historyMap.get(patient.patient_id)!.history.push(h);
       }
-      const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'),{
+      const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
         title: 'Mi PDF',
         content: 'Este es el contenido del PDF generado',
-        patients:historyMap
+        patients: historyMap
       });
-      
+
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setContent(html)
-      
+      await page.setContent(html);
+
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true
@@ -295,21 +297,20 @@ export class PatientController {
       await browser.close();
       const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
       fs.writeFileSync(pdfPath, pdfBuffer);
-      SendShiftExchangeNotifications(req)
+      SendShiftExchangeNotifications(req);
       res.download(pdfPath, 'generated-pdf.pdf', (err) => {
         if (err) {
           console.error('Error al descargar el archivo:', err);
         }
-        
+
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
-      })
-      await HistoryModel.updateReported(historyToReport.map(h => h.updated_id));
-    }catch(err){
-      return res.status(500).json(err.message)
+      });
+      await HistoryModel.updateReported(historyToReport.map((h) => h.updated_id));
+    } catch (err) {
+      return res.status(500).json(err.message);
     }
   }
-
 
   static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
     try {
@@ -378,14 +379,14 @@ export class PatientController {
   }
   static async getPatientsByUser(req: Request, res: Response): Promise<Response> {
     try {
-      // Aca podria pasar por query para que no me de los de alta 
-      const { user_id } = req.params; 
+      // Aca podria pasar por query para que no me de los de alta
+      const { user_id } = req.params;
 
       if (!user_id) {
         return res.status(400).json({ message: 'user_id is required' });
       }
-  
-      const token = req.headers.authorization?.split(' ')[1]; 
+
+      const token = req.headers.authorization?.split(' ')[1];
 
       if (!token) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -398,12 +399,12 @@ export class PatientController {
         return res.status(404).json({ message: 'user_id is not correct format' });
       }
 
-      let patients:IPatinet[]=[];
-      if(req.query.status_not_in){
-        let status:string = req.query.status_not_in as string;
+      let patients: IPatinet[] = [];
+      if (req.query.status_not_in) {
+        let status: string = req.query.status_not_in as string;
         const allStatus = status.includes(',') ? status.split(',') : [status];
-        patients = await PatientsModel.getPatientsByUserIDWithoutStatus(user_id,allStatus);
-      }else{
+        patients = await PatientsModel.getPatientsByUserIDWithoutStatus(user_id, allStatus);
+      } else {
         patients = await PatientsModel.getPatientsByUserID(user_id);
       }
       const decryptedPatients = patients.map((patient) => decryptPatientData(patient));

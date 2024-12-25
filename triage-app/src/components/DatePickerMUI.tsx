@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 
 interface DatePickerMUIProps {
-  onChangeExt: (newDate: string | null) => void
+  onChangeExt: (newDate: string | Date | null) => void
   selectedDateExt: string | null
   error_active: { value: boolean | null; message: string }
 }

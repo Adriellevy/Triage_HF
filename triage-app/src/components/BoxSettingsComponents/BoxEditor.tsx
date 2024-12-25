@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Box, BoxType, PartialBox } from '@/interfaces/Boxes'
+import { Box, BoxStatus, BoxType, PartialBox } from '@/interfaces/Boxes'
 import { Button, Input, Label, Select } from '@/components/ui'
 import { useTranslation } from 'react-i18next'
 import { CreateNewBox, deleteBox, updateBox } from '@/services/boxService'
 import { toast } from 'sonner'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline' // Puedes usar un ícono de tu preferencia
 import ConfirmationDialog from '../ConfirmationDialog'
 
 interface BoxEditorProps {
@@ -16,7 +15,18 @@ interface BoxEditorProps {
 }
 
 const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, setAddBox }) => {
-  const [editableBox, setEditableBox] = useState<Box>({ ...box })
+  const [editableBox, setEditableBox] = useState<Box>({
+    box_id: box.box_id || 'default-id',
+    box_code: box.box_code || 'default-code',
+    box_type: box.box_type || BoxType.HOSPITALIZATION,
+    box_time: box.box_time || 'default-time',
+    box_status: box.box_status || BoxStatus.LIBRE,
+    patient_id: box.patient_id,
+    patient_name: box.patient_name,
+    [Symbol.iterator]: function* () {
+      yield this
+    }
+  })
   const [isModified, setIsModified] = useState<boolean>(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
 
@@ -32,10 +42,16 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
   const ignoreFields = ['box_id', 'patient_id', 'box_time']
 
   useEffect(() => {
-    setEditableBox({ ...box })
+    setEditableBox((prevBox) => {
+      const updatedBox: Partial<Box> = {} // Objeto parcial para almacenar cambios válidos
+      for (const key in box) {
+        if (box[key as keyof typeof box] !== undefined)
+          (updatedBox as unknown)[key] = box[key as keyof typeof box]
+      }
+      return { ...prevBox, ...updatedBox } as Box
+    })
   }, [box])
-
-  const handleChange = (field: keyof Box, value: any) => {
+  const handleChange = (field: keyof Box, value: string | number | boolean) => {
     setEditableBox((prev) => ({
       ...prev,
       [field]: value
@@ -74,7 +90,18 @@ const BoxEditor: React.FC<BoxEditorProps> = ({ box, onUpdate, onDelete, addBox, 
     if (addBox) {
       setAddBox(false) // Cerrar la ventana si estamos en modo de agregar
     } else {
-      setEditableBox({ ...box })
+      setEditableBox({
+        box_id: box.box_id,
+        box_code: box.box_code,
+        box_type: box.box_type, // Valor por defecto de ejemplo
+        box_time: box.box_time,
+        box_status: box.box_status, // Valor por defecto de ejemplo
+        patient_id: box.patient_id,
+        patient_name: box.patient_name,
+        [Symbol.iterator]: function* () {
+          yield this
+        }
+      })
       setIsModified(false)
     }
   }

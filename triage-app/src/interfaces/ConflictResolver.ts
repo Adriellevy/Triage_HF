@@ -13,5 +13,5 @@ export interface ConflictResolverProps {
 export interface Field {
   label: string
   key: keyof PatientData
-  format: ((value: string) => string | Promise<string | null>) | null
+  format: ((value: string | boolean) => string | Promise<string | null>) | null
 }

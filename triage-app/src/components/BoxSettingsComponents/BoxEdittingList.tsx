@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import BoxEditor from '@/components/BoxSettingsComponents/BoxEditor'
-import { Box, BoxType, BoxStatus, PartialBox } from '@/interfaces/Boxes'
+import { Box, BoxType, PartialBox } from '@/interfaces/Boxes'
 import { useTranslation } from 'react-i18next'
 import BoxEdittingItem from './BoxEdittingItem'
 
@@ -13,7 +13,8 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   const [boxes, setBoxes] = useState<Box[]>(initialBoxes)
   const [addBox, setAddBox] = useState<boolean>(false)
   const [boxAuxiliar, setboxAuxiliar] = useState<PartialBox>()
-  const [visibleTypes, setVisibleTypes] = useState<Record<BoxType, boolean>>({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [visibleTypes, setVisibleTypes] = useState<Partial<Record<BoxType, boolean>>>({
     [BoxType.CONSULTORIO]: true
   })
 
@@ -29,15 +30,20 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
     setAddBox(true)
     const newBox: PartialBox = {
       box_code: '',
-      box_type: BoxType.CONSULTORIO
+      box_type: BoxType.CONSULTORIO,
+      [Symbol.iterator]: function (): IterableIterator<Box> {
+        throw new Error('Function not implemented.')
+      }
     }
     setboxAuxiliar(newBox)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCancel = () => {
     setAddBox(false)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleVisibility = (type: BoxType) => {
     setVisibleTypes((prev) => ({
       ...prev,

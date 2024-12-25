@@ -74,10 +74,16 @@ function BoxItem({ box, index }: PropsBoxItem) {
     setShowDeleteConfirm(true)
   }
 
-  const handleSaveBox = async (updatedBox: Box) => {
+  const handleSaveBox = async (updatedObject: {
+    box_code: string
+    box_type: BoxType
+    box_time: string
+    box_status: BoxStatus
+    patient_name: string
+  }) => {
     setIsLoading(true) // Mostrar Loader
     try {
-      await updateBox(box.box_id, updatedBox)
+      await updateBox(box.box_id, updatedObject)
       setIsEditing(false)
       toast.success('Box actualizado', { duration: 2000 })
     } catch (error) {

@@ -22,7 +22,7 @@ export function filterPatients(
       case 'EN AISLAMIENTO':
         return patient.patient_isolated === 1
       default:
-        return patient[option.value].toString() === option.item
+        return patient[option.value].toString() === option.value
     }
   }
 

@@ -84,15 +84,12 @@ export const getPatientById = async (patient_id: string | undefined): Promise<Pa
 export const getPatientByName = async (patient_name: string | undefined): Promise<Patient> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(
-      `${config.API_URL}/patient/patientName/${patient_name}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    const response = await fetch(`${config.API_URL}/patient/patientName/${patient_name}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient:${response.status}`)
     }
@@ -133,13 +130,16 @@ export const getPatientsByDate = async (
 export const getPatientsByUserID = async (user_id: string | undefined): Promise<Patient[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${config.API_URL}/patient/patientsByUserID/${user_id}?status_not_in=ALTA`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    const response = await fetch(
+      `${config.API_URL}/patient/patientsByUserID/${user_id}?status_not_in=ALTA`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
     if (!response.ok) {
       throw new Error(`Error in GET request to /patient:${response.status}`)
     }
@@ -149,8 +149,6 @@ export const getPatientsByUserID = async (user_id: string | undefined): Promise<
     throw new Error('Error fetching patient')
   }
 }
-
-
 
 export const getFilteredPatients = async (ops: unknown[]): Promise<Patient[]> => {
   try {
@@ -328,53 +326,50 @@ export const getPatientHistory = async (
     throw new Error('Error fetching patient')
   }
 }
-  export const executeShiftChange = async (patients: unknown[], report: boolean) => {
-    try {
-      const token = Cookies.get('authToken')
-      const response = await fetch(`${config.API_URL}/patient/shiftChange`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          patients: patients,
-          report: report
-        })
+export const executeShiftChange = async (patients: unknown[], report: boolean) => {
+  try {
+    const token = Cookies.get('authToken')
+    const response = await fetch(`${config.API_URL}/patient/shiftChange`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        patients: patients,
+        report: report
       })
-      if (response.status === 207) {
-        console.log('Llego el 207, procesando el error...')
-        throw new Error('Cerrar sesion')
-      }
-      if (!response.ok) {
-        throw new Error(`Error in POST request to /shiftChange: ${response.statusText}`)
-      }
-      if(!report)
-        return await response.json()
-
-      const blob = await response.blob()
-
-      console.log(response)
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-
-      link.download = 'document.pdf';
-
-      document.body.appendChild(link);
-      link.click();
-
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      return 'Reporte generado'
-    } catch (error) {
-      if (error.message === 'Cerrar sesion') {
-        throw new Error('Cerrar sesion')
-      } else {
-        console.error('Error fetching patients:', error)
-        throw new Error('Error fetching patients')
-      }
+    })
+    if (response.status === 207) {
+      console.log('Llego el 207, procesando el error...')
+      throw new Error('Cerrar sesion')
     }
-  } 
+    if (!response.ok) {
+      throw new Error(`Error in POST request to /shiftChange: ${response.statusText}`)
+    }
+    if (!report) return await response.json()
 
-  
+    const blob = await response.blob()
+
+    console.log(response)
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+
+    link.download = 'document.pdf'
+
+    document.body.appendChild(link)
+    link.click()
+
+    link.remove()
+    window.URL.revokeObjectURL(url)
+    return 'Reporte generado'
+  } catch (error) {
+    if (error.message === 'Cerrar sesion') {
+      throw new Error('Cerrar sesion')
+    } else {
+      console.error('Error fetching patients:', error)
+      throw new Error('Error fetching patients')
+    }
+  }
+}
