@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "http://192.168.0.83:3000",
+    "VITE_NETWORK_APP_URL": "http://192.168.0.83:5173",
+    "VITE_PYTHON_URL": "http://192.168.0.83:5000"
+  }
+}
