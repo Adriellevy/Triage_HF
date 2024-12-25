@@ -177,9 +177,9 @@ export const updateBox = async (
 
     // Agregar cada key-value pair al cuerpo de la solicitud
     Object.entries(updatedData).forEach(([key, value]) => {
-      if (key in updatedData) {
-        body[key as keyof Box] = value
-      }
+      if (key in updatedData)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (body as any)[key as keyof Box] = value as any
     })
 
     const response = await fetch(apiUrl, {

@@ -1,9 +1,11 @@
 import Cookies from 'js-cookie'
-import { config } from '../config/env';
-import { Settings } from '../interfaces/Settings';
+import { config } from '../config/env'
+
+//import { Settings } from '../interfaces/Settings'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getSettings = async (): Promise<Settings> => {
+//TODO string por el settings que no existe
+export const getSettings = async (): Promise<string> => {
   const token = Cookies.get('authToken')
   try {
     const responsedocs = await fetch(`${config.API_URL}/settings`, {

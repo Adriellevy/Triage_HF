@@ -57,7 +57,8 @@ export const verifyToken = async (token: string): Promise<AuthResponse> => {
       // Retorna el nuevo token al llamador
       return { success: true, serverRes: responseData }
     } else {
-      return { success: false, error: response }
+      const errorText = await response.text()
+      return { success: false, error: errorText }
     }
   } catch (error) {
     console.error('Error al intentar renovar el token:', error)

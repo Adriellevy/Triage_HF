@@ -73,13 +73,16 @@ export const getUserIdByToken = async (): Promise<number> => {
 export const getAllDoctors = async (withPatients?: boolean): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${config.API_URL}/users/doctor?withPatients=${withPatients || false}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    const response = await fetch(
+      `${config.API_URL}/users/doctor?withPatients=${withPatients || false}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
     if (response.status === 207) {
       console.log('Llego el 207, procesando el error...')
       throw new Error('Cerrar sesion')
@@ -102,13 +105,16 @@ export const getAllDoctors = async (withPatients?: boolean): Promise<User[]> => 
 export const getAllNurses = async (withPatients?: boolean): Promise<User[]> => {
   const token = Cookies.get('authToken')
   try {
-    const response = await fetch(`${config.API_URL}/users/nurse?withPatients=${withPatients || false}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+    const response = await fetch(
+      `${config.API_URL}/users/nurse?withPatients=${withPatients || false}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
 
     if (!response.ok) {
       throw new Error(`Error in GET request to /Users: ${response.statusText}`)
@@ -176,7 +182,7 @@ export const updateUser = async (
     const apiUrl = `${config.API_URL}/users/update/${user_id}`
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const body: Partial<User> = {} // Initialize an empty object for the request body
+    const body: PartialUser = {} // Initialize an empty object for the request body
 
     // Agregar cada key-value pair al cuerpo de la solicitud
     Object.entries(updatedData).forEach(([key, value]) => {
