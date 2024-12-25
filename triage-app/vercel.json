@@ -10,7 +10,7 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "http://192.168.0.83:3000",
+    "VITE_API_URL": "https://triage-hf-6wdp.onrender.com",
     "VITE_NETWORK_APP_URL": "http://192.168.0.83:5173",
     "VITE_PYTHON_URL": "http://192.168.0.83:5000"
   }
