@@ -318,17 +318,22 @@ export class PatientController {
       const now = new Date();
       const leftDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
       const rightDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
-      const patients = await PatientsModel.getPatientsByNameAndAge(patient_name, leftDate, rightDate);
+      const patients = await PatientsModel.getPatientsByName(encryptstring(patient_name));
 
-      const patientsWithouIsolated = patients.filter((patient) => {patient.patient_isolated === false});
+      const patientsDesencrypted = patients.map((patient) => decryptPatientData(patient));
+      const patientsFiltered = patientsDesencrypted.filter((patient) => {
+        const patientDate = new Date(patient.patient_age);
+        return patientDate >= leftDate && patientDate <= rightDate;
+      });
+      const patientsWithouIsolated = patientsFiltered.filter((patient) => {patient.patient_isolated === false});
       const patientsWithIsolatedInHistory = await HistoryModel.findByIdsAndColumn(patientsWithouIsolated.map((patient) => patient.patient_id),'patient_isolated',1,1);
       // patientsWithIsolatedInHistory id de pacientes aislados en algun momento
-      patients.forEach((p)=>{
+      patientsFiltered.forEach((p)=>{
         if(p.patient_isolated == false && patientsWithIsolatedInHistory.includes(p.patient_id)){
           p.patient_isolated = true;
         }
       })
-      return res.json(patients);
+      return res.json(patientsFiltered);
     }catch(error){
       return res.status(500).json({ message: error.message });
     }
