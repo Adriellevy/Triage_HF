@@ -45,4 +45,23 @@ export class HistoryModel{
         const conn = await connect();
         const [result]:any = await conn.query(query,[id]);
     }
+
+    static async findByIdsAndColumn(ids:string[],column:string,old_value:number,new_value:number):Promise<string[]>{
+        //Este metodo me devuelve un arreglo con todos los id de pacientes que cumplan con la condicion
+
+        const query = `SELECT  
+        BIN_TO_UUID(updated_id) AS updated_id,
+        BIN_TO_UUID(patient_id) as patient_id,
+        user_id,
+        updated_id,
+        patient_updated_column,
+        patient_old_value,
+        patient_new_value,
+        patient_updated_date 
+        FROM PatientUpdateHistory 
+        WHERE patient_updated_column = ? AND (patient_new_value = ? OR patient_old_value = ?) AND patient_id IN (?)`;
+        const conn = await connect();
+        const [rows] = await conn.query<IHistory[]>(query,[column,old_value,new_value,ids]);
+        return rows.map(row => row.patient_id);
+    }
 }

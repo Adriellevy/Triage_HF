@@ -312,6 +312,28 @@ export class PatientController {
     }
   }
 
+  static async getPatientsByNameAndAge(req: Request, res: Response): Promise<Response> {
+    try{
+      const { patient_name, patient_age } = req.body;
+      const now = new Date();
+      const leftDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
+      const rightDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
+      const patients = await PatientsModel.getPatientsByNameAndAge(patient_name, leftDate, rightDate);
+
+      const patientsWithouIsolated = patients.filter((patient) => {patient.patient_isolated === false});
+      const patientsWithIsolatedInHistory = await HistoryModel.findByIdsAndColumn(patientsWithouIsolated.map((patient) => patient.patient_id),'patient_isolated',1,1);
+      // patientsWithIsolatedInHistory id de pacientes aislados en algun momento
+      patients.forEach((p)=>{
+        if(p.patient_isolated == false && patientsWithIsolatedInHistory.includes(p.patient_id)){
+          p.patient_isolated = true;
+        }
+      })
+      return res.json(patients);
+    }catch(error){
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
   static async getPaginatedPatients(req: Request, res: Response): Promise<Response> {
     try {
       const { batch } = req.params;

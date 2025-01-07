@@ -43,3 +43,7 @@ patientRouter.post('/shiftChange', (req: Request, res: Response) => {
   void PatientController.shiftChange(req, res);
 });
 
+patientRouter.post('/exists', (req: Request, res: Response) => {
+  void PatientController.getPatientsByNameAndAge(req, res);
+});
+

@@ -792,5 +792,44 @@ export class PatientsModel {
   
     return patients; // Retorna todos los pacientes encontrados
   }
+  static async getPatientsByNameAndAge(name:string,dateLeft:any,dateRight:any):Promise<IPatinet[]>{
+    try{
+      const query = `
+        SELECT 
+               BIN_TO_UUID(patient_id) AS patient_id,
+        patient_name,
+        patient_age,
+        patient_entry_time,
+        patient_exit_time,
+        patient_triage_time,
+        patient_triage_level,
+        patient_isolated,
+        BIN_TO_UUID(Patient.box_id) AS box_id,
+        Box.box_code,
+        patient_status,
+        patient_symptom,
+        patient_healthcare_system,
+        doctor_procedure,
+        doctor_studies_solicitated,
+        nurse_coment,
+        Doctor.user_name AS doctor_name,
+        Nurse.user_name AS nurse_name,
+        BIN_TO_UUID(doctor_id) AS doctor_id,
+        BIN_TO_UUID(nurse_id) AS nurse_id
+        FROM Patient
+        LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
+        LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
+        LEFT JOIN Box ON Patient.box_id = Box.box_id
+        
+        WHERE patient_name = ? AND STR_TO_DATE(patient_age, '%Y-%m-%d') BETWEEN ? AND ?;
+      `
+      const conn = await connect();
+      const [patients] = await conn.query<IPatinet[]>(query, [name,dateLeft,dateRight]);
   
+      return patients;
+    }catch(err){
+      console.log(`Error al obtener los pacientes por nombre y edad: ${err.message}`);
+      throw err;
+    }
+  }
 }
