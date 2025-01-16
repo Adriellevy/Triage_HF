@@ -70,88 +70,6 @@ async def get_table(
 ) -> typing.Union[pd.DataFrame, None]:
     json_recived = await asinc_get_table(table_name, condition)
     return json_recived
-    # dfs = transform_patient_data(json_recived)
-    # seccion sql
-    connection = connect()
-    if connection:
-        query = "SELECT * FROM " + table_name
-        if condition != "":
-            query += condition
-        print('QUERY:   "' + query + '"')
-        df = pd.read_sql(sql=query, con=connection)
-        connection.close()
-        # Verificar si tienen los mismos nombres de columnas
-        if list(df.columns) != list(dfj.columns):
-            print("Las columnas no coinciden:")
-            print("SQL Columns:", list(df.columns))
-            print("JSON Columns:", list(dfj.columns))
-
-        dfj["patient_age"] = pd.to_datetime(dfj["patient_age"], errors="coerce")
-        dfj["patient_entry_time"] = pd.to_datetime(
-            dfj["patient_entry_time"], errors="coerce"
-        )
-        dfj["patient_exit_time"] = pd.to_datetime(
-            dfj["patient_exit_time"], errors="coerce"
-        )
-        dfj["patient_triage_time"] = pd.to_datetime(
-            dfj["patient_triage_time"], errors="coerce"
-        )
-
-        # Eliminar la zona horaria de las columnas datetime del JSON DataFrame
-        dfj["patient_age"] = dfj["patient_age"].dt.tz_localize(None)
-        dfj["patient_entry_time"] = dfj["patient_entry_time"].dt.tz_localize(None)
-        dfj["patient_exit_time"] = dfj["patient_exit_time"].dt.tz_localize(None)
-        dfj["patient_triage_time"] = dfj["patient_triage_time"].dt.tz_localize(None)
-
-        # Verificar nuevamente los tipos de datos después de eliminar la zona horaria
-        print(dfj.dtypes)
-
-        # Comparar tipos de datos
-        print("Tipos de datos de SQL DataFrame:")
-        print(df.dtypes)
-        print("\nTipos de datos de JSON DataFrame:")
-        print(dfj.dtypes)
-
-        # Compara los DataFrames por diferencia de contenido
-        patient_id = "c86989cf-4e69-11ef-9ed6-0a002700000f"  # Reemplaza con el ID del paciente que quieres comparar
-
-        # Selecciona al paciente correspondiente en ambos DataFrames
-        df_patient_sql = df[df["patient_id"] == patient_id]
-        df_patient_json = dfj[dfj["patient_id"] == patient_id]
-
-        # Reinicia el índice para asegurar que las comparaciones se alineen correctamente
-        df_patient_sql.reset_index(drop=True, inplace=True)
-        df_patient_json.reset_index(drop=True, inplace=True)
-
-        # Comparar fila a fila y campo a campo
-        differences = {}
-        for column in df_patient_sql.columns:
-            sql_value = (
-                df_patient_sql[column].iloc[0] if not df_patient_sql.empty else None
-            )
-            json_value = (
-                df_patient_json[column].iloc[0] if not df_patient_json.empty else None
-            )
-            if sql_value != json_value:
-                differences[column] = {
-                    "SQL": sql_value,
-                    "JSON": json_value,
-                    "Expected Type for JSON": type(sql_value).__name__,
-                }
-
-        # Imprimir las diferencias
-        if differences:
-            print("Diferencias encontradas:")
-            for column, diff in differences.items():
-                print(f"\nCampo: {column}")
-                print(f"  SQL: {diff['SQL']}")
-                print(f"  JSON: {diff['JSON']}")
-                print(f"  Tipo esperado para JSON: {diff['Expected Type for JSON']}")
-        else:
-            print("No se encontraron diferencias para este paciente.")
-        return dfj
-    else:
-        return None
 
 
 async def asinc_get_table(
@@ -161,8 +79,16 @@ async def asinc_get_table(
     if condition != "":
         query += condition
     print('QUERY:   "' + query + '"')
+    # Recuperar el host de la variable de entorno APP_HOST
+    app_host = os.getenv("APP_HOST")
+    if not app_host:
+        print("Error: APP_HOST no está configurado en las variables de entorno.")
+        return None
+
+    # Construir el endpoint usando el APP_HOST
+    endpoint = app_host + "/PatientByQuery/" + query + ""
     # USAR ESTA RUTA PARA PRUEBA CON DOCKER
-    endpoint = "http://host.docker.internal:3000/PatientByQuery/" + query + ""
+    # endpoint = "http://host.docker.internal:3000/PatientByQuery/" + query + ""
     # USAR ESTA RUTA PARA PRUEBA LOCAL
     # endpoint = "http://localhost:3000/PatientByQuery/" + query + ""
     print('ENDPOINT: "' + endpoint + '"')

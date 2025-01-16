@@ -387,7 +387,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
           setCurrentPage={setCurrentPage}
         />
       ) : (
-        <LoaderSpin />
+        <p>No se encontraron pacientes.</p>
       )}
     </div>
   )

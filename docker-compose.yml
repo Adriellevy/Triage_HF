@@ -60,16 +60,15 @@ services:
     links:
       - mysqldb
     environment:
-      - DB_HOST=mysqldb
-      - DB_USER=root
+      - DB_HOST=http://triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com
+      - DB_USER=usertriage
+      - DB_PASSWORD=administraciontriage2024
       - DB_PORT=3306
-      - DB_PASSWORD=1234
-      - DB_NAME=Triagedb
+      - DB_NAME=Triage_db
       - DB_CHARSET=latin1
       - CHARTS_RESTRICTION=False
       - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
-      - APP_HOST=192.168.0.83  
-      - APP_PORT=5000
+      - APP_HOST=https://triage-hf-6wdp.onrender.com
       - APP_KEY=123
       - MANAGER_SECRET=TRIAGE_APP_110112_220221
     ports:
