@@ -75,6 +75,26 @@ services:
       - 5000:5000
     networks:
       - app-network
+  superset:
+    image: apache/superset:latest
+    container_name: superset_container
+    environment:
+      SUPERSET_SECRET_KEY: "supersecretkey"
+      DATABASE_URL: "mysql://usertriage:administraciontriage2024@mysqldb:3306/Triage_db"
+    depends_on:
+      - mysqldb
+    ports:
+      - 8088:8088
+    networks:
+      - app-network
+    volumes:
+      - ./superset_home:/app/superset_home
+    entrypoint: >
+      /bin/sh -c "
+      superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
+      superset db upgrade &&
+      superset init &&
+      superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
       
 
   triageapp:

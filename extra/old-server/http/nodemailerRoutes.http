@@ -1,2 +1,0 @@
-### Send Email Test
-GET http://localhost:3000/nodemailer/
