@@ -33,6 +33,7 @@ __pycache__/
 *.sln
 *.sw?
 
+superset_home/*
 DataAnalysisAndReports/src/data/__pycache__/*
 DataAnalysisAndReports/src/features/__pycache__/*
 DataAnalysisAndReports/src/models/__pycache__/*
