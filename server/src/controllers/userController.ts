@@ -195,6 +195,9 @@ export class UserController {
       if (!existingUser) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
+      if (result.data.user_password) {
+        result.data.user_password = await encrypt(result.data.user_password);
+      }
       const updatedUser = await UserModel.updateUser(userId, result.data as User);
 
       if (updatedUser) {

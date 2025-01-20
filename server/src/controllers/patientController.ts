@@ -89,6 +89,7 @@ export class PatientController {
   static async getPatientByName(req: Request, res: Response): Promise<Response> {
     try {
       const { name } = req.params;
+      console.log('Nombre del paciente:', name);
       const User = await PatientsModel.getPatientsByName(encryptstring(name.toString()));
       if (User) return res.json(User);
       return res.status(404).json({ message: 'Patient not found' });
@@ -318,7 +319,12 @@ export class PatientController {
       const now = new Date();
       const leftDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
       const rightDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
+
       const patients = await PatientsModel.getPatientsByName(encryptstring(patient_name));
+      if(patients.length === 0){
+        return res.status(404).json({ message: 'No se encontraron pacientes' });
+      }
+      console.log(patient_name, patient_age,patients);
 
       const patientsDesencrypted = patients.map((patient) => decryptPatientData(patient));
       const patientsFiltered = patientsDesencrypted.filter((patient) => {

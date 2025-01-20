@@ -250,6 +250,8 @@ export class UserModel {
   // Método para actualizar un usuario existente
   static async updateUser(userId: string, updatedUserData: Partial<User>): Promise<User | null> {
     try {
+      console.log('userId:', userId);
+      console.log('updatedUserData:', updatedUserData);
       if (!userId) {
         throw new Error('userId is required.');
       }

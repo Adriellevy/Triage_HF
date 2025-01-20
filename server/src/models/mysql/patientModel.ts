@@ -111,6 +111,7 @@ export class PatientsModel {
         WHERE patient_name LIKE ?;
       `;
       const conn = await connect();
+      console.log('Nombre del paciente:', patientName);
       const [rows] = await conn.query<IPatinet[]>(patientsQuery, [`%${patientName}%`]);
       return rows;
     } catch (error) {

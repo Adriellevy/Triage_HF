@@ -118,6 +118,7 @@ export const decryptPatientData = (patient: Patient): Patient => {
 
 export const encryptstring = (data: string): string => {
   const iv = randomBytes(ivLength); // Generamos un vector de inicialización (IV) aleatorio
+  
   const cipher = createCipheriv(algorithm, key, iv);
 
   let encrypted = cipher.update(data, 'utf8', 'hex');
@@ -127,7 +128,7 @@ export const encryptstring = (data: string): string => {
   const encryptedData = iv.toString('hex') + ':' + encrypted;
 
   // Retornamos el paciente con los campos encriptados
-  return data;
+  return encryptedData;
 };
 
 export const dencryptstring = (data: string): string => {
