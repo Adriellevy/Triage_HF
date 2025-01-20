@@ -185,6 +185,7 @@ export class UserController {
     }
 
     const decoded = verifyToken(token);
+    userData.user_rol = userData.user_type;
     const result = validatePartialUpdateUser(userData);
     if (!result.success) {
       return res.status(500).json({ errors: result.error.errors });

@@ -250,8 +250,6 @@ export class UserModel {
   // Método para actualizar un usuario existente
   static async updateUser(userId: string, updatedUserData: Partial<User>): Promise<User | null> {
     try {
-      console.log('userId:', userId);
-      console.log('updatedUserData:', updatedUserData);
       if (!userId) {
         throw new Error('userId is required.');
       }
@@ -264,16 +262,23 @@ export class UserModel {
         user_type: 'user_type = ?'
       };
 
-      const updateFields = Object.keys(updatedUserData)
-        .filter(
-          (key) =>
-            updatedUserData[key as keyof User] !== undefined &&
-            key !== 'user_cellphone' &&
-            key !== 'user_email' &&
-            updatedUserData[key as keyof User] !== null
-        )
-        .map((key) => fieldsMap[key as keyof User]);
+      const aliasMap: { [key: string]: keyof User } = {
+          user_rol: 'user_type',
+      };
 
+      const updateFields = Object.keys(updatedUserData)
+          .filter(
+              (key) =>
+                  updatedUserData[key as keyof User] !== undefined &&
+                  key !== 'user_cellphone' &&
+                  key !== 'user_email' &&
+                  updatedUserData[key as keyof User] !== null
+          )
+          .map((key) => aliasMap[key] || key) // Reemplaza con el alias si existe
+          .map((key) => fieldsMap[key as keyof User]) // Aplica el mapeo final
+          .filter((field) => field !== undefined); // Elimina valores undefined
+
+      console.log("fields", updateFields);
       const updateValues = Object.keys(updatedUserData)
         .filter(
           (key) =>
