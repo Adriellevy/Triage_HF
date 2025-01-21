@@ -409,7 +409,7 @@ function PatientFormRefactorizado() {
     { _id: 16, name: 'Alteracion de laboratorio' },
     { _id: 17, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
     { _id: 18, name: 'Fiebre >38°' },
-    { _id: 19, name: 'Infeccion' }
+    { _id: 19, name: 'infección' }
   ]
   const TriageLevels: TriageLevel[] = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
