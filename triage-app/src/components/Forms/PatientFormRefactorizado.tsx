@@ -397,13 +397,19 @@ function PatientFormRefactorizado() {
     { _id: 4, name: 'Dolor abdominal / lumbar' },
     { _id: 5, name: 'Cefalea' },
     { _id: 6, name: 'Déficit motor' },
-    { _id: 7, name: 'Disartria - afasia' },
-    { _id: 8, name: 'Pérdida aguda de visión' },
-    { _id: 9, name: 'Disnea' },
-    { _id: 10, name: 'Otro dolor en curso' },
-    { _id: 11, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
-    { _id: 12, name: 'Sangrado Digestivo' },
-    { _id: 13, name: 'Fiebre >38°' }
+    { _id: 7, name: 'Inestabilidad en la marcha' },
+    { _id: 8, name: 'Disartria - afasia' },
+    { _id: 9, name: 'Pérdida aguda de visión' },
+    { _id: 10, name: 'Disnea' },
+    { _id: 11, name: 'Sincope' },
+    { _id: 12, name: 'Mareos' },
+    { _id: 13, name: 'Edema' },
+    { _id: 14, name: 'Sangrado digestivo' },
+    { _id: 15, name: 'Otro dolor en curso' },
+    { _id: 16, name: 'Alteracion de laboratorio' },
+    { _id: 17, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
+    { _id: 18, name: 'Fiebre >38°' },
+    { _id: 19, name: 'Infeccion' }
   ]
   const TriageLevels: TriageLevel[] = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
