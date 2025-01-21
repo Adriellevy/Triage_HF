@@ -99,7 +99,7 @@ export interface Field {
   format: ((value: User | Box | string) => string | Promise<string | null>) | null
   component_type: string
   value: string | null | Date | Box | User
-  handlerHelperFunction: Box | User | string | number | null | Boolean
+  handlerHelperFunction: Box | User | string | number | null | boolean
   formatdata: ((value: string | null) => string | null) | null
   isRequiredField: boolean
 }
