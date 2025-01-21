@@ -132,6 +132,7 @@ function EditModal<T extends PartialUser | User | Box | Patient>({
                         className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         value={value as string}
                         onChange={(e) => handleChange(key as keyof T, e.target.value)}
+                        autoComplete={key.includes('password') ? 'new-password' : 'no-autocomplete'}
                       />
                     ) : null}
 
