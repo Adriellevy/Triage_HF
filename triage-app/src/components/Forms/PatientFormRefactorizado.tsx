@@ -83,7 +83,6 @@ function PatientFormRefactorizado() {
     box_time: new Date().toISOString(),
     box_status: BoxStatus.LIBRE // o el estado que prefieras
   }
-
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
   // Formulario estandar tiene como objetivo ser la plantilla
 
@@ -97,7 +96,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnName4Database
+      formatdata: returnName4Database,
+      isRequiredField: true
     },
     {
       key: 'patient_age',
@@ -107,7 +107,8 @@ function PatientFormRefactorizado() {
       component_type: 'DependsMode',
       value: '' || null,
       handlerHelperFunction: null,
-      formatdata: returnDate4Database
+      formatdata: returnDate4Database,
+      isRequiredField: true
     },
     {
       key: 'patient_symptom',
@@ -117,7 +118,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: true,
-      formatdata: returnSintomName
+      formatdata: returnSintomName,
+      isRequiredField: true
     },
     {
       key: 'patient_entry_time',
@@ -127,7 +129,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNewDate
+      formatdata: returnNewDate,
+      isRequiredField: false
     },
     {
       key: 'patient_exit_time',
@@ -137,7 +140,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     },
     {
       key: 'patient_triage_time',
@@ -147,7 +151,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNewDate
+      formatdata: returnNewDate,
+      isRequiredField: false
     },
     {
       key: 'patient_triage_level',
@@ -157,7 +162,8 @@ function PatientFormRefactorizado() {
       component_type: 'TriageComponent',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnPatientTriageNumber
+      formatdata: returnPatientTriageNumber,
+      isRequiredField: false
     },
     {
       key: 'patient_isolated',
@@ -167,7 +173,8 @@ function PatientFormRefactorizado() {
       component_type: 'checkbox',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnBoolean
+      formatdata: returnBoolean,
+      isRequiredField: false
     },
     {
       key: 'patient_status',
@@ -177,7 +184,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnEstado
+      formatdata: returnEstado,
+      isRequiredField: false
     },
     {
       key: 'patient_healthcare_system',
@@ -187,7 +195,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     },
     {
       key: 'doctor_id',
@@ -197,7 +206,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnDoctorId
+      formatdata: returnDoctorId,
+      isRequiredField: true
     },
     {
       key: 'nurse_id',
@@ -207,7 +217,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNurseId
+      formatdata: returnNurseId,
+      isRequiredField: true
     },
     {
       key: 'box_id',
@@ -217,7 +228,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnBoxID
+      formatdata: returnBoxID,
+      isRequiredField: false
     },
     {
       key: 'nurse_coment',
@@ -227,7 +239,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     }
     //patient_medication: '',
   ]

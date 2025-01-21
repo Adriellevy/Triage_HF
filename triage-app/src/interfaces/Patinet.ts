@@ -101,4 +101,5 @@ export interface Field {
   value: string | null | Date | Box | User
   handlerHelperFunction: Box | User | string | number | null | Boolean
   formatdata: ((value: string | null) => string | null) | null
+  isRequiredField: boolean
 }
