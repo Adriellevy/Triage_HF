@@ -98,11 +98,10 @@ services:
       superset db upgrade &&
       superset init &&
       superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
+      superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
       superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
-      
-    #  superset import-dashboards -p /app/dashboards/dashboard.zip --username admin &&
-    # superset import-dataset -p /app/datasets/dataset.zip --username admin &&
-    # superset import-assets --path /app/dashboards/dashboard.zip &&
+
+    # leer este issue en github para cargar dashboards de forma automatica https://github.com/apache/superset/issues/28692#issuecomment-2337761581
 
   triageapp:
     container_name: react_app_container
