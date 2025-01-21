@@ -6,11 +6,12 @@
   "StatsPatientsDate": "Number of patients by date",
   "StatsPatientsTriage": "Number of patients by triage",
   "StatsReasons": "Reasons for consultation by date",
-  "MeanTimePatientPerDoctor":"Mean time of patient per doctor",
-  "StatsPatientsAge":"Patien agrupation by Age",
-  "MeanTimePatientPerNurse":"Tiempo medio pacientes por enfermero",
+  "MeanTimePatientPerDoctor": "Mean time of patient per doctor",
+  "StatsPatientsAge": "Patien agrupation by Age",
+  "MeanTimePatientPerNurse": "Mean time patient per nurse",
   "Settings": "Settings",
   "UsersSettings": "Users Settings",
   "BoxSettings": "Box Settings",
-  "LogoutButton": "Logout"
+  "LogoutButton": "Logout",
+  "handleHealthInstituteConfiguration": "Configuration of health institution"
 }

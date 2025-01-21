@@ -35,7 +35,7 @@ services:
     environment:
       - DB_HOST=mysqldb
       - DB_USER=root
-      - DB_PORT=3307
+      - DB_PORT=3306
       - DB_PASSWORD=1234
       - DB_NAME=Triagedb
       - PORTAPI=3000
@@ -51,55 +51,55 @@ services:
     networks:
       - app-network
 
-  dataanalysisandreports:
-    container_name: DataAnalysisAndReports_api_container
-    build:
-      context: ./DataAnalysisAndReports/src/
-    depends_on:
-      - mysqldb
-    links:
-      - mysqldb
-    environment:
-      - DB_HOST=http://triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com
-      - DB_USER=usertriage
-      - DB_PASSWORD=administraciontriage2024
-      - DB_PORT=3306
-      - DB_NAME=Triage_db
-      - DB_CHARSET=latin1
-      - CHARTS_RESTRICTION=False
-      - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
-      - APP_HOST=https://triage-hf-6wdp.onrender.com
-      - APP_KEY=123
-      - MANAGER_SECRET=TRIAGE_APP_110112_220221
-    ports:
-      - 5000:5000
-    networks:
-      - app-network
+  # dataanalysisandreports:
+  #   container_name: DataAnalysisAndReports_api_container
+  #   build:
+  #     context: ./DataAnalysisAndReports/src/
+  #   depends_on:
+  #     - mysqldb
+  #   links:
+  #     - mysqldb
+  #   environment:
+  #     - DB_HOST=http://triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com
+  #     - DB_USER=usertriage
+  #     - DB_PASSWORD=administraciontriage2024
+  #     - DB_PORT=3306
+  #     - DB_NAME=Triage_db
+  #     - DB_CHARSET=latin1
+  #     - CHARTS_RESTRICTION=False
+  #     - PYTHONSERVER=Qssl2u)]EJ,K7J9v+S$U&F.Sab[hpA)qvKSR#n8krNV<l,oT?b=K}0M70]9hZ4/b"O@Ksw
+  #     - APP_HOST=https://triage-hf-6wdp.onrender.com
+  #     - APP_KEY=123
+  #     - MANAGER_SECRET=TRIAGE_APP_110112_220221
+  #   ports:
+  #     - 5000:5000
+  #   networks:
+  #     - app-network
 
       
-  superset:
-    image: apache/superset:latest-dev
-    container_name: superset_container
-    environment:
-      SUPERSET_SECRET_KEY: "supersecretkey"
-      SQLALCHEMY_DATABASE_URI: "mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db"
-    # depends_on:
-      # - mysqldb
-    ports:
-      - 8088:8088
-    networks:
-      - app-network
-    volumes:
-      - ./superset_home:/app/superset_home
-      - ./dashboards:/app/dashboards
-    entrypoint: >
-      /bin/sh -c "
-      superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
-      superset db upgrade &&
-      superset init &&
-      superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
-      superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
-      superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
+  # superset:
+  #   image: apache/superset:latest-dev
+  #   container_name: superset_container
+  #   environment:
+  #     SUPERSET_SECRET_KEY: "supersecretkey"
+  #     SQLALCHEMY_DATABASE_URI: "mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db"
+  #   # depends_on:
+  #     # - mysqldb
+  #   ports:
+  #     - 8088:8088
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - ./superset_home:/app/superset_home
+  #     - ./dashboards:/app/dashboards
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
+  #     superset db upgrade &&
+  #     superset init &&
+  #     superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
+  #     superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
+  #     superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
 
     # leer este issue en github para cargar dashboards de forma automatica https://github.com/apache/superset/issues/28692#issuecomment-2337761581
 

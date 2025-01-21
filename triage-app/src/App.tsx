@@ -17,6 +17,7 @@ import { getUserById, getUserIdByToken } from '@/services/userService'
 import StatsPatinet from './pages/stats/StatsPatinet'
 import StatsTopConsultas from './pages/stats/StatsTopConsultas'
 import BoxSettings from './pages/settings/BoxSettings'
+import HealthInstituteSettings from './pages/settings/HealthInstituteSettings'
 import UserSettings from './pages/settings/UserSettings'
 import PatientEdit from './pages/PatientEdit'
 import StatsPatientTriage from './pages/stats/StatsPatientTriage'
@@ -254,6 +255,20 @@ function App() {
                                 allowedRole={UserRole.HOSPITAL}
                               >
                                 <BoxSettings />
+                              </ProtectedRouteWithVerification>
+                            </ProtectedRouteAutentication>
+                          }
+                        />
+                        <Route
+                          path='/settings/health-institute'
+                          element={
+                            <ProtectedRouteAutentication>
+                              <ProtectedRouteWithVerification
+                                Username={Actual_user?.user_name ? Actual_user.user_name : ''}
+                                role={role}
+                                allowedRole={UserRole.HOSPITAL}
+                              >
+                                <HealthInstituteSettings />
                               </ProtectedRouteWithVerification>
                             </ProtectedRouteAutentication>
                           }
