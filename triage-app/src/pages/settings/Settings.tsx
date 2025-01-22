@@ -23,7 +23,7 @@ function Settings() {
   }
 
   return (
-    <div className='h-screen p-4 list-item mt-24'>
+    <div className='h-screen p-4 list-item mt-20 ml-2 md:mt-0 md:ml-0'>
       <div className='p-2'>
         <Button wfull color='green' onClick={handleBoxSettingsClick}>
           {t('BoxSettings')}
