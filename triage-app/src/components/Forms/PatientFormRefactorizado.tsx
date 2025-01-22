@@ -44,6 +44,7 @@ import { UpdateEvent } from '@/interfaces/Socket'
 import WarningBox from '../ui/WarningBox'
 import LoaderSpin from '../LoaderSpin'
 import LoaderOverlay from '../ui/LoaderOverlay'
+import { getAllSymptoms } from '@/services/symtomService'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -51,6 +52,8 @@ function PatientFormRefactorizado() {
   const [BoxOcupiedByPatient, setBoxOcupiedByPatient] = useState<Box[] | null>(null)
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
+  const [patientSymptoms, setPatientSymptoms] = useState<PatientSymptom[]>([])
+
   const [loadingIcon, setloadingIcon] = useState<boolean>(false)
   const [TotalOptions, setTotalOptions] = useState<{
     doctor_id: User[]
@@ -83,7 +86,6 @@ function PatientFormRefactorizado() {
     box_time: new Date().toISOString(),
     box_status: BoxStatus.LIBRE // o el estado que prefieras
   }
-
   //-----------------------------------  SETEO FORMULARIOS ---------------------------------
   // Formulario estandar tiene como objetivo ser la plantilla
 
@@ -97,7 +99,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnName4Database
+      formatdata: returnName4Database,
+      isRequiredField: true
     },
     {
       key: 'patient_age',
@@ -107,7 +110,8 @@ function PatientFormRefactorizado() {
       component_type: 'DependsMode',
       value: '' || null,
       handlerHelperFunction: null,
-      formatdata: returnDate4Database
+      formatdata: returnDate4Database,
+      isRequiredField: true
     },
     {
       key: 'patient_symptom',
@@ -117,7 +121,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: true,
-      formatdata: returnSintomName
+      formatdata: returnSintomName,
+      isRequiredField: true
     },
     {
       key: 'patient_entry_time',
@@ -127,7 +132,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNewDate
+      formatdata: returnNewDate,
+      isRequiredField: false
     },
     {
       key: 'patient_exit_time',
@@ -137,7 +143,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     },
     {
       key: 'patient_triage_time',
@@ -147,7 +154,8 @@ function PatientFormRefactorizado() {
       component_type: '',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNewDate
+      formatdata: returnNewDate,
+      isRequiredField: false
     },
     {
       key: 'patient_triage_level',
@@ -157,7 +165,8 @@ function PatientFormRefactorizado() {
       component_type: 'TriageComponent',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnPatientTriageNumber
+      formatdata: returnPatientTriageNumber,
+      isRequiredField: false
     },
     {
       key: 'patient_isolated',
@@ -167,7 +176,8 @@ function PatientFormRefactorizado() {
       component_type: 'checkbox',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnBoolean
+      formatdata: returnBoolean,
+      isRequiredField: false
     },
     {
       key: 'patient_status',
@@ -177,7 +187,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnEstado
+      formatdata: returnEstado,
+      isRequiredField: false
     },
     {
       key: 'patient_healthcare_system',
@@ -187,7 +198,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     },
     {
       key: 'doctor_id',
@@ -197,7 +209,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnDoctorId
+      formatdata: returnDoctorId,
+      isRequiredField: true
     },
     {
       key: 'nurse_id',
@@ -207,7 +220,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnNurseId
+      formatdata: returnNurseId,
+      isRequiredField: true
     },
     {
       key: 'box_id',
@@ -217,7 +231,8 @@ function PatientFormRefactorizado() {
       component_type: 'select',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnBoxID
+      formatdata: returnBoxID,
+      isRequiredField: false
     },
     {
       key: 'nurse_coment',
@@ -227,7 +242,8 @@ function PatientFormRefactorizado() {
       component_type: 'input',
       value: null,
       handlerHelperFunction: null,
-      formatdata: null
+      formatdata: null,
+      isRequiredField: false
     }
     //patient_medication: '',
   ]
@@ -267,10 +283,11 @@ function PatientFormRefactorizado() {
         const nurses = await getAllNurses()
         const boxes = await getAvailableBoxes()
         const allBoxes = await getAllBoxes()
+        const PatientSintoms = await getAllSymptoms()
         setDoctorOptions(docs)
         setNurseOptions(nurses)
         setBoxesOptions(boxes)
-        ActualizarTotalOptions(docs, nurses, boxes, PatientSintoms)
+        ActualizarTotalOptions(docs, nurses, boxes, PatientSintoms.data)
 
         const doctor = docs?.find((doctor) => doctor.user_name === edditingPatient?.doctor_name)
 
@@ -352,9 +369,32 @@ function PatientFormRefactorizado() {
         // console.error('Error:', error.message)
       }
     }
+    const fetchSymptoms = async () => {
+      try {
+        const response = await getAllSymptoms()
+        if (response.success && response.data) {
+          const formattedSymptoms = response.data.map((symptom) => ({
+            _id: symptom._id, // Asume que `id` es la propiedad del backend
+            name: symptom.name
+          }))
+          return formattedSymptoms
+        } else {
+          console.error('Error al obtener síntomas:', response.message)
+          return []
+        }
+      } catch (error) {
+        console.error('Error desconocido al obtener síntomas:', error)
+        return []
+      }
+    }
 
     const fetchData = async () => {
-      const [docs, nurses, boxes] = await Promise.all([fetchDoctors(), fetchNurses(), fetchBoxes()])
+      const [docs, nurses, boxes, PatientSintoms] = await Promise.all([
+        fetchDoctors(),
+        fetchNurses(),
+        fetchBoxes(),
+        fetchSymptoms()
+      ])
       ActualizarTotalOptions(docs, nurses, boxes, PatientSintoms)
     }
 
@@ -390,27 +430,27 @@ function PatientFormRefactorizado() {
 
   //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
   //TODO estos const deberían levantarse de la base de datos
-  const PatientSintoms: PatientSymptom[] = [
-    { _id: 1, name: 'Convulsiones' },
-    { _id: 2, name: 'Trauma de Cráneo' },
-    { _id: 3, name: 'Dolor torácico / dorsal' },
-    { _id: 4, name: 'Dolor abdominal / lumbar' },
-    { _id: 5, name: 'Cefalea' },
-    { _id: 6, name: 'Déficit motor' },
-    { _id: 7, name: 'Inestabilidad en la marcha' },
-    { _id: 8, name: 'Disartria - afasia' },
-    { _id: 9, name: 'Pérdida aguda de visión' },
-    { _id: 10, name: 'Disnea' },
-    { _id: 11, name: 'Sincope' },
-    { _id: 12, name: 'Mareos' },
-    { _id: 13, name: 'Edema' },
-    { _id: 14, name: 'Sangrado digestivo' },
-    { _id: 15, name: 'Otro dolor en curso' },
-    { _id: 16, name: 'Alteracion de laboratorio' },
-    { _id: 17, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
-    { _id: 18, name: 'Fiebre >38°' },
-    { _id: 19, name: 'infección' }
-  ]
+  // const PatientSintoms: PatientSymptom[] = [
+  //   { _id: 1, name: 'Convulsiones' },
+  //   { _id: 2, name: 'Trauma de Cráneo' },
+  //   { _id: 3, name: 'Dolor torácico / dorsal' },
+  //   { _id: 4, name: 'Dolor abdominal / lumbar' },
+  //   { _id: 5, name: 'Cefalea' },
+  //   { _id: 6, name: 'Déficit motor' },
+  //   { _id: 7, name: 'Inestabilidad en la marcha' },
+  //   { _id: 8, name: 'Disartria - afasia' },
+  //   { _id: 9, name: 'Pérdida aguda de visión' },
+  //   { _id: 10, name: 'Disnea' },
+  //   { _id: 11, name: 'Sincope' },
+  //   { _id: 12, name: 'Mareos' },
+  //   { _id: 13, name: 'Edema' },
+  //   { _id: 14, name: 'Sangrado digestivo' },
+  //   { _id: 15, name: 'Otro dolor en curso' },
+  //   { _id: 16, name: 'Alteracion de laboratorio' },
+  //   { _id: 17, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
+  //   { _id: 18, name: 'Fiebre >38°' },
+  //   { _id: 19, name: 'infección' }
+  // ]
   const TriageLevels: TriageLevel[] = [
     { _id: 1, name: 'I', color: '153, 153, 153' },
     { _id: 2, name: 'II', color: '255,51,0' },

@@ -45,7 +45,7 @@ function Sidebar() {
   const location = useLocation()
   const [menuVisible, setMenuVisible] = useState<boolean>(false)
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [UserInfo, setUserInfo] = useState<PartialUser>({
     user_id: '',
     user_name: '',
@@ -53,12 +53,12 @@ function Sidebar() {
   })
 
   const openModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   // TODO: GET IMG DB
   const UserProfileImage = DoctorImg
@@ -122,7 +122,12 @@ function Sidebar() {
       linkUrl: '/settings',
       submenu: [
         { icon: ConfigIcon, title: t('UsersSettings'), linkUrl: '/settings/user' },
-        { icon: ConfigIcon, title: t('BoxesSettings'), linkUrl: '/settings/box' }
+        { icon: ConfigIcon, title: t('BoxesSettings'), linkUrl: '/settings/box' },
+        {
+          icon: ConfigIcon,
+          title: t('handleHealthInstituteConfiguration'),
+          linkUrl: '/settings/health-institute'
+        }
       ]
     }
   ]
@@ -144,7 +149,6 @@ function Sidebar() {
     setOpenSubMenu(openSubMenu === index ? null : index)
   }
 
-
   useEffect(() => {
     setOpenSubMenu(null)
   }, [location.pathname])
@@ -160,7 +164,7 @@ function Sidebar() {
       if (data.message === UpdateEvent.SHIFT_EXCHANGE) {
         toast.success('Cambio de turno executado', { duration: 5000 })
         setTimeout(() => {
-          window.location.reload() 
+          window.location.reload()
         }, 5000)
         return
       }
@@ -245,7 +249,7 @@ function Sidebar() {
     }
     const setupSocket = () => {
       try {
-        console.log('Configurando listener para:', `${UserInfo.user_id}`);
+        console.log('Configurando listener para:', `${UserInfo.user_id}`)
         socket.on(SocketEvent.UPDATE, handleSocketEvent)
         socket.on(`${UserInfo.user_id}`, handleSocketEvent)
       } catch (error) {
@@ -288,18 +292,18 @@ function Sidebar() {
   }, [token])
 
   return (
-    <div >
+    <div>
       <div className='hidden md:flex lg:flex flex-col w-60 lg:w-[270px] bg-blue-900 text-white h-full '>
-      <div className="p-4 flex items-center space-x-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <img
-          src={Logo}
-          alt="Logo"
-          className="w-8 h-8 lg:w-12 lg:h-12 rounded-full border-2 border-white shadow-lg"
-        />
-        <div className="text-3xl font-extrabold tracking-wide text-white drop-shadow-md">
-          TriageApp
+        <div className='p-4 flex items-center space-x-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]'>
+          <img
+            src={Logo}
+            alt='Logo'
+            className='w-8 h-8 lg:w-12 lg:h-12 rounded-full border-2 border-white shadow-lg'
+          />
+          <div className='text-3xl font-extrabold tracking-wide text-white drop-shadow-md'>
+            TriageApp
+          </div>
         </div>
-      </div>
         <nav className='flex-1'>
           {menuitems.map((item, index) =>
             (item.title !== 'Settings' && item.title !== 'Stats' && role !== UserRole.HOSPITAL) ||
@@ -335,7 +339,11 @@ function Sidebar() {
                   )}
                 </div>
               ) : (
-                <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-inner text-lg'>
+                <Link
+                  to={item.linkUrl}
+                  key={index}
+                  className='block p-3 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-inner text-lg'
+                >
                   {item.icon && (
                     <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                   )}
@@ -345,38 +353,39 @@ function Sidebar() {
             ) : null
           )}
         </nav>
-          {UserInfo.user_type === 'NURSE'  ? 
-            <div className="mt-auto p-4">
-  <button
-    onClick={openModal}
-    className="flex items-center justify-center w-full py-2 px-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200"
-  >
-    <i className="fas fa-exchange-alt text-xl mr-2"></i>
-    {t('TurnExchange')}
-  </button>
-</div>
-
-        : null }
-        <div className="flex items-center p-4 bg-gradient-to-r from-blue-900 to-blue-700 shadow-lg ">
-  {isModalOpen && <ShiftExchangeModal onClose={closeModal} />}
-  <img
-    src={UserProfileImage}
-    alt="Profile"
-    className="w-12 h-12 rounded-full mr-4 border-2 border-white shadow-md"
-  />
-  <div>
-    <Link to={`/users/${UserInfo.user_id}`} className="hover:underline">
-      <div className="font-semibold text-white text-sm lg:text-md">{UserInfo.user_name}</div>
-    </Link>
-    <div className="text-sm text-blue-200">
-      {UserInfo.user_type === 'NURSE'
-        ? t('NURSE')
-        : UserInfo.user_type === 'DOCTOR'
-        ? t('DOCTOR')
-        : t('ADMIN')}
-    </div>
-  </div>
-</div>
+        {UserInfo.user_type === 'NURSE' ? (
+          <div className='mt-auto p-4'>
+            <button
+              onClick={openModal}
+              className='flex items-center justify-center w-full py-2 px-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200'
+            >
+              <i className='fas fa-exchange-alt text-xl mr-2'></i>
+              {t('TurnExchange')}
+            </button>
+          </div>
+        ) : null}
+        <div className='flex items-center p-4 bg-gradient-to-r from-blue-900 to-blue-700 shadow-lg '>
+          {isModalOpen && <ShiftExchangeModal onClose={closeModal} />}
+          <img
+            src={UserProfileImage}
+            alt='Profile'
+            className='w-12 h-12 rounded-full mr-4 border-2 border-white shadow-md'
+          />
+          <div>
+            <Link to={`/users/${UserInfo.user_id}`} className='hover:underline'>
+              <div className='font-semibold text-white text-sm lg:text-md'>
+                {UserInfo.user_name}
+              </div>
+            </Link>
+            <div className='text-sm text-blue-200'>
+              {UserInfo.user_type === 'NURSE'
+                ? t('NURSE')
+                : UserInfo.user_type === 'DOCTOR'
+                ? t('DOCTOR')
+                : t('ADMIN')}
+            </div>
+          </div>
+        </div>
 
         <div className='mt-auto p-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-md'>
           <Button wfull color='red' onClick={handleLogout}>
@@ -419,24 +428,25 @@ function Sidebar() {
               <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
               <span className='text-lg font-bold mx-auto'>Triage App</span>
             </div>
-            <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-lg">
-  <img
-    src={UserProfileImage}
-    alt="Profile"
-    className="w-12 h-12 rounded-full border-2 border-gray-500 shadow-md"
-  />
-  <div>
-    <Link
-      to={`/users/${UserInfo.user_id}`}
-      className="hover:underline text-white"
-    >
-      <div className="font-bold text-lg">{UserInfo.user_name}</div>
-    </Link>
-    <div className="text-gray-300 italic text-sm">
-      {UserInfo.user_type === 'NURSE' ? t('NURSE') : UserInfo.user_type === 'DOCTOR' ? t('DOCTOR') : t('ADMIN')}
-    </div>
-  </div>
-</div>
+            <div className='flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-lg'>
+              <img
+                src={UserProfileImage}
+                alt='Profile'
+                className='w-12 h-12 rounded-full border-2 border-gray-500 shadow-md'
+              />
+              <div>
+                <Link to={`/users/${UserInfo.user_id}`} className='hover:underline text-white'>
+                  <div className='font-bold text-lg'>{UserInfo.user_name}</div>
+                </Link>
+                <div className='text-gray-300 italic text-sm'>
+                  {UserInfo.user_type === 'NURSE'
+                    ? t('NURSE')
+                    : UserInfo.user_type === 'DOCTOR'
+                    ? t('DOCTOR')
+                    : t('ADMIN')}
+                </div>
+              </div>
+            </div>
 
             <button onClick={toggleMenu} className='text-lg font-bold'>
               {menuVisible ? (

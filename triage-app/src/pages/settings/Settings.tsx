@@ -17,6 +17,11 @@ function Settings() {
     navigate('/settings/user')
   }
 
+  const handleHealthInstituteConfiguration = () => {
+    // Redirigimos a la página de configuración de usuarios
+    navigate('/settings/health-institute')
+  }
+
   return (
     <div className='h-screen p-4 list-item'>
       <div className='p-2'>
@@ -27,6 +32,16 @@ function Settings() {
       <div className='p-2' onClick={handleUsersSettingsClick}>
         <Button wfull color='green'>
           {t('UsersSettings')}
+        </Button>
+      </div>
+      <div className='p-2' onClick={handleUsersSettingsClick}>
+        <Button wfull color='green'>
+          {t('UsersSettings')}
+        </Button>
+      </div>
+      <div className='p-2' onClick={handleHealthInstituteConfiguration}>
+        <Button wfull color='green'>
+          {t('handleHealthInstituteConfiguration')}
         </Button>
       </div>
     </div>

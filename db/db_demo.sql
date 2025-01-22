@@ -145,3 +145,24 @@ VALUES
   (UUID_TO_BIN(UUID()),'O-16','OBSERVACION'),
   (UUID_TO_BIN(UUID()),'O-17','OBSERVACION'),
   (UUID_TO_BIN(UUID()),'O-18','OBSERVACION');
+
+ INSERT INTO Symptom (name) VALUES
+('Convulsiones'),
+('Trauma de Craneo'),
+('Dolor toracico / dorsal'),
+('Dolor abdominal / lumbar'),
+('Cefalea'),
+('Deficit motor'),
+('Inestabilidad en la marcha'),
+('Disartria - afasia'),
+('Perdida aguda de vision'),
+('Disnea'),
+('Sincope'),
+('Mareos'),
+('Edema'),
+('Sangrado digestivo'),
+('Otro dolor en curso'),
+('Alteracion de laboratorio'),
+('Sobredosis de farmacos / Ingesta de toxicos'),
+('Fiebre'),
+('Infeccion');
