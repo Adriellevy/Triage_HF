@@ -23,15 +23,10 @@ function Settings() {
   }
 
   return (
-    <div className='h-screen p-4 list-item'>
+    <div className='h-screen p-4 list-item mt-24'>
       <div className='p-2'>
         <Button wfull color='green' onClick={handleBoxSettingsClick}>
           {t('BoxSettings')}
-        </Button>
-      </div>
-      <div className='p-2' onClick={handleUsersSettingsClick}>
-        <Button wfull color='green'>
-          {t('UsersSettings')}
         </Button>
       </div>
       <div className='p-2' onClick={handleUsersSettingsClick}>
