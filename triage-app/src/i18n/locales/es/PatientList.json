@@ -13,5 +13,8 @@
   "LastNurseNameLabel": "Enfermero asignado",
   "NewNurseNameLabel": "Enfermero entrante",
   "PatientStatusLabel": "Estado",
-  "PatientActionsLabel": "Acciones"
+  "PatientActionsLabel": "Acciones",
+  "Observations": "Observaciones",
+  "Procedures": "Procedimientos",
+  "Record": "Antecedentes"
 }

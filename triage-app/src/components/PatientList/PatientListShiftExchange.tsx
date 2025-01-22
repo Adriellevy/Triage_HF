@@ -24,56 +24,54 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
       field: 'patient_name',
       sortable: true,
       showOnLargeScreen: true,
-      mode: 'all'
-    },
-    {
-      label: t('TriageLevelLabel'),
-      field: 'patient_triage_level',
-      sortable: true,
-      showOnLargeScreen: true,
-      mode: 'all'
     },
     {
       label: t('LastDoctorNameLabel'),
       field: 'last_doctor_name',
       sortable: false,
       showOnLargeScreen: false,
-      mode: 'doctor'
-    },
-    {
-      label: t('NewDoctorNameLabel'),
-      field: 'doctor_name',
-      sortable: false,
-      showOnLargeScreen: false,
-      mode: 'doctor'
     },
     {
       label: t('LastNurseNameLabel'),
       field: 'last_nurse_name',
       sortable: false,
       showOnLargeScreen: false,
-      mode: 'nurse'
+    },
+    {
+      label: t('NewDoctorNameLabel'),
+      field: 'doctor_name',
+      sortable: false,
+      showOnLargeScreen: false,
     },
     {
       label: t('NewNurseNameLabel'),
       field: 'nurse_name',
       sortable: false,
       showOnLargeScreen: false,
-      mode: 'nurse'
     },
     {
-      label: t('PatientStatusLabel'),
-      field: 'patient_status',
-      sortable: true,
+      label: t('Observations'),
+      field: 'observation',
+      sortable: false,
       showOnLargeScreen: true,
-      mode: 'all'
+    },
+    {
+      label: t('Procedures'),
+      field: 'procedures',
+      sortable: false,
+      showOnLargeScreen: true,
+    },
+    {
+      label: t('Record'),
+      field: 'record',
+      sortable: false,
+      showOnLargeScreen: true,
     },
     {
       label: t('PatientActionsLabel'),
       field: 'actions',
       sortable: false,
       showOnLargeScreen: true,
-      mode: 'all'
     }
   ]
 
@@ -118,7 +116,6 @@ function PatientsListShiftExchange({ patients, mode, lastDoctor, lastNurse }: Pr
           <thead>
             <tr className='bg-blue-800 text-white'>
               {columns
-                .filter((column) => column.mode === 'all' || column.mode === mode)
                 .map((column) => {
                   const shouldHideColumn =
                     column.field === 'patient_status' ||

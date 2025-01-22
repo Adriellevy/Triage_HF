@@ -23,12 +23,12 @@ interface PropsPatientItem {
 function PatientItemShiftExchange({
   patient,
   index,
-  mode,
-  lastDoctor,
-  lastNurse,
 }: PropsPatientItem) {
   const [doctorOptions, setDoctorOptions] = useState([]);
   const [nurseOptions, setNurseOptions] = useState([]);
+  const [observations, setObservations] = useState('')
+  const [procedures, setProcedures] = useState('')
+  const [record, setRecord] = useState('')
   const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null);
   const dispatch = useDispatch();
 
@@ -51,18 +51,6 @@ function PatientItemShiftExchange({
 
   const isOdd = index % 2 !== 0;
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100';
-
-  const TriageLevels = [
-    { _id: 1, name: 'I', color: '153, 153, 153' },
-    { _id: 2, name: 'II', color: '255,51,0' },
-    { _id: 3, name: 'III', color: '255,255,102' },
-    { _id: 4, name: 'IV', color: '105,168,79' },
-  ];
-
-  const getBackgroundColor = (id: number) => {
-    const triageLevel = TriageLevels.find((level) => level._id === id);
-    return triageLevel ? `rgb(${triageLevel.color}, 0.6)` : 'transparent';
-  };
 
   const handleSelection = (
     patient_id: string, // Asegúrate de pasar `patient_id` como argumento
@@ -109,11 +97,11 @@ function PatientItemShiftExchange({
         }));
 
         const filteredDoctors = formattedDoctors.filter(
-          (doctor) => doctor.value !== lastDoctor?.value
+          (doctor) => doctor.value !== doctor_name?.value
         );
 
         const filteredNurses = formattedNurses.filter(
-          (nurse) => nurse.value !== lastNurse?.value
+          (nurse) => nurse.value !== doctor_name?.value
         );
 
         setDoctorOptions(filteredDoctors);
@@ -124,12 +112,24 @@ function PatientItemShiftExchange({
     };
 
     fetchOptions();
-  }, [lastDoctor, lastNurse]);
+  }, []);
 
   const handleFastDischarge = (id: string) => {
     console.log('fast Discharge in process ' + id);
     setPatientToDischarge(patient);
   };
+
+  const handleObservationChange = (value: string) => {
+    setObservations(value); 
+  };
+
+  const handleProceduresChange = (value: string) => {
+    setProcedures(value); 
+  };
+  const handleRecordChange = (value: string) => {
+    setRecord(value); 
+  };
+  
 
   const handleConfirmFastDischarge = () => {
     console.log('Alta confirmada');
@@ -145,33 +145,23 @@ function PatientItemShiftExchange({
   return (
     <tr className={bgClass}>
       <td className="border text-sm overflow-hidden text-center">{patient_name}</td>
-      <td
-        className="border md:p-2 text-center"
-        style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
-      >
-        {patient_triage_level}
+      <td className="border p-2  text-center hidden lg:table-cell ">{doctor_name}</td>
+      <td className="border p-2 table-cell text-center hidden lg:table-cell">{nurse_name}</td>
+      <td className="border p-4 table-cell text-center">
+        <Select
+          className="w-full text-black"
+          options={doctorOptions}
+          placeholder="Selec. doctor/a"
+          closeMenuOnSelect={true}
+          value={selectedDoctors[patient_id]?.newValue 
+            ? doctorOptions.find(option => option.value === selectedDoctors[patient_id]?.newValue)
+            : null}
+          onChange={(selectedOption) =>
+            handleSelection(patient_id, selectedOption, 'doctor', doctor_name, nurse_name)
+          }
+        />
       </td>
-      {mode === 'doctor' ? (
-  <>
-    <td className="border p-2  text-center hidden lg:table-cell ">{doctor_name}</td>
-    <td className="border p-4 table-cell text-center">
-      <Select
-        className="w-full text-black"
-        options={doctorOptions}
-        placeholder="Selec. doctor/a"
-        closeMenuOnSelect={true}
-        value={selectedDoctors[patient_id]?.newValue 
-          ? doctorOptions.find(option => option.value === selectedDoctors[patient_id]?.newValue)
-          : null}
-        onChange={(selectedOption) =>
-          handleSelection(patient_id, selectedOption, 'doctor', lastDoctor, lastNurse)
-        }
-      />
-    </td>
-  </>
-) : (
-  <>
-    <td className="border p-2 table-cell text-center hidden lg:table-cell">{nurse_name}</td>
+    
     <td className="border p-4 table-cell text-center">
       <Select
         className="w-full text-black"
@@ -182,13 +172,37 @@ function PatientItemShiftExchange({
           ? nurseOptions.find(option => option.value === selectedNurses[patient_id]?.newValue)
           : null}
         onChange={(selectedOption) =>
-          handleSelection(patient_id, selectedOption, 'nurse', lastDoctor, lastNurse)
+          handleSelection(patient_id, selectedOption, 'nurse', doctor_name, nurse_name)
         }
       />
     </td>
-  </>
-)}
-      <td className="border text-sm text-center hidden lg:table-cell">{patient_status}</td>
+      <td className=" bg-white border text-sm text-center hidden lg:table-cell">
+      <input
+        type="text"
+        placeholder='Escribe...'
+        className="py-8 ps-2  text-start"
+        value={observations} 
+        onChange={(e) => handleObservationChange( e.target.value)} 
+      />
+      </td>
+      <td className=" bg-white border text-sm text-center hidden lg:table-cell">
+      <input
+        type="text"
+        placeholder='Escribe...'
+        className="py-8 ps-2  text-start"
+        value={procedures} 
+        onChange={(e) => handleProceduresChange( e.target.value)} 
+      />
+      </td>
+      <td className=" bg-white border text-sm text-center hidden lg:table-cell">
+      <input
+        type="text"
+        placeholder='Escribe...'
+        className="py-8 ps-2  text-start"
+        value={record} 
+        onChange={(e) => handleRecordChange( e.target.value)} 
+      />
+      </td>
       <td className="border p-2">
         <div className="flex gap-2">
           {patient_status !== 'ALTA' ? (
