@@ -54,5 +54,12 @@ export interface PatientShiftChange {
 
 export interface ReportShiftChange{
   patient_id:string
-
+  patient_name:string
+  doctor_outgoing:string
+  doctor_incoming:string
+  nurse_outgoing:string
+  nurse_incoming:string
+  observations:string
+  records:string
+  procedures:string
 }

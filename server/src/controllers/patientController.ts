@@ -20,7 +20,7 @@ import {
   encryptPatientData,
   encryptstring
 } from '../helpers/handleEncription-Decription';
-import { Patient, PatientShiftChange } from '../interface/patient';
+import { Patient, PatientShiftChange, ReportShiftChange } from '../interface/patient';
 import { HistoryModel } from '../models/mysql/historyModel';
 import { ReportHistoryPerPatient } from '../interface/history';
 import puppeteer from 'puppeteer';
@@ -226,7 +226,7 @@ export class PatientController {
       for (const p of data) {
         await PatientsModel.updateObservationRecordProcedure(p.patientID,p.observations,p.records,p.procedures);
         const patientAux = patients.find((pat) => pat.patient_id === p.patientID);
-        console.log('paciente auxiliar:', patientAux);
+
         if(p.procedures){
           await HistoryModel.create({
             patient_id: p.patientID,
@@ -292,36 +292,25 @@ export class PatientController {
 
       const patientIds = historyToReport.map((h) => h.patient_id);
       patients = await PatientsModel.getPatientsByIds(patientIds);
-      const patientMap = new Map(
-        patients.map((patient) => {
-          return [patient.patient_id, patient];
-        })
-      );
 
-      const historyMap = new Map<string, ReportHistoryPerPatient>();
-      for (const h of historyToReport) {
-        const patient = patientMap.get(h.patient_id);
-        h.column_name = h.patient_updated_column === 'nurse_id' ? 'enfermero' : 'doctor';
-        h.new_value_name = h.column_name == 'doctor' ? patient?.doctor_name : patient?.nurse_name;
-        h.old_value_name =
-          h.column_name == 'doctor'
-            ? allPatiensToUpdate.find((pat) => pat.patient_id === h.patient_id)?.doctor_name
-            : allPatiensToUpdate.find((pat) => pat.patient_id === h.patient_id)?.nurse_name;
-
-        if (!patient) continue;
-        if (!historyMap.get(patient.patient_id)) {
-          historyMap.set(patient.patient_id, {
-            patient_id: patient.patient_id,
-            patient_name: decryptPatientData(patient).patient_name,
-            history: []
-          });
+      const patientsToReport:ReportShiftChange[] = patients.map((p) => {
+        return {
+          patient_name: decryptPatientData(p).patient_name,
+          patient_id: p.patient_id,
+          doctor_incoming: p.doctor_name || "",
+          doctor_outgoing: allPatiensToUpdate.find((pat) => pat.patient_id === p.patient_id)?.doctor_name || "",
+          nurse_incoming: p.nurse_name || "",
+          nurse_outgoing: allPatiensToUpdate.find((pat) => pat.patient_id === p.patient_id)?.nurse_name || "",
+          observations: p.patient_observations || "",
+          records: p.patient_records || "",
+          procedures: p.patient_procedures || ""
         }
-        historyMap.get(patient.patient_id)!.history.push(h);
-      }
+      });
+
       const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
         title: 'Mi PDF',
         content: 'Este es el contenido del PDF generado',
-        patients: historyMap
+        patients: patientsToReport
       });
 
       const browser = await puppeteer.launch();
@@ -330,7 +319,8 @@ export class PatientController {
 
       const pdfBuffer = await page.pdf({
         format: 'A4',
-        printBackground: true
+        printBackground: true,
+        landscape: true
       });
       await browser.close();
       const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
