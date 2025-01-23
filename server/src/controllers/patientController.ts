@@ -222,7 +222,44 @@ export class PatientController {
     const data: PatientShiftChange[] = req.body.patients;
     try {
       const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map((p) => p.patientID));
+      let patients = await PatientsModel.getPatientsByIds(data.map((p) => p.patientID));
       for (const p of data) {
+        await PatientsModel.updateObservationRecordProcedure(p.patientID,p.observations,p.records,p.procedures);
+        const patientAux = patients.find((pat) => pat.patient_id === p.patientID);
+        console.log('paciente auxiliar:', patientAux);
+        if(p.procedures){
+          await HistoryModel.create({
+            patient_id: p.patientID,
+            patient_new_value: p.procedures,
+            patient_old_value: patientAux?.patient_procedures ? patientAux?.patient_procedures : 'Sin procedimientos',
+            patient_updated_column: 'procedures',
+            patient_updated_date: new Date(),
+            user_id: req.user.id
+          })
+        }
+
+        if(p.records){
+          await HistoryModel.create({
+            patient_id: p.patientID,
+            patient_new_value: p.records,
+            patient_old_value: patientAux?.patient_records ? patientAux?.patient_records : 'Sin antecedentes',
+            patient_updated_column: 'records',
+            patient_updated_date: new Date(),
+            user_id: req.user.id
+          })
+        }
+
+        if(p.observations){
+          await HistoryModel.create({
+            patient_id: p.patientID,
+            patient_new_value: p.observations,
+            patient_old_value: patientAux?.patient_observations ? patientAux?.patient_observations : 'Sin observaciones',
+            patient_updated_column: 'observations',
+            patient_updated_date: new Date(),
+            user_id: req.user.id
+          })
+        }
+
         if (p.role === 'nurse') {
           await PatientsModel.updateNurseOfPatient(p.patientID, p.newNurseID);
           await HistoryModel.create({
@@ -254,7 +291,7 @@ export class PatientController {
       const historyToReport = await HistoryModel.findAllTodayToReport();
 
       const patientIds = historyToReport.map((h) => h.patient_id);
-      const patients = await PatientsModel.getPatientsByIds(patientIds);
+      patients = await PatientsModel.getPatientsByIds(patientIds);
       const patientMap = new Map(
         patients.map((patient) => {
           return [patient.patient_id, patient];

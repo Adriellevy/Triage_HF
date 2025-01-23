@@ -780,7 +780,10 @@ export class PatientsModel {
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name,
         BIN_TO_UUID(doctor_id) AS doctor_id,
-        BIN_TO_UUID(nurse_id) AS nurse_id
+        BIN_TO_UUID(nurse_id) AS nurse_id,
+        patient_observations,
+        patient_records,
+        patient_procedures
         FROM Patient
         LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'
@@ -794,5 +797,22 @@ export class PatientsModel {
     return patients; // Retorna todos los pacientes encontrados
   }
  
+
+  static async updateObservationRecordProcedure(patient_id:string,obs:string,rec:string,proc:string):Promise<any>{
+    try{
+      const query = `UPDATE Patient SET
+        patient_observations = ?,
+        patient_records = ?,
+        patient_procedures = ?
+        WHERE patient_id = UUID_TO_BIN(?);`;
+      
+      const conn = await connect();
+      await conn.query(query,[obs,rec,proc,patient_id]);
+      return patient_id;
+    }catch(err){
+      console.log(`Error al actualizar observaciones, antecedentes y procedimientos del paciente: ${err.message}`);
+      throw err;
+    }
+  }
   
 }

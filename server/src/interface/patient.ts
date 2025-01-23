@@ -23,6 +23,9 @@ export interface Patient {
   nurse_id: string;
   doctor_name?: string;
   nurse_name?: string;
+  patient_observations?: string;
+  patient_records?: string;
+  patient_procedures?: string;
 }
 
 export interface PatientHistoryItem {
@@ -44,6 +47,9 @@ export interface PatientShiftChange {
   newDoctorID: string;
   lastNurseID: string;
   newNurseID: string;
+  observations: string;
+  records: string;
+  procedures:string;
 }
 
 export interface ReportShiftChange{
