@@ -73,18 +73,18 @@ function SymptomSettings() {
     fetchSymptoms()
   }, [])
 
-  useEffect(() => {
-    if (socket) {
-      socket.on(SocketEvent.UPDATE, (data) => {
-        if (data.message === UpdateEvent.SYMPTOM_UPDATE) {
-          fetchSymptoms()
-        }
-      })
-      return () => {
-        socket.off(SocketEvent.UPDATE)
-      }
-    }
-  }, [socket])
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.on(SocketEvent.UPDATE, (data) => {
+  //       if (data.message === UpdateEvent.SYMPTOM_UPDATE) {
+  //         fetchSymptoms()
+  //       }
+  //     })
+  //     return () => {
+  //       socket.off(SocketEvent.UPDATE)
+  //     }
+  //   }
+  // }, [socket])
 
   return (
     <div className='bg-white pb-4 mt-20 ml-2 md:mt-0 md:ml-0'>
