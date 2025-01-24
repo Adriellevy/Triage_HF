@@ -12,5 +12,8 @@
   "PatientStatusLabel": "Estado del Paciente",
   "QRLabel": "Escanear código QR para móvil",
   "DischargeButton": "Dar de Alta",
-  "BackButton": "Volver"
+  "BackButton": "Volver",
+  "PatientObservationsLabel": "Observaciones del paciente",
+  "PatientProceduresLabel": "Procedimientos del paciente",
+  "PatientRecordsLabel": "Antecedentes del paciente"
 }

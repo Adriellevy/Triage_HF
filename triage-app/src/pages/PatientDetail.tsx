@@ -56,7 +56,11 @@ function PatientDetail() {
     { label: t('PatientBoxCodeLabel'), key: 'box_code', format: null },
     { label: t('DoctorNameLabel'), key: 'doctor_name', format: null },
     { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
-    { label: t('PatientStatusLabel'), key: 'patient_status', format: null }
+    { label: t('PatientStatusLabel'), key: 'patient_status', format: null },
+
+    { label: t('PatientObservationsLabel'), key: 'observations', format: null },
+    { label: t('PatientProceduresLabel'), key: 'procedures', format: null },
+    { label: t('PatientRecordsLabel'), key: 'records', format: null }
   ]
 
   //------------------------------------------- Handle State Patient change ---------------------------------------------------------------

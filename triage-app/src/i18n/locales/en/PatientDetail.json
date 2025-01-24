@@ -12,5 +12,8 @@
   "PatientStatusLabel": "Patient Status",
   "QRLabel": "Scan QR Code for mobile",
   "DischargeButton": "Discharge",
-  "BackButton": "Back"
+  "BackButton": "Back",
+  "PatientObservationsLabel": "Patient Observations",
+  "PatientProceduresLabel": "Patient Procedures",
+  "PatientRecordsLabel": "Patient History"
 }

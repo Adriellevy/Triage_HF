@@ -33,6 +33,9 @@ export interface Patient {
   doctor_name: string
   nurse_name: string
   nurse_coment?: string
+  observations?: string
+  procedures?: string
+  records?: string
   [Symbol.iterator](): IterableIterator<Patient>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any // Add this line
@@ -57,6 +60,9 @@ export interface PatientData {
   nurse_coment?: string
   doctor_id?: string
   nurse_id?: string
+  observations?: string
+  procedures?: string
+  records?: string
 }
 
 export type NullablePatient = Patient | null
@@ -78,6 +84,9 @@ export interface PartialPatient {
   nurse_name?: string
   patient_healthcare_system?: string
   nurse_coment?: string
+  observations?: string
+  procedures?: string
+  records?: string
 }
 
 export interface PatientHistoryItemType {
