@@ -15,5 +15,7 @@
   "BackButton": "Back",
   "PatientObservationsLabel": "Patient Observations",
   "PatientProceduresLabel": "Patient Procedures",
-  "PatientRecordsLabel": "Patient History"
+  "PatientRecordsLabel": "Patient History",
+  "NoShiftChangesMessage": "This patient was not part of any shift change",
+  "NoDataLabel": "No data available"
 }

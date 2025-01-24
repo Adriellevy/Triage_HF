@@ -110,8 +110,8 @@ const ShiftExchangeModal = ({ onClose }) => {
 
   return (
     <div className='fixed top-0  left-0 h-full w-full flex items-start justify-center bg-black bg-opacity-35 z-50 '>
-      <div className=' flex  flex-col bg-blue-900 rounded-lg mt-10 ml-56  max-w-2xl md:max-w-screen-2xl w-full z-60'>
-        <div className='flex mx-2 my-4 justify-between'>
+      <div className=' flex  flex-col bg-blue-900 rounded-lg mt-10 ml-14  max-w-2xl md:max-w-screen-2xl w-full z-60'>
+        <div className='flex  my-4 justify-between'>
           <h3 className='text-2xl font-bold mx-2 my-2 mr-20'>Cambio de turno</h3>
           <Button color='grey' onClick={onClose} className='text-sm py-0 px-2 font-bold '>
             Cancelar
