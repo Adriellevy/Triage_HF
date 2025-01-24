@@ -8,7 +8,14 @@ import Select from 'react-select'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/redux/store/store.ts'
-import { setDoctorSelections, setNurseSelections } from '@/redux/slices/shiftSelectionsSlice.ts'
+import {
+  setDoctorSelections,
+  setNurseSelections,
+  setRXObservations,
+  setRXProcedures,
+  setRXRecord
+} from '@/redux/slices/shiftSelectionsSlice.ts'
+import { PartialUser } from '@/interfaces/User'
 
 interface PropsPatientItem {
   patient: Patient
@@ -32,13 +39,19 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
   const selectedDoctors = useSelector((state: RootState) => state.shiftSelections.doctorSelections)
   const selectedNurses = useSelector((state: RootState) => state.shiftSelections.nurseSelections)
 
+  //TODO: ver de borrar estos state para evitar hacer 3 request cuando puede ser solo 1
+  const [DoctorListForId, setDoctorListForId] = useState<PartialUser[]>([])
+  const [NurseListForId, setNurseListForId] = useState<PartialUser[]>([])
+
   const {
     patient_id,
     patient_name,
     patient_triage_level,
     patient_status,
     doctor_name,
-    nurse_name
+    nurse_name,
+    doctor_id,
+    nurse_id
   } = patient
 
   const isOdd = index % 2 !== 0
@@ -48,15 +61,24 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
     patient_id: string, // Asegúrate de pasar `patient_id` como argumento
     selectedOption: { value: string; label: string } | null,
     type: 'doctor' | 'nurse',
-    lastDoctor?: string,
-    lastNurse?: string
+    lastDoctor_name?: string,
+    lastNurse_name?: string
   ) => {
+    console.log('selected option:', selectedOption)
+
+    console.log('patient data item', patient)
+    //obtener el id del doctor y enfermero
+    const lastDoctor_id = DoctorListForId.find(
+      (doctor) => doctor.user_name === lastDoctor_name
+    )?.user_id
+    const lastNurse_id = NurseListForId.find((nurse) => nurse.user_name === lastNurse_name)?.user_id
+
     if (selectedOption) {
       if (type === 'doctor') {
         dispatch(
           setDoctorSelections({
             patient_id,
-            previousValue: lastDoctor,
+            previousValue: lastDoctor_id,
             newValue: selectedOption.value
           })
         )
@@ -64,7 +86,7 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
         dispatch(
           setNurseSelections({
             patient_id,
-            previousValue: lastNurse,
+            previousValue: lastNurse_id,
             newValue: selectedOption.value
           })
         )
@@ -77,6 +99,8 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
       try {
         const [doctors, nurses] = await Promise.all([getAllDoctors(), getAllNurses()])
 
+        setDoctorListForId(doctors)
+        setNurseListForId(nurses)
         const formattedDoctors = doctors.map((doctor) => ({
           value: doctor.user_id,
           label: doctor.user_name
@@ -106,17 +130,38 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
     setPatientToDischarge(patient)
   }
 
-  const handleObservationChange = (value: string) => {
+  const handleObservationChange = (patient_id: string, value: string) => {
     setObservations(value)
+    dispatch(
+      setRXObservations({
+        patient_id,
+        previousValue: '',
+        newValue: value
+      })
+    )
   }
 
-  const handleProceduresChange = (value: string) => {
+  const handleProceduresChange = (patient_id: string, value: string) => {
     setProcedures(value)
-  }
-  const handleRecordChange = (value: string) => {
-    setRecord(value)
+    dispatch(
+      setRXProcedures({
+        patient_id,
+        previousValue: '',
+        newValue: value
+      })
+    )
   }
 
+  const handleRecordChange = (patient_id: string, value: string) => {
+    setRecord(value)
+    dispatch(
+      setRXRecord({
+        patient_id,
+        previousValue: '',
+        newValue: value
+      })
+    )
+  }
   const handleConfirmFastDischarge = () => {
     console.log('Alta confirmada')
     setPatientToDischarge(null)
@@ -174,7 +219,7 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
           placeholder='Escribe...'
           className='py-8 ps-2  text-start'
           value={observations}
-          onChange={(e) => handleObservationChange(e.target.value)}
+          onChange={(e) => handleObservationChange(patient_id, e.target.value)}
         />
       </td>
       <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
@@ -183,7 +228,7 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
           placeholder='Escribe...'
           className='py-8 ps-2  text-start'
           value={procedures}
-          onChange={(e) => handleProceduresChange(e.target.value)}
+          onChange={(e) => handleProceduresChange(patient_id, e.target.value)}
         />
       </td>
       <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
@@ -192,7 +237,7 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
           placeholder='Escribe...'
           className='py-8 ps-2  text-start'
           value={record}
-          onChange={(e) => handleRecordChange(e.target.value)}
+          onChange={(e) => handleRecordChange(patient_id, e.target.value)}
         />
       </td>
       <td className='border p-2'>
