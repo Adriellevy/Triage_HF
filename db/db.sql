@@ -65,6 +65,36 @@ CREATE TABLE PatientUpdateHistory (
   FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
+CREATE TABLE Shift(
+  id INT NOT NULL AUTO_INCREMENT,
+  shift_day DATE NOT NULL,
+  shift_start_time TINYINT NOT NULL,
+  shift_end_time TINYINT NOT NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE ShiftChange(
+  id INT NOT NULL AUTO_INCREMENT,
+  shift_id INT NOT NULL,
+  user_id BINARY(16) NOT NULL,
+  last_doctor_id BINARY(16) NOT NULL,
+  new_doctor_id BINARY(16) NOT NULL,
+  last_nurse_id BINARY(16) NOT NULL,
+  new_nurse_id BINARY(16) NOT NULL,
+  shift_change_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  patient_id BINARY(16) NOT NULL,
+  patient_observations VARCHAR(500) NULL,
+  patient_records VARCHAR(500) NULL,
+  patient_procedures VARCHAR(500) NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
+  FOREIGN KEY (shift_id) REFERENCES Shift(id),
+  FOREIGN KEY (user_id) REFERENCES User(user_id),
+  FOREIGN KEY (last_doctor_id) REFERENCES User(user_id),
+  FOREIGN KEY (new_doctor_id) REFERENCES User(user_id),
+  FOREIGN KEY (last_nurse_id) REFERENCES User(user_id),
+  FOREIGN KEY (new_nurse_id) REFERENCES User(user_id)
+);
+
 -- Insertar datos de ejemplo en la tabla Users
 INSERT INTO Users (user_id, user_name, user_email, user_password, user_type)
 VALUES
@@ -88,3 +118,16 @@ VALUES
   (UUID_TO_BIN(UUID()),'10','INTERNACION'),
   (UUID_TO_BIN(UUID()),'11','INTERNACION'),
   (UUID_TO_BIN(UUID()),'12','INTERNACION');
+
+
+INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
+VALUES (CURDATE(), 0, 6);
+
+INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
+VALUES (CURDATE(), 6, 12);
+
+INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
+VALUES (CURDATE(), 12, 18);
+
+INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
+VALUES (CURDATE(), 18, 24);

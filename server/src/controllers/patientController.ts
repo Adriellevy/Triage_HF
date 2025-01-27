@@ -25,6 +25,8 @@ import { HistoryModel } from '../models/mysql/historyModel';
 import { ReportHistoryPerPatient } from '../interface/history';
 import puppeteer from 'puppeteer';
 import { UserModel } from '../models/mysql/userModel';
+import { ShiftChangeModel } from '../models/mysql/shiftChangeModel';
+import { ShiftModel } from '../models/mysql/shiftModel';
 // import { ComparePatientItems } from '../helpers/patienthelper';
 export class PatientController {
   // static async getAllPatients(req: Request, res: Response): Promise<Response> {
@@ -220,93 +222,76 @@ export class PatientController {
 
   static async shiftChange(req: any, res: Response) {
     const data: PatientShiftChange[] = req.body.patients;
-    try {
-      const allPatiensToUpdate = await PatientsModel.getPatientsByIds(data.map((p) => p.patientID));
-      let patients = await PatientsModel.getPatientsByIds(data.map((p) => p.patientID));
-      for (const p of data) {
-        await PatientsModel.updateObservationRecordProcedure(p.patientID,p.observations,p.records,p.procedures);
-        const patientAux = patients.find((pat) => pat.patient_id === p.patientID);
+    
+    try{
+      if(!data){
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+      const now = new Date();
+      const shift = await ShiftModel.getShiftOfNow(now);
 
-        if(p.procedures){
-          await HistoryModel.create({
-            patient_id: p.patientID,
-            patient_new_value: p.procedures,
-            patient_old_value: patientAux?.patient_procedures ? patientAux?.patient_procedures : 'Sin procedimientos',
-            patient_updated_column: 'procedures',
-            patient_updated_date: new Date(),
-            user_id: req.user.id
-          })
-        }
+      if(shift.length === 0){
+        return res.status(404).json({ message: 'Shift not found' });
+      }
+      const shiftID = shift.find((s)=> now.getHours() >= s.shift_start_time && now.getHours() <= s.shift_end_time)!.id;
 
-        if(p.records){
-          await HistoryModel.create({
-            patient_id: p.patientID,
-            patient_new_value: p.records,
-            patient_old_value: patientAux?.patient_records ? patientAux?.patient_records : 'Sin antecedentes',
-            patient_updated_column: 'records',
-            patient_updated_date: new Date(),
-            user_id: req.user.id
-          })
-        }
+      const allPatients = await PatientsModel.getPatientsByIds(data.map((patient) => patient.patientID));
 
-        if(p.observations){
-          await HistoryModel.create({
-            patient_id: p.patientID,
-            patient_new_value: p.observations,
-            patient_old_value: patientAux?.patient_observations ? patientAux?.patient_observations : 'Sin observaciones',
-            patient_updated_column: 'observations',
-            patient_updated_date: new Date(),
-            user_id: req.user.id
-          })
-        }
+      for(const p of data){
+        const patient = allPatients.find((patient) => patient.patient_id === p.patientID);
+        if(p.lastDoctorID && p.lastDoctorID != p.newDoctorID){
+          const doctor = await UserModel.getUserById(p.newDoctorID);
+          if(!doctor){
+            return res.status(404).json({ message: 'Doctor not found' });
+          }
 
-        if (p.role === 'nurse') {
-          await PatientsModel.updateNurseOfPatient(p.patientID, p.newNurseID);
-          await HistoryModel.create({
-            patient_id: p.patientID,
-            patient_new_value: p.newNurseID,
-            patient_old_value: p.lastNurseID,
-            patient_updated_column: 'nurse_id',
-            patient_updated_date: new Date(),
-            user_id: req.user.id
-          });
-        }
-        if (p.role === 'doctor') {
           await PatientsModel.updateDoctorOfPatient(p.patientID, p.newDoctorID);
           await HistoryModel.create({
-            patient_id: p.patientID,
-            patient_new_value: p.newDoctorID,
-            patient_old_value: p.lastDoctorID,
             patient_updated_column: 'doctor_id',
-            patient_updated_date: new Date(),
-            user_id: req.user.id
-          });
+            patient_old_value: patient?.doctor_id || p.lastDoctorID,
+            patient_new_value: p.newDoctorID,
+            patient_id: p.patientID,
+            user_id: req.user.id,
+            patient_updated_date: new Date()
+          })
         }
+
+        if(p.lastNurseID && p.lastNurseID != p.newNurseID){
+          const nurse = await UserModel.getUserById(p.newNurseID);
+          if(!nurse){
+            return res.status(404).json({ message: 'Nurse not found' });
+          }
+
+          await PatientsModel.updateNurseOfPatient(p.patientID, p.newNurseID);
+          await HistoryModel.create({
+            patient_updated_column: 'nurse_id',
+            patient_old_value: patient?.nurse_id || p.lastNurseID,
+            patient_new_value: p.newNurseID,
+            patient_id: p.patientID,
+            user_id: req.user.id,
+            patient_updated_date: new Date()
+          })
+        }
+
+        await ShiftChangeModel.create(
+          {shift_id:shiftID,last_doctor_id: p.lastDoctorID, new_doctor_id: p.newDoctorID, last_nurse_id: p.lastNurseID, new_nurse_id: p.newNurseID, patient_id: p.patientID, patient_observations: p.observations, patient_records: p.records, patient_procedures: p.procedures, user_id: req.user.id}
+        )
       }
-
-      if (!req.body.report || req.body.report === false) {
-        SendShiftExchangeNotifications(req);
-        return res.status(201).json({ message: 'Shift change success' });
-      }
-      const historyToReport = await HistoryModel.findAllTodayToReport();
-
-      const patientIds = historyToReport.map((h) => h.patient_id);
-      patients = await PatientsModel.getPatientsByIds(patientIds);
-
-      const patientsToReport:ReportShiftChange[] = patients.map((p) => {
+      const patientsUpdated = await PatientsModel.getPatientsByIds(data.map((patient) => patient.patientID));
+      const patientsToReport:ReportShiftChange[] = patientsUpdated.map((p) => {
+        const shiftChange = data.find((patient) => patient.patientID === p.patient_id);
         return {
           patient_name: decryptPatientData(p).patient_name,
           patient_id: p.patient_id,
           doctor_incoming: p.doctor_name || "",
-          doctor_outgoing: allPatiensToUpdate.find((pat) => pat.patient_id === p.patient_id)?.doctor_name || "",
+          doctor_outgoing: allPatients.find((pat) => pat.patient_id === p.patient_id)?.doctor_name || "",
           nurse_incoming: p.nurse_name || "",
-          nurse_outgoing: allPatiensToUpdate.find((pat) => pat.patient_id === p.patient_id)?.nurse_name || "",
-          observations: p.patient_observations || "",
-          records: p.patient_records || "",
-          procedures: p.patient_procedures || ""
+          nurse_outgoing: allPatients.find((pat) => pat.patient_id === p.patient_id)?.nurse_name || "",
+          observations: shiftChange?.observations || "",
+          records: shiftChange?.records|| "",
+          procedures: shiftChange?.procedures || ""
         }
       });
-
       const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
         title: 'Mi PDF',
         content: 'Este es el contenido del PDF generado',
@@ -334,9 +319,9 @@ export class PatientController {
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
       });
-      await HistoryModel.updateReported(historyToReport.map((h) => h.updated_id));
-    } catch (err) {
-      return res.status(500).json(err.message);
+    }catch(error){
+      console.log('Error al aplicar cambios de turno:', error);
+      return res.status(500).json({ message: error.message });
     }
   }
 

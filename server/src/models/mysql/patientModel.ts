@@ -780,10 +780,7 @@ export class PatientsModel {
         Doctor.user_name AS doctor_name,
         Nurse.user_name AS nurse_name,
         BIN_TO_UUID(doctor_id) AS doctor_id,
-        BIN_TO_UUID(nurse_id) AS nurse_id,
-        patient_observations,
-        patient_records,
-        patient_procedures
+        BIN_TO_UUID(nurse_id) AS nurse_id
         FROM Patient
         LEFT JOIN User AS Doctor ON Patient.doctor_id = Doctor.user_id AND Doctor.user_type = 'DOCTOR'
         LEFT JOIN User AS Nurse ON Patient.nurse_id = Nurse.user_id AND Nurse.user_type = 'NURSE'

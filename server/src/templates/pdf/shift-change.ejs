@@ -38,7 +38,9 @@
                     <tr>
                         <th>Paciente</th>
                         <th>Doctor saliente</th>
+                        <th>Doctor entrante</th>
                         <th>Enfermero saliente</th>
+                        <th>Enfermero entrante</th>
                         <th>Observaciones</th>
                         <th>Procedimientos</th>
                         <th>Antecedentes</th>
@@ -50,7 +52,9 @@
                         <tr>
                             <td><%= patient.patient_name %></td>
                             <td><%= patient.doctor_outgoing %></td>
+                            <td><%= patient.doctor_incoming %></td>
                             <td><%= patient.nurse_outgoing %></td>
+                            <td><%= patient.nurse_incoming %></td>
                             <td><%= patient.observations %></td>
                             <td><%= patient.procedures %></td>
                             <td><%= patient.records %></td>

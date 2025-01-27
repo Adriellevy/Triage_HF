@@ -42,7 +42,6 @@ export interface PatientHistoryItem {
 
 export interface PatientShiftChange {
   patientID: string;
-  role: string;
   lastDoctorID: string;
   newDoctorID: string;
   lastNurseID: string;
