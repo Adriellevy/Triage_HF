@@ -13,10 +13,17 @@ import TriageLevelEditor from '@/components/TriageSettingsComponents/TriageLevel
 import { useTranslation } from 'react-i18next'
 import { SocketContext } from '@/contex/SocketContext'
 import { useAuth } from '@/contex/AuthContext'
+import {
+  createTriage,
+  deleteTriage,
+  getAllTriages,
+  updateTriage
+} from '@/services/triageLevelsService'
 
 function SymptomSettings() {
   const [isLoading, setIsLoading] = useState(false)
   const [symptomsData, setSymptomsData] = useState([])
+  const [triageLevels, setTriageLevels] = useState([])
 
   const [isSymptomsExpanded, setIsSymptomsExpanded] = useState(true)
   const [isTriageExpanded, setIsTriageExpanded] = useState(false)
@@ -78,16 +85,71 @@ function SymptomSettings() {
     }
   }
 
+  // Fetch triage levels
+  const fetchTriageLevels = async () => {
+    try {
+      setIsLoading(true)
+      const { success, data } = await getAllTriages()
+      if (success) {
+        setTriageLevels(data || [])
+      }
+      setIsLoading(false)
+    } catch (error) {
+      if (error.message === 'Cerrar sesion') {
+        logout()
+      } else {
+        console.error('Error al obtener niveles de triage:', error)
+      }
+    }
+  }
+
+  const handleAddTriageLevel = async (level, color) => {
+    try {
+      const { success, message } = await createTriage(level, color)
+      if (success) {
+        await fetchTriageLevels()
+        console.log(message)
+      }
+    } catch (error) {
+      console.error('Error al agregar nivel de triage:', error)
+    }
+  }
+
+  const handleUpdateTriageLevel = async (level, color) => {
+    try {
+      const { success, message } = await updateTriage(level, color)
+      if (success) {
+        await fetchTriageLevels()
+        console.log(message)
+      }
+    } catch (error) {
+      console.error('Error al actualizar nivel de triage:', error)
+    }
+  }
+
+  const handleDeleteTriageLevel = async (level) => {
+    try {
+      const { success, message } = await deleteTriage(level)
+      if (success) {
+        await fetchTriageLevels()
+        console.log(message)
+      }
+    } catch (error) {
+      console.error('Error al eliminar nivel de triage:', error)
+    }
+  }
+
   useEffect(() => {
     fetchSymptoms()
+    fetchTriageLevels()
   }, [])
 
-  const TriageLevels = [
-    { id: '1', name: 'I', color: '#999999' },
-    { id: '2', name: 'II', color: '#FF3300' },
-    { id: '3', name: 'III', color: '#FFFF66' },
-    { id: '4', name: 'IV', color: '#69A84F' }
-  ]
+  // const TriageLevels = [
+  //   { id: '1', name: 'I', color: '#999999' },
+  //   { id: '2', name: 'II', color: '#FF3300' },
+  //   { id: '3', name: 'III', color: '#FFFF66' },
+  //   { id: '4', name: 'IV', color: '#69A84F' }
+  // ]
 
   return (
     <div className='bg-white pb-4 mt-20 ml-2 md:mt-0 md:ml-0'>
@@ -131,10 +193,10 @@ function SymptomSettings() {
             </button>
             {isTriageExpanded && (
               <TriageLevelEditor
-                levels={TriageLevels}
-                onAddLevel={null}
-                onUpdateLevel={null}
-                onDeleteLevel={null}
+                levels={triageLevels}
+                onAddLevel={handleAddTriageLevel}
+                onUpdateLevel={handleUpdateTriageLevel}
+                onDeleteLevel={handleDeleteTriageLevel}
               />
             )}
           </div>

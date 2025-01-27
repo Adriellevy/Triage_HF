@@ -154,12 +154,8 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
                     </Button>
                   ) : (
                     <div
-                      style={{
-                        backgroundColor: level.color,
-                        width: '30px',
-                        height: '30px',
-                        border: '1px solid black'
-                      }}
+                      className='w-8 h-8 rounded-full mx-auto flex justify-center items-center border-2 border-gray-300'
+                      style={{ backgroundColor: level.color }}
                     ></div>
                   )}
                 </td>
@@ -201,12 +197,8 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
       {colorPickerOpen && (
         <Modal onClose={() => setColorPickerOpen(false)}>
           <div
-            style={{
-              backgroundColor: editingLevelId ? editingLevelColor : newLevelColor,
-              padding: '20px',
-              borderRadius: '8px',
-              textAlign: 'center'
-            }}
+            className='p-5 rounded-lg text-center'
+            style={{ backgroundColor: editingLevelId ? editingLevelColor : newLevelColor }}
           >
             <HexColorPicker
               color={editingLevelId ? editingLevelColor : newLevelColor}
