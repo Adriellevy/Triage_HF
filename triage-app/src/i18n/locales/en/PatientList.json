@@ -7,7 +7,15 @@
   "PatientProblem": "Patient's Problem",
   "PatientBoxLabel": "Box Code",
   "DoctorNameLabel": "Doctor's Name",
+  "LastDoctorNameLabel": "Asigned Doctor",
   "NurseNameLabel": "Nurse's Name",
+  "NewDoctorNameLabel": "Incoming Doctor",
+  "LastNurseNameLabel": "Asigned Nurse",
+  "NewNurseNameLabel": "Incoming Nurse",
   "PatientStatusLabel": "Patient Status",
-  "PatientActionsLabel": "Patient Actions"
+  "PatientActionsLabel": "Patient Actions",
+  "Observations": "Observations",
+  "Procedures": "Procedures",
+  "Record": "History",
+  "DoctorOrNurse": "Is needed to assign a new doctor or nurse to the patient"
 }

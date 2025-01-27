@@ -18,6 +18,7 @@ const ShiftExchangeModal = ({ onClose }) => {
   const [nurseOptions, setNurseOptions] = useState<ColourOption[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
   const [createReport, setCreateReport] = useState(false)
+  const [invalidPatients, setInvalidPatients] = useState<Patient[]>([])
 
   const selectedDoctors = useSelector((state: RootState) => state.shiftSelections.doctorSelections)
   const selectedNurses = useSelector((state: RootState) => state.shiftSelections.nurseSelections)
@@ -42,6 +43,7 @@ const ShiftExchangeModal = ({ onClose }) => {
 
   const handleShiftExchange = async () => {
     const patientsMap = {}
+    const invalidPatientsTemp = []
 
     // Mapeo de Doctores
     Object.keys(selectedDoctors).forEach((patientID) => {
@@ -95,6 +97,23 @@ const ShiftExchangeModal = ({ onClose }) => {
     // Crear el array final de pacientes
     const patients = Object.values(patientsMap)
 
+    // Validación de pacientes inválidos (mismo doctor y enfermero)
+    Object.keys(patientsMap).forEach((patientID) => {
+      const patient = patientsMap[patientID]
+      if (
+        patient.newDoctorID === patient.lastDoctorID && // Mismo doctor
+        patient.newNurseID === patient.lastNurseID // Mismo enfermero
+      ) {
+        invalidPatientsTemp.push(patientID)
+      }
+    })
+    if (invalidPatientsTemp.length > 0) {
+      setInvalidPatients(invalidPatientsTemp)
+      console.log('invalidPatientsTemp:', invalidPatientsTemp)
+      toast.error('Algunos pacientes no tienen cambios en doctor o enfermero', { duration: 2000 })
+      return
+    }
+
     console.log('Patients:', patients, 'Create Report?:', createReport)
 
     try {
@@ -130,7 +149,12 @@ const ShiftExchangeModal = ({ onClose }) => {
         </div> */}
         <div className='bg-white w-full rounded-lg p-4'>
           <div className='text-black flex justify-center'>
-            <PatientsListTurnExchange patients={patients} mode={'doctor'} lastDoctor={'yo'} />
+            <PatientsListTurnExchange
+              patients={patients}
+              mode={'doctor'}
+              lastDoctor={'yo'}
+              invalidPatients={invalidPatients}
+            />
           </div>
           {/* BUTTON */}
           <div className='flex justify-end mt-4'>
