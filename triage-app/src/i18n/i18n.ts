@@ -39,6 +39,8 @@ import TimeExpireModalAndErrors_es from './locales/es/TimeExpireModalAndErrors.j
 import TimeExpireModalAndErrors_en from './locales/en/TimeExpireModalAndErrors.json'
 import symptomeditor_es from './locales/es/SymptomEditor.json'
 import Symptomeditor_en from './locales/en/SymptomEditor.json'
+import TriageEditor_es from './locales/es/TriageEditor.json'
+import TriageEditor_en from './locales/en/TriageEditor.json'
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -70,7 +72,8 @@ i18n
         UserItem: UserItem_es,
         VerifyUser: VerifyUser_es,
         TimeExpireModalAndErrors: TimeExpireModalAndErrors_es,
-        SymptomEditor: symptomeditor_es
+        SymptomEditor: symptomeditor_es,
+        TriageEditor: TriageEditor_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -90,7 +93,8 @@ i18n
         UserItem: UserItem_en,
         VerifyUser: VerifyUser_en,
         TimeExpireModalAndErrors: TimeExpireModalAndErrors_en,
-        SymptomEditor: Symptomeditor_en
+        SymptomEditor: Symptomeditor_en,
+        TriageEditor: TriageEditor_en
       }
     }
   })
