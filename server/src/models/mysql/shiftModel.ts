@@ -16,4 +16,11 @@ export class ShiftModel{
         const [rows] = await conn.query<IShift[]>('SELECT * FROM Shift WHERE shift_day = ?', [nowFormatted]);
         return rows;
     }
+
+    static async getAll(date:Date|null):Promise<IShift[]>{ 
+        const conn = await connect();
+        const sql = date ? 'SELECT * FROM Shift WHERE shift_day = ?' : 'SELECT * FROM Shift';
+        const [rows] = await conn.query<IShift[]>(sql, [date]);
+        return rows;
+    }
 }

@@ -49,18 +49,20 @@ export class TriageController{
             return res.status(403).json({message:"No tienes permisos para realizar esta acción"});
 
         const levelParam = req.params.id;
-        const {color} = req.body;
+        const {color,newLevel} = req.body;
         const level = await TriageModel.findByLevel(levelParam);
         if(!level)
             return res.status(404).json({message:`No se encontró un triage con el nivel ${levelParam}`});
-        
+        const existLevel = await TriageModel.findByLevel(newLevel);
+        if(existLevel && newLevel !== levelParam)
+            return res.status(400).json({message:`Ya existe un triage con el nivel ${newLevel}`});
         if(!color)
             return res.status(400).json({message:"El color es requerido"});
         if(!this.validateRgbColor(color))
             return res.status(400).json({message:`El color debe tener el formato rgb: 'XXX,XXX,XXX'`});
 
         try{
-            const updatedTriage = await TriageModel.update({level:levelParam, color});
+            const updatedTriage = await TriageModel.update({level:newLevel, color},levelParam);
             return res.status(200).json({message:updatedTriage});
         }catch(err){
             return res.status(500).json({message:`Error al actualizar el triage: ${err.message}`});
