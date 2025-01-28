@@ -33,10 +33,11 @@ export class TriageModel{
         return this.findById(result.insertId);
     }
 
-    static async update(triage:{level:string,color:string}):Promise<ITriage>{
-        const query = `UPDATE Triage SET color = ? WHERE level = ?`;
+    static async update(triage:{level:string,color:string},currentLevel:string):Promise<ITriage>{
+        const query = `UPDATE Triage SET color = ?, level = ? WHERE level = ?`;
         const conn = await connect();
-        const [result]:any = await conn.query(query,[triage.color,triage.level]);
+        console.log(triage);
+        const [result]:any = await conn.query(query,[triage.color,triage.level,currentLevel]);
         return this.findByLevel(result.insertId);
     }
 
