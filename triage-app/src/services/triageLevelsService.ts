@@ -108,7 +108,7 @@ export const createTriage = async (
 export const updateTriage = async (
   id: string,
   color: string,
-  newlevel: string
+  newLevel: string
 ): Promise<{
   success: boolean
   message: string
@@ -116,7 +116,7 @@ export const updateTriage = async (
 }> => {
   const token = Cookies.get('authToken')
   console.log('OldLevel:', id)
-  console.log('Body:', JSON.stringify({ color, newlevel }))
+  console.log('Body:', JSON.stringify({ color, newLevel }))
   try {
     const response = await fetch(`${config.API_URL}/triage/${id}`, {
       method: 'PUT',
@@ -124,7 +124,7 @@ export const updateTriage = async (
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ color, newlevel })
+      body: JSON.stringify({ color, newLevel })
     })
     if (!response.ok) {
       const errorResponse = await response.json()
