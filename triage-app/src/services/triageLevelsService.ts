@@ -106,29 +106,30 @@ export const createTriage = async (
 
 // Actualizar un triage por nivel
 export const updateTriage = async (
-  level: string,
-  color: string
+  id: string,
+  color: string,
+  newlevel: string
 ): Promise<{
   success: boolean
   message: string
   data?: TriageLevel
 }> => {
   const token = Cookies.get('authToken')
-
+  console.log('OldLevel:', id)
+  console.log('Body:', JSON.stringify({ color, newlevel }))
   try {
-    const response = await fetch(`${config.API_URL}/triage/${level}`, {
+    const response = await fetch(`${config.API_URL}/triage/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ color })
+      body: JSON.stringify({ color, newlevel })
     })
-
     if (!response.ok) {
       const errorResponse = await response.json()
       throw new Error(
-        `Error en la solicitud PUT a /triage/${level}: ${errorResponse.message || 'Unknown error'}`
+        `Error en la solicitud PUT a /triage/${id}: ${errorResponse.message || 'Unknown error'}`
       )
     }
 
@@ -142,15 +143,15 @@ export const updateTriage = async (
 
 // Eliminar un triage por nivel
 export const deleteTriage = async (
-  level: string
+  id: string
 ): Promise<{
   success: boolean
   message: string
 }> => {
   const token = Cookies.get('authToken')
-
+  console.log('Deleting triage with ID:', id)
   try {
-    const response = await fetch(`${config.API_URL}/triage/${level}`, {
+    const response = await fetch(`${config.API_URL}/triage/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -161,9 +162,7 @@ export const deleteTriage = async (
     if (!response.ok) {
       const errorResponse = await response.json()
       throw new Error(
-        `Error en la solicitud DELETE a /triage/${level}: ${
-          errorResponse.message || 'Unknown error'
-        }`
+        `Error en la solicitud DELETE a /triage/${id}: ${errorResponse.message || 'Unknown error'}`
       )
     }
 

@@ -1,5 +1,5 @@
 export interface TriageLevel {
   id: string
-  name: string
+  level: string
   color: string // Formato HEX (ejemplo: "#ffffff")
 }

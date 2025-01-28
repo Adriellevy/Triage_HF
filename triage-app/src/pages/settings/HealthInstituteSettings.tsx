@@ -90,6 +90,7 @@ function SymptomSettings() {
     try {
       setIsLoading(true)
       const { success, data } = await getAllTriages()
+      console.log(data)
       if (success) {
         setTriageLevels(data || [])
       }
@@ -115,9 +116,9 @@ function SymptomSettings() {
     }
   }
 
-  const handleUpdateTriageLevel = async (level, color) => {
+  const handleUpdateTriageLevel = async (oldlevel, color, newLevel) => {
     try {
-      const { success, message } = await updateTriage(level, color)
+      const { success, message } = await updateTriage(oldlevel, color, newLevel)
       if (success) {
         await fetchTriageLevels()
         console.log(message)

@@ -9,14 +9,14 @@ import { v4 as uuidv4 } from 'uuid' // Para generar IDs únicos
 
 interface TriageLevel {
   id: string
-  name: string
+  level: string
   color: string // Formato HEX (ejemplo: "#ffffff")
 }
 
 interface TriageLevelEditorProps {
   levels?: TriageLevel[]
   onAddLevel?: (name: string, color: string) => void
-  onUpdateLevel?: (id: string, updatedName: string, updatedColor: string) => void
+  onUpdateLevel?: (updatedName: string, updatedColor: string) => void
   onDeleteLevel?: (id: string) => void
 }
 
@@ -37,15 +37,24 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
   const [editingLevelColor, setEditingLevelColor] = useState('#ffffff')
   const [colorPickerOpen, setColorPickerOpen] = useState(false)
 
+  const hexToRgb = (hex: string): string => {
+    const bigint = parseInt(hex.slice(1), 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
+    return `${r}, ${g}, ${b}`
+  }
+
   const handleAdd = () => {
+    const rgbColor = hexToRgb(newLevelColor)
     if (newLevelName.trim()) {
-      const newLevel = {
+      const newLevel: TriageLevel = {
         id: uuidv4(),
-        name: newLevelName.trim(),
-        color: newLevelColor
+        level: newLevelName.trim(),
+        color: rgbColor
       }
       if (onAddLevel) {
-        onAddLevel(newLevel.name, newLevel.color)
+        onAddLevel(newLevel.level, rgbColor)
       } else {
         setLocalLevels((prevLevels) => [...prevLevels, newLevel])
       }
@@ -54,15 +63,17 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
     }
   }
 
-  const handleUpdate = () => {
+  // Usar esta función antes de actualizar el nivel
+  const handleUpdate = (oldlevel: string) => {
     if (editingLevelName.trim() && editingLevelId) {
+      const rgbColor = hexToRgb(editingLevelColor)
       if (onUpdateLevel) {
-        onUpdateLevel(editingLevelId, editingLevelName.trim(), editingLevelColor)
+        onUpdateLevel(oldlevel, rgbColor, editingLevelName.trim())
       } else {
         setLocalLevels((prevLevels) =>
           prevLevels.map((level) =>
             level.id === editingLevelId
-              ? { ...level, name: editingLevelName.trim(), color: editingLevelColor }
+              ? { ...level, name: editingLevelName.trim(), color: rgbColor }
               : level
           )
         )
@@ -75,8 +86,8 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
 
   const handleDelete = (id: string) => {
     if (onDeleteLevel) {
+      console.log('Deleting level with ID:', id)
       onDeleteLevel(id)
-    } else {
       setLocalLevels((prevLevels) => prevLevels.filter((level) => level.id !== id))
     }
   }
@@ -140,7 +151,7 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
                       className='border rounded px-4 py-2 w-full'
                     />
                   ) : (
-                    level.name
+                    level.level
                   )}
                 </td>
                 <td className='border px-4 py-2'>
@@ -155,14 +166,14 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
                   ) : (
                     <div
                       className='w-8 h-8 rounded-full mx-auto flex justify-center items-center border-2 border-gray-300'
-                      style={{ backgroundColor: level.color }}
+                      style={{ backgroundColor: `rgb(${level.color})` }}
                     ></div>
                   )}
                 </td>
                 <td className='border px-4 py-2 flex gap-2 justify-center'>
                   {editingLevelId === level.id ? (
                     <>
-                      <Button color='green' onClick={handleUpdate}>
+                      <Button color='green' onClick={() => handleUpdate(level.level)}>
                         {t('Save')}
                       </Button>
                       <Button color='grey' onClick={handleCancelEdit}>
@@ -175,13 +186,13 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
                         color='green'
                         onClick={() => {
                           setEditingLevelId(level.id)
-                          setEditingLevelName(level.name)
+                          setEditingLevelName(level.level)
                           setEditingLevelColor(level.color)
                         }}
                       >
                         <FontAwesomeIcon icon={faPenToSquare} />
                       </Button>
-                      <Button color='red' onClick={() => handleDelete(level.id)}>
+                      <Button color='red' onClick={() => handleDelete(level.level)}>
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
                     </>
