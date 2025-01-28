@@ -1,0 +1,12 @@
+{
+  "LevelName": "Level Name",
+  "Color": "Color",
+  "Actions": "Actions",
+  "Accept": "Accept",
+  "Cancel": "Cancel",
+  "PickColor": "Pick a color",
+  "TriageLevels": "Triage Levels",
+  "Add": "Add",
+  "NewLevel": "New Level",
+  "SymptomList": "Symptom List"
+}

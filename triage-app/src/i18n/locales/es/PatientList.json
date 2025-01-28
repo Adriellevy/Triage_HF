@@ -8,13 +8,14 @@
   "PatientBoxLabel": "Código de Box",
   "DoctorNameLabel": "Nombre del Doctor",
   "LastDoctorNameLabel": "Doctor asignado",
-  "NewDoctorNameLabel": "Doctor entrante",
   "NurseNameLabel": "Nombre de la Enfermera",
+  "NewDoctorNameLabel": "Doctor entrante",
   "LastNurseNameLabel": "Enfermero asignado",
   "NewNurseNameLabel": "Enfermero entrante",
   "PatientStatusLabel": "Estado",
   "PatientActionsLabel": "Acciones",
   "Observations": "Observaciones",
   "Procedures": "Procedimientos",
-  "Record": "Antecedentes"
+  "Record": "Antecedentes",
+  "DoctorOrNurse": "Es necesario asignar un nuevo doctor o enfermera al paciente"
 }

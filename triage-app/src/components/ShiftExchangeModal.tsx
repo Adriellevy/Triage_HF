@@ -18,6 +18,7 @@ const ShiftExchangeModal = ({ onClose }) => {
   const [nurseOptions, setNurseOptions] = useState<ColourOption[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
   const [createReport, setCreateReport] = useState(false)
+  const [invalidPatients, setInvalidPatients] = useState<Patient[]>([])
 
   const selectedDoctors = useSelector((state: RootState) => state.shiftSelections.doctorSelections)
   const selectedNurses = useSelector((state: RootState) => state.shiftSelections.nurseSelections)
@@ -42,6 +43,7 @@ const ShiftExchangeModal = ({ onClose }) => {
 
   const handleShiftExchange = async () => {
     const patientsMap = {}
+    const invalidPatientsTemp = []
 
     // Mapeo de Doctores
     Object.keys(selectedDoctors).forEach((patientID) => {
@@ -95,6 +97,23 @@ const ShiftExchangeModal = ({ onClose }) => {
     // Crear el array final de pacientes
     const patients = Object.values(patientsMap)
 
+    // Validación de pacientes inválidos (mismo doctor y enfermero)
+    Object.keys(patientsMap).forEach((patientID) => {
+      const patient = patientsMap[patientID]
+      if (
+        patient.newDoctorID === patient.lastDoctorID && // Mismo doctor
+        patient.newNurseID === patient.lastNurseID // Mismo enfermero
+      ) {
+        invalidPatientsTemp.push(patientID)
+      }
+    })
+    if (invalidPatientsTemp.length > 0) {
+      setInvalidPatients(invalidPatientsTemp)
+      console.log('invalidPatientsTemp:', invalidPatientsTemp)
+      toast.error('Algunos pacientes no tienen cambios en doctor o enfermero', { duration: 2000 })
+      return
+    }
+
     console.log('Patients:', patients, 'Create Report?:', createReport)
 
     try {
@@ -110,8 +129,8 @@ const ShiftExchangeModal = ({ onClose }) => {
 
   return (
     <div className='fixed top-0  left-0 h-full w-full flex items-start justify-center bg-black bg-opacity-35 z-50 '>
-      <div className=' flex  flex-col bg-blue-900 rounded-lg mt-10 ml-56  max-w-2xl md:max-w-screen-2xl w-full z-60'>
-        <div className='flex mx-2 my-4 justify-between'>
+      <div className=' flex  flex-col bg-blue-900 rounded-lg mt-10 ml-14  max-w-2xl md:max-w-screen-2xl w-full z-60'>
+        <div className='flex  my-4 justify-between'>
           <h3 className='text-2xl font-bold mx-2 my-2 mr-20'>Cambio de turno</h3>
           <Button color='grey' onClick={onClose} className='text-sm py-0 px-2 font-bold '>
             Cancelar
@@ -130,7 +149,12 @@ const ShiftExchangeModal = ({ onClose }) => {
         </div> */}
         <div className='bg-white w-full rounded-lg p-4'>
           <div className='text-black flex justify-center'>
-            <PatientsListTurnExchange patients={patients} mode={'doctor'} lastDoctor={'yo'} />
+            <PatientsListTurnExchange
+              patients={patients}
+              mode={'doctor'}
+              lastDoctor={'yo'}
+              invalidPatients={invalidPatients}
+            />
           </div>
           {/* BUTTON */}
           <div className='flex justify-end mt-4'>

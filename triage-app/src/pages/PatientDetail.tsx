@@ -63,6 +63,11 @@ function PatientDetail() {
     { label: t('PatientRecordsLabel'), key: 'records', format: null }
   ]
 
+  const specialFields: Field[] = [
+    { label: t('PatientObservationsLabel'), key: 'observations', format: null },
+    { label: t('PatientProceduresLabel'), key: 'procedures', format: null },
+    { label: t('PatientRecordsLabel'), key: 'records', format: null }
+  ]
   //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
 
   const handlePatientStatus = (patientData: Patient | null) => {
@@ -70,6 +75,8 @@ function PatientDetail() {
       SetMedicalDischarge(true)
     }
   }
+  const hasNoSpecialFields = (patient: PatientData) =>
+    !patient.observations && !patient.procedures && !patient.records
 
   const handleMedicalDischarge = () => {
     SetMedicalDischarge(true)
@@ -98,18 +105,46 @@ function PatientDetail() {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
         <div>
           <ul className='list-disc pl-4 space-y-2'>
-            {patientFields.map((field) => (
-              <li key={field.label} className='flex items-start'>
-                <span className='font-semibold mr-2'>{field.label}:</span>
-                <span className='flex-1'>
-                  {Patient
-                    ? field.format
-                      ? field.format(String(Patient[field.key]))
-                      : String(Patient[field.key])
-                    : null}
-                </span>
+            {patientFields.map((field) => {
+              const value = Patient ? Patient[field.key] : null
+              const isEmpty = value === undefined || value === null || value === ''
+
+              // Check if this field is part of the observations, procedures, or records group
+              if (['observations', 'procedures', 'records'].includes(field.key)) {
+                return null // We handle these fields separately below
+              }
+
+              return (
+                <li key={field.label} className='flex items-start'>
+                  <span className='font-semibold mr-2'>{field.label}:</span>
+                  <span className='flex-1'>
+                    {Patient
+                      ? field.format
+                        ? field.format(String(value))
+                        : isEmpty
+                        ? t('NoDataLabel') // Fallback for empty fields
+                        : String(value)
+                      : null}
+                  </span>
+                </li>
+              )
+            })}
+
+            {/* Custom logic for observations, procedures, and records */}
+            {['observations', 'procedures', 'records'].every((key) => !Patient || !Patient[key]) ? (
+              <li className='flex items-start text-red-500 font-semibold'>
+                {t('NoShiftChangesMessage')}
               </li>
-            ))}
+            ) : (
+              ['observations', 'procedures', 'records'].map((key) => (
+                <li key={key} className='flex items-start'>
+                  <span className='font-semibold mr-2'>{t(`${key}Label`)}:</span>
+                  <span className='flex-1'>
+                    {Patient ? String(Patient[key] || t('NoDataLabel')) : null}
+                  </span>
+                </li>
+              ))
+            )}
           </ul>
         </div>
         <div className='flex items-center'>
@@ -133,8 +168,8 @@ function PatientDetail() {
           </Button>
         </div>
       ) : null}
-
-      {showMedicalDischarge && <PatientInformIA Patient={Patient} />}
+      {/* 
+      {showMedicalDischarge && <PatientInformIA Patient={Patient} />} */}
 
       <PatientHistory patient_id={patient_id} />
     </div>

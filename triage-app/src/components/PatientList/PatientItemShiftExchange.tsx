@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui'
 import Select from 'react-select'
+import { useTranslation } from 'react-i18next'
 import { getAllDoctors, getAllNurses } from '@/services/userService'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/redux/store/store.ts'
@@ -25,9 +26,10 @@ interface PropsPatientItem {
   mode: string
   lastDoctor?: { value: string; label: string }
   lastNurse?: { value: string; label: string }
+  isInvalid: boolean
 }
 
-function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
+function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientItem) {
   const [doctorOptions, setDoctorOptions] = useState([])
   const [nurseOptions, setNurseOptions] = useState([])
   const [observations, setObservations] = useState('')
@@ -36,6 +38,7 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
   const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null)
   const dispatch = useDispatch()
 
+  const { t } = useTranslation('PatientList')
   const selectedDoctors = useSelector((state: RootState) => state.shiftSelections.doctorSelections)
   const selectedNurses = useSelector((state: RootState) => state.shiftSelections.nurseSelections)
 
@@ -56,7 +59,8 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
 
   const isOdd = index % 2 !== 0
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
-
+  const errBack = 'bg-red-100'
+  const errLine = 'border-red-500 border-2 rounded-md '
   const handleSelection = (
     patient_id: string, // Asegúrate de pasar `patient_id` como argumento
     selectedOption: { value: string; label: string } | null,
@@ -174,13 +178,13 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
   }
 
   return (
-    <tr className={bgClass}>
+    <tr className={`${isInvalid ? errBack : bgClass}`}>
       <td className='border text-sm overflow-hidden text-center'>{patient_name}</td>
       <td className='border p-2  text-center hidden lg:table-cell '>{doctor_name}</td>
       <td className='border p-2 table-cell text-center hidden lg:table-cell'>{nurse_name}</td>
-      <td className='border p-4 table-cell text-center'>
+      <td className={`border p-4 table-cell text-center ${isInvalid ? errLine : bgClass}`}>
         <Select
-          className='w-full text-black'
+          className={`w-full text-black `}
           options={doctorOptions}
           placeholder='Selec. doctor/a'
           closeMenuOnSelect={true}
@@ -195,9 +199,11 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
             handleSelection(patient_id, selectedOption, 'doctor', doctor_name, nurse_name)
           }
         />
+
+        {isInvalid && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
       </td>
 
-      <td className='border p-4 table-cell text-center'>
+      <td className={`border p-4 table-cell text-center ${isInvalid ? errLine : bgClass}`}>
         <Select
           className='w-full text-black'
           options={nurseOptions}
@@ -212,6 +218,8 @@ function PatientItemShiftExchange({ patient, index }: PropsPatientItem) {
             handleSelection(patient_id, selectedOption, 'nurse', doctor_name, nurse_name)
           }
         />
+
+        {isInvalid && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
       </td>
       <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
         <input

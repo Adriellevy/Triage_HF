@@ -15,5 +15,7 @@
   "BackButton": "Volver",
   "PatientObservationsLabel": "Observaciones del paciente",
   "PatientProceduresLabel": "Procedimientos del paciente",
-  "PatientRecordsLabel": "Antecedentes del paciente"
+  "PatientRecordsLabel": "Antecedentes del paciente",
+  "NoShiftChangesMessage": "Este paciente no formo parte de ningun pase de turno",
+  "NoDataLabel": "No hay datos disponibles"
 }
