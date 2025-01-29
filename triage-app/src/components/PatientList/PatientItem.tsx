@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Patient, PatientStatus } from '../../interfaces/Patinet'
+import { TriageLevel } from '../../interfaces/TriageLevel'
 import { updatePatient } from '@/services/patientService'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui'
+import { getAllTriages } from '@/services/triageLevelsService'
 
 interface PropsPatientItem {
   patient: Patient
@@ -19,7 +21,7 @@ interface PropsPatientItem {
 function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: PropsPatientItem) {
   const [age, setAge] = useState<number | null>(null)
   const [entryTime, setEntryTime] = useState<string | null>(null)
-
+  const [TriageLevels, setTriageLevel] = useState<TriageLevel[]>([])
   const {
     patient_id,
     patient_name,
@@ -37,15 +39,8 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
 
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
 
-  const TriageLevels = [
-    { _id: 1, name: 'I', color: '153, 153, 153' },
-    { _id: 2, name: 'II', color: '255,51,0' },
-    { _id: 3, name: 'III', color: '255,255,102' },
-    { _id: 4, name: 'IV', color: '105,168,79' }
-  ]
-
   const getBackgroundColor = (id: number) => {
-    const triageLevel = TriageLevels.find((level) => level._id === id)
+    const triageLevel = TriageLevels.find((level) => Number(level.id) === id)
     return triageLevel ? `rgb(${triageLevel.color}, 0.6)` : 'transparent'
   }
 
@@ -68,6 +63,28 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
     setEntryTime(fechaFormateada)
   }, [])
 
+  useEffect(() => {
+    const fetchTriageLevels = async () => {
+      try {
+        const response = await getAllTriages()
+        if (response.success && response.data) {
+          return response.data
+        } else {
+          console.error('Error al obtener niveles de triaje:', response.message)
+          return []
+        }
+      } catch (error) {
+        console.error('Error desconocido al obtener niveles de triaje:', error)
+        return []
+      }
+    }
+    const fetchData = async () => {
+      const [triageLevels] = await Promise.all([fetchTriageLevels()])
+      setTriageLevel(triageLevels)
+    }
+    fetchData()
+  }, [])
+
   const [patientToDischarge, setPatientToDischarge] = useState<Patient | null>(null)
   const handleFastDischarge = (id: string) => {
     console.log('fast Discharge in process ' + id)
@@ -86,7 +103,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
   }
   return (
     <tr className={bgClass}>
-      {!(turnExchange) ? (
+      {!turnExchange ? (
         <>
           <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
           <td className='border p-2 hidden lg:table-cell text-center'>{age}</td>
@@ -120,7 +137,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
                   </Link>
                 </div>
               </div>
-              {(patient_status !== 'ALTA' ? (
+              {patient_status !== 'ALTA' ? (
                 <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
@@ -128,7 +145,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
                 <Button wfull color='grey_disabled' disabled>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
-              ))}
+              )}
             </div>
             {patientToDischarge?.patient_id === patient_id && (
               <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
@@ -153,8 +170,12 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
       ) : (
         <>
           <td className={`border text-sm overflow-hidden text-center `}>{patient_name}</td>
-          <td className='border p-2 hidden lg:table-cell text-center'>{doctor_name} {newDoctor ? ` -> ${newDoctor}`: null}</td>
-          <td className='border p-2 hidden lg:table-cell text-center'>{nurse_name} {newNurse ? ` -> ${newNurse}`: null}</td>
+          <td className='border p-2 hidden lg:table-cell text-center'>
+            {doctor_name} {newDoctor ? ` -> ${newDoctor}` : null}
+          </td>
+          <td className='border p-2 hidden lg:table-cell text-center'>
+            {nurse_name} {newNurse ? ` -> ${newNurse}` : null}
+          </td>
           <td
             className={`border md:p-2 text-center`}
             style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
@@ -163,7 +184,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
           </td>
           <td className='border p-2'>
             <div className='flex gap-2'>
-              {(patient_status !== 'ALTA' ? (
+              {patient_status !== 'ALTA' ? (
                 <Button wfull color='red' onClick={() => handleFastDischarge(patient_id)}>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
@@ -171,7 +192,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
                 <Button wfull color='grey_disabled' disabled>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                 </Button>
-              ))}
+              )}
             </div>
             {patientToDischarge?.patient_id === patient_id && (
               <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
@@ -195,8 +216,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
         </>
       )}
     </tr>
-  );
-  
+  )
 }
 
 export default PatientItem

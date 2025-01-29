@@ -162,7 +162,7 @@ function PatientFormRefactorizado() {
       component_type: 'TriageComponent',
       value: null,
       handlerHelperFunction: null,
-      formatdata: returnPatientTriageNumber,
+      formatdata: null,
       isRequiredField: false
     },
     {
@@ -936,12 +936,12 @@ function PatientFormRefactorizado() {
                         onClick={() =>
                           handlerOtherTypes(
                             formInterfaz[key as keyof typeof formInterfaz]?.key,
-                            level.id
+                            level.level
                           )
                         }
                         type='button'
                         className={`py-1 flex-grow border-4 ${
-                          formInterfaz[key as keyof typeof formInterfaz]?.value == level.id
+                          formInterfaz[key as keyof typeof formInterfaz]?.value == level.level
                             ? 'border-black'
                             : 'border-transparent'
                         }`}
