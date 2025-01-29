@@ -142,4 +142,23 @@ export class ShiftChangeModel{
         const [rows] = await conn.query<IShiftChange[]>(sql, params);
         return rows;
     }
+
+    static async getLastShiftChangeByPatientID(patient_id:string):Promise<IShiftChange>{
+        const sql = `SELECT
+            id,
+            shift_id,
+            BIN_TO_UUID(user_id) as user_id,
+            BIN_TO_UUID(last_doctor_id) as last_doctor_id,
+            BIN_TO_UUID(new_doctor_id) as new_doctor_id,
+            BIN_TO_UUID(last_nurse_id) as last_nurse_id,
+            BIN_TO_UUID(new_nurse_id) as new_nurse_id,
+            BIN_TO_UUID(patient_id) as patient_id,
+            patient_observations,
+            patient_records,
+            patient_procedures
+        FROM ShiftChange WHERE patient_id = UUID_TO_BIN(?) ORDER BY id DESC LIMIT 1`;
+        const conn = await connect();
+        const [rows] = await conn.query<IShiftChange[]>(sql, [patient_id]);
+        return rows[0];
+    }
 }

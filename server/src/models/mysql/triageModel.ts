@@ -12,6 +12,13 @@ export class TriageModel{
         return rows[0];
     }
 
+    static async findByOffset(offset:number):Promise<ITriage>{
+        const query = `SELECT * FROM Triage LIMIT 1 OFFSET ? ORDER BY id ASC`;
+        const conn = await connect();
+        const [rows] = await conn.query<ITriage[]>(query, [offset]);
+        return rows[0];
+    }
+
     static async findById(id:number):Promise<ITriage>{
         const query = `SELECT * FROM Triage WHERE id = ?`;
         const conn = await connect();

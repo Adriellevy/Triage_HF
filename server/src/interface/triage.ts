@@ -1,4 +1,4 @@
 export interface Triage{
-    level:number;
+    level:string;
     color:string;
 }

@@ -33,7 +33,7 @@ CREATE TABLE Patient (
   patient_entry_time TIMESTAMP NOT NULL,
   patient_exit_time TIMESTAMP,
   patient_triage_time TIMESTAMP NOT NULL,
-  patient_triage_level INT NOT NULL,
+  patient_triage_level VARCHAR(5) NOT NULL,
   patient_isolated BOOLEAN NOT NULL,
   patient_status ENUM('ALTA', 'EN OBSERVACION', 'EN ESPERA DE INTERNACION', 'INTERNADO', 'AFUERA'),
   patient_symptom VARCHAR(500) NOT NULL,

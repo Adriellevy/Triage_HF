@@ -18,3 +18,7 @@ triageRouter.put('/:id',(req:Request,res:Response)=>{
 triageRouter.delete('/:id',(req:Request,res:Response)=>{
     void TriageController.deleteTriage(req,res)
 })
+
+triageRouter.post('sort',(req:Request,res:Response)=>{
+    void TriageController.sortTriageLevels(req,res)
+})
