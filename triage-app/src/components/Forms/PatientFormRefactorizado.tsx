@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { Field, Patient, PatientSymptom, TriageLevel } from '@/interfaces/Patinet'
+import { Field, Patient, PatientSymptom } from '@/interfaces/Patinet'
+import { TriageLevel } from '@/interfaces/TriageLevel'
 import { toast } from 'sonner'
 import { User } from '@/interfaces/User'
 import { Box, BoxStatus, BoxType } from '@/interfaces/Boxes'
@@ -19,7 +17,6 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@mui/material'
 import React from 'react'
-import _, { isEqual } from 'lodash'
 import {
   IndiceObjeto,
   returnBoxCode,
@@ -38,13 +35,13 @@ import {
   returnEstado
 } from '@/helpers/HelperPatientForm'
 import ConflictResolver from '../ConflictResolver/ConflictResolver'
-import { Console } from 'console'
 import { SocketContext } from '@/contex/SocketContext'
 import { UpdateEvent } from '@/interfaces/Socket'
 import WarningBox from '../ui/WarningBox'
 import LoaderSpin from '../LoaderSpin'
 import LoaderOverlay from '../ui/LoaderOverlay'
 import { getAllSymptoms } from '@/services/symtomService'
+import { getAllTriages } from '@/services/triageLevelsService'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -53,7 +50,7 @@ function PatientFormRefactorizado() {
   const [DoctorOptions, setDoctorOptions] = useState<User[] | null>(null)
   const [NurseOptions, setNurseOptions] = useState<User[] | null>(null)
   const [patientSymptoms, setPatientSymptoms] = useState<PatientSymptom[]>([])
-
+  const [TriageLevels, setTriageLevel] = useState<TriageLevel[]>([])
   const [loadingIcon, setloadingIcon] = useState<boolean>(false)
   const [TotalOptions, setTotalOptions] = useState<{
     doctor_id: User[]
@@ -388,14 +385,31 @@ function PatientFormRefactorizado() {
       }
     }
 
+    const fetchTriageLevels = async () => {
+      try {
+        const response = await getAllTriages()
+        if (response.success && response.data) {
+          return response.data
+        } else {
+          console.error('Error al obtener niveles de triaje:', response.message)
+          return []
+        }
+      } catch (error) {
+        console.error('Error desconocido al obtener niveles de triaje:', error)
+        return []
+      }
+    }
+
     const fetchData = async () => {
-      const [docs, nurses, boxes, PatientSintoms] = await Promise.all([
+      const [docs, nurses, boxes, PatientSintoms, triageLevels] = await Promise.all([
         fetchDoctors(),
         fetchNurses(),
         fetchBoxes(),
-        fetchSymptoms()
+        fetchSymptoms(),
+        fetchTriageLevels()
       ])
       ActualizarTotalOptions(docs, nurses, boxes, PatientSintoms)
+      setTriageLevel(triageLevels)
     }
 
     fetchData()
@@ -427,36 +441,6 @@ function PatientFormRefactorizado() {
     setupSocket()
     return cleanupSocket
   }, [token, edditingPatientID, socket, navigate])
-
-  //-----------------------------------  VARIABLES OBTENIBLES DE BD ---------------------------------
-  //TODO estos const deberían levantarse de la base de datos
-  // const PatientSintoms: PatientSymptom[] = [
-  //   { _id: 1, name: 'Convulsiones' },
-  //   { _id: 2, name: 'Trauma de Cráneo' },
-  //   { _id: 3, name: 'Dolor torácico / dorsal' },
-  //   { _id: 4, name: 'Dolor abdominal / lumbar' },
-  //   { _id: 5, name: 'Cefalea' },
-  //   { _id: 6, name: 'Déficit motor' },
-  //   { _id: 7, name: 'Inestabilidad en la marcha' },
-  //   { _id: 8, name: 'Disartria - afasia' },
-  //   { _id: 9, name: 'Pérdida aguda de visión' },
-  //   { _id: 10, name: 'Disnea' },
-  //   { _id: 11, name: 'Sincope' },
-  //   { _id: 12, name: 'Mareos' },
-  //   { _id: 13, name: 'Edema' },
-  //   { _id: 14, name: 'Sangrado digestivo' },
-  //   { _id: 15, name: 'Otro dolor en curso' },
-  //   { _id: 16, name: 'Alteracion de laboratorio' },
-  //   { _id: 17, name: 'Sobredosis de fármacos / Ingesta de tóxicos' },
-  //   { _id: 18, name: 'Fiebre >38°' },
-  //   { _id: 19, name: 'infección' }
-  // ]
-  const TriageLevels: TriageLevel[] = [
-    { _id: 1, name: 'I', color: '153, 153, 153' },
-    { _id: 2, name: 'II', color: '255,51,0' },
-    { _id: 3, name: 'III', color: '255,255,102' },
-    { _id: 4, name: 'IV', color: '105,168,79' }
-  ]
 
   //-----------------------------------  HANDLERS ---------------------------------
   const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (_event) => {
@@ -947,23 +931,23 @@ function PatientFormRefactorizado() {
                     {TriageLevels.map((level) => (
                       <button
                         id={key as keyof typeof formInterfaz}
-                        key={level._id}
+                        key={level.id}
                         name={key}
                         onClick={() =>
                           handlerOtherTypes(
                             formInterfaz[key as keyof typeof formInterfaz]?.key,
-                            level._id
+                            level.id
                           )
                         }
                         type='button'
                         className={`py-1 flex-grow border-4 ${
-                          formInterfaz[key as keyof typeof formInterfaz]?.value == level._id
+                          formInterfaz[key as keyof typeof formInterfaz]?.value == level.id
                             ? 'border-black'
                             : 'border-transparent'
                         }`}
                         style={{ backgroundColor: `rgba(${level.color}, 0.6)` }}
                       >
-                        {level.name}
+                        {level.level}
                       </button>
                     ))}
                   </div>
