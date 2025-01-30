@@ -17,6 +17,7 @@ import ConfigIcon from '@/icons/settings-2-svgrepo-com.svg'
 import Logo from '@/icons/stats-icon.svg'
 import ArrowNext from '@/icons/arrow-next.svg'
 import ArrowPrev from '@/icons/arrow-prev.svg'
+import ShiftExchangeIcon from '@/icons/shift-exchange-icon.png'
 import { Button } from '@/components/ui'
 // Todo: DB img
 import DoctorImg from '../assets/doctor.jpeg'
@@ -81,6 +82,12 @@ function Sidebar() {
       label: t('Patients'),
       title: 'Patients',
       linkUrl: '/patients'
+    },
+    {
+      icon: ShiftExchangeIcon,
+      label: t('ShiftExchange'),
+      title: 'Shifts',
+      linkUrl: '/shifts'
     },
     {
       icon: StatsIcon,
@@ -299,7 +306,7 @@ function Sidebar() {
             className='w-8 h-8 lg:w-12 lg:h-12 rounded-full border-2 border-white shadow-lg'
           />
           <div className='text-3xl font-extrabold tracking-wide text-white drop-shadow-md'>
-            TriageApp
+            Triage Digital
           </div>
         </div>
         <nav className='flex-1'>
