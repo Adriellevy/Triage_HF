@@ -39,8 +39,8 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
 
   const bgClass = isOdd ? 'bg-white' : 'bg-gray-100'
 
-  const getBackgroundColor = (id: number) => {
-    const triageLevel = TriageLevels.find((level) => Number(level.id) === id)
+  const getBackgroundColor = (patient_triage_level: string) => {
+    const triageLevel = TriageLevels.find((level) => level.level === patient_triage_level)
     return triageLevel ? `rgb(${triageLevel.color}, 0.6)` : 'transparent'
   }
 
@@ -110,7 +110,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
           <td className='border p-2 hidden lg:table-cell text-center'>{entryTime}</td>
           <td
             className={`border md:p-2 text-center`}
-            style={{ backgroundColor: getBackgroundColor(Number(patient_triage_level)) }}
+            style={{ backgroundColor: getBackgroundColor(patient_triage_level) }}
           >
             {patient_triage_level}
           </td>
