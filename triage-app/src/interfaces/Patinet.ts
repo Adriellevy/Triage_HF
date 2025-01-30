@@ -60,9 +60,9 @@ export interface PatientData {
   nurse_coment?: string
   doctor_id?: string
   nurse_id?: string
-  observations?: string
-  procedures?: string
-  records?: string
+  patient_observations?: string
+  patient_procedures?: string
+  patient_records?: string
 }
 
 export type NullablePatient = Patient | null
