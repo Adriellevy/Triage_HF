@@ -17,6 +17,7 @@ import {
   createTriage,
   deleteTriage,
   getAllTriages,
+  sortTriageLevels,
   updateTriage
 } from '@/services/triageLevelsService'
 
@@ -32,6 +33,10 @@ function SymptomSettings() {
 
   const { t } = useTranslation('TriageEditor')
 
+  useEffect(() => {
+    fetchSymptoms()
+    fetchTriageLevels()
+  }, [])
   const fetchSymptoms = async () => {
     try {
       setIsLoading(true)
@@ -139,18 +144,21 @@ function SymptomSettings() {
       console.error('Error al eliminar nivel de triage:', error)
     }
   }
-
-  useEffect(() => {
-    fetchSymptoms()
-    fetchTriageLevels()
-  }, [])
-
-  // const TriageLevels = [
-  //   { id: '1', name: 'I', color: '#999999' },
-  //   { id: '2', name: 'II', color: '#FF3300' },
-  //   { id: '3', name: 'III', color: '#FFFF66' },
-  //   { id: '4', name: 'IV', color: '#69A84F' }
-  // ]
+  const handleUpdateOrder = async (changedLevels) => {
+    try {
+      console.log('infoRecivida', changedLevels)
+      const { success, message } = await sortTriageLevels(changedLevels)
+      if (!success) {
+        console.error(`Error al actualizar los niveles ${changedLevels}: ${message}`)
+        return // Detenemos el proceso si alguna actualización falla
+      }
+      // Refresca los niveles de triage una vez completadas todas las actualizaciones
+      await fetchTriageLevels()
+      console.log('Todos los niveles de triage actualizados con éxito.')
+    } catch (error) {
+      console.error('Error general al actualizar niveles de triage:', error)
+    }
+  }
 
   return (
     <div className='bg-white pb-4 mt-20 ml-2 md:mt-0 md:ml-0'>
@@ -198,6 +206,7 @@ function SymptomSettings() {
                 onAddLevel={handleAddTriageLevel}
                 onUpdateLevel={handleUpdateTriageLevel}
                 onDeleteLevel={handleDeleteTriageLevel}
+                onUpdateOrder={handleUpdateOrder}
               />
             )}
           </div>

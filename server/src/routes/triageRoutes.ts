@@ -1,24 +1,24 @@
-import { Router, Request, Response } from "express";
-import { TriageController } from "../controllers/triageController";
+import { Router, Request, Response } from 'express';
+import { TriageController } from '../controllers/triageController';
 
 export const triageRouter = Router();
 
-triageRouter.get('',(req:Request,res:Response)=>{
-    void TriageController.getAllTriage(req,res)
-})
+triageRouter.get('', (req: Request, res: Response) => {
+  void TriageController.getAllTriage(req, res);
+});
 
-triageRouter.post('',(req:Request,res:Response)=>{
-    void TriageController.createNewTriage(req,res)
-})
+triageRouter.post('', (req: Request, res: Response) => {
+  void TriageController.createNewTriage(req, res);
+});
 
-triageRouter.put('/:id',(req:Request,res:Response)=>{
-    void TriageController.updateTriage(req,res)
-})
+triageRouter.put('/:id', (req: Request, res: Response) => {
+  void TriageController.updateTriage(req, res);
+});
 
-triageRouter.delete('/:id',(req:Request,res:Response)=>{
-    void TriageController.deleteTriage(req,res)
-})
+triageRouter.delete('/:id', (req: Request, res: Response) => {
+  void TriageController.deleteTriage(req, res);
+});
 
-triageRouter.post('sort',(req:Request,res:Response)=>{
-    void TriageController.sortTriageLevels(req,res)
-})
+triageRouter.post('/sort', (req: Request, res: Response) => {
+  void TriageController.sortTriageLevels(req, res);
+});

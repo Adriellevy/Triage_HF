@@ -9,5 +9,8 @@
   "Add": "Agregar",
   "NewLevel": "Nuevo nivel",
   "SymptomList": "Lista de síntomas",
-  "Save": "Guardar"
+  "Save": "Guardar",
+  "MoveUp": "Subir nivel",
+  "MoveDown": "Bajar nivel",
+  "Order": "Ordenar"
 }

@@ -9,5 +9,8 @@
   "Add": "Add",
   "NewLevel": "New Level",
   "SymptomList": "Symptom List",
-  "Save": "Save"
+  "Save": "Save",
+  "MoveUp": "Move Up level",
+  "MoveDown": "Move Down level",
+  "Order": "Order"
 }

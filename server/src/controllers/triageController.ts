@@ -87,26 +87,57 @@ export class TriageController {
     }
   }
 
+  static async sortTriageLevels(req: Request, res: Response) {
+    const triages = req.body.triages;
 
-    static async sortTriageLevels(req:Request,res:Response){
-        const triages = req.body.triages;
-        if(!triages)
-            return res.status(400).json({message:"Arreglo con triages es requerido"});
-        if(triages.length===0)
-            return res.status(400).json({message:"Triages no puede estar vacío"});
-        try{
-            for(let i=0;i<triages.length;i++){
-                const triage = await TriageModel.findByOffset(i);
-                await TriageModel.update({level:triages[i].level,color:triage.color},triage.level);
-            }
-            return res.status(200).json({message:"Triages ordenados correctamente"});
-        }catch(err){
-            return res.status(500).json({message:`Error al ordenar los triages: ${err.message}`});
-        }
+    if (!triages || triages.length === 0) {
+      return res
+        .status(400)
+        .json({ message: 'El arreglo con triages es requerido y no puede estar vacío.' });
     }
-    private static validateRgbColor(color:string){
-        const rgbRegex = /^(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})$/;
-        const [r,g,b] = color.split(',').map(c=>parseInt(c));
-        return rgbRegex.test(color) && (r>=0 && r<=255) && (g>=0 && g<=255) && (b>=0 && b<=255);
+
+    try {
+      const existingTriages = await TriageModel.getAllTriagesInAscendentOrderById();
+
+      if (existingTriages.length !== triages.length) {
+        return res.status(400).json({
+          message:
+            'El número de triages recibidos no coincide con los existentes en la base de datos.'
+        });
+      }
+
+      // Paso 1: Actualizar valores temporalmente (niveles cortos)
+      for (let i = 0; i < existingTriages.length; i++) {
+        const currentTriage = existingTriages[i];
+        const tempLevel = `_${i + 1}`; // Valores temporales cortos (ejemplo: "_1", "_2")
+
+        await TriageModel.updateById(currentTriage.id, {
+          level: tempLevel,
+          color: triages[i].color
+        });
+      }
+
+      // Paso 2: Actualizar los valores finales
+      for (let i = 0; i < existingTriages.length; i++) {
+        const currentTriage = existingTriages[i];
+        const finalLevel = triages[i].level;
+
+        await TriageModel.updateById(currentTriage.id, {
+          level: finalLevel,
+          color: triages[i].color
+        });
+      }
+
+      return res.status(200).json({ message: 'Triages ordenados y actualizados correctamente.' });
+    } catch (err) {
+      console.error(`Error al ordenar los triages: ${err.message}`);
+      return res.status(500).json({ message: `Error al ordenar los triages: ${err.message}` });
     }
+  }
+
+  private static validateRgbColor(color: string) {
+    const rgbRegex = /^(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})$/;
+    const [r, g, b] = color.split(',').map((c) => parseInt(c));
+    return rgbRegex.test(color) && r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255;
+  }
 }

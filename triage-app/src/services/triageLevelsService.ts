@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import { config } from '../config/env'
-import { TriageLevel } from '@/interfaces/TriageLevel'
+import { TriageLevel, TriageLevel_noId } from '@/interfaces/TriageLevel'
 
 // Obtener todos los triages
 export const getAllTriages = async (): Promise<{
@@ -135,6 +135,38 @@ export const updateTriage = async (
 
     const data = await response.json()
     return { success: true, message: 'Triage actualizado correctamente', data: data.message }
+  } catch (error: unknown) {
+    console.error('Error al actualizar el triage:', JSON.stringify(error, null, 2))
+    return { success: false, message: 'Error al actualizar el triage' }
+  }
+}
+
+export const sortTriageLevels = async (
+  triages: TriageLevel_noId[]
+): Promise<{
+  success: boolean
+  message: string
+}> => {
+  const token = Cookies.get('authToken')
+  console.log('Sorting triages:', JSON.stringify({ triages }))
+  try {
+    const response = await fetch(`${config.API_URL}/triage/sort`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ triages })
+    })
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      throw new Error(
+        `Error en la solicitud PUT a /triage/sort/${triages}: ${
+          errorResponse.message || 'Unknown error'
+        }`
+      )
+    }
+    return { success: true, message: 'Triages actualizados correctamente' }
   } catch (error: unknown) {
     console.error('Error al actualizar el triage:', JSON.stringify(error, null, 2))
     return { success: false, message: 'Error al actualizar el triage' }
