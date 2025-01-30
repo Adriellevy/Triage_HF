@@ -13,7 +13,7 @@ export interface Patient {
   patient_entry_time: string;
   patient_exit_time: string | null;
   patient_triage_time: string;
-  patient_triage_level: number | null;
+  patient_triage_level: string | null;
   patient_isolated: boolean;
   box_id: string | null;
   box_code?: string;
@@ -39,7 +39,6 @@ export interface PatientHistoryItem {
   user_name?: string;
 }
 
-
 export interface PatientShiftChange {
   patientID: string;
   lastDoctorID: string;
@@ -48,17 +47,17 @@ export interface PatientShiftChange {
   newNurseID: string;
   observations: string;
   records: string;
-  procedures:string;
+  procedures: string;
 }
 
-export interface ReportShiftChange{
-  patient_id:string
-  patient_name:string
-  doctor_outgoing:string
-  doctor_incoming:string
-  nurse_outgoing:string
-  nurse_incoming:string
-  observations:string
-  records:string
-  procedures:string
+export interface ReportShiftChange {
+  patient_id: string;
+  patient_name: string;
+  doctor_outgoing: string;
+  doctor_incoming: string;
+  nurse_outgoing: string;
+  nurse_incoming: string;
+  observations: string;
+  records: string;
+  procedures: string;
 }

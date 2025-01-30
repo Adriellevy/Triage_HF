@@ -228,26 +228,30 @@ export class PatientController {
 
   static async shiftChange(req: any, res: Response) {
     const data: PatientShiftChange[] = req.body.patients;
-    
-    try{
-      if(!data){
+
+    try {
+      if (!data) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
       const now = new Date();
       const shift = await ShiftModel.getShiftOfNow(now);
 
-      if(shift.length === 0){
+      if (shift.length === 0) {
         return res.status(404).json({ message: 'Shift not found' });
       }
-      const shiftID = shift.find((s)=> now.getHours() >= s.shift_start_time && now.getHours() <= s.shift_end_time)!.id;
+      const shiftID = shift.find(
+        (s) => now.getHours() >= s.shift_start_time && now.getHours() <= s.shift_end_time
+      )!.id;
 
-      const allPatients = await PatientsModel.getPatientsByIds(data.map((patient) => patient.patientID));
+      const allPatients = await PatientsModel.getPatientsByIds(
+        data.map((patient) => patient.patientID)
+      );
 
-      for(const p of data){
+      for (const p of data) {
         const patient = allPatients.find((patient) => patient.patient_id === p.patientID);
-        if(p.lastDoctorID && p.lastDoctorID != p.newDoctorID){
+        if (p.lastDoctorID && p.lastDoctorID != p.newDoctorID) {
           const doctor = await UserModel.getUserById(p.newDoctorID);
-          if(!doctor){
+          if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found' });
           }
 
@@ -259,12 +263,12 @@ export class PatientController {
             patient_id: p.patientID,
             user_id: req.user.id,
             patient_updated_date: new Date()
-          })
+          });
         }
 
-        if(p.lastNurseID && p.lastNurseID != p.newNurseID){
+        if (p.lastNurseID && p.lastNurseID != p.newNurseID) {
           const nurse = await UserModel.getUserById(p.newNurseID);
-          if(!nurse){
+          if (!nurse) {
             return res.status(404).json({ message: 'Nurse not found' });
           }
 
@@ -276,27 +280,40 @@ export class PatientController {
             patient_id: p.patientID,
             user_id: req.user.id,
             patient_updated_date: new Date()
-          })
+          });
         }
 
-        await ShiftChangeModel.create(
-          {shift_id:shiftID,last_doctor_id: p.lastDoctorID, new_doctor_id: p.newDoctorID, last_nurse_id: p.lastNurseID, new_nurse_id: p.newNurseID, patient_id: p.patientID, patient_observations: p.observations, patient_records: p.records, patient_procedures: p.procedures, user_id: req.user.id}
-        )
+        await ShiftChangeModel.create({
+          shift_id: shiftID,
+          last_doctor_id: p.lastDoctorID,
+          new_doctor_id: p.newDoctorID,
+          last_nurse_id: p.lastNurseID,
+          new_nurse_id: p.newNurseID,
+          patient_id: p.patientID,
+          patient_observations: p.observations,
+          patient_records: p.records,
+          patient_procedures: p.procedures,
+          user_id: req.user.id
+        });
       }
-      const patientsUpdated = await PatientsModel.getPatientsByIds(data.map((patient) => patient.patientID));
-      const patientsToReport:ReportShiftChange[] = patientsUpdated.map((p) => {
+      const patientsUpdated = await PatientsModel.getPatientsByIds(
+        data.map((patient) => patient.patientID)
+      );
+      const patientsToReport: ReportShiftChange[] = patientsUpdated.map((p) => {
         const shiftChange = data.find((patient) => patient.patientID === p.patient_id);
         return {
           patient_name: decryptPatientData(p).patient_name,
           patient_id: p.patient_id,
-          doctor_incoming: p.doctor_name || "",
-          doctor_outgoing: allPatients.find((pat) => pat.patient_id === p.patient_id)?.doctor_name || "",
-          nurse_incoming: p.nurse_name || "",
-          nurse_outgoing: allPatients.find((pat) => pat.patient_id === p.patient_id)?.nurse_name || "",
-          observations: shiftChange?.observations || "",
-          records: shiftChange?.records|| "",
-          procedures: shiftChange?.procedures || ""
-        }
+          doctor_incoming: p.doctor_name || '',
+          doctor_outgoing:
+            allPatients.find((pat) => pat.patient_id === p.patient_id)?.doctor_name || '',
+          nurse_incoming: p.nurse_name || '',
+          nurse_outgoing:
+            allPatients.find((pat) => pat.patient_id === p.patient_id)?.nurse_name || '',
+          observations: shiftChange?.observations || '',
+          records: shiftChange?.records || '',
+          procedures: shiftChange?.procedures || ''
+        };
       });
       const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
         title: 'Mi PDF',
@@ -325,40 +342,55 @@ export class PatientController {
         // Opcional: eliminar el archivo generado después de la descarga
         fs.unlinkSync(pdfPath);
       });
-    }catch(error){
+    } catch (error) {
       console.log('Error al aplicar cambios de turno:', error);
       return res.status(500).json({ message: error.message });
     }
   }
 
   static async getPatientsByNameAndAge(req: Request, res: Response): Promise<Response> {
-    try{
+    try {
       const { patient_name, patient_age } = req.body;
       const now = new Date();
-      const leftDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
-      const rightDate = new Date(now.getFullYear() - patient_age + 10, now.getMonth(), now.getDate());
+      const leftDate = new Date(
+        now.getFullYear() - patient_age + 10,
+        now.getMonth(),
+        now.getDate()
+      );
+      const rightDate = new Date(
+        now.getFullYear() - patient_age + 10,
+        now.getMonth(),
+        now.getDate()
+      );
 
       const patients = await PatientsModel.getPatientsByName(encryptstring(patient_name));
-      if(patients.length === 0){
+      if (patients.length === 0) {
         return res.status(404).json({ message: 'No se encontraron pacientes' });
       }
-      console.log(patient_name, patient_age,patients);
+      console.log(patient_name, patient_age, patients);
 
       const patientsDesencrypted = patients.map((patient) => decryptPatientData(patient));
       const patientsFiltered = patientsDesencrypted.filter((patient) => {
         const patientDate = new Date(patient.patient_age);
         return patientDate >= leftDate && patientDate <= rightDate;
       });
-      const patientsWithouIsolated = patientsFiltered.filter((patient) => {patient.patient_isolated === false});
-      const patientsWithIsolatedInHistory = await HistoryModel.findByIdsAndColumn(patientsWithouIsolated.map((patient) => patient.patient_id),'patient_isolated',1,1);
+      const patientsWithouIsolated = patientsFiltered.filter((patient) => {
+        patient.patient_isolated === false;
+      });
+      const patientsWithIsolatedInHistory = await HistoryModel.findByIdsAndColumn(
+        patientsWithouIsolated.map((patient) => patient.patient_id),
+        'patient_isolated',
+        1,
+        1
+      );
       // patientsWithIsolatedInHistory id de pacientes aislados en algun momento
-      patientsFiltered.forEach((p)=>{
-        if(p.patient_isolated == false && patientsWithIsolatedInHistory.includes(p.patient_id)){
+      patientsFiltered.forEach((p) => {
+        if (p.patient_isolated == false && patientsWithIsolatedInHistory.includes(p.patient_id)) {
           p.patient_isolated = true;
         }
-      })
+      });
       return res.json(patientsFiltered);
-    }catch(error){
+    } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   }

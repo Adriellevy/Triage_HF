@@ -5,7 +5,7 @@ const patientSchema = z.object({
   patient_entry_time: z.string(),
   patient_exit_time: z.string().nullable(),
   patient_triage_time: z.string(),
-  patient_triage_level: z.number().int().nullable(),
+  patient_triage_level: z.string().nullable(),
   patient_isolated: z.boolean(),
   patient_status: z.enum(['ALTA', 'EN OBSERVACION', 'AFUERA']),
   patient_symptom: z.string().min(1).max(500),
