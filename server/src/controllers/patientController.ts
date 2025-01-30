@@ -81,6 +81,12 @@ export class PatientController {
     try {
       const { id } = req.params;
       const User = await PatientsModel.getPatientById({ id });
+      const lastShiftChange = await ShiftChangeModel.getLastShiftChangeByPatientID(id);
+      if (lastShiftChange && User) {
+        User.patient_observations = lastShiftChange.patient_observations || '';
+        User.patient_records = lastShiftChange.patient_records || '';
+        User.patient_procedures = lastShiftChange.patient_procedures || '';
+      }
       if (User) return res.json(decryptPatientData(User));
       return res.status(404).json({ message: 'Patient not found' });
     } catch (error) {

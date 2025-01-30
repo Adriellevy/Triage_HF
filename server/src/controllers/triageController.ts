@@ -87,9 +87,26 @@ export class TriageController {
     }
   }
 
-  private static validateRgbColor(color: string) {
-    const rgbRegex = /^(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})$/;
-    const [r, g, b] = color.split(',').map((c) => parseInt(c));
-    return rgbRegex.test(color) && r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255;
-  }
+
+    static async sortTriageLevels(req:Request,res:Response){
+        const triages = req.body.triages;
+        if(!triages)
+            return res.status(400).json({message:"Arreglo con triages es requerido"});
+        if(triages.length===0)
+            return res.status(400).json({message:"Triages no puede estar vacío"});
+        try{
+            for(let i=0;i<triages.length;i++){
+                const triage = await TriageModel.findByOffset(i);
+                await TriageModel.update({level:triages[i].level,color:triage.color},triage.level);
+            }
+            return res.status(200).json({message:"Triages ordenados correctamente"});
+        }catch(err){
+            return res.status(500).json({message:`Error al ordenar los triages: ${err.message}`});
+        }
+    }
+    private static validateRgbColor(color:string){
+        const rgbRegex = /^(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})$/;
+        const [r,g,b] = color.split(',').map(c=>parseInt(c));
+        return rgbRegex.test(color) && (r>=0 && r<=255) && (g>=0 && g<=255) && (b>=0 && b<=255);
+    }
 }
