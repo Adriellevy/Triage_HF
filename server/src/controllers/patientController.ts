@@ -315,33 +315,33 @@ export class PatientController {
           procedures: shiftChange?.procedures || ''
         };
       });
-      const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
-        title: 'Mi PDF',
-        content: 'Este es el contenido del PDF generado',
-        patients: patientsToReport
-      });
+      // const html = await ejs.renderFile(path.resolve('src/templates/pdf/shift-change.ejs'), {
+      //   title: 'Mi PDF',
+      //   content: 'Este es el contenido del PDF generado',
+      //   patients: patientsToReport
+      // });
 
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.setContent(html);
+      // const browser = await puppeteer.launch();
+      // const page = await browser.newPage();
+      // await page.setContent(html);
 
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        landscape: true
-      });
-      await browser.close();
-      const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
-      fs.writeFileSync(pdfPath, pdfBuffer);
+      // const pdfBuffer = await page.pdf({
+      //   format: 'A4',
+      //   printBackground: true,
+      //   landscape: true
+      // });
+      // await browser.close();
+      // const pdfPath = path.join(__dirname, 'generated-pdf.pdf');
+      // fs.writeFileSync(pdfPath, pdfBuffer);
       SendShiftExchangeNotifications(req);
-      res.download(pdfPath, 'generated-pdf.pdf', (err) => {
-        if (err) {
-          console.error('Error al descargar el archivo:', err);
-        }
+      // res.download(pdfPath, 'generated-pdf.pdf', (err) => {
+      //   if (err) {
+      //     console.error('Error al descargar el archivo:', err);
+      //   }
 
-        // Opcional: eliminar el archivo generado después de la descarga
-        fs.unlinkSync(pdfPath);
-      });
+      //   // Opcional: eliminar el archivo generado después de la descarga
+      //   fs.unlinkSync(pdfPath);
+      // });
     } catch (error) {
       console.log('Error al aplicar cambios de turno:', error);
       return res.status(500).json({ message: error.message });

@@ -117,10 +117,9 @@ const ShiftExchangeModal = ({ onClose }) => {
     console.log('Patients:', patients, 'Create Report?:', createReport)
 
     try {
-      const shiftExchange = await executeShiftChange(patients, createReport)
-      console.log('Shift Exchange Result:', shiftExchange)
+      await executeShiftChange(patients, createReport)
+      //console.log('Shift Exchange Result:', shiftExchange)
       onClose()
-      toast.success('Cambio de turno exitoso!', { duration: 2000 })
     } catch (error) {
       toast.error('Hubo un error en el cambio de turno', { duration: 2000 })
       console.error('Error executing shift exchange:', error)

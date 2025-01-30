@@ -58,11 +58,11 @@ export function SendNewPatientNotifications(
 }
 
 export function SendShiftExchangeNotifications(req: Request): void {
-  console.log('CHE EMITIMOS O NOOOOOOOOOO')
-  const io = req.io
+  console.log('Se envío la notificación por socket de intercambio de turno');
+  const io = req.io;
   io?.emit(SocketEvent.UPDATE, {
-    message: UpdateEvent.SHIFT_EXCHANGE 
-  })
+    message: UpdateEvent.SHIFT_EXCHANGE
+  });
 }
 
 export function SendUpdatePatientNotifications(

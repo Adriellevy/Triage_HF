@@ -162,10 +162,8 @@ function Sidebar() {
     }) => {
       console.log(data)
       if (data.message === UpdateEvent.SHIFT_EXCHANGE) {
+        setIsModalOpen(false)
         toast.success('Cambio de turno executado', { duration: 5000 })
-        setTimeout(() => {
-          window.location.reload()
-        }, 5000)
         return
       }
       if (data.message === UpdateEvent.REFRESH_TOKEN_EXPIRED) {
