@@ -58,15 +58,15 @@ function PatientDetail() {
     { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
     { label: t('PatientStatusLabel'), key: 'patient_status', format: null },
 
-    { label: t('PatientObservationsLabel'), key: 'observations', format: null },
-    { label: t('PatientProceduresLabel'), key: 'procedures', format: null },
-    { label: t('PatientRecordsLabel'), key: 'records', format: null }
+    { label: t('Patientpatient_observationsLabel'), key: 'patient_observations', format: null },
+    { label: t('Patientpatient_proceduresLabel'), key: 'patient_procedures', format: null },
+    { label: t('Patientpatient_recordsLabel'), key: 'patient_records', format: null }
   ]
 
   const specialFields: Field[] = [
-    { label: t('PatientObservationsLabel'), key: 'observations', format: null },
-    { label: t('PatientProceduresLabel'), key: 'procedures', format: null },
-    { label: t('PatientRecordsLabel'), key: 'records', format: null }
+    { label: t('Patientpatient_observationsLabel'), key: 'patient_observations', format: null },
+    { label: t('Patientpatient_proceduresLabel'), key: 'patient_procedures', format: null },
+    { label: t('Patientpatient_recordsLabel'), key: 'patient_records', format: null }
   ]
   //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
 
@@ -76,7 +76,7 @@ function PatientDetail() {
     }
   }
   const hasNoSpecialFields = (patient: PatientData) =>
-    !patient.observations && !patient.procedures && !patient.records
+    !patient.patient_observations && !patient.patient_procedures && !patient.patient_records
 
   const handleMedicalDischarge = () => {
     SetMedicalDischarge(true)
@@ -109,8 +109,12 @@ function PatientDetail() {
               const value = Patient ? Patient[field.key] : null
               const isEmpty = value === undefined || value === null || value === ''
 
-              // Check if this field is part of the observations, procedures, or records group
-              if (['observations', 'procedures', 'records'].includes(field.key)) {
+              // Check if this field is part of the patient_observations, patient_procedures, or patient_records group
+              if (
+                ['patient_observations', 'patient_procedures', 'patient_records'].includes(
+                  field.key
+                )
+              ) {
                 return null // We handle these fields separately below
               }
 
@@ -130,13 +134,15 @@ function PatientDetail() {
               )
             })}
 
-            {/* Custom logic for observations, procedures, and records */}
-            {['observations', 'procedures', 'records'].every((key) => !Patient || !Patient[key]) ? (
+            {/* Custom logic for patient_observations, patient_procedures, and patient_records */}
+            {['patient_observations', 'patient_procedures', 'patient_records'].every(
+              (key) => !Patient || !Patient[key]
+            ) ? (
               <li className='flex items-start text-red-500 font-semibold'>
                 {t('NoShiftChangesMessage')}
               </li>
             ) : (
-              ['observations', 'procedures', 'records'].map((key) => (
+              ['patient_observations', 'patient_procedures', 'patient_records'].map((key) => (
                 <li key={key} className='flex items-start'>
                   <span className='font-semibold mr-2'>{t(`${key}Label`)}:</span>
                   <span className='flex-1'>
