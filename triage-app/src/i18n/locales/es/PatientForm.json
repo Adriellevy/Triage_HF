@@ -6,7 +6,7 @@
   "TriageLevelLabel": "Nivel de Triage",
   "PatientIsolation": "Paciente con Aisalmiento",
   "PatientSymptom": "Sintoma del paciente",
-  "BoxIDLabel": "ID de la caja",
+  "BoxIDLabel": "Asignar ubicacion",
   "DoctorNameLabel": "Nombre del Doctor",
   "NurseNameLabel": "Nombre del Enfermero",
   "PatientStatusLabel": "Estado del Paciente",
@@ -17,5 +17,6 @@
   "patient_healthcare_system": "Cobertura Médica",
   "doctor_procedure": "Indicaciones del Doctor",
   "doctor_coment": "Comentarios del Doctor",
-  "AddingPatient": "Agregando paciente, por favor espere"
+  "AddingPatient": "Agregando paciente, por favor espere",
+  "RequiredField": "Campo requerido"
 }

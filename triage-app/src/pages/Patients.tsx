@@ -152,75 +152,11 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [selectedOptions, setselectedOptions] = useState<ColourOption[]>([])
   const [searchType, setSearchType] = useState('Nombre')
   const [animation, setAnimation] = useState('')
-  // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
-  // Verifica si el rol del usuario es DOCTOR y agrega la opción "MÍOS"
-  // const predefinedOptionsVar: ColourOption[] = [
-  //   {
-  //     value: 'patient_status',
-  //     item: 'TODOS MENOS ALTA',
-  //     label: 'TODOS MENOS ALTA',
-  //     color: '#525252',
-  //     isFixed: true
-  //   }
-  // ]
-
-  // if (role === UserRole.DOCTOR) {
-  //   predefinedOptionsVar.push({
-  //     value: 'type_user',
-  //     item: 'MÍOS',
-  //     label: 'MÍOS',
-  //     color: '#525252',
-  //     isFixed: true
-  //   })
-  // }
-
   const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>([])
-
-  //hardoceado ver como obtenerlo de otra forma
 
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
     setfilterOptions(selectedOptions as ColourOption[])
   }
-
-  // useEffect(() => {
-  //   const token = Cookies.get('authToken')
-  //   const fetchData = async () => {
-  //     try {
-  //       if (token) {
-  //         const batch = Math.ceil(currentPage / 3);
-  //         if(!(filteredDataBatch.includes(batch))) {
-  //           const data = await getPaginatedPatients(batch)
-  //           const sortedData = data.sort((a, b) => {
-  //             return new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime()
-  //             console.log('Predifined Options em use efect', predefinedOptions)
-  //           })
-  //           setRawData(sortedData)
-  //           const filteredPatients = filterPatients(
-  //             sortedData,
-  //             predefinedOptions,
-  //             searchTerm,
-  //             'name',
-  //             actual_user
-  //           )
-  //           setPatientsData([...patientsData, ...filteredPatients])
-  //           setfilteredDataBatch([...dataBatch, batch])
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error((error as Error).message)
-  //     }
-  //   }
-  //   if (socket) {
-  //     socket.on(SocketEvent.UPDATE, (data) => {
-  //       if (data.message == UpdateEvent.NEW_PATIENT || data.message == UpdateEvent.UPDATE_PATIENT) {
-  //         fetchData()
-  //       }
-  //     })
-  //     return () => {
-  //       socket.off(SocketEvent.UPDATE)
-  //     }
-  //   }
-  // }, [socket, predefinedOptions])
 
   useEffect(() => {
     const fetchData = async () => {

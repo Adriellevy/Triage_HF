@@ -15,7 +15,7 @@ import { getPatientById } from '@/services/patientService'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Checkbox } from '@mui/material'
+import { Checkbox, Tooltip } from '@mui/material'
 import React from 'react'
 import {
   IndiceObjeto,
@@ -42,6 +42,8 @@ import LoaderSpin from '../LoaderSpin'
 import LoaderOverlay from '../ui/LoaderOverlay'
 import { getAllSymptoms } from '@/services/symtomService'
 import { getAllTriages } from '@/services/triageLevelsService'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 function PatientFormRefactorizado() {
   // Select states
@@ -163,7 +165,29 @@ function PatientFormRefactorizado() {
       value: null,
       handlerHelperFunction: null,
       formatdata: null,
-      isRequiredField: false
+      isRequiredField: true
+    },
+    {
+      key: 'doctor_id',
+      label: 'DoctorNameLabel',
+      labelAlternativo: null,
+      format: returnDoctorName,
+      component_type: 'select',
+      value: null,
+      handlerHelperFunction: null,
+      formatdata: returnDoctorId,
+      isRequiredField: true
+    },
+    {
+      key: 'nurse_id',
+      label: 'NurseNameLabel',
+      labelAlternativo: null,
+      format: returnNurseName,
+      component_type: 'select',
+      value: null,
+      handlerHelperFunction: null,
+      formatdata: returnNurseId,
+      isRequiredField: true
     },
     {
       key: 'patient_isolated',
@@ -197,28 +221,6 @@ function PatientFormRefactorizado() {
       handlerHelperFunction: null,
       formatdata: null,
       isRequiredField: false
-    },
-    {
-      key: 'doctor_id',
-      label: 'DoctorNameLabel',
-      labelAlternativo: null,
-      format: returnDoctorName,
-      component_type: 'select',
-      value: null,
-      handlerHelperFunction: null,
-      formatdata: returnDoctorId,
-      isRequiredField: true
-    },
-    {
-      key: 'nurse_id',
-      label: 'NurseNameLabel',
-      labelAlternativo: null,
-      format: returnNurseName,
-      component_type: 'select',
-      value: null,
-      handlerHelperFunction: null,
-      formatdata: returnNurseId,
-      isRequiredField: true
     },
     {
       key: 'box_id',
@@ -532,18 +534,6 @@ function PatientFormRefactorizado() {
         : 'no hay data-index'
     }
 
-    // console.log('e.target: ', e.target)
-    // console.log(
-    //   'Value pasado: \n',
-    //   value,
-    //   '\n id: \n',
-    //   id,
-    //   '\n name: \n',
-    //   name,
-    //   '\n data-index: \n',
-    //   OpcionSelecionada
-    // )
-
     setformInterfaz((prevFormInterfaz) => {
       const index = IndiceObjeto(prevFormInterfaz, id)
       if (index === -1) return prevFormInterfaz
@@ -640,17 +630,6 @@ function PatientFormRefactorizado() {
     resetErrors()
   }
 
-  //----------------------------------------------  Deseleccion Box ------------------------------------
-  // Función para cancelar el cambio de box y agregar el box previo a la lista
-  // // // const cancelBoxPreviousSelected = () => {
-  // // //   // Verificar que BoxesOptions y formData.box_id tengan valores válidos
-  // // //   if (BoxesOptions && formData.box_id) {
-  // // //     // Agregar el box previo a la lista solo si no está ya en la lista
-  // // //     if (!BoxesOptions.includes(formData.box_id)) {
-  // // //       setBoxesOptions([...BoxesOptions, formData.box_id])
-  // // //     }
-  // // //   }
-  // // // }
   //----------------------------------------------  Actualizacion de las opciones-----------------------
   function ActualizarTotalOptions(
     docs: User | User[] | null = [],
@@ -794,12 +773,24 @@ function PatientFormRefactorizado() {
           const error = ErrorsForm[key as keyof typeof ErrorsForm]
           return (
             <div key={key}>
-              <Label htmlFor={key}>
-                {!edditingPatient &&
-                t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
-                  ? t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
-                  : t(formInterfaz[key as keyof typeof formInterfaz]?.label)}
-              </Label>
+              <div className='flex justify-between items-center'>
+                <Label htmlFor={key}>
+                  {!edditingPatient &&
+                  t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
+                    ? t(formInterfaz[key as keyof typeof formInterfaz]?.labelAlternativo)
+                    : t(formInterfaz[key as keyof typeof formInterfaz]?.label)}
+                </Label>
+                {(formInterfaz[key as keyof typeof formInterfaz] as Field)?.isRequiredField && (
+                  <>
+                    <Tooltip title={t('RequiredField')}>
+                      <FontAwesomeIcon
+                        icon={faInfoCircle}
+                        style={{ color: 'red', marginLeft: '5px', cursor: 'pointer' }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
+              </div>
               {/*Si el tipo de entry es modo INPUT*/}
               {(formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'input' ||
                 (formInterfaz[key as keyof typeof formInterfaz]?.component_type === 'DependsMode' &&

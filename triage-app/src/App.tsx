@@ -20,6 +20,7 @@ import BoxSettings from './pages/settings/BoxSettings'
 import HealthInstituteSettings from './pages/settings/HealthInstituteSettings'
 import UserSettings from './pages/settings/UserSettings'
 import PatientEdit from './pages/PatientEdit'
+import ShiftChange from '@/pages/ShiftChange'
 import StatsPatientTriage from './pages/stats/StatsPatientTriage'
 import PatientsMeanTimeNurse from './pages/stats/PatientsMeanTimeNurse'
 import PatientsMeanAge from './pages/stats/PatientsMeanAge'
@@ -156,6 +157,14 @@ function App() {
                       element={
                         <ProtectedRouteAutentication>
                           <Boxes />
+                        </ProtectedRouteAutentication>
+                      }
+                    />
+                    <Route
+                      path='/shifts'
+                      element={
+                        <ProtectedRouteAutentication>
+                          <ShiftChange />
                         </ProtectedRouteAutentication>
                       }
                     />

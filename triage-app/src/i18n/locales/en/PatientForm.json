@@ -6,7 +6,7 @@
   "TriageLevelLabel": "Triage Level",
   "PatientIsolation": "Patient in isolation",
   "PatientSymptom": "Patient's Simtom",
-  "BoxIDLabel": "Box ID",
+  "BoxIDLabel": "Asign Location",
   "DoctorNameLabel": "Doctor's Name",
   "NurseNameLabel": "Nurse's Name",
   "PatientStatusLabel": "Patient Status",
@@ -17,5 +17,6 @@
   "patient_healthcare_system": "Health Insurance",
   "doctor_procedure": "Doctor Indications",
   "doctor_coment": "Doctor Coments",
-  "AddingPatient": "Adding Patient, please wait"
+  "AddingPatient": "Adding Patient, please wait",
+  "RequiredField": "Required Field"
 }
