@@ -46,15 +46,17 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
           </div>
         ) : (
           <table className='w-full border border-gray-300 text-white'>
-            <thead className='sticky top-0 bg-blue-800 m-2'>
-              <tr>
-                <th className='border p-2'>{t('TimeLable')}</th>
-                <th className='border p-2'>{t('ItemLable')}</th>
-                <th className='border p-2'>{t('BeforeLable')}</th>
-                <th className='border p-2'>{t('AfterLable')}</th>
-                <th className='border p-2'>{t('EditByLabel')}</th>
-              </tr>
-            </thead>
+            <>
+              <thead className='sticky top-0 z-10 bg-blue-800 m-2'>
+                <tr>
+                  <th className='border p-2'>{t('TimeLable')}</th>
+                  <th className='border p-2'>{t('ItemLable')}</th>
+                  <th className='border p-2'>{t('BeforeLable')}</th>
+                  <th className='border p-2'>{t('AfterLable')}</th>
+                  <th className='border p-2'>{t('EditByLabel')}</th>
+                </tr>
+              </thead>
+            </>
             <tbody className='text-center text-black'>
               {PatientHistoryData.map(
                 (HistoryItem, index) =>

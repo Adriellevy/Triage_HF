@@ -18,5 +18,6 @@
   "NURSE": "Enfermero",
   "DOCTOR": "Doctor",
   "ADMIN": "Administrador",
+  "ShiftExchange": "Cambios de turnos",
   "handleHealthInstituteConfiguration": "Configuración de institución de salud"
 }

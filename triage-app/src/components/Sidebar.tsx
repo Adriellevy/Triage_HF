@@ -330,7 +330,7 @@ function Sidebar() {
                     )}
                   </button>
                   {openSubMenu === index && (
-                    <div className='absolute left-full top-0 mt-2 ml-2 bg-blue-900 rounded-md p-2'>
+                    <div className='absolute left-full top-0 mt-2 ml-2 z-30 bg-blue-900 rounded-md p-2'>
                       {item.submenu.map((submenuItem, submenuIndex) => (
                         <Link
                           key={submenuIndex}
