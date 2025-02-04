@@ -17,5 +17,7 @@
   "Observations": "Observaciones",
   "Procedures": "Procedimientos",
   "Record": "Antecedentes",
-  "DoctorOrNurse": "Es necesario asignar un nuevo doctor o enfermera al paciente"
+  "DoctorOrNurse": "Es necesario asignar un nuevo doctor o enfermera al paciente",
+  "StatusLabel": "Estado",
+  "SymptomLabel": "Sintoma"
 }

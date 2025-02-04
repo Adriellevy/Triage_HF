@@ -96,10 +96,10 @@ function BoxItem({ box, index }: PropsBoxItem) {
 
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{box_code}</td>
-      <td className='border p-2'>{t(`${box_type}`)}</td>
+      <td className='border p-1 lg:p-2 font-bold'>{box_code}</td>
+      <td className='border p-1 lg:p-2 text-sm hidden lg:table-cell'>{t(`${box_type}`)}</td>
 
-      <td className='border p-2 '>
+      <td className='border p-1 lg:p-2 '>
         <div
           className={`rounded-md p-2 text-white ${
             box_status === BoxStatus.OCUPADO ? 'bg-red-500 shadow-md' : 'bg-green-500 shadow-md'
@@ -108,8 +108,8 @@ function BoxItem({ box, index }: PropsBoxItem) {
           {t(`BoxStatus.${box_status}`)}
         </div>
       </td>
-      <td className='border p-2 '>{patient_name || t('NoPatient')}</td>
-      <td className='border p-2 '>
+      <td className='border lg:p-2 text-sm'>{patient_name || t('NoPatient')}</td>
+      <td className='border p-1 lg:p-2 '>
         <div className='flex gap-2'>
           <div>
             <div className='mb-2'>

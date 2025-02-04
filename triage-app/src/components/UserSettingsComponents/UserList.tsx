@@ -105,14 +105,14 @@ function UserList({ users }: PropsUserList) {
   })
 
   const columns = [
-    { label: t('Name'), field: 'user_name', showOnLargeScreen: true, sortable: true },
+    { label: t('Name'), field: 'user_name', showOnLargeScreen: false, sortable: true },
     { label: t('FullName'), field: 'user_full_name', showOnLargeScreen: true, sortable: true },
-    { label: t('Email'), field: 'user_email', showOnLargeScreen: true, sortable: true },
+    { label: t('Email'), field: 'user_email', showOnLargeScreen: false, sortable: true },
     { label: t('Role'), field: 'user_type', showOnLargeScreen: true, sortable: true },
     {
       label: t('Specialization'),
       field: 'user_specialization',
-      showOnLargeScreen: true,
+      showOnLargeScreen: false,
       sortable: false
     },
     { label: t('State'), field: 'state', showOnLargeScreen: true, sortable: false },
@@ -122,7 +122,7 @@ function UserList({ users }: PropsUserList) {
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <button
-        className='bg-green-500 text-white my-3 py-2 px-4 rounded hover:bg-blue-600 transition duration-300'
+        className='bg-green-500 text-white my-3 py-2 ml-2 px-4 rounded hover:bg-blue-600 transition duration-300'
         onClick={handleAddUser}
       >
         {t('AddUser')}
@@ -146,11 +146,11 @@ function UserList({ users }: PropsUserList) {
       )}
       <table className='w-full border border-gray-300'>
         <thead>
-          <tr className='min-w-full bg-blue-800 text-white'>
+          <tr className='min-w-full bg-blue-800 text-white text-sm lg:text-lg'>
             {columns.map((column) => (
               <th
                 key={column.field}
-                className={`border p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
+                className={`border p-1 lg:p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
                 onClick={() => (column.sortable ? handleSort(column.field) : null)}
               >
                 {column.label}{' '}

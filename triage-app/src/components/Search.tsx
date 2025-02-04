@@ -1,14 +1,14 @@
 import { useState, ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
-interface optionitem {
+interface OptionItem {
   value: string
   text: string
 }
 
 interface PropsSearch {
   onSearch: ({ term, by }: { term: string; by: string }) => void
-  options: optionitem[]
+  options: OptionItem[]
 }
 
 function Search({ onSearch, options }: PropsSearch) {
@@ -29,25 +29,29 @@ function Search({ onSearch, options }: PropsSearch) {
   }
 
   return (
-    <div className='bg-white p-4'>
-      <h2 className='text-xl font-semibold mb-4'>{t('title')}</h2>
-      <div className='flex space-x-4'>
-        <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>{t('TermLabel')}</label>
+    <div className="bg-white shadow-md rounded-b-2xl p-6 w-full max-w-lg mx-auto">
+      <h2 className=" lg:text-xl font-bold text-gray-800 mb-4">{t('title')}</h2>
+      <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t('TermLabel')}
+          </label>
           <input
-            type='text'
+            type="text"
             value={searchTerm}
             onChange={handleInputChange}
-            className='w-full p-2 border rounded-md'
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder={t('TermPlaceholder')}
           />
         </div>
-        <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>{t('ByLabel')}</label>
+        <div className="flex-1 mt-4 md:mt-0">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t('ByLabel')}
+          </label>
           <select
             value={searchBy}
             onChange={handleSelectChange}
-            className='w-full p-2 border rounded-md'
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
           >
             {options.map((option, index) => (
               <option key={index} value={option.value}>
@@ -56,22 +60,6 @@ function Search({ onSearch, options }: PropsSearch) {
             ))}
           </select>
         </div>
-        {/* test */}
-        {/* <div className='flex-1'>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>Mostrar ALTA:</label>
-          <input type="checkbox" name="" id="" />
-          <select
-            value={searchBy}
-            onChange={handleSelectChange}
-            className='w-full p-2 border rounded-md'
-          >
-            {options.map((option, index) => (
-              <option key={index} value={option.value}>
-                {option.text}
-              </option>
-            ))}
-          </select>
-        </div> */}
       </div>
     </div>
   )

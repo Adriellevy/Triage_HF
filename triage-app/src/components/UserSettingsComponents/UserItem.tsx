@@ -106,25 +106,25 @@ function UserItem({ user, index }: PropsUserItem) {
 
   return (
     <tr className={bgClass}>
-      <td className='border p-2 '>{user_name}</td>
-      <td className='border p-2 '>{user_full_name}</td>
-      <td className='border p-2 '>{user_email}</td>
-      <td className='border p-2 '>
+      <td className='border p-1 lg:p-2 hidden lg:table-cell'>{user_name}</td>
+      <td className='border p-1 lg:p-2 '>{user_full_name}</td>
+      <td className='border p-1 lg:p-2 hidden lg:table-cell'>{user_email}</td>
+      <td className='border p-1 lg:p-2 '>
         <div
-          className={`rounded-md p-2 text-white ${
+          className={`rounded-md p-1 lg:p-2 text-white ${
             user_type === UserRole.HOSPITAL ? 'bg-blue-500 shadow-md' : 'bg-green-500 shadow-md'
           }`}
         >
           {t(`UserRole.${user_type}`)}
         </div>
       </td>
-      <td className='border p-2 '>{user_specialization || t('NoSpecialization')}</td>
-      <td className='border p-2 '>
-        <div className={`rounded-md p-2 text-white ${state ? 'bg-green-500' : 'bg-red-500'}`}>
+      <td className='border p-1 lg:p-2 hidden lg:table-cell'>{user_specialization || t('NoSpecialization')}</td>
+      <td className='border p-1 lg:p-2 '>
+        <div className={`rounded-md p-1 lg:p-2 text-white ${state ? 'bg-green-500' : 'bg-red-500'}`}>
           {state ? t('Active') : t('Inactive')}
         </div>
       </td>
-      <td className='border p-2 '>
+      <td className='border p-1 lg:p-2 '>
         <div className='flex gap-2'>
           <div>
             <div className='mb-2'>

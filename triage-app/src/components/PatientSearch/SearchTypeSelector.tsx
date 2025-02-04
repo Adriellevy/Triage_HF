@@ -11,12 +11,12 @@ const SearchTypeSelector = ({ searchType, setSearchType , setAnimation}) => {
     let animationOut;
     switch (type) {
       case 'Filtro':
-        animationIn = 'animate-slideInFromLeft';
+        animationIn = 'animate-slideInFromRight';
         animationOut = 'animate-slideOutToLeft';
         break;
       case 'Fecha':
         animationIn = 'animate-slideInFromRight';
-        animationOut = 'animate-slideOutToRight';  
+        animationOut = 'animate-slideOutToLeft';  
         break;
       default:
         animationIn = 'animate-slideInFromRight'; 
@@ -36,9 +36,9 @@ const SearchTypeSelector = ({ searchType, setSearchType , setAnimation}) => {
         <Button 
           key={index}
           className={`px-1 py-1 md:px-4 md:py-2 rounded-lg transition-transform duration-300 ${
-            searchType === option ? 'bg-blue-800 text-white transform scale-125' : 'bg-gray-200 text-black'
+            searchType === option ? 'bg-blue-800 text-white text-sm lg:text-lg transform scale-125' : 'bg-gray-200 text-black'
           }`}
-          color='blue'
+          color={searchType === option ? 'blue' : "grey"}
           onClick={() => handleSearchTypeChange(option)}
         >
           <div className='flex items-center'>
