@@ -427,31 +427,29 @@ function Sidebar() {
           </div>
         </div>
 
-        <div className='md:hidden fixed z-50 top-0 bg-blue-900 text-white w-full p-4 text-center'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center'>
-              <img src={Logo} alt='Logo' className='w-8 h-8 mr-2' />
-              <span className='text-lg font-bold mx-auto'>Triage App</span>
+        <div className="md:hidden fixed z-50 top-0 bg-blue-900 text-white w-full px-4 py-3 shadow-lg">
+      <div className="flex items-center justify-between">
+        {/* Logo e Identidad */}
+        <div className="flex items-center space-x-2">
+          <img src={Logo} alt="Logo" className="w-8 h-8" />
+          <span className="text-lg font-bold">Triage App</span>
+        </div>
+
+        <div className="flex items-center space-x-3 bg-blue-900 px-3 py-2 rounded-lg">
+          <img
+            src={UserProfileImage}
+            alt="Profile"
+            className="w-10 h-10 rounded-full border-2 border-gray-600"
+          />
+          <div className="text-sm">
+            <Link to={`/users/${UserInfo.user_id}`} className="hover:underline text-white font-semibold">
+              {UserInfo.user_name}
+            </Link>
+            <div className="text-gray-300 text-xs italic">
+              {t(UserInfo.user_type)}
             </div>
-            <div className='flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-lg'>
-              <img
-                src={UserProfileImage}
-                alt='Profile'
-                className='w-12 h-12 rounded-full border-2 border-gray-500 shadow-md'
-              />
-              <div>
-                <Link to={`/users/${UserInfo.user_id}`} className='hover:underline text-white'>
-                  <div className='font-bold text-lg'>{UserInfo.user_name}</div>
-                </Link>
-                <div className='text-gray-300 italic text-sm'>
-                  {UserInfo.user_type === 'NURSE'
-                    ? t('NURSE')
-                    : UserInfo.user_type === 'DOCTOR'
-                    ? t('DOCTOR')
-                    : t('ADMIN')}
-                </div>
-              </div>
-            </div>
+          </div>
+        </div>
 
             <button onClick={toggleMenu} className='text-lg font-bold'>
               {menuVisible ? (

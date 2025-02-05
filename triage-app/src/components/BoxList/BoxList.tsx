@@ -50,7 +50,7 @@ function BoxList({ boxes }: PropsBoxList) {
   ]
 
   return (
-    <div className='mx-0 mt-4 lg:mx-8'>
+    <div className='mx-0 mt-4 lg:mx-4'>
       <table className='w-full border border-gray-300'>
         <thead>
           <tr className='min-w-full bg-blue-800 text-white'>

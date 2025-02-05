@@ -48,7 +48,7 @@ const SymptomEditingList: React.FC<SymptomEditingListProps> = ({
   }
 
   return (
-    <div className='mx-4 mt-4 space-y-4'>
+    <div className='mx-4 my-4 space-y-4'>
       {/* Add New Symptom */}
       <div className='flex items-center gap-2'>
         <input

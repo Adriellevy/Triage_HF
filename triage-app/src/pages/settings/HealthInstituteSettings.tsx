@@ -161,13 +161,13 @@ function SymptomSettings() {
   }
 
   return (
-    <div className='bg-white pb-4 mt-20 ml-2 md:mt-0 md:ml-0'>
+    <div className=' pb-4 mt-5 ml-2 md:mt-0 md:ml-0 h-[100vh] lg:h-auto'>
       {isLoading ? (
         <LoaderSpin />
       ) : (
         <>
           {/* Configuración de Síntomas */}
-          <div className='border-b mb-4'>
+          <div className='border-b '>
             <button
               onClick={() => setIsSymptomsExpanded(!isSymptomsExpanded)}
               className='w-full text-left py-2 px-4 bg-gray-100 hover:bg-gray-200 font-bold flex items-center justify-between'
@@ -189,7 +189,7 @@ function SymptomSettings() {
           </div>
 
           {/* Configuración de Niveles de Triage */}
-          <div className='border-b'>
+          <div className='border-b '>
             <button
               onClick={() => setIsTriageExpanded(!isTriageExpanded)}
               className='w-full text-left py-2 px-4 bg-gray-100 hover:bg-gray-200 font-bold flex items-center justify-between'

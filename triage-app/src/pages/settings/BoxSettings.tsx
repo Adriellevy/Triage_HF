@@ -59,7 +59,7 @@ function BoxSettings() {
   }, [socket])
 
   return (
-    <div className='bg-white pb-4 mt-20 ml-2 md:mt-0 md:ml-0'>
+    <div className=' pb-4 mt-5 md:mt-0 '>
       {isLoading ? <LoaderSpin /> : <BoxEdittingList initialBoxes={boxesData} />}
     </div>
   )

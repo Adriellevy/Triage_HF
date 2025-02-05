@@ -25,7 +25,7 @@ const PatientByDatePicker = ({ startDate, setStartDate, endDate, setEndDate, sea
   }
 
   return (
-    <div className='bg-white flex px-4 gap-3 min-h-[64px] mt-4 justify-center flex-col md:flex-row'>
+    <div className='flex px-4 gap-3 min-h-[64px] mt-4 justify-center flex-col md:flex-row'>
       <div className='flex flex-col mr-3 mb-3 md:mb-0'>
         <label  className='text-sm font-medium text-gray-700 mb-1'>Desde:</label>
         <DatePickerMUI

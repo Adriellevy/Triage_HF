@@ -13,7 +13,6 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   const [boxes, setBoxes] = useState<Box[]>(initialBoxes)
   const [addBox, setAddBox] = useState<boolean>(false)
   const [boxAuxiliar, setboxAuxiliar] = useState<PartialBox>()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [visibleTypes, setVisibleTypes] = useState<Partial<Record<BoxType, boolean>>>({
     [BoxType.CONSULTORIO]: true
   })
@@ -38,12 +37,10 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
     setboxAuxiliar(newBox)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCancel = () => {
     setAddBox(false)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleVisibility = (type: BoxType) => {
     setVisibleTypes((prev) => ({
       ...prev,
@@ -54,7 +51,7 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
   return (
     <div className='mx-0 mt-4 lg:mx-8'>
       <button
-        className='bg-green-500 text-white my-3 py-2 px-4 rounded hover:bg-blue-600 transition duration-300'
+        className='ml-2 bg-green-500 text-white mt-3 py-2 px-4 rounded hover:bg-blue-600 transition duration-300'
         onClick={handleAddBox}
       >
         {t('AddAtentionPlace')}
@@ -71,22 +68,25 @@ const BoxEdittingList: React.FC<BoxEdittingListProps> = ({ initialBoxes }) => {
           />
         </div>
       )}
-      <table className='w-full border border-gray-300 mt-4'>
-        <thead>
-          <tr className='min-w-full bg-blue-800 text-white'>
-            <th className='border p-2'>{t('Boxcode')}</th>
-            <th className='border p-2'>{t('TypeBox')}</th>
-            <th className='border p-2'>{t('StatusBoxString')}</th>
-            <th className='border p-2'>{t('PatientName')}</th>
-            <th className='border p-2'>{t('Actions')}</th>
-          </tr>
-        </thead>
-        <tbody className='text-center text-black'>
-          {boxes.map((box, index) => (
-            <BoxEdittingItem box={box} key={index} index={index}></BoxEdittingItem>
-          ))}
-        </tbody>
-      </table>
+      
+      <div className='overflow-x-auto'>
+        <table className='w-full border border-gray-300 mt-4'>
+          <thead>
+            <tr className='min-w-full bg-blue-800 text-white'>
+              <th className='border p-1 lg:p-2 text-sm lg:text-lg'>{t('Boxcode')}</th>
+              <th className='border lg:p-2 text-sm lg:text-lg hidden lg:table-cell'>{t('TypeBox')}</th>
+              <th className='border lg:p-2 text-sm lg:text-lg'>{t('StatusBoxString')}</th>
+              <th className='border lg:p-2 text-sm lg:text-lg'>{t('PatientName')}</th>
+              <th className='border lg:p-2 text-sm lg:text-lg'>{t('Actions')}</th>
+            </tr>
+          </thead>
+          <tbody className='text-center text-black'>
+            {boxes.map((box, index) => (
+              <BoxEdittingItem box={box} key={index} index={index} />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

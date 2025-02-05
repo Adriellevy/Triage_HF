@@ -269,8 +269,8 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   }
 
   return (
-    <div className='bg-white '>
-      <div className='flex  flex-col p-4 mt-20 ml-2 md:mt-0 md:ml-0'>
+    <div className='bg-gray-100 h-[100vh]'>
+      <div className='flex  flex-col p-4 mt-5 ml-2 md:mt-0 md:ml-0'>
         <SearchTypeSelector
           searchType={searchType}
           setSearchType={setSearchType}
