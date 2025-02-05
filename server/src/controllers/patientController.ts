@@ -237,6 +237,7 @@ export class PatientController {
       const shift = await ShiftModel.getShiftOfNow(now);
 
       if (shift.length === 0) {
+        console.log('patientsToReport:');
         return res.status(404).json({ message: 'Shift not found' });
       }
       const shiftID = shift.find(

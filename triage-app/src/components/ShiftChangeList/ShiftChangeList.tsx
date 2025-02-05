@@ -1,15 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ShiftChange } from '../../interfaces/Shift-change'
+import Cookies from 'js-cookie'
+import { getShiftById, getShiftChanges } from '@/services/ShiftService'
 
 interface PropsShiftList {
-  shiftChanges: ShiftChange[]
+  shift_id: string
 }
 
-function ShiftList({ shiftChanges }: PropsShiftList) {
+function ShiftChangeList({ shift_id }: PropsShiftList) {
   const { t } = useTranslation('ShiftList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [shiftChanges, setShiftChanges] = useState<ShiftChange[]>([])
+  const token = Cookies.get('authToken')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (token) {
+          const data = await getShiftChanges(null, null, shift_id)
+          console.log('data', data)
+          setShiftChanges(data)
+        }
+      } catch (error) {
+        console.error((error as Error).message)
+      }
+    }
+    fetchData()
+  }, [token, shift_id])
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -20,7 +39,7 @@ function ShiftList({ shiftChanges }: PropsShiftList) {
     }
   }
 
-  if (!shiftChanges || shiftChanges.length === 0) {
+  if (!shift_id || shift_id === '') {
     return <div className='mx-0 mt-4 lg:mx-8'>{t('No shift changes available')}</div>
   }
 
@@ -112,4 +131,4 @@ function ShiftList({ shiftChanges }: PropsShiftList) {
   )
 }
 
-export default ShiftList
+export default ShiftChangeList

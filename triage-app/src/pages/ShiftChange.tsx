@@ -8,18 +8,19 @@ import {
 } from '../services/ShiftService'
 // import { Shift } from '../interfaces/Shift.ts'
 import type { ShiftChange } from '@/interfaces/Shift-change.ts'
-import ShiftList from '@/components/ShiftChangeList/ShiftList.tsx'
+import ShiftChangeList from '@/components/ShiftChangeList/ShiftChangeList'
+import ShiftLists, { Shift } from '@/components/ShiftChangeList/shiftLists'
 
 function ShiftChange() {
   const token = Cookies.get('authToken')
-  const [shiftsData, setShiftsData] = useState<ShiftChange[] | null>(null)
+  const [shiftsData, setShiftsData] = useState<Shift[] | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (token) {
-          const data = await getShiftChanges()
+          const data = await getAllShifts()
           console.log('data', data)
           setShiftsData(data)
         }
@@ -32,8 +33,8 @@ function ShiftChange() {
 
   return shiftsData ? (
     <>
-      <>llego la data</>
-      <ShiftList shiftChanges={shiftsData} />
+      <ShiftLists shifts={shiftsData} />
+      {/*><ShiftChangeList shiftChanges={shiftsData} /> */}
     </>
   ) : (
     <p>No shifts found.</p>
