@@ -41,6 +41,9 @@ import symptomeditor_es from './locales/es/SymptomEditor.json'
 import Symptomeditor_en from './locales/en/SymptomEditor.json'
 import TriageEditor_es from './locales/es/TriageEditor.json'
 import TriageEditor_en from './locales/en/TriageEditor.json'
+import ShiftList_es from './locales/es/ShiftList.json'
+import ShiftList_en from './locales/en/ShiftList.json'
+
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -73,7 +76,8 @@ i18n
         VerifyUser: VerifyUser_es,
         TimeExpireModalAndErrors: TimeExpireModalAndErrors_es,
         SymptomEditor: symptomeditor_es,
-        TriageEditor: TriageEditor_es
+        TriageEditor: TriageEditor_es,
+        ShiftList: ShiftList_es
       },
       en: {
         LoginForm: LoginForm_en,
@@ -94,7 +98,8 @@ i18n
         VerifyUser: VerifyUser_en,
         TimeExpireModalAndErrors: TimeExpireModalAndErrors_en,
         SymptomEditor: Symptomeditor_en,
-        TriageEditor: TriageEditor_en
+        TriageEditor: TriageEditor_en,
+        ShiftList: ShiftList_en
       }
     }
   })

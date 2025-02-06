@@ -1,0 +1,16 @@
+{
+  "Shift ID": "Identificador del turno",
+  "User ID": "Usuario a cargo del cambio de turno",
+  "Last Doctor ID": "Doctor saliendo del turno",
+  "New Doctor ID": "Doctor entrando al turno",
+  "Last Nurse ID": "Enfermera saliendo del turno",
+  "New Nurse ID": "Enfermero entrando al turno",
+  "Patient ID": "Identificador del paciente",
+  "Patient Observations": "Observaciones del paciente",
+  "Patient Records": "Historial del paciente",
+  "Patient Procedures": "Procedimientos del paciente",
+  "No shift changes available": "No hay cambios de turno disponibles",
+  "Hide Details": "Ocultar detalles",
+  "Show Details": "Mostrar detalles",
+  "Shift on:": "Fecha del turno: "
+}

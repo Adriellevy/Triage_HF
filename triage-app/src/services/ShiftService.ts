@@ -48,14 +48,24 @@ export const getAllShifts = async (date?: string) => {
 
 export const getShiftChanges = async (patient?: string, date?: string, shift?: string) => {
   try {
+    if ((shift && date) || (!patient && !shift && !date)) {
+      throw new Error(
+        'Invalid query parameters: Cannot combine shift and date, and at least one filter must be provided'
+      )
+    }
+
     const token = Cookies.get('authToken')
-    const response = await fetch(`${config.API_URL}/shift/changes`, {
+    const url = new URL(`${config.API_URL}/shift/changes`)
+    if (patient) url.searchParams.append('patient', patient)
+    if (shift) url.searchParams.append('shift', shift)
+    if (date) url.searchParams.append('date', date)
+
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
-      },
-      params: { patient, date, shift }
+      }
     })
 
     if (!response.ok) {

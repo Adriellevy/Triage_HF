@@ -14,5 +14,9 @@
   "BoxSettings": "Box Settings",
   "LogoutButton": "Logout",
   "ShiftExchange": "Shifts Exchanges",
-  "handleHealthInstituteConfiguration": "Configuration of health institution"
+  "handleHealthInstituteConfiguration": "Configuration of health institution",
+  "HOSPITAL": "Hospital",
+  "DOCTOR": "Doctor",
+  "NURSE": "Nurse",
+  "ADMIN": "Administrator"
 }

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ShiftChange } from '../../interfaces/Shift-change'
 import Cookies from 'js-cookie'
-import { getShiftById, getShiftChanges } from '@/services/ShiftService'
+import { getShiftChanges } from '@/services/ShiftService'
+import LoaderSpin from '../LoaderSpin'
 
 interface PropsShiftList {
   shift_id: string
@@ -12,7 +13,8 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
   const { t } = useTranslation('ShiftList')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  const [shiftChanges, setShiftChanges] = useState<ShiftChange[]>([])
+  const [shiftChanges, setShiftChanges] = useState<ShiftChange[] | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
   const token = Cookies.get('authToken')
 
   useEffect(() => {
@@ -20,11 +22,12 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
       try {
         if (token) {
           const data = await getShiftChanges(null, null, shift_id)
-          console.log('data', data)
           setShiftChanges(data)
         }
       } catch (error) {
         console.error((error as Error).message)
+      } finally {
+        setLoading(false)
       }
     }
     fetchData()
@@ -39,7 +42,11 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
     }
   }
 
-  if (!shift_id || shift_id === '') {
+  if (loading) {
+    return <LoaderSpin />
+  }
+
+  if (!shift_id || shift_id === '' || !shiftChanges || shiftChanges.length === 0) {
     return <div className='mx-0 mt-4 lg:mx-8'>{t('No shift changes available')}</div>
   }
 
@@ -113,7 +120,7 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
           </tr>
         </thead>
         <tbody className='text-center text-black'>
-          {sortedShiftChanges.map((shiftChange, index) => (
+          {sortedShiftChanges.map((shiftChange) => (
             <tr key={shiftChange.id}>
               {columns.map((column) => (
                 <td
