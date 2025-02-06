@@ -89,6 +89,7 @@ CREATE TABLE Symptom (
 CREATE TABLE Shift(
   id INT NOT NULL AUTO_INCREMENT,
   shift_day DATE NOT NULL,
+  user_id BINARY(16) NOT NULL,
   shift_start_time TINYINT NOT NULL,
   shift_end_time TINYINT NOT NULL,
   PRIMARY KEY (`id`));
@@ -96,7 +97,6 @@ CREATE TABLE Shift(
 CREATE TABLE ShiftChange(
   id INT NOT NULL AUTO_INCREMENT,
   shift_id INT NOT NULL,
-  user_id BINARY(16) NOT NULL,
   last_doctor_id BINARY(16) NOT NULL,
   new_doctor_id BINARY(16) NOT NULL,
   last_nurse_id BINARY(16) NOT NULL,

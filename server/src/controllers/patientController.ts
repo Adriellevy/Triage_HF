@@ -235,14 +235,17 @@ export class PatientController {
       }
       const now = new Date();
       const shift = await ShiftModel.getShiftOfNow(now);
-
-      if (shift.length === 0) {
-        console.log('patientsToReport:');
-        return res.status(404).json({ message: 'Shift not found' });
+      let shiftID:number
+      if(shift.length === 0){
+        shiftID = await ShiftModel.createShift(now.toISOString(), now.getHours(), now.getHours()+8,req.user.id); //TODO: Cambiar a variable de entorno
+      }else{
+        let aux = shift.find((s)=> now.getHours() >= s.shift_start_time - 1 && now.getHours() <= s.shift_end_time - 1)!.id;
+        if(aux){
+          shiftID = aux;
+        }else{
+          shiftID = await ShiftModel.createShift(now.toISOString(), now.getHours(), now.getHours()+8,req.user.id); //TODO: Cambiar a variable de entorno
+        }
       }
-      const shiftID = shift.find(
-        (s) => now.getHours() >= s.shift_start_time && now.getHours() <= s.shift_end_time
-      )!.id;
 
       const allPatients = await PatientsModel.getPatientsByIds(
         data.map((patient) => patient.patientID)
