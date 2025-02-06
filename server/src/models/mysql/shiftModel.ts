@@ -9,8 +9,6 @@ export class ShiftModel {
     return rows[0];
   }
 
-
-
     static async createShift(day:string,start:number,end:number,user:string):Promise<number>{
         const query = `
             INSERT INTO Shift(shift_day,shift_start_time,shift_end_time,user_id)
