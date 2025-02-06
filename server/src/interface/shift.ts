@@ -5,6 +5,7 @@ export interface Shift{
     shift_day:Date;
     shift_start_time:number;
     shift_end_time:number;
+    user_id:string;
 }
 export interface ShiftComplete{
     shift:Shift;
