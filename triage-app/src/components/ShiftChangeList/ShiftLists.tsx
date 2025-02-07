@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../ui/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import ShiftChangeList from './ShiftChangeList'
