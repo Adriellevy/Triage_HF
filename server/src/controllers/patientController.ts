@@ -90,6 +90,7 @@ export class PatientController {
       if (User) return res.json(decryptPatientData(User));
       return res.status(404).json({ message: 'Patient not found' });
     } catch (error) {
+      console.log(error.message)
       return res.status(500).json({ message: 'Something goes wrong' });
     }
   }
@@ -236,16 +237,50 @@ export class PatientController {
       const now = new Date();
       const shift = await ShiftModel.getShiftOfNow(now);
       let shiftID:number
-      if(shift.length === 0){
-        shiftID = await ShiftModel.createShift(now.toISOString(), now.getHours(), now.getHours()+8,req.user.id); //TODO: Cambiar a variable de entorno
-      }else{
-        let aux = shift.find((s)=> now.getHours() >= s.shift_start_time - 1 && now.getHours() <= s.shift_end_time - 1)!.id;
-        if(aux){
+      const shiftStart = now.getHours();
+      const shiftEnd = (shiftStart + 8) % 24; 
+      
+      const token = req.headers.authorization?.split(' ')[1];
+
+      if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
+  
+      const tokendecoded = verifyToken(token);
+      const userID = tokendecoded.id;
+      if (shift.length === 0) {
+        shiftID = await ShiftModel.createShift(
+          now.toISOString().split('T')[0], 
+          shiftStart, 
+          shiftEnd, 
+          userID
+        ); // TODO: Cambiar a variable de entorno
+      } else {
+        let aux = shift.find((s) => {
+            const start = s.shift_start_time;
+            const end = s.shift_end_time;
+          
+            if (start < end) {
+              return shiftStart >= start - 1 && shiftStart <= end - 1;
+            } else {
+              return shiftStart >= start - 1 || shiftStart <= end - 1;
+            }
+        })?.id;
+        
+        if (aux) {
           shiftID = aux;
-        }else{
-          shiftID = await ShiftModel.createShift(now.toISOString(), now.getHours(), now.getHours()+8,req.user.id); //TODO: Cambiar a variable de entorno
+        } else {
+          shiftID = await ShiftModel.createShift(
+            now.toISOString().split('T')[0], 
+            shiftStart, 
+            shiftEnd, 
+            userID
+          ); // TODO: Cambiar a variable de entorno
         }
       }
+
+      if(data.length == 0)
+        return res.status(400).json({ message: "Send one o more shift changes" });
 
       const allPatients = await PatientsModel.getPatientsByIds(
         data.map((patient) => patient.patientID)
@@ -265,7 +300,7 @@ export class PatientController {
             patient_old_value: patient?.doctor_id || p.lastDoctorID,
             patient_new_value: p.newDoctorID,
             patient_id: p.patientID,
-            user_id: req.user.id,
+            user_id: userID,
             patient_updated_date: new Date()
           });
         }
@@ -282,7 +317,7 @@ export class PatientController {
             patient_old_value: patient?.nurse_id || p.lastNurseID,
             patient_new_value: p.newNurseID,
             patient_id: p.patientID,
-            user_id: req.user.id,
+            user_id: userID,
             patient_updated_date: new Date()
           });
         }
@@ -297,7 +332,7 @@ export class PatientController {
           patient_observations: p.observations,
           patient_records: p.records,
           patient_procedures: p.procedures,
-          user_id: req.user.id
+          user_id: userID
         });
       }
       const patientsUpdated = await PatientsModel.getPatientsByIds(
@@ -346,6 +381,7 @@ export class PatientController {
       //   // Opcional: eliminar el archivo generado después de la descarga
       //   fs.unlinkSync(pdfPath);
       // });
+      return res.status(201).json({message:"Created"})
     } catch (error) {
       console.log('Error al aplicar cambios de turno:', error);
       return res.status(500).json({ message: error.message });

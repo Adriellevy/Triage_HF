@@ -22,6 +22,7 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
       try {
         if (token) {
           const data = await getShiftChanges(null, null, shift_id)
+          console.log(data,"data")
           setShiftChanges(data)
         }
       } catch (error) {

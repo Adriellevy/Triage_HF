@@ -96,14 +96,17 @@ CREATE TABLE Symptom (
   CREATE TABLE Shift(
   id INT NOT NULL AUTO_INCREMENT,
   shift_day DATE NOT NULL,
+  user_id BINARY(16) NOT NULL,
   shift_start_time TINYINT NOT NULL,
   shift_end_time TINYINT NOT NULL,
-  PRIMARY KEY (`id`));
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (user_id) REFERENCES User(user_id)
+  );
 
 CREATE TABLE ShiftChange(
   id INT NOT NULL AUTO_INCREMENT,
   shift_id INT NOT NULL,
-  user_id BINARY(16) NOT NULL,
   last_doctor_id BINARY(16) NOT NULL,
   new_doctor_id BINARY(16) NOT NULL,
   last_nurse_id BINARY(16) NOT NULL,
@@ -116,7 +119,6 @@ CREATE TABLE ShiftChange(
   PRIMARY KEY (`id`),
   FOREIGN KEY (patient_id) REFERENCES Patient(patient_id),
   FOREIGN KEY (shift_id) REFERENCES Shift(id),
-  FOREIGN KEY (user_id) REFERENCES User(user_id),
   FOREIGN KEY (last_doctor_id) REFERENCES User(user_id),
   FOREIGN KEY (new_doctor_id) REFERENCES User(user_id),
   FOREIGN KEY (last_nurse_id) REFERENCES User(user_id),
@@ -200,14 +202,3 @@ VALUES
 ('Fiebre'),
 ('Infeccion');
 
-INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
-VALUES (CURDATE(), 8, 14);
-
-INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
-VALUES (CURDATE(), 14, 20);
-
-INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
-VALUES (CURDATE(), 20, 2);
-
-INSERT INTO Shift (shift_day, shift_start_time, shift_end_time)
-VALUES (CURDATE(), 2, 8);

@@ -1,6 +1,7 @@
 export interface ShiftChange {
     id: number;
     shift_id: number;
+    user_id:string;
     last_doctor_id: string;
     new_doctor_id: string;
     last_nurse_id: string;

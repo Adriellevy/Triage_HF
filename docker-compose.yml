@@ -77,32 +77,32 @@ services:
   #     - app-network
 
       
-  # superset:
-  #   image: apache/superset:latest-dev
-  #   container_name: superset_container
-  #   environment:
-  #     SUPERSET_SECRET_KEY: "supersecretkey"
-  #     SQLALCHEMY_DATABASE_URI: "mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db"
-  #     SUPERSET_FEATURE_EMBEDDED_SUPERSET: true
-  #     TALISMAN_ENABLED : false
-  #   # depends_on:
-  #     # - mysqldb
-  #   ports:
-  #     - 8088:8088
-  #   networks:
-  #     - app-network
-  #   volumes:
-  #     - ./superset_home:/app/superset_home
-  #     - ./dashboards:/app/dashboards
-  #     - ./superset/config.py:/app/superset/config.py 
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #     superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
-  #     superset db upgrade &&
-  #     superset init &&
-  #     superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
-  #     superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
-  #     superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
+  superset:
+    image: apache/superset:latest-dev
+    container_name: superset_container
+    environment:
+      SUPERSET_SECRET_KEY: "supersecretkey"
+      SQLALCHEMY_DATABASE_URI: "mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db"
+      SUPERSET_FEATURE_EMBEDDED_SUPERSET: true
+      TALISMAN_ENABLED : false
+    # depends_on:
+      # - mysqldb
+    ports:
+      - 8088:8088
+    networks:
+      - app-network
+    volumes:
+      - ./superset_home:/app/superset_home
+      - ./dashboards:/app/dashboards
+      - ./superset/config.py:/app/superset/config.py 
+    entrypoint: >
+      /bin/sh -c "
+      superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
+      superset db upgrade &&
+      superset init &&
+      superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
+      superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
+      superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
       
     # leer este issue en github para cargar dashboards de forma automatica https://github.com/apache/superset/issues/28692#issuecomment-2337761581
 
