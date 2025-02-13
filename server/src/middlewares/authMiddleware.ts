@@ -49,7 +49,7 @@ const authenticateToken = async (
           name: decoded.name // Verificamos que es JwtPayload y accedemos a 'name'
         };
         SendTokenExpiredNotification(req, decoded.id as string);
-        const newAccessToken = signTokenWithExpiration(userForToken, 10 / 60);
+        const newAccessToken = signTokenWithExpiration(userForToken, 10 / 3600);
         res.status(206).json({ newAccessToken });
       } else {
         // Manejo del caso en que 'decoded' sea un string o no sea válido

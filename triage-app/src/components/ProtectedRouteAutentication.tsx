@@ -10,7 +10,7 @@ interface ProtectedRouteAutenticationProps {
 }
 
 function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationProps) {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, refreshAuthToken } = useAuth()
 
   const [showWarning, setShowWarning] = useState(false) // Estado para controlar el modal
   const [errorMessage, setErrorMessage] = useState('') // Estado para almacenar el mensaje de error
@@ -39,6 +39,12 @@ function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationPr
     }
   }, [isAuthenticated, Cookies.get('authToken')])
 
+  const OnRefresh = () => {
+    console.log('entree')
+    refreshAuthToken()
+    window.location.reload()
+  }
+
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
@@ -52,9 +58,7 @@ function ProtectedRouteAutentication({ children }: ProtectedRouteAutenticationPr
               logout()
               setShowWarning(false)
             }} // Cierra el modal al hacer clic en el botón
-            onrefresh={function (): void {
-              throw new Error('Function not implemented.')
-            }}
+            onrefresh={OnRefresh}
           />
         )}
       </>
