@@ -12,5 +12,6 @@
   "No shift changes available": "No hay cambios de turno disponibles",
   "Hide Details": "Ocultar detalles",
   "Show Details": "Mostrar detalles",
-  "Shift on:": "Fecha del turno: "
+  "Shift on:": "Fecha del turno: ",
+  "noshift": "No hay cambios de turno disponibles"
 }

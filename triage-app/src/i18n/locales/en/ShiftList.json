@@ -12,5 +12,6 @@
   "No Shift Changes Available": "No shift changes available",
   "Hide Details": "Hide Details",
   "Show Details": "Show Details",
-  "Shift on:": "Shift date: "
+  "Shift on:": "Shift date: ",
+  "noshift": "No shift changes available"
 }
