@@ -20,6 +20,7 @@ import {
   sortTriageLevels,
   updateTriage
 } from '@/services/triageLevelsService'
+import { toast } from 'sonner'
 
 function SymptomSettings() {
   const [isLoading, setIsLoading] = useState(false)
@@ -37,6 +38,7 @@ function SymptomSettings() {
     fetchSymptoms()
     fetchTriageLevels()
   }, [])
+
   const fetchSymptoms = async () => {
     try {
       setIsLoading(true)
@@ -55,14 +57,21 @@ function SymptomSettings() {
   }
 
   const handleAddSymptom = async (name) => {
+    if (symptomsData.some((symptom) => symptom.name === name)) {
+      toast.error('Error al agregar síntoma: este ya existe')
+      return
+    }
     try {
       const { success, message } = await createSymptom(name)
       if (success) {
         await fetchSymptoms()
         console.log(message)
+      } else {
+        toast.error(message)
       }
     } catch (error) {
       console.error('Error al agregar síntoma:', error)
+      toast.error('Error al agregar síntomas')
     }
   }
 
@@ -72,9 +81,12 @@ function SymptomSettings() {
       if (success) {
         await fetchSymptoms()
         console.log(message)
+      } else {
+        toast.error(message)
       }
     } catch (error) {
       console.error('Error al actualizar síntoma:', error)
+      toast.error('Error al actualizar síntoma:', error)
     }
   }
 
@@ -84,9 +96,12 @@ function SymptomSettings() {
       if (success) {
         await fetchSymptoms()
         console.log(message)
+      } else {
+        toast.error(message)
       }
     } catch (error) {
       console.error('Error al eliminar síntoma:', error)
+      toast.error('Error al eliminar síntoma:', error)
     }
   }
 
@@ -105,19 +120,27 @@ function SymptomSettings() {
         logout()
       } else {
         console.error('Error al obtener niveles de triage:', error)
+        toast.error('Error al obtener niveles de triage:', error)
       }
     }
   }
 
   const handleAddTriageLevel = async (level, color) => {
+    if (triageLevels.some((triage) => triage.level === level)) {
+      toast.error('Error al agregar nivel de triage: este ya existe')
+      return
+    }
     try {
       const { success, message } = await createTriage(level, color)
       if (success) {
         await fetchTriageLevels()
         console.log(message)
+      } else {
+        toast.error(message)
       }
     } catch (error) {
       console.error('Error al agregar nivel de triage:', error)
+      toast.error('Error al agregar nivel de triage:', error)
     }
   }
 
@@ -127,9 +150,12 @@ function SymptomSettings() {
       if (success) {
         await fetchTriageLevels()
         console.log(message)
+      } else {
+        toast.error(message)
       }
     } catch (error) {
       console.error('Error al actualizar nivel de triage:', error)
+      toast.error('Error al actualizar nivel de triage:', error)
     }
   }
 
@@ -142,8 +168,10 @@ function SymptomSettings() {
       }
     } catch (error) {
       console.error('Error al eliminar nivel de triage:', error)
+      toast.error('Error al eliminar nivel de triage:', error)
     }
   }
+
   const handleUpdateOrder = async (changedLevels) => {
     try {
       console.log('infoRecivida', changedLevels)

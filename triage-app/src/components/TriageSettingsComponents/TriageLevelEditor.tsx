@@ -70,12 +70,15 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
         color: rgbColor
       }
       if (onAddLevel) {
-        onAddLevel(newLevel.level, rgbColor)
+        try {
+          onAddLevel(newLevel.level, rgbColor)
+        } catch {
+          setNewLevelName(newLevelName)
+          setNewLevelColor(rgbColor)
+        }
       } else {
         setLocalLevels((prevLevels) => [...prevLevels, newLevel])
       }
-      setNewLevelName('')
-      setNewLevelColor('#ffffff')
     }
   }
 
@@ -102,7 +105,6 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
 
   const handleDelete = (id: string) => {
     if (onDeleteLevel) {
-      console.log('Deleting level with ID:', id)
       onDeleteLevel(id)
       setLocalLevels((prevLevels) => prevLevels.filter((level) => level.id !== id))
     }
@@ -131,7 +133,6 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
         // Verificamos si el orden cambió antes de notificar al backend
         if (JSON.stringify(prevLevels) !== JSON.stringify(updatedLevels)) {
           // Llamamos al servicio para actualizar el orden en la base de datos
-          console.log('Calling onUpdateOrder with:', updatedLevels)
           if (onUpdateOrder) {
             onUpdateOrder(updatedLevels.map(({ id, ...rest }) => rest))
           }
@@ -162,7 +163,6 @@ const TriageLevelEditor: React.FC<TriageLevelEditorProps> = ({
 
         // Verificamos si el orden cambió antes de notificar al backend
         if (JSON.stringify(prevLevels) !== JSON.stringify(updatedLevels)) {
-          console.log('Calling onUpdateOrder with:', updatedLevels)
           if (onUpdateOrder) {
             onUpdateOrder(updatedLevels.map(({ id, ...rest }) => rest))
           }
