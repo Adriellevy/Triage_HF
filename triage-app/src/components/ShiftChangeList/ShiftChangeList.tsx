@@ -6,6 +6,7 @@ import { getShiftChanges } from '@/services/ShiftService'
 import LoaderSpin from '../LoaderSpin'
 import { getUserById } from '@/services/userService'
 import { getPatientById } from '@/services/patientService'
+import { Tooltip } from '@mui/material'
 
 interface PropsShiftList {
   shift_id: string
@@ -183,11 +184,21 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
                     'new_doctor_id',
                     'last_nurse_id',
                     'new_nurse_id'
-                  ].includes(column.field)
-                    ? userNames[shiftChange[column.field as keyof ShiftChange]] || 'Loading...'
-                    : column.field === 'patient_id'
-                    ? patientNames[shiftChange[column.field as keyof ShiftChange]] || 'Loading...'
-                    : shiftChange[column.field as keyof ShiftChange]}
+                  ].includes(column.field) ? (
+                    userNames[shiftChange[column.field as keyof ShiftChange]] || 'Loading...'
+                  ) : column.field === 'patient_id' ? (
+                    <Tooltip title={t('PatientInformation')}>
+                      <a
+                        href={`/patients/${shiftChange[column.field as keyof ShiftChange]}`}
+                        className='text-blue-500 underline'
+                      >
+                        {patientNames[shiftChange[column.field as keyof ShiftChange]] ||
+                          'Loading...'}
+                      </a>
+                    </Tooltip>
+                  ) : (
+                    shiftChange[column.field as keyof ShiftChange]
+                  )}
                 </td>
               ))}
             </tr>
