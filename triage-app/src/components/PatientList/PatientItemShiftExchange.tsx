@@ -26,10 +26,16 @@ interface PropsPatientItem {
   mode: string
   lastDoctor?: { value: string; label: string }
   lastNurse?: { value: string; label: string }
-  isInvalid: boolean
+  NochangeInDocOrNurse: boolean
+  NochangeInObserservationsProceduresOrRecords: boolean
 }
 
-function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientItem) {
+function PatientItemShiftExchange({
+  patient,
+  index,
+  NochangeInDocOrNurse,
+  NochangeInObserservationsProceduresOrRecords
+}: PropsPatientItem) {
   const [doctorOptions, setDoctorOptions] = useState([])
   const [nurseOptions, setNurseOptions] = useState([])
   const [observations, setObservations] = useState('')
@@ -178,11 +184,13 @@ function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientIte
   }
 
   return (
-    <tr className={`${isInvalid ? errBack : bgClass}`}>
+    <tr className={`${NochangeInDocOrNurse ? errBack : bgClass}`}>
       <td className='border text-sm overflow-hidden text-center'>{patient_name}</td>
       <td className='border p-2  text-center hidden lg:table-cell '>{doctor_name}</td>
       <td className='border p-2 table-cell text-center hidden lg:table-cell'>{nurse_name}</td>
-      <td className={`border p-4 table-cell text-center ${isInvalid ? errLine : bgClass}`}>
+      <td
+        className={`border p-4 table-cell text-center ${NochangeInDocOrNurse ? errLine : bgClass}`}
+      >
         <Select
           className={`w-full text-black `}
           options={doctorOptions}
@@ -200,10 +208,12 @@ function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientIte
           }
         />
 
-        {isInvalid && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
+        {NochangeInDocOrNurse && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
       </td>
 
-      <td className={`border p-4 table-cell text-center ${isInvalid ? errLine : bgClass}`}>
+      <td
+        className={`border p-4 table-cell text-center ${NochangeInDocOrNurse ? errLine : bgClass}`}
+      >
         <Select
           className='w-full text-black'
           options={nurseOptions}
@@ -219,9 +229,13 @@ function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientIte
           }
         />
 
-        {isInvalid && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
+        {NochangeInDocOrNurse && <span className='text-red-500 pt-2'>{t('DoctorOrNurse')}</span>}
       </td>
-      <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
+      <td
+        className={` bg-white border text-sm text-center hidden lg:table-cell ${
+          NochangeInObserservationsProceduresOrRecords ? errLine : bgClass
+        }`}
+      >
         <input
           type='text'
           placeholder='Escribe...'
@@ -229,17 +243,37 @@ function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientIte
           value={observations}
           onChange={(e) => handleObservationChange(patient_id, e.target.value)}
         />
+
+        {NochangeInObserservationsProceduresOrRecords && (
+          <div className='text-red-500 mt-2'>
+            {t('NochangeInObserservationsProceduresOrRecords')}
+          </div>
+        )}
       </td>
-      <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
+      <td
+        className={` bg-white border text-sm text-center hidden lg:table-cell ${
+          NochangeInObserservationsProceduresOrRecords ? errLine : bgClass
+        }`}
+      >
         <input
           type='text'
           placeholder='Escribe...'
-          className='py-8 ps-2  text-start'
+          className='py-8 ps-2 text-start'
           value={procedures}
           onChange={(e) => handleProceduresChange(patient_id, e.target.value)}
         />
+
+        {NochangeInObserservationsProceduresOrRecords && (
+          <div className='text-red-500 mt-2'>
+            {t('NochangeInObserservationsProceduresOrRecords')}
+          </div>
+        )}
       </td>
-      <td className=' bg-white border text-sm text-center hidden lg:table-cell'>
+      <td
+        className={` bg-white border text-sm text-center hidden lg:table-cell ${
+          NochangeInObserservationsProceduresOrRecords ? errLine : bgClass
+        }`}
+      >
         <input
           type='text'
           placeholder='Escribe...'
@@ -247,6 +281,12 @@ function PatientItemShiftExchange({ patient, index, isInvalid }: PropsPatientIte
           value={record}
           onChange={(e) => handleRecordChange(patient_id, e.target.value)}
         />
+
+        {NochangeInObserservationsProceduresOrRecords && (
+          <div className='text-red-500 mt-2'>
+            {t('NochangeInObserservationsProceduresOrRecords')}
+          </div>
+        )}
       </td>
       <td className='border p-2'>
         <div className='flex gap-2'>

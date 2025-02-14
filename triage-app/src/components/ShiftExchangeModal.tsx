@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { SetStateAction, useEffect, useState } from 'react'
@@ -18,7 +17,11 @@ const ShiftExchangeModal = ({ onClose }) => {
   const [nurseOptions, setNurseOptions] = useState<ColourOption[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
   const [createReport, setCreateReport] = useState(false)
-  const [invalidPatients, setInvalidPatients] = useState<Patient[]>([])
+  const [NochangeInDocOrNurse, setNochangeInDocOrNurse] = useState<Patient[]>([])
+  const [
+    NochangeInObserservationsProceduresOrRecords,
+    setNochangeInObserservationsProceduresOrRecords
+  ] = useState<Patient[]>([])
 
   const selectedDoctors = useSelector((state: RootState) => state.shiftSelections.doctorSelections)
   const selectedNurses = useSelector((state: RootState) => state.shiftSelections.nurseSelections)
@@ -31,7 +34,6 @@ const ShiftExchangeModal = ({ onClose }) => {
       try {
         setPatients([])
         const patients = await getFilteredPatients([false, ['TODOS MENOS ALTA']])
-        console.log(patients)
         setPatients(patients)
       } catch (error) {
         console.error('Error fetching patients:', error)
@@ -43,8 +45,8 @@ const ShiftExchangeModal = ({ onClose }) => {
 
   const handleShiftExchange = async () => {
     const patientsMap = {}
-    const invalidPatientsTemp = []
-
+    const NochangeInDocOrNurseTemp = []
+    const NochangeInObserservationsProceduresOrRecordsTemp = []
     // Mapeo de Doctores
     Object.keys(selectedDoctors).forEach((patientID) => {
       const doctor = selectedDoctors[patientID]
@@ -97,19 +99,34 @@ const ShiftExchangeModal = ({ onClose }) => {
     // Crear el array final de pacientes
     const patients = Object.values(patientsMap)
 
-    // Validación de pacientes inválidos (mismo doctor y enfermero)
+    // Validación de pacientes inválidos (mismo doctor y enfermero) o sin (observaciones, procedimientos o registros)
     Object.keys(patientsMap).forEach((patientID) => {
       const patient = patientsMap[patientID]
       if (
         patient.newDoctorID === patient.lastDoctorID && // Mismo doctor
         patient.newNurseID === patient.lastNurseID // Mismo enfermero
       ) {
-        invalidPatientsTemp.push(patientID)
+        NochangeInDocOrNurseTemp.push(patientID)
+      }
+      if (!patient.observations && !patient.records && !patient.procedures) {
+        // Sin ningun cambio
+        NochangeInObserservationsProceduresOrRecordsTemp.push(patientID) // Agregar a la lista de pacientes sin comentarios
       }
     })
-    if (invalidPatientsTemp.length > 0) {
-      setInvalidPatients(invalidPatientsTemp)
-      console.log('invalidPatientsTemp:', invalidPatientsTemp)
+    if (NochangeInDocOrNurseTemp.length > 0) {
+      setNochangeInDocOrNurse(NochangeInDocOrNurseTemp)
+      console.log('NochangeInDocOrNurseTemp:', NochangeInDocOrNurseTemp)
+      toast.error('Algunos pacientes no tienen cambios en doctor o enfermero', { duration: 2000 })
+      return
+    }
+    if (NochangeInObserservationsProceduresOrRecordsTemp.length > 0) {
+      setNochangeInObserservationsProceduresOrRecords(
+        NochangeInObserservationsProceduresOrRecordsTemp
+      )
+      console.log(
+        'NochangeInObserservationsProceduresOrRecordsTemp:',
+        NochangeInObserservationsProceduresOrRecordsTemp
+      )
       toast.error('Algunos pacientes no tienen cambios en doctor o enfermero', { duration: 2000 })
       return
     }
@@ -152,7 +169,10 @@ const ShiftExchangeModal = ({ onClose }) => {
               patients={patients}
               mode={'doctor'}
               lastDoctor={'yo'}
-              invalidPatients={invalidPatients}
+              NochangeInDocOrNurse={NochangeInDocOrNurse}
+              NochangeInObserservationsProceduresOrRecords={
+                NochangeInObserservationsProceduresOrRecords
+              }
             />
           </div>
           {/* BUTTON */}

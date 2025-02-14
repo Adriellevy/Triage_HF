@@ -17,5 +17,6 @@
   "Observations": "Observations",
   "Procedures": "Procedures",
   "Record": "History",
-  "DoctorOrNurse": "Is needed to assign a new doctor or nurse to the patient"
+  "DoctorOrNurse": "Is needed to assign a new doctor or nurse to the patient",
+  "NochangeInObserservationsProceduresOrRecords": "No changes in observations, procedures or history"
 }

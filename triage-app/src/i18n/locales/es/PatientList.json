@@ -19,5 +19,6 @@
   "Record": "Antecedentes",
   "DoctorOrNurse": "Es necesario asignar un nuevo doctor o enfermera al paciente",
   "StatusLabel": "Estado",
-  "SymptomLabel": "Sintoma"
+  "SymptomLabel": "Sintoma",
+  "NochangeInObserservationsProceduresOrRecords": "No hay cambios en las observaciones, procedimientos o antecedentes"
 }

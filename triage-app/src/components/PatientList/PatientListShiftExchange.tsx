@@ -9,7 +9,8 @@ interface PropsPatientsList {
   mode: string
   lastDoctor?: { value: string; label: string }
   lastNurse?: { value: string; label: string }
-  invalidPatients: Patient[]
+  NochangeInDocOrNurse: Patient[]
+  NochangeInObserservationsProceduresOrRecords: Patient[]
 }
 
 function PatientsListShiftExchange({
@@ -17,7 +18,8 @@ function PatientsListShiftExchange({
   mode,
   lastDoctor,
   lastNurse,
-  invalidPatients
+  NochangeInDocOrNurse,
+  NochangeInObserservationsProceduresOrRecords
 }: PropsPatientsList) {
   const { t } = useTranslation('PatientList')
   const [currentPage, setCurrentPage] = useState(1)
@@ -115,7 +117,7 @@ function PatientsListShiftExchange({
   const indexOfLastPatient = currentPage * patientsPerPage
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage
   const currentPatients = sortedPatients.slice(indexOfFirstPatient, indexOfLastPatient)
-  console.log('invalidPatients', invalidPatients)
+  console.log('NochangeInDocOrNurse', NochangeInDocOrNurse)
   return (
     <>
       <div className='text-xs lg:text-sm mt-4 lg:mx-8'>
@@ -153,11 +155,18 @@ function PatientsListShiftExchange({
                 mode={mode}
                 lastDoctor={lastDoctor}
                 lastNurse={lastNurse}
-                isInvalid={invalidPatients.some((invalidPatient) => {
+                NochangeInDocOrNurse={NochangeInDocOrNurse.some((invalidPatient) => {
                   console.log(invalidPatient)
                   console.log(patient.patient_id)
                   return String(invalidPatient) === String(patient.patient_id)
                 })}
+                NochangeInObserservationsProceduresOrRecords={NochangeInObserservationsProceduresOrRecords.some(
+                  (invalidPatient) => {
+                    console.log(invalidPatient)
+                    console.log(patient.patient_id)
+                    return String(invalidPatient) === String(patient.patient_id)
+                  }
+                )}
               />
             ))}
           </tbody>
