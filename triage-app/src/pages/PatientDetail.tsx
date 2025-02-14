@@ -137,14 +137,19 @@ function PatientDetail() {
                 {t('NoShiftChangesMessage')}
               </li>
             ) : (
-              ['patient_observations', 'patient_procedures', 'patient_records'].map((key) => (
-                <li key={key} className='flex items-start'>
-                  <span className='font-semibold mr-2'>{t(`${key}Label`)}:</span>
-                  <span className='flex-1'>
-                    {Patient ? String(Patient[key] || t('NoDataLabel')) : null}
-                  </span>
+              <>
+                <li className='flex items-start text-blue-500 font-semibold'>
+                  {t('ShiftChangeInfoMessage')}
                 </li>
-              ))
+                {['patient_observations', 'patient_procedures', 'patient_records'].map((key) => (
+                  <li key={key} className='flex items-start'>
+                    <span className='font-semibold mr-2'>{t(`${key}Label`)}:</span>
+                    <span className='flex-1'>
+                      {Patient ? String(Patient[key] || t('NoDataLabel')) : null}
+                    </span>
+                  </li>
+                ))}
+              </>
             )}
           </ul>
         </div>

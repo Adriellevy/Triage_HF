@@ -13,9 +13,10 @@
   "QRLabel": "Escanear código QR para móvil",
   "DischargeButton": "Dar de Alta",
   "BackButton": "Volver",
-  "patient_observationsLabel": "Observaciones del paciente",
-  "patient_proceduresLabel": "Procedimientos del paciente",
+  "patient_observationsLabel": "Observaciones sobre el paciente",
+  "patient_proceduresLabel": "Procedimientos realizados al paciente",
   "patient_recordsLabel": "Antecedentes del paciente",
   "NoShiftChangesMessage": "Este paciente no formo parte de ningun pase de turno",
-  "NoDataLabel": "No hay datos disponibles"
+  "NoDataLabel": "No hay datos disponibles",
+  "ShiftChangeInfoMessage": "Este paciente tiene la siguiente información de pase de turno"
 }

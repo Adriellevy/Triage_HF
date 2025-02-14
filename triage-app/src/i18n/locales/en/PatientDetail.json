@@ -13,9 +13,10 @@
   "QRLabel": "Scan QR Code for mobile",
   "DischargeButton": "Discharge",
   "BackButton": "Back",
-  "patient_observationsLabel": "Patient Observations",
-  "patient_proceduresLabel": "Patient Procedures",
+  "patient_observationsLabel": "Observations about patient",
+  "patient_proceduresLabel": "Procedures performed on patient",
   "patient_recordsLabel": "Patient History",
   "NoShiftChangesMessage": "This patient was not part of any shift change",
-  "NoDataLabel": "No data available"
+  "NoDataLabel": "No data available",
+  "ShiftChangeInfoMessage": "This patient has the following shift change information"
 }
