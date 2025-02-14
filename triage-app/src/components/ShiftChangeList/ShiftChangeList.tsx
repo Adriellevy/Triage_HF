@@ -4,6 +4,8 @@ import { ShiftChange } from '../../interfaces/Shift-change'
 import Cookies from 'js-cookie'
 import { getShiftChanges } from '@/services/ShiftService'
 import LoaderSpin from '../LoaderSpin'
+import { getUserById } from '@/services/userService'
+import { getPatientById } from '@/services/patientService'
 
 interface PropsShiftList {
   shift_id: string
@@ -15,6 +17,8 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [shiftChanges, setShiftChanges] = useState<ShiftChange[] | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [userNames, setUserNames] = useState<{ [key: string]: string }>({})
+  const [patientNames, setPatientNames] = useState<{ [key: string]: string }>({})
   const token = Cookies.get('authToken')
 
   useEffect(() => {
@@ -22,7 +26,7 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
       try {
         if (token) {
           const data = await getShiftChanges(null, null, shift_id)
-          console.log(data,"data")
+          console.log(data, 'data')
           setShiftChanges(data)
         }
       } catch (error) {
@@ -33,6 +37,52 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
     }
     fetchData()
   }, [token, shift_id])
+
+  useEffect(() => {
+    const fetchUserNames = async (userIds: string[]) => {
+      const names: { [key: string]: string } = {}
+      for (const id of userIds) {
+        try {
+          const user = await getUserById(id)
+          names[id] = user.user_name
+        } catch (error) {
+          console.error(`Error fetching user with ID ${id}:`, error)
+        }
+      }
+      setUserNames(names)
+    }
+
+    const fetchPatientNames = async (patientIds: string[]) => {
+      const names: { [key: string]: string } = {}
+      for (const id of patientIds) {
+        try {
+          const patient = await getPatientById(id)
+          names[id] = patient.patient_name
+        } catch (error) {
+          console.error(`Error fetching patient with ID ${id}:`, error)
+        }
+      }
+      setPatientNames(names)
+    }
+
+    if (shiftChanges) {
+      const userIds = [
+        ...new Set(
+          shiftChanges.flatMap((shiftChange) => [
+            shiftChange.user_id,
+            shiftChange.last_doctor_id,
+            shiftChange.new_doctor_id,
+            shiftChange.last_nurse_id,
+            shiftChange.new_nurse_id
+          ])
+        )
+      ]
+      fetchUserNames(userIds)
+
+      const patientIds = [...new Set(shiftChanges.map((shiftChange) => shiftChange.patient_id))]
+      fetchPatientNames(patientIds)
+    }
+  }, [shiftChanges])
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -69,7 +119,6 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
   })
 
   const columns = [
-    { label: t('Shift ID'), field: 'shift_id', showOnLargeScreen: true, sortable: true },
     { label: t('User ID'), field: 'user_id', showOnLargeScreen: false, sortable: true },
     {
       label: t('Last Doctor ID'),
@@ -128,7 +177,17 @@ function ShiftChangeList({ shift_id }: PropsShiftList) {
                   key={column.field}
                   className={`border p-2 ${column.showOnLargeScreen ? '' : 'hidden lg:table-cell'}`}
                 >
-                  {shiftChange[column.field as keyof ShiftChange]}
+                  {[
+                    'user_id',
+                    'last_doctor_id',
+                    'new_doctor_id',
+                    'last_nurse_id',
+                    'new_nurse_id'
+                  ].includes(column.field)
+                    ? userNames[shiftChange[column.field as keyof ShiftChange]] || 'Loading...'
+                    : column.field === 'patient_id'
+                    ? patientNames[shiftChange[column.field as keyof ShiftChange]] || 'Loading...'
+                    : shiftChange[column.field as keyof ShiftChange]}
                 </td>
               ))}
             </tr>
