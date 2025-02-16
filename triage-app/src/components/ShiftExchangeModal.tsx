@@ -12,7 +12,9 @@ import { RootState } from '@/redux/store/store'
 import { toast } from 'sonner'
 import { set } from 'lodash'
 
+import { useTranslation } from 'react-i18next'
 const ShiftExchangeModal = ({ onClose }) => {
+  const { t } = useTranslation('ShiftList')
   const [doctorOptions, setDoctorOptions] = useState<ColourOption[]>([])
   const [nurseOptions, setNurseOptions] = useState<ColourOption[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
@@ -147,9 +149,9 @@ const ShiftExchangeModal = ({ onClose }) => {
     <div className='fixed top-0  left-0 h-full w-full flex items-start justify-center bg-black bg-opacity-35 z-50 '>
       <div className=' flex  flex-col bg-blue-900 rounded-lg mt-10 ml-14  max-w-2xl md:max-w-screen-2xl w-full z-60'>
         <div className='flex  my-4 justify-between'>
-          <h3 className='text-2xl font-bold mx-2 my-2 mr-20'>Cambio de turno</h3>
+          <h3 className='text-2xl font-bold mx-2 my-2 mr-20'>{t('ShiftChangeModal')}</h3>
           <Button color='grey' onClick={onClose} className='text-sm py-0 px-2 font-bold '>
-            Cancelar
+            {t('Cancel')}
           </Button>
         </div>
 
@@ -177,7 +179,7 @@ const ShiftExchangeModal = ({ onClose }) => {
           </div>
           {/* BUTTON */}
           <div className='flex justify-end mt-4'>
-            <label className='text-black self-center '>Generar informe</label>
+            <label className='text-black self-center '>{t('GenerateInform')}</label>
             <Checkbox
               name='Generar informe'
               color='success'
@@ -191,7 +193,7 @@ const ShiftExchangeModal = ({ onClose }) => {
               }}
               className='text-lg py-2 px-2 font-bold '
             >
-              Cambio de turno
+              {t('ShiftChanges')}
             </Button>
           </div>
         </div>

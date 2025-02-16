@@ -304,14 +304,14 @@ function PatientItemShiftExchange({
           <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-35'>
             <div className='bg-white p-8 rounded-lg'>
               <div className='text-center'>
-                Confirmar alta de paciente <strong>{patientToDischarge.patient_name}</strong>?
+                {t('ConfirmDischarge')} <strong>{patientToDischarge.patient_name}</strong>?
               </div>
               <div className='flex justify-center mt-4 gap-2'>
                 <Button color='red' onClick={handleConfirmFastDischarge}>
-                  Confirmar
+                  {t('Confirm')}
                 </Button>
                 <Button color='grey' onClick={() => setPatientToDischarge(null)}>
-                  Cancelar
+                  {t('Cancel')}
                 </Button>
               </div>
             </div>

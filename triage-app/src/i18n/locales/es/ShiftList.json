@@ -14,5 +14,9 @@
   "Show Details": "Mostrar detalles",
   "Shift on:": "Fecha del turno: ",
   "noshift": "No hay cambios de turno disponibles",
-  "PatientInformation": "Información del paciente"
+  "PatientInformation": "Información del paciente",
+  "ShiftChanges": "Efectuar cambio de turno",
+  "GenerateInform": "Generar informe",
+  "Cancel": "Cancelar",
+  "ShiftChangeModal": "Pagina cambio de turno"
 }

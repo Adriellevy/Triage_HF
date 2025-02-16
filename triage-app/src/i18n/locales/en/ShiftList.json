@@ -14,5 +14,9 @@
   "Show Details": "Show Details",
   "Shift on:": "Shift date: ",
   "noshift": "No shift changes available",
-  "PatientInformation": "Patient Information"
+  "PatientInformation": "Patient Information",
+  "ShiftChanges": "Shift Changes",
+  "GenerateInform": "Generate report",
+  "Cancel": "Cancelar",
+  "ShiftChangeModal": "Shift Change Modal"
 }

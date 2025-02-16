@@ -18,5 +18,8 @@
   "Procedures": "Procedures",
   "Record": "History",
   "DoctorOrNurse": "Is needed to assign a new doctor or nurse to the patient",
-  "NochangeInObserservationsProceduresOrRecords": "No changes in observations, procedures or history"
+  "NochangeInObserservationsProceduresOrRecords": "No changes in observations, procedures or history",
+  "ConfirmDischarge": "Confirm Discharge",
+  "Confirm": "Confirm",
+  "Cancel": "Cancel"
 }

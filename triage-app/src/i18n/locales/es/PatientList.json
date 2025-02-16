@@ -20,5 +20,8 @@
   "DoctorOrNurse": "Es necesario asignar un nuevo doctor o enfermera al paciente",
   "StatusLabel": "Estado",
   "SymptomLabel": "Sintoma",
-  "NochangeInObserservationsProceduresOrRecords": "No hay cambios en las observaciones, procedimientos o antecedentes"
+  "NochangeInObserservationsProceduresOrRecords": "No hay cambios en las observaciones, procedimientos o antecedentes",
+  "ConfirmDischarge": "Confirmar Alta",
+  "Confirm": "Confirmar",
+  "Cancel": "Cancelar"
 }
