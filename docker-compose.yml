@@ -147,7 +147,7 @@ services:
       DATABASE_PASSWORD: 1234
       DATABASE_NAME: triage-refactor-db
     ports:
-      - "3010:3000"
+      - 3010:3000
     networks:
       - app-network
     volumes:
