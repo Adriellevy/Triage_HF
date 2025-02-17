@@ -121,6 +121,41 @@ services:
     networks:
       - app-network
 
+  mysql_refactor:
+    image: mysql:8.0.33
+    container_name: mysql_refactor_container
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=triage-refactor-db
+    ports:
+      - 3309:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  nestjs_refactor:
+    build: ./nestjs-refactor
+    container_name: nestjs_refactor
+    restart: always
+    depends_on:
+      - mysql_refactor
+    environment:
+      DATABASE_HOST: mysql_refactor
+      DATABASE_PORT: 3309
+      DATABASE_USER: root
+      DATABASE_PASSWORD: 1234
+      DATABASE_NAME: triage-refactor-db
+    ports:
+      - "3010:3000"
+    networks:
+      - app-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  mysql_data:
 
 networks:
   app-network:
