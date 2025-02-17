@@ -18,5 +18,12 @@
   "patient_recordsLabel": "Antecedentes del paciente",
   "NoShiftChangesMessage": "Este paciente no formo parte de ningun pase de turno",
   "NoDataLabel": "No hay datos disponibles",
-  "ShiftChangeInfoMessage": "Este paciente tiene la siguiente información de pase de turno"
+  "ShiftChangeInfoMessage": "Las observaciones, procedimientos realizados y antecedentes del último pase de turno",
+  "Hide": "Ocultar",
+  "Show": "Mostrar",
+  "Shift on:": "Pase de turno:",
+  "from": "de las",
+  "to": "a",
+  "Patient History": "Detalles del historial del Paciente",
+  "Shift Changes": "Detalles de los pases de turno"
 }

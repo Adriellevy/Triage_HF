@@ -4,23 +4,32 @@ import QRCode from 'react-qr-code'
 import { Patient, PatientStatus, PatientData } from '@/interfaces/Patinet'
 import { Button, Label } from '@/components/ui'
 import PatientHistory from '@/components/PatientHistory/PatientHistory'
-import PatientInformIA from '@/components/PatientInformIA'
+// import PatientInformIA from '@/components/PatientInformIA'
 import { getPatientById } from '@/services/patientService'
 import { updatePatient } from '@/services/patientService'
+import { getShiftChanges, getShiftById } from '@/services/ShiftService'
+import { Shift } from '@/interfaces/Shift'
+import { ShiftChange } from '@/interfaces/Shift-change'
 import { useTranslation } from 'react-i18next'
 import { getFormatBirthDate, getFormatDate } from '../helpers/HelperFechas'
+import ShiftChangeList from '@/components/ShiftChangeList/ShiftChangeList'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+
 function PatientDetail() {
   const { t } = useTranslation('PatientDetail')
   const { patient_id } = useParams()
   const navigate = useNavigate()
   const [Patient, setPatient] = useState<PatientData | null>(null)
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
+  const [shiftChanges, setShiftChanges] = useState<ShiftChange[]>([])
+  const [shifts, setShifts] = useState<Shift[]>([])
+  const [expandedShiftId, setExpandedShiftId] = useState<string | null>(null)
   const isPatientStatusAlta = Patient?.patient_status !== PatientStatus.DISCHARGED
 
   const handleGoBack = () => {
     navigate(-1)
   }
-  //------------------------------------------- Our Api Get Patient  --------------------------------------------------------------------------------------
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +48,27 @@ function PatientDetail() {
     fetchData()
   }, [patient_id])
 
-  //------------------------------------------------------  Formating Patient -----------------------------------------------------------------------------
+  useEffect(() => {
+    const fetchShiftChanges = async () => {
+      try {
+        const changes = await getShiftChanges(patient_id)
+        setShiftChanges(changes)
+        const uniqueShiftIds = Array.from(
+          new Set(changes.map((change) => change.shift_id.toString()))
+        )
+        const shiftPromises = uniqueShiftIds.map((shiftId) => getShiftById(shiftId))
+        const shiftsData = await Promise.all(shiftPromises)
+        setShifts(shiftsData.map((data) => data.shift)) // Desestructurar aquí
+      } catch (error) {
+        console.error('Error fetching shift changes:', error)
+      }
+    }
+    fetchShiftChanges()
+  }, [patient_id])
+
+  const toggleExpand = (id: string) => {
+    setExpandedShiftId(expandedShiftId === id ? null : id)
+  }
 
   interface Field {
     label: string
@@ -57,21 +86,16 @@ function PatientDetail() {
     { label: t('DoctorNameLabel'), key: 'doctor_name', format: null },
     { label: t('NurseNameLabel'), key: 'nurse_name', format: null },
     { label: t('PatientStatusLabel'), key: 'patient_status', format: null },
-
     { label: t('patient_observationsLabel'), key: 'patient_observations', format: null },
     { label: t('patient_proceduresLabel'), key: 'patient_procedures', format: null },
     { label: t('patient_recordsLabel'), key: 'patient_records', format: null }
   ]
-
-  //------------------------------------------- Handle State Patient change ---------------------------------------------------------------
 
   const handlePatientStatus = (patientData: Patient | null) => {
     if (patientData && patientData.patient_status === PatientStatus.DISCHARGED) {
       SetMedicalDischarge(true)
     }
   }
-  const hasNoSpecialFields = (patient: PatientData) =>
-    !patient.patient_observations && !patient.patient_procedures && !patient.patient_records
 
   const handleMedicalDischarge = () => {
     SetMedicalDischarge(true)
@@ -104,13 +128,12 @@ function PatientDetail() {
               const value = Patient ? Patient[field.key] : null
               const isEmpty = value === undefined || value === null || value === ''
 
-              // Check if this field is part of the patient_observations, patient_procedures, or patient_records group
               if (
                 ['patient_observations', 'patient_procedures', 'patient_records'].includes(
                   field.key
                 )
               ) {
-                return null // We handle these fields separately below
+                return null
               }
 
               return (
@@ -121,7 +144,7 @@ function PatientDetail() {
                       ? field.format
                         ? field.format(String(value))
                         : isEmpty
-                        ? t('NoDataLabel') // Fallback for empty fields
+                        ? t('NoDataLabel')
                         : String(value)
                       : null}
                   </span>
@@ -129,7 +152,6 @@ function PatientDetail() {
               )
             })}
 
-            {/* Custom logic for patient_observations, patient_procedures, and patient_records */}
             {['patient_observations', 'patient_procedures', 'patient_records'].every(
               (key) => !Patient || !Patient[key]
             ) ? (
@@ -174,10 +196,58 @@ function PatientDetail() {
           </Button>
         </div>
       ) : null}
-      {/* 
-      {showMedicalDischarge && <PatientInformIA Patient={Patient} />} */}
-
-      <PatientHistory patient_id={patient_id} />
+      {shiftChanges.length > 0 && (
+        <div className='mt-4 p-4 bg-white shadow-md rounded-md'>
+          <div className='flex justify-between items-center mb-4'>
+            <h3 className='text-xl font-bold'>{t('Shift Changes')}</h3>
+            <Button
+              onClick={() => toggleExpand('shiftChanges')}
+              variant='ghost'
+              className='flex items-center'
+            >
+              {expandedShiftId === 'shiftChanges' ? t('Hide') : t('Show')}
+              <FontAwesomeIcon
+                icon={expandedShiftId === 'shiftChanges' ? faChevronDown : faChevronRight}
+                className='ml-2 text-gray-600'
+              />
+            </Button>
+          </div>
+          {expandedShiftId === 'shiftChanges' && (
+            <div className='mt-4 overflow-x-auto'>
+              {shifts.map((shift) => (
+                <div key={shift.id} className='mb-4'>
+                  <h4 className='text-lg font-semibold'>
+                    {t('Shift on:')} {new Date(shift.shift_day).toLocaleDateString()} {t('from')}{' '}
+                    {shift.shift_end_time}
+                    {'hrs'}
+                  </h4>
+                  <ShiftChangeList
+                    shift_id={shift.id}
+                    shiftChanges={shiftChanges.filter((change) => change.shift_id === shift.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      <div className='mt-4 p-4 bg-white shadow-md rounded-md'>
+        <div className='flex justify-between items-center mb-4'>
+          <h3 className='text-xl font-bold'>{t('Patient History')}</h3>
+          <Button
+            onClick={() => toggleExpand('patientHistory')}
+            variant='ghost'
+            className='flex items-center'
+          >
+            {expandedShiftId === 'patientHistory' ? t('Hide') : t('Show')}
+            <FontAwesomeIcon
+              icon={expandedShiftId === 'patientHistory' ? faChevronDown : faChevronRight}
+              className='ml-2 text-gray-600'
+            />
+          </Button>
+        </div>
+        {expandedShiftId === 'patientHistory' && <PatientHistory patient_id={patient_id} />}
+      </div>
     </div>
   )
 }

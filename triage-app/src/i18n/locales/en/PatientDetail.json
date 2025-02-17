@@ -18,5 +18,10 @@
   "patient_recordsLabel": "Patient History",
   "NoShiftChangesMessage": "This patient was not part of any shift change",
   "NoDataLabel": "No data available",
-  "ShiftChangeInfoMessage": "This patient has the following shift change information"
+  "ShiftChangeInfoMessage": "This patient has the following shift change information",
+  "Hide": "Hide ",
+  "Show": "Show",
+  "Shift on:": "Shift:",
+  "from": "from its",
+  "Patient History": "Patient History"
 }
