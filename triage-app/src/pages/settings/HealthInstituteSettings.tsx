@@ -27,7 +27,7 @@ function SymptomSettings() {
   const [symptomsData, setSymptomsData] = useState([])
   const [triageLevels, setTriageLevels] = useState([])
 
-  const [isSymptomsExpanded, setIsSymptomsExpanded] = useState(true)
+  const [isSymptomsExpanded, setIsSymptomsExpanded] = useState(false)
   const [isTriageExpanded, setIsTriageExpanded] = useState(false)
   const socket = useContext(SocketContext)
   const { logout } = useAuth()
