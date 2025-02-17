@@ -37,26 +37,23 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
   }, [patient_id])
 
   return (
-    <div className='mx-0 mt-4 lg:mx-0'>
-      <h3 className='text-xl font-bold mt-4 mb-6'>{t('title')}</h3>
-      <div className='max-h-72 overflow-y-auto'>
+    <div className='mt-4 px-2 md:px-8'>
+      <div className='overflow-x-auto shadow-md rounded-lg'>
         {isLoading ? (
           <div className='flex justify-center items-center'>
             <LoaderSpin />
           </div>
         ) : (
-          <table className='w-full border border-gray-300 text-white'>
-            <>
-              <thead className='sticky top-0 z-10 bg-blue-800 m-2'>
-                <tr>
-                  <th className='border p-2'>{t('TimeLable')}</th>
-                  <th className='border p-2'>{t('ItemLable')}</th>
-                  <th className='border p-2'>{t('BeforeLable')}</th>
-                  <th className='border p-2'>{t('AfterLable')}</th>
-                  <th className='border p-2'>{t('EditByLabel')}</th>
-                </tr>
-              </thead>
-            </>
+          <table className='w-full text-sm md:text-base border border-gray-300'>
+            <thead className='bg-blue-800 text-white'>
+              <tr>
+                <th className='p-2 text-left cursor-pointer text-center'>{t('TimeLable')}</th>
+                <th className='p-2 text-left cursor-pointer text-center'>{t('ItemLable')}</th>
+                <th className='p-2 text-left cursor-pointer text-center'>{t('BeforeLable')}</th>
+                <th className='p-2 text-left cursor-pointer text-center'>{t('AfterLable')}</th>
+                <th className='p-2 text-left cursor-pointer text-center'>{t('EditByLabel')}</th>
+              </tr>
+            </thead>
             <tbody className='text-center text-black'>
               {PatientHistoryData.map(
                 (HistoryItem, index) =>
