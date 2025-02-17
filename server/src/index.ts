@@ -31,7 +31,7 @@ app.use(corsMiddleware());
 const httpServer = createServer(app);
 
 app.use(initializeSocketMiddleware(httpServer));
-//app.use((req: Request, res: Response, next: NextFunction) => validateKeyMiddleware(req, res, next));
+app.use((req: Request, res: Response, next: NextFunction) => validateKeyMiddleware(req, res, next));
 app.get('/', (req: Request, res: Response) => {
   res.send('<h1>Triage Api</h1>');
 });
