@@ -93,7 +93,6 @@ function Sidebar() {
       icon: StatsIcon,
       label: t('Stats'),
       title: 'Stats',
-      linkUrl: '/stats',
       submenu: [
         {
           icon: StatsIcon,
@@ -120,7 +119,8 @@ function Sidebar() {
           title: t('StatsPatientsAge'),
           linkUrl: '/stats/number_patients_date/age/'
         }
-      ]
+      ],
+      linkUrl: ''
     },
     {
       icon: ConfigIcon,
@@ -154,6 +154,14 @@ function Sidebar() {
 
   const handleSubMenuToggle = (index: number) => {
     setOpenSubMenu(openSubMenu === index ? null : index)
+  }
+
+  const handleMenuItemClick = () => {
+    setMenuVisible(false)
+  }
+
+  const handleSubMenuItemClick = () => {
+    setOpenSubMenu(null)
   }
 
   useEffect(() => {
@@ -296,8 +304,30 @@ function Sidebar() {
     fetchData()
   }, [token])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebarElement = document.getElementById('sidebar')
+      if (sidebarElement && !sidebarElement.contains(event.target as Node)) {
+        setMenuVisible(false)
+        setOpenSubMenu(null)
+      }
+    }
+
+    const handleScroll = () => {
+      setMenuVisible(false)
+      setOpenSubMenu(null)
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('wheel', handleScroll)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('wheel', handleScroll)
+    }
+  }, [])
+
   return (
-    <div>
+    <div id='sidebar'>
       <div className='hidden md:flex lg:flex flex-col w-60 lg:w-[270px] bg-blue-900 text-white h-full '>
         <div className='p-4 flex items-center space-x-4 bg-gradient-to-r from-blue-900 to-blue-700  shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]'>
           <img
@@ -336,6 +366,7 @@ function Sidebar() {
                           key={submenuIndex}
                           to={submenuItem.linkUrl}
                           className=' block px-3 py-2 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-md whitespace-nowrap'
+                          onClick={handleSubMenuItemClick}
                         >
                           {submenuItem.title}
                         </Link>
@@ -348,6 +379,7 @@ function Sidebar() {
                   to={item.linkUrl}
                   key={index}
                   className='block p-3 hover:bg-gradient-to-r from-blue-900 to-blue-700 shadow-inner text-lg'
+                  onClick={handleSubMenuItemClick}
                 >
                   {item.icon && (
                     <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
@@ -410,7 +442,12 @@ function Sidebar() {
               (item.title !== 'Settings' && item.title !== 'Stats') ||
               role === UserRole.HOSPITAL ? (
                 <Link to={item.linkUrl} key={index} className='block p-3 hover:bg-gray-700 text-lg'>
-                  <button onClick={closedMenu}>
+                  <button
+                    onClick={() => {
+                      closedMenu()
+                      handleMenuItemClick()
+                    }}
+                  >
                     {item.icon && (
                       <img src={item.icon} alt={item.title} className='inline-block w-5 h-5 mr-2' />
                     )}
@@ -421,35 +458,42 @@ function Sidebar() {
             )}
           </nav>
           <div className='mt-auto p-4'>
-            <Button color='red' onClick={handleLogout}>
+            <Button
+              color='red'
+              onClick={() => {
+                handleLogout()
+                handleMenuItemClick()
+              }}
+            >
               Logout
             </Button>
           </div>
         </div>
 
-        <div className="md:hidden fixed z-50 top-0 bg-blue-900 text-white w-full px-4 py-3 shadow-lg">
-      <div className="flex items-center justify-between">
-        {/* Logo e Identidad */}
-        <div className="flex items-center space-x-2">
-          <img src={Logo} alt="Logo" className="w-8 h-8" />
-          <span className="text-lg font-bold">Triage App</span>
-        </div>
-
-        <div className="flex items-center space-x-3 bg-blue-900 px-3 py-2 rounded-lg">
-          <img
-            src={UserProfileImage}
-            alt="Profile"
-            className="w-10 h-10 rounded-full border-2 border-gray-600"
-          />
-          <div className="text-sm">
-            <Link to={`/users/${UserInfo.user_id}`} className="hover:underline text-white font-semibold">
-              {UserInfo.user_name}
-            </Link>
-            <div className="text-gray-300 text-xs italic">
-              {t(UserInfo.user_type)}
+        <div className='md:hidden fixed z-50 top-0 bg-blue-900 text-white w-full px-4 py-3 shadow-lg'>
+          <div className='flex items-center justify-between'>
+            {/* Logo e Identidad */}
+            <div className='flex items-center space-x-2'>
+              <img src={Logo} alt='Logo' className='w-8 h-8' />
+              <span className='text-lg font-bold'>Triage App</span>
             </div>
-          </div>
-        </div>
+
+            <div className='flex items-center space-x-3 bg-blue-900 px-3 py-2 rounded-lg'>
+              <img
+                src={UserProfileImage}
+                alt='Profile'
+                className='w-10 h-10 rounded-full border-2 border-gray-600'
+              />
+              <div className='text-sm'>
+                <Link
+                  to={`/users/${UserInfo.user_id}`}
+                  className='hover:underline text-white font-semibold'
+                >
+                  {UserInfo.user_name}
+                </Link>
+                <div className='text-gray-300 text-xs italic'>{t(UserInfo.user_type)}</div>
+              </div>
+            </div>
 
             <button onClick={toggleMenu} className='text-lg font-bold'>
               {menuVisible ? (
