@@ -38,3 +38,6 @@ DataAnalysisAndReports/src/data/__pycache__/*
 DataAnalysisAndReports/src/features/__pycache__/*
 DataAnalysisAndReports/src/models/__pycache__/*
 DataAnalysisAndReports/src/visualization/__pycache__/*
+nestjs-refactor/.env
+nestjs-refactor/node_modules
+nestjs-refactor/dist
