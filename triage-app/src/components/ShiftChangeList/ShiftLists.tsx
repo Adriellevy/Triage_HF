@@ -34,7 +34,7 @@ const ShiftLists: React.FC<ShiftListsProps> = ({ shifts }) => {
             </div>
             <Button
               onClick={() => toggleExpand(shift.id)}
-              variant='ghost'
+              color='grey'
               className='flex items-center'
             >
               {expandedShiftId === shift.id ? t('Hide Details') : t('Show Details')}

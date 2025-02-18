@@ -37,7 +37,7 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
 
   const getBackgroundColor = (triageLevel: string) => {
     const level = TriageLevels.find((t) => t.level === triageLevel)
-    return level ? `rgb(${level.color}, 0.6)` : 'transparent'
+    return level ? `rgb(${level.color.toString()}, 0.6)` : 'transparent'
   }
 
   useEffect(() => {
@@ -86,52 +86,62 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
   return (
     <>
       <tr className={`hover:bg-gray-100 border-b`}>
-        <td className="p-3 text-center">{patient_name}</td>
+        <td className='p-3 text-center'>{patient_name}</td>
         {!turnExchange && (
           <>
-            <td className="p-3 hidden lg:table-cell text-center">{age}</td>
-            <td className="p-3 hidden lg:table-cell text-center">{entryTime}</td>
-            <td className="p-3 text-center" style={{ backgroundColor: getBackgroundColor(patient_triage_level) }}>
+            <td className='p-3 hidden lg:table-cell text-center'>{age}</td>
+            <td className='p-3 hidden lg:table-cell text-center'>{entryTime}</td>
+            <td
+              className='p-3 text-center'
+              style={{
+                backgroundColor: getBackgroundColor(patient_triage_level as unknown as string)
+              }}
+            >
               {patient_triage_level}
             </td>
-            <td className="p-3 hidden lg:table-cell text-center">{patient_symptom}</td>
-            <td className="p-3 hidden lg:table-cell text-center">{box_code}</td>
-            <td className="p-3 hidden lg:table-cell text-center">{doctor_name}</td>
-            <td className="p-3 hidden lg:table-cell text-center">{nurse_name}</td>
-            <td className="p-3 text-center font-medium">{patient_status}</td>
+            <td className='p-3 hidden lg:table-cell text-center'>{patient_symptom}</td>
+            <td className='p-3 hidden lg:table-cell text-center'>{box_code}</td>
+            <td className='p-3 hidden lg:table-cell text-center'>{doctor_name}</td>
+            <td className='p-3 hidden lg:table-cell text-center'>{nurse_name}</td>
+            <td className='p-3 text-center font-medium'>{patient_status}</td>
           </>
         )}
         {turnExchange && (
           <>
-            <td className="p-3 hidden lg:table-cell text-center">
+            <td className='p-3 hidden lg:table-cell text-center'>
               {doctor_name} {newDoctor && `-> ${newDoctor}`}
             </td>
-            <td className="p-3 hidden lg:table-cell text-center">
+            <td className='p-3 hidden lg:table-cell text-center'>
               {nurse_name} {newNurse && `-> ${newNurse}`}
             </td>
-            <td className="p-3 text-center" style={{ backgroundColor: getBackgroundColor(patient_triage_level) }}>
+            <td
+              className='p-3 text-center'
+              style={{
+                backgroundColor: getBackgroundColor(patient_triage_level as unknown as string)
+              }}
+            >
               {patient_triage_level}
             </td>
           </>
         )}
-        <td className="p-3">
-          <div className="flex justify-center gap-2">
+        <td className='p-3'>
+          <div className='flex justify-center gap-2'>
             <Link to={`/edit_patient/${patient_id}`}>
-              <Button color="green">
+              <Button color='green'>
                 <FontAwesomeIcon icon={faPenToSquare} />
               </Button>
             </Link>
             <Link to={`/patients/${patient_id}`}>
-              <Button color="blue">
+              <Button color='blue'>
                 <FontAwesomeIcon icon={faCircleInfo} />
               </Button>
             </Link>
             {patient_status !== 'ALTA' ? (
-              <Button color="red" onClick={handleFastDischarge}>
+              <Button color='red' onClick={handleFastDischarge}>
                 <FontAwesomeIcon icon={faRightFromBracket} />
               </Button>
             ) : (
-              <Button color="gray" disabled>
+              <Button color='grey' disabled>
                 <FontAwesomeIcon icon={faRightFromBracket} />
               </Button>
             )}
@@ -140,16 +150,16 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
       </tr>
 
       {patientToDischarge?.patient_id === patient_id && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-35">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80">
-            <p className="text-lg font-medium">
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-35'>
+          <div className='bg-white p-6 rounded-lg shadow-lg text-center w-80'>
+            <p className='text-lg font-medium'>
               Confirmar alta de <strong>{patientToDischarge.patient_name}</strong>?
             </p>
-            <div className="flex justify-center mt-4 gap-3">
-              <Button color="red" onClick={handleConfirmFastDischarge}>
+            <div className='flex justify-center mt-4 gap-3'>
+              <Button color='red' onClick={handleConfirmFastDischarge}>
                 Confirmar
               </Button>
-              <Button color="gray" onClick={() => setPatientToDischarge(null)}>
+              <Button color='grey' onClick={() => setPatientToDischarge(null)}>
                 Cancelar
               </Button>
             </div>

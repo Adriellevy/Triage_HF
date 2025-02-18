@@ -196,8 +196,9 @@ function Dashboard() {
   useEffect(() => {
     const container = document.getElementById("my-superset-container");
     if (container && container.children[0]) {
-      container.children[0].width = "1000px";
-      container.children[0].height = "1000px";
+      const iframe = container.children[0] as HTMLIFrameElement;
+      iframe.width = "1000px";
+      iframe.height = "1000px";
     }
   }, [isTokenReady]);
 

@@ -56,7 +56,7 @@ function PatientDetail() {
         const uniqueShiftIds = Array.from(
           new Set(changes.map((change) => change.shift_id.toString()))
         )
-        const shiftPromises = uniqueShiftIds.map((shiftId) => getShiftById(shiftId))
+        const shiftPromises = uniqueShiftIds.map((shiftId: string) => getShiftById(shiftId))
         const shiftsData = await Promise.all(shiftPromises)
         setShifts(shiftsData.map((data) => data.shift)) // Desestructurar aquí
       } catch (error) {
@@ -202,7 +202,7 @@ function PatientDetail() {
             <h3 className='text-xl font-bold'>{t('Shift Changes')}</h3>
             <Button
               onClick={() => toggleExpand('shiftChanges')}
-              variant='ghost'
+              color='grey'
               className='flex items-center'
             >
               {expandedShiftId === 'shiftChanges' ? t('Hide') : t('Show')}
@@ -223,7 +223,9 @@ function PatientDetail() {
                   </h4>
                   <ShiftChangeList
                     shift_id={shift.id}
-                    shiftChanges={shiftChanges.filter((change) => change.shift_id === shift.id)}
+                    shiftChanges={shiftChanges.filter(
+                      (change) => change.shift_id === Number(shift.id)
+                    )}
                   />
                 </div>
               ))}
@@ -236,7 +238,7 @@ function PatientDetail() {
           <h3 className='text-xl font-bold'>{t('Patient History')}</h3>
           <Button
             onClick={() => toggleExpand('patientHistory')}
-            variant='ghost'
+            color='grey'
             className='flex items-center'
           >
             {expandedShiftId === 'patientHistory' ? t('Hide') : t('Show')}

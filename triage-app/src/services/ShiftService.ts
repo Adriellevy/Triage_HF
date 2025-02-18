@@ -26,13 +26,15 @@ export const getCurrentShift = async () => {
 export const getAllShifts = async (date?: string) => {
   try {
     const token = Cookies.get('authToken')
-    const response = await fetch(`${config.API_URL}/shift`, {
+    const url = new URL(`${config.API_URL}/shift`)
+    if (date) url.searchParams.append('date', date)
+
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
-      },
-      params: { date }
+      }
     })
 
     if (!response.ok) {
