@@ -9,7 +9,10 @@ interface PropsPatienHistory {
   patient_id: string | undefined
 }
 
-function PatientHistory({ patient_id }: PropsPatienHistory) {
+function PatientHistory({
+  patient_id,
+  setHasHistory
+}: PropsPatienHistory & { setHasHistory: (hasHistory: boolean) => void }) {
   const { t } = useTranslation('PatientHistory')
   const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItemType[]>([])
   const [isLoading, setisLoading] = useState<boolean>(true)
@@ -28,13 +31,21 @@ function PatientHistory({ patient_id }: PropsPatienHistory) {
         )
 
         setPatientHistoryData(sortedData)
+        // TODO: Change to a low query request to the API
+        const hasHistory =
+          sortedData.length > 0 &&
+          sortedData.some(
+            (item) =>
+              item.patient_new_value !== 'ALTA' && item.patient_updated_column !== 'patient_status'
+          )
+        setHasHistory(hasHistory) // Set the hasHistory state
         setisLoading(false)
       } catch (error) {
         console.error((error as Error).message)
       }
     }
     fetchData()
-  }, [patient_id])
+  }, [patient_id, setHasHistory])
 
   return (
     <div className='mt-4 px-2 md:px-8'>

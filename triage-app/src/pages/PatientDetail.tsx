@@ -25,8 +25,9 @@ function PatientDetail() {
   const [showMedicalDischarge, SetMedicalDischarge] = useState<boolean>(false)
   const [shiftChanges, setShiftChanges] = useState<ShiftChange[]>([])
   const [shifts, setShifts] = useState<Shift[]>([])
-  const [expandedShiftId, setExpandedShiftId] = useState<string | null>(null)
+  const [expandedShiftId, setExpandedShiftId] = useState<string | null>('patientHistory') //TODO ver de cambiar la logica por un request de true o false de la API
   const [patientToDischarge, setPatientToDischarge] = useState<PatientData | null>(null)
+  const [hasHistory, setHasHistory] = useState<boolean>(true)
   const isPatientStatusAlta = Patient?.patient_status !== PatientStatus.DISCHARGED
 
   const handleGoBack = () => {
@@ -67,6 +68,12 @@ function PatientDetail() {
     }
     fetchShiftChanges()
   }, [patient_id])
+
+  useEffect(() => {
+    if (hasHistory) {
+      setExpandedShiftId(null) // Close the expanded state if there is history
+    }
+  }, [hasHistory])
 
   const toggleExpand = (id: string) => {
     setExpandedShiftId(expandedShiftId === id ? null : id)
@@ -235,23 +242,27 @@ function PatientDetail() {
           )}
         </div>
       )}
-      <div className='mt-4 p-4 bg-white shadow-md rounded-md'>
-        <div className='flex justify-between items-center mb-4'>
-          <h3 className='text-xl font-bold'>{t('Patient History')}</h3>
-          <Button
-            onClick={() => toggleExpand('patientHistory')}
-            color='grey'
-            className='flex items-center'
-          >
-            {expandedShiftId === 'patientHistory' ? t('Hide') : t('Show')}
-            <FontAwesomeIcon
-              icon={expandedShiftId === 'patientHistory' ? faChevronDown : faChevronRight}
-              className='ml-2 text-gray-600'
-            />
-          </Button>
+      {hasHistory && ( //TODO ver de cambiar la logica por un request de true o false de la API
+        <div className='mt-4 p-4 bg-white shadow-md rounded-md'>
+          <div className='flex justify-between items-center mb-4'>
+            <h3 className='text-xl font-bold'>{t('Patient History')}</h3>
+            <Button
+              onClick={() => toggleExpand('patientHistory')}
+              color='grey'
+              className='flex items-center'
+            >
+              {expandedShiftId === 'patientHistory' ? t('Hide') : t('Show')}
+              <FontAwesomeIcon
+                icon={expandedShiftId === 'patientHistory' ? faChevronDown : faChevronRight}
+                className='ml-2 text-gray-600'
+              />
+            </Button>
+          </div>
+          {expandedShiftId === 'patientHistory' && (
+            <PatientHistory patient_id={patient_id} setHasHistory={setHasHistory} />
+          )}
         </div>
-        {expandedShiftId === 'patientHistory' && <PatientHistory patient_id={patient_id} />}
-      </div>
+      )}
       {patientToDischarge && (
         <ConfirmationModal
           message={`Confirmar alta de ${patientToDischarge.patient_name}?`}
