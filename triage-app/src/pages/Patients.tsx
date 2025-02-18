@@ -22,6 +22,7 @@ import PatientByDatePicker from '@/components/PatientSearch/PatientByDatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import FilterPatientsComponent from '@/components/PatientSearch/FilterPatientsComponent'
 import SearchTypeSelector from '@/components/PatientSearch/SearchTypeSelector'
+import LoaderSpin from '@/components/LoaderSpin' // Import LoaderSpin
 
 const colourStyles: StylesConfig<ColourOption, true> = {
   control: (styles) => ({ ...styles, backgroundColor: 'white' }),
@@ -153,6 +154,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   const [searchType, setSearchType] = useState('Nombre')
   const [animation, setAnimation] = useState('')
   const [predefinedOptions, setPredefinedOptions] = useState<ColourOption[]>([])
+  const [isLoading, setIsLoading] = useState(false) // Add loading state
 
   const onChangeSelect = (selectedOptions: MultiValue<ColourOption>) => {
     setfilterOptions(selectedOptions as ColourOption[])
@@ -161,6 +163,7 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true) // Set loading state to true
         if (token) {
           const batch = Math.ceil(currentPage / 2)
           if (!dataBatch.includes(batch)) {
@@ -186,8 +189,10 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
             setDataBatch([...dataBatch, batch])
           }
         }
+        setIsLoading(false) // Set loading state to false
       } catch (error) {
         console.error((error as Error).message)
+        setIsLoading(false) // Set loading state to false
       }
     }
     fetchData()
@@ -310,7 +315,13 @@ function Patients({ actual_user, role }: { actual_user: User; role: UserRole }) 
         ) : null}
       </div>
 
-      {searchTerm === '' && patientsData ? (
+      {isLoading ? (
+        <div className='relative w-full h-screen'>
+          <div className='absolute inset-0 flex items-center justify-center bg-white z-50'>
+            <LoaderSpin />
+          </div>
+        </div>
+      ) : searchTerm === '' && patientsData ? (
         <PatientsList
           patients={patientsData}
           currentPage={currentPage}

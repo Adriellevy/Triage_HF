@@ -93,7 +93,11 @@ function Boxes() {
     <div className=' pb-4 mt-5 mx-2 md:mt-0 md:ml-0'>
       <Search onSearch={handleonSearch} options={SearchOption} />
       {isLoading ? (
-        <LoaderSpin />
+        <div className='relative w-full h-screen'>
+          <div className='absolute inset-0 flex items-center justify-center bg-white z-50'>
+            <LoaderSpin />
+          </div>
+        </div>
       ) : boxesData === null ? (
         <p>{t('No boxes available')}</p> // Message when no boxes are found
       ) : searchTerm === '' && boxesData ? (
