@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faCircleInfo, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/ui'
 import { getAllTriages } from '@/services/triageLevelsService'
+import ConfirmationModal from '@/components/ConfirmationModal'
 
 interface PropsPatientItem {
   patient: Patient
@@ -150,21 +151,11 @@ function PatientItem({ patient, index, turnExchange, newDoctor, newNurse }: Prop
       </tr>
 
       {patientToDischarge?.patient_id === patient_id && (
-        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-35'>
-          <div className='bg-white p-6 rounded-lg shadow-lg text-center w-80'>
-            <p className='text-lg font-medium'>
-              Confirmar alta de <strong>{patientToDischarge.patient_name}</strong>?
-            </p>
-            <div className='flex justify-center mt-4 gap-3'>
-              <Button color='red' onClick={handleConfirmFastDischarge}>
-                Confirmar
-              </Button>
-              <Button color='grey' onClick={() => setPatientToDischarge(null)}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ConfirmationModal
+          message={`Confirmar alta de ${patientToDischarge.patient_name}?`}
+          onConfirm={handleConfirmFastDischarge}
+          onCancel={() => setPatientToDischarge(null)}
+        />
       )}
     </>
   )

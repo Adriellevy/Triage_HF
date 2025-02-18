@@ -15,6 +15,7 @@ import { getFormatBirthDate, getFormatDate } from '../helpers/HelperFechas'
 import ShiftChangeList from '@/components/ShiftChangeList/ShiftChangeList'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import ConfirmationModal from '@/components/ConfirmationModal'
 
 function PatientDetail() {
   const { t } = useTranslation('PatientDetail')
@@ -25,6 +26,7 @@ function PatientDetail() {
   const [shiftChanges, setShiftChanges] = useState<ShiftChange[]>([])
   const [shifts, setShifts] = useState<Shift[]>([])
   const [expandedShiftId, setExpandedShiftId] = useState<string | null>(null)
+  const [patientToDischarge, setPatientToDischarge] = useState<PatientData | null>(null)
   const isPatientStatusAlta = Patient?.patient_status !== PatientStatus.DISCHARGED
 
   const handleGoBack = () => {
@@ -97,16 +99,16 @@ function PatientDetail() {
     }
   }
 
-  const handleMedicalDischarge = () => {
+  const handleMedicalDischarge = () => setPatientToDischarge(Patient)
+  const handleConfirmMedicalDischarge = () => {
     SetMedicalDischarge(true)
+    setPatientToDischarge(null)
     if (Patient) {
       Patient.patient_status = PatientStatus.DISCHARGED
       Patient.patient_triage_time = new Date(Patient.patient_triage_time)
       Patient.patient_entry_time = new Date(Patient.patient_entry_time)
       Patient.patient_age = new Date(Patient.patient_age)
       Patient.patient_exit_time = new Date()
-      console.log('paciente a actualizar ')
-      console.log(Patient)
       updatePatient(Patient.patient_id, Patient)
     } else {
       console.log('Error en dar de ALTA al paciente')
@@ -250,6 +252,13 @@ function PatientDetail() {
         </div>
         {expandedShiftId === 'patientHistory' && <PatientHistory patient_id={patient_id} />}
       </div>
+      {patientToDischarge && (
+        <ConfirmationModal
+          message={`Confirmar alta de ${patientToDischarge.patient_name}?`}
+          onConfirm={handleConfirmMedicalDischarge}
+          onCancel={() => setPatientToDischarge(null)}
+        />
+      )}
     </div>
   )
 }
