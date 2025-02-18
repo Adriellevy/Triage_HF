@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug NestJS",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "node",
+        "runtimeArgs": [
+          "-r",
+          "ts-node/register",
+          "-r",
+          "source-map-support/register",
+          "./src/main.ts"
+        ],
+        "skipFiles": ["<node_internals>/**"],
+        "protocol": "inspector",
+        "autoAttachChildProcesses": true,
+        "restart": true
+      }
+    ]
+  }
+  
