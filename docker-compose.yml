@@ -6,7 +6,7 @@ services:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=Triagedb
     ports:
-      - 3306:3306
+      -  3307:3306 #(Puerto para que no entre en conclicto con mysql):(Puerto interno)
     volumes:
       - ./db/db_demo.sql:/docker-entrypoint-initdb.d/db_demo.sql
     networks:
