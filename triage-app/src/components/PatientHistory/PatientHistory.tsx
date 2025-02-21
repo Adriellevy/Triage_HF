@@ -7,12 +7,13 @@ import { useTranslation } from 'react-i18next'
 
 interface PropsPatienHistory {
   patient_id: string | undefined
+  setHasHistory?: (hasHistory: boolean) => void // Make setHasHistory optional
 }
 
 function PatientHistory({
   patient_id,
-  setHasHistory
-}: PropsPatienHistory & { setHasHistory: (hasHistory: boolean) => void }) {
+  setHasHistory = () => {} // Provide a default no-op function
+}: PropsPatienHistory) {
   const { t } = useTranslation('PatientHistory')
   const [PatientHistoryData, setPatientHistoryData] = useState<PatientHistoryItemType[]>([])
   const [isLoading, setisLoading] = useState<boolean>(true)
