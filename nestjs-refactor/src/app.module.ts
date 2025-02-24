@@ -5,6 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { environment } from './environment';
 import { DataModule } from './modules/data.module';
 import { ServiceModule } from './modules/service.module';
+import { AuthController } from './controllers/auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './security/jwt.strategy';
 
 const modules = [
   DataModule,
@@ -12,18 +15,19 @@ const modules = [
 ]
 
 const controllers = [
-  AppController
+  AppController,
+  AuthController
 ]
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load:[()=>environment],
+      load:[()=>({...environment})],
       isGlobal:true
     }),
     ...modules
   ],
   controllers: controllers,
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

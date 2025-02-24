@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SymptomEntity } from 'src/entities/symptom.entity';
+import { TokenEntity } from 'src/entities/token.entity';
+import { UserEntity } from 'src/entities/user.entity';
 import { environment } from 'src/environment';
 import { SymptomRepository } from 'src/repositories/symptom.repository';
-const entities = [SymptomEntity]
-const repositories = [SymptomRepository]
+import { TokenRepository } from 'src/repositories/token.repository';
+import { UserRepository } from 'src/repositories/user.repository';
+const entities = [
+    SymptomEntity,
+    UserEntity,
+    TokenEntity,
+]
+const repositories = [
+    SymptomRepository,
+    UserRepository,
+    TokenRepository
+]
 @Module({
     imports:[
         TypeOrmModule.forRoot({
@@ -15,10 +27,11 @@ const repositories = [SymptomRepository]
             password:environment.db.password,
             database:environment.db.database,
             entities:entities,
-            synchronize: !environment.production ? environment.db.synchronize : environment.production
+            synchronize: !environment.production && environment.db.synchronize
         }),
-        TypeOrmModule.forFeature(repositories)
+        TypeOrmModule.forFeature(entities)
     ],
-    exports:[TypeOrmModule]
+    providers:[...repositories],
+    exports:[TypeOrmModule,...repositories]
 })
 export class DataModule {}

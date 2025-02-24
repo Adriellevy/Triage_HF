@@ -7,6 +7,6 @@ import { Repository } from "typeorm";
 export class SymptomRepository{
     constructor(
         @InjectRepository(SymptomEntity)
-        private readonly symptomRepository:Repository<SymptomRepository>
+        private readonly symptomRepository:Repository<SymptomEntity>
     ){}
 } 

@@ -23,7 +23,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
       const authResponse = await loginService(email, password)
       if (authResponse.success) {
         if (authResponse.serverRes) {
-          Cookies.set('authToken', authResponse.serverRes)
+          Cookies.set('authToken', authResponse.serverRes, { expires: new Date(Date.now() + 10 * 1000) })
           handleUserChange(authResponse.serverRes)
           setEmail('')
           setPassword('')
