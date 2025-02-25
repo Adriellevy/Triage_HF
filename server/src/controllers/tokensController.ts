@@ -50,7 +50,7 @@ class TokensController {
               id: decoded.id, // Accedemos a 'id'
               name: decoded.name // Accedemos a 'name'
             };
-            const newAccessToken = signTokenWithExpiration(userForToken, 10 / 60);
+            const newAccessToken = signTokenWithExpiration(userForToken, 20 / 60);
             console.log('Token devuelto al renovar');
             return res.status(200).json(newAccessToken);
           } else {

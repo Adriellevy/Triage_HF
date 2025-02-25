@@ -10,7 +10,7 @@ export const environment = {
     production: process.env.PRODUCTION ? process.env.PRODUCTION == 'true' : false,
     port:process.env.PORT || 3010,
     jwt:{
-        expiration:process.env.JWT_EXPIRATION || 30000, // 5 min expresados en milisegundos
+        expiration:process.env.JWT_EXPIRATION || 300000, // 5 min expresados en milisegundos
         secret:process.env.SECRET_JWT_KEY || 'secretKey',
         refreshTokenExpiration:process.env.JWT_REFRESH_TOKEN_EXPIRATION || 14400000 // 4 horas expresados en milisegundos
     }
