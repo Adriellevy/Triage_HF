@@ -24,7 +24,7 @@ function LoginForm({ handleUserChange, user }: LoginFormProps) {
       if (authResponse.success) {
         if (authResponse.serverRes) {
           // Cookies.set('authToken', authResponse.serverRes, { expires: new Date(Date.now() + 10 * 1000) })
-          Cookies.set('authToken', authResponse.serverRes, { expires: 1 / 144 })
+          Cookies.set('authToken', authResponse.serverRes, { expires: 1 / 24 })
           handleUserChange(authResponse.serverRes)
           setEmail('')
           setPassword('')
