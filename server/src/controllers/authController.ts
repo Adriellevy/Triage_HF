@@ -30,7 +30,7 @@ export class AuthController {
         id: UserData.user_id,
         name: user_name
       };
-      const token = signTokenWithExpiration(userForToken, 10 / 600); //token de sesion
+      const token = signTokenWithExpiration(userForToken, 10 / 60); //token de sesion
 
       // Verificar si existe un refresh token en la base de datos
       const existingToken = await TokensModel.findTokenByUserId(UserData.user_id);
