@@ -3,7 +3,7 @@ import { DataModule } from './data.module';
 import { AuthService } from 'src/services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { environment } from 'src/environment';
-import { JwtStrategy } from 'src/security/jwt.strategy';
+import { JwtRefreshGuard } from 'src/security/auth.guard';
 const services = [
     AuthService
 ]
@@ -13,7 +13,7 @@ const helpers = []
         secret: environment.jwt.secret,
         signOptions: { expiresIn: environment.jwt.expiration }
       })],
-    providers:[...services,...helpers,JwtStrategy],
-    exports:[...services,...helpers]
+    providers:[...services,...helpers,JwtRefreshGuard],
+    exports:[...services,...helpers,JwtModule]
 })
 export class ServiceModule {}

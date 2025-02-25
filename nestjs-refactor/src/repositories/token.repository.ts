@@ -23,8 +23,12 @@ export class TokenRepository{
         return await this.tokenRepository.findOne({where:{user_id: user.id}});
     }
 
-    async update(token: TokenEntity, refreshToken: string): Promise<TokenEntity>{
-        token.refresh_token = refreshToken;
+    async findByUserAndToken(userId: string, token: string): Promise<TokenEntity | null>{
+        return await this.tokenRepository.findOne({where:{user_id: userId, refresh_token: token},relations:['user']});
+    }
+
+    async update(token: TokenEntity): Promise<TokenEntity>{
         return await this.tokenRepository.save(token);
     }
+
 }

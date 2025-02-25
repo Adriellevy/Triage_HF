@@ -31,7 +31,8 @@ export class AuthService {
             
             const tokenEntity = await this.tokenRepository.findByUser(user);
             if(tokenEntity) {
-                await this.tokenRepository.update(tokenEntity, refreshToken);
+                tokenEntity.refresh_token = refreshToken;
+                await this.tokenRepository.update(tokenEntity);
             }else{
                 await this.tokenRepository.create(user, refreshToken,new Date());
             }

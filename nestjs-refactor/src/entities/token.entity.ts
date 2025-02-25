@@ -12,6 +12,9 @@ export class TokenEntity{
     @Column({type:'timestamp'})
     issued_at: Date;
 
+    @Column({nullable:true})
+    expired_access_token?: string;
+    
     @Column()
     user_id: string;
 

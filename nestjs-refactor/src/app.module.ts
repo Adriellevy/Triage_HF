@@ -6,8 +6,6 @@ import { environment } from './environment';
 import { DataModule } from './modules/data.module';
 import { ServiceModule } from './modules/service.module';
 import { AuthController } from './controllers/auth.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './security/jwt.strategy';
 
 const modules = [
   DataModule,
