@@ -7,7 +7,7 @@ interface AuthContextProps {
   logout: () => void
   setAutenticationCookie: (Verification_token: string) => void
   setVerificationCookie: (Verification_token: string) => void // Nueva función para manejar la cookie de verificación
-  refreshAuthToken: () =>  void
+  refreshAuthToken: () => void
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined)
@@ -36,13 +36,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const setAutenticationCookie = (Verification_token: string) => {
-    console.log('holaaaaa')
-    Cookies.set('authToken', Verification_token,   { expires: new Date(Date.now() + 10 * 1000) }) // 10 minutos
-
-    const cookieData = Cookies.get('authToken');
+    // console.log('holaaaaa')
+    // Cookies.set('authToken', Verification_token,   { expires: new Date(Date.now() + 10 * 1000) }) // 10 minutos
+    Cookies.set('authToken', Verification_token, { expires: 1 / 144 }) // 10 minutos
+    const cookieData = Cookies.get('authToken')
     if (cookieData) {
-        const { value, expires } = JSON.parse(cookieData);
-        console.log('Expira en:', new Date(expires));
+      const { value, expires } = JSON.parse(cookieData)
+      console.log('Expira en:', new Date(expires))
     }
   }
 
@@ -51,17 +51,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const refreshAuthToken = () => {
-    const verificationToken = Cookies.get('verificationToken');
+    const verificationToken = Cookies.get('verificationToken')
     if (verificationToken) {
-      setAutenticationCookie(verificationToken);
+      setAutenticationCookie(verificationToken)
     } else {
-      console.warn('No verification token found in cookies');
+      console.warn('No verification token found in cookies')
     }
-  };
+  }
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, setAutenticationCookie, setVerificationCookie, refreshAuthToken }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        setAutenticationCookie,
+        setVerificationCookie,
+        refreshAuthToken
+      }}
     >
       {children}
     </AuthContext.Provider>
