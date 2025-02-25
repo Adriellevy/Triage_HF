@@ -1,18 +1,23 @@
-let activeKey:boolean =false 
-export async function syncKey(){
-    try{
-        const response = await fetch(`https://triage-managment.netlify.app/keys/${process.env.APP_KEY}`,{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-secret': process.env.MANAGER_SECRET || 'default'
-            }
-        })
-        const data = await response.json();
-        activeKey = data;
-    }catch(err){
-        console.error('Error:', err);
-    }
-}
+import { dbfs } from "../config/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-export default activeKey;
+
+export async function syncKey(): Promise<any | null> {
+    try {
+        const keysCollection = collection(dbfs, "keys");
+        const querySnapshot = await getDocs(keysCollection);
+
+        const keyDoc = querySnapshot.docs.find(doc => doc.id === process.env.SYNC_KEY);
+
+        if (keyDoc) {
+            console.log("Clave activa validada");
+            return keyDoc.data(); 
+        } else {
+            console.warn("No se encontró la clave en Firebase.");
+            return null;
+        }
+    } catch (err) {
+        console.error("Error al obtener la clave:", err);
+        return null;
+    }
+} 
