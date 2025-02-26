@@ -20,11 +20,11 @@ export class TokenRepository{
     }
 
     async findByUser(user: UserEntity): Promise<TokenEntity | null>{
-        return await this.tokenRepository.findOne({where:{user_id: user.id}});
+        return await this.tokenRepository.findOne({where:{id_user: user.id}});
     }
 
     async findByUserAndToken(userId: string, token: string): Promise<TokenEntity | null>{
-        return await this.tokenRepository.findOne({where:{user_id: userId, refresh_token: token},relations:['user']});
+        return await this.tokenRepository.findOne({where:{id_user: userId, refresh_token: token},relations:['user']});
     }
 
     async update(token: TokenEntity): Promise<TokenEntity>{

@@ -4,6 +4,9 @@ import { BoxEntity } from "./box.entity";
 import { UserEntity } from "./user.entity";
 import { AdmisionStudyEntity } from "./admision-study.entity";
 import { AdmisionSymptomEntity } from "./admision-symptom.entity";
+import { AdmisionDoctorProcedureEntity } from "./admision-doctor-procedure.entity";
+import { ShiftChangeEntity } from "./shift-change.entity";
+import { AdmisionHistoryEntity } from "./admision-history.entity";
 
 @Entity('admision')
 export class AdmisionEntity{ //TODO: Agregar triage
@@ -56,4 +59,12 @@ export class AdmisionEntity{ //TODO: Agregar triage
     @OneToMany(()=>AdmisionSymptomEntity,as=>as.admision)
     admisionSymptoms:AdmisionSymptomEntity[];
 
+    @OneToMany(()=>AdmisionDoctorProcedureEntity,adp=>adp.admision)
+    admisionDoctorProcedures:AdmisionDoctorProcedureEntity[];
+
+    @OneToMany(()=>ShiftChangeEntity,sc=>sc.admision)
+    shiftChanges:ShiftChangeEntity[];
+
+    @OneToMany(()=>AdmisionHistoryEntity,ah=>ah.admision)
+    admisionHistories:AdmisionHistoryEntity[];
 }

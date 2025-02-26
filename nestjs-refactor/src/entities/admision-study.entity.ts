@@ -2,6 +2,7 @@ import { StudyStatus } from "src/domain/study.domain";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AdmisionEntity } from "./admision.entity";
 import { StudyEntity } from "./study.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity('admision_study')
 export class AdmisionStudyEntity {
@@ -31,5 +32,7 @@ export class AdmisionStudyEntity {
     @JoinColumn({name:'id_study'})
     study:StudyEntity;
 
-
+    @ManyToOne(()=>UserEntity,u=>u.admisionSymptoms)
+    @JoinColumn({name:'id_user'})
+    user:UserEntity;
 }
