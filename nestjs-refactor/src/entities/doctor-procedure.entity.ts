@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { AdmisionDoctorProcedureEntity } from "./admision-doctor-procedure.entity";
 
 @Entity('doctor_procedure')
 export class DoctorProcedureEntity{
@@ -10,5 +11,6 @@ export class DoctorProcedureEntity{
     
     // NICE TO HAVE: Enum con los tipos de procedimientos
 
-
+    @OneToMany(()=>AdmisionDoctorProcedureEntity,adp=>adp.doctorProcedure)
+    admisionDoctorProcedures:AdmisionDoctorProcedureEntity[]
 }

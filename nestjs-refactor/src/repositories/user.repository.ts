@@ -41,6 +41,7 @@ export class UserRepository{
         user.role = role;
         user.password = password;
         user.email = email;
+        user.fullname = username;
         return await this.userRepository.save(user);
     }
 }

@@ -1,5 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdmisionDoctorProcedureEntity } from 'src/entities/admision-doctor-procedure.entity';
+import { AdmisionHistoryEntity } from 'src/entities/admision-history.entity';
+import { AdmisionStudyEntity } from 'src/entities/admision-study.entity';
+import { AdmisionSymptomEntity } from 'src/entities/admision-symptom.entity';
+import { AdmisionEntity } from 'src/entities/admision.entity';
+import { BoxEntity } from 'src/entities/box.entity';
+import { DoctorProcedureEntity } from 'src/entities/doctor-procedure.entity';
+import { PatientEntity } from 'src/entities/patient.entity';
+import { ShiftChangeEntity } from 'src/entities/shift-change.entity';
+import { ShiftEntity } from 'src/entities/shift.entity';
+import { StudyEntity } from 'src/entities/study.entity';
 import { SymptomEntity } from 'src/entities/symptom.entity';
 import { TokenEntity } from 'src/entities/token.entity';
 import { UserEntity } from 'src/entities/user.entity';
@@ -8,9 +19,20 @@ import { SymptomRepository } from 'src/repositories/symptom.repository';
 import { TokenRepository } from 'src/repositories/token.repository';
 import { UserRepository } from 'src/repositories/user.repository';
 const entities = [
+    AdmisionDoctorProcedureEntity,
+    AdmisionHistoryEntity,
+    AdmisionStudyEntity,
+    AdmisionSymptomEntity,
+    AdmisionEntity,
+    BoxEntity,
+    DoctorProcedureEntity,
+    PatientEntity,
+    ShiftChangeEntity,
+    ShiftEntity,
+    StudyEntity,
     SymptomEntity,
-    UserEntity,
     TokenEntity,
+    UserEntity  
 ]
 const repositories = [
     SymptomRepository,

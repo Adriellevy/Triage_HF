@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColu
 import { AdmisionEntity } from "./admision.entity";
 import { StudyEntity } from "./study.entity";
 import { SymptomEntity } from "./symptom.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity('admision_symptom')
 export class AdmisionSymptomEntity {
@@ -32,5 +33,7 @@ export class AdmisionSymptomEntity {
     @JoinColumn({name:'id_study'})
     symptom:SymptomEntity;
 
-
+    @ManyToOne(()=>UserEntity,u=>u.admisionSymptoms)
+    @JoinColumn({name:'id_user'})
+    user:UserEntity;
 }

@@ -16,9 +16,9 @@ export class TokenEntity{
     expired_access_token?: string;
     
     @Column()
-    user_id: string;
+    id_user: string;
 
     @OneToOne(()=>UserEntity, u=>u.token)
-    @JoinColumn({name:'user_id'})
+    @JoinColumn({name:'id_user'})
     user: UserEntity;
 }

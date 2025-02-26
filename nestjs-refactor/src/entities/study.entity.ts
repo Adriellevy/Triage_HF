@@ -6,10 +6,7 @@ export class StudyEntity{
     @PrimaryGeneratedColumn()
     id:number
 
-    @Column({
-            type:'varchar',
-            length:256
-    })
+    @Column({type:'varchar',length:256})
     name:string
     
     @OneToMany(()=>AdmisionStudyEntity,as=>as.study)
