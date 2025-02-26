@@ -38,20 +38,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const setAutenticationCookie = (Verification_token: string) => {
     // console.log('holaaaaa')
-    Cookies.set('authToken', Verification_token, { expires: 1 / 8640 }) // 10 seconds
+    // Cookies.set('authToken', Verification_token, { expires: 1 / 8640 }) // 10 seconds
     // Cookies.set('authToken', Verification_token,   { expires: new Date(Date.now() + 10 * 1000) }) // 10 minutos
-    // Cookies.set('authToken', Verification_token, { expires: 1 / 24 }) // 1 hour
-    // const cookieData = Cookies.get('authToken')
-    // if (cookieData) {
-    //   const { expires } = JSON.parse(cookieData)
-    //   console.log('Expira en:', new Date(expires))
-    // }
+    Cookies.set('authToken', Verification_token, { expires: 1 / 48 }) // 1 hour
   }
 
   const setVerificationCookie = (Verification_token: string) => {
     Cookies.set('verificationToken', Verification_token, {
-      expires: new Date(Date.now() + 20 * 1000)
-    }) // 20 seconds
+      expires: 1 / 24
+    }) // 1 hour
   }
 
   const refreshAuthToken = () => {
