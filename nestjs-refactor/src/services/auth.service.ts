@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { LoginInputDto, LoginOutputDto, TokenPayload } from 'src/domain/login.domain';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/repositories/user.repository';
@@ -42,8 +42,22 @@ export class AuthService {
         }
     }   
 
-
     private async validatePassword(password: string, userPassword: string): Promise<boolean> {
         return await bcrypt.compare(password, userPassword);
+    }
+
+    async logout(req:any): Promise<void> {
+        try{
+            const token = req.headers.authorization.split(' ')[1];
+            const payload = this.jwtSrv.verify(token);
+            if(!payload) throw new UnauthorizedException('Token invalido');
+            const user = await this.userRepository.findOneById(payload.sub);
+            if(!user) throw new UnauthorizedException('Token invalido');
+            const tokenUser = await this.tokenRepository.findByUser(user);
+            if(!tokenUser) throw new UnauthorizedException('Token invalido');
+            await this.tokenRepository.delete(tokenUser);
+        }catch(err){
+            throw new HttpException(err.message,err.status || 500);
+        }
     }
 }

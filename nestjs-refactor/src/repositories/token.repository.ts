@@ -31,4 +31,7 @@ export class TokenRepository{
         return await this.tokenRepository.save(token);
     }
 
+    async delete(token: TokenEntity): Promise<void>{
+        await this.tokenRepository.remove(token);
+    }
 }
