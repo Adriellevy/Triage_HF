@@ -1,17 +1,1 @@
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "env": {
-    "VITE_API_URL": "https://triage-hf-6wdp.onrender.com",
-    "VITE_NETWORK_APP_URL": "http://192.168.0.83:5173",
-    "VITE_PYTHON_URL": "http://192.168.0.83:5000"
-  }
-}
+{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
