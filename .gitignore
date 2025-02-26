@@ -41,3 +41,4 @@ DataAnalysisAndReports/src/visualization/__pycache__/*
 nestjs-refactor/.env
 nestjs-refactor/node_modules
 nestjs-refactor/dist
+db/data/*
