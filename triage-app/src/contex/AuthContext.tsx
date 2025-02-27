@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import Cookies from 'js-cookie'
 import { logout_petition } from '@/services/authService'
+import { isTokenExpired } from '@/helpers/HelperAuthentication'
 interface AuthContextProps {
   isAuthenticated: boolean
   login: (token: string) => void
@@ -37,23 +38,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const setAutenticationCookie = (Verification_token: string) => {
     // console.log('holaaaaa')
+    // Cookies.set('authToken', Verification_token, { expires: 1 / 8640 }) // 10 seconds
     // Cookies.set('authToken', Verification_token,   { expires: new Date(Date.now() + 10 * 1000) }) // 10 minutos
-    Cookies.set('authToken', Verification_token, { expires: 1 / 24 }) // 1 hour
-    const cookieData = Cookies.get('authToken')
-    if (cookieData) {
-      const { value, expires } = JSON.parse(cookieData)
-      console.log('Expira en:', new Date(expires))
-    }
+    Cookies.set('authToken', Verification_token, { expires: 1 / 48 }) // 1 hour
   }
 
   const setVerificationCookie = (Verification_token: string) => {
-    Cookies.set('verificationToken', Verification_token, { expires: 1 / 24 }) // 1 hour
+    Cookies.set('verificationToken', Verification_token, {
+      expires: 1 / 24
+    }) // 1 hour
   }
 
   const refreshAuthToken = () => {
     const verificationToken = Cookies.get('verificationToken')
+
+    console.log('Refreshing auth token', verificationToken)
     if (verificationToken) {
-      setAutenticationCookie(verificationToken)
+      if (!isTokenExpired(verificationToken)) {
+        setAutenticationCookie(verificationToken)
+      } else {
+        console.warn('Verification token has expired')
+      }
     } else {
       console.warn('No verification token found in cookies')
     }

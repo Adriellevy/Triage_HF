@@ -5,10 +5,12 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=Triagedb
+      - innodb_force_recovery=1
     ports:
       -  3307:3306 #(Puerto para que no entre en conclicto con mysql):(Puerto interno)
     volumes:
       - ./db/db_demo.sql:/docker-entrypoint-initdb.d/db_demo.sql
+      # - ./db/data:/var/lib/mysql # Para que se guarden los datos en la carpeta db/data
     networks:
       - app-network
 
@@ -101,10 +103,11 @@ services:
       superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
       superset db upgrade &&
       superset init &&
-      superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
+      superset set-database-uri --database_name TriageDB --uri 'mysql://root:1234@mysqldb:3306/Triagedb' &&
       superset import-dashboards -p /app/dashboards/dashboard_sin_contra.zip --username admin &&
       superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
       
+    # superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
     # leer este issue en github para cargar dashboards de forma automatica https://github.com/apache/superset/issues/28692#issuecomment-2337761581
 
   triageapp:
