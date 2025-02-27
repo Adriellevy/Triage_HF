@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { LoginInputDto, LoginOutputDto, TokenPayload } from 'src/domain/login.domain';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/repositories/user.repository';
@@ -23,14 +23,14 @@ export class AuthService {
             if(!await this.validatePassword(body.password, user.password)) 
                 throw new UnauthorizedException('Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña.')
             
-            const payload:TokenPayload = {username: user.username, sub: user.id, iat: Date.now()};
+            const payload:TokenPayload = {username: user.username, sub: user.id, iat: Date.now(),roles:[user.role]}; // NICE TO HAVE: Add list of roles in UserEntity
             const token = this.jwtSrv.sign(payload)
     
-            const payloadRefreshToken:TokenPayload = {username: user.username, sub: user.id, iat: Date.now()};
+            const payloadRefreshToken:TokenPayload = {username: user.username, sub: user.id, iat: Date.now(),roles:[user.role]};
             const refreshToken = this.jwtSrv.sign(payloadRefreshToken, {expiresIn: environment.jwt.refreshTokenExpiration});
             
             const tokenEntity = await this.tokenRepository.findByUser(user);
-            if(tokenEntity) {
+                if(tokenEntity) {
                 tokenEntity.refresh_token = refreshToken;
                 await this.tokenRepository.update(tokenEntity);
             }else{
@@ -42,8 +42,22 @@ export class AuthService {
         }
     }   
 
-
     private async validatePassword(password: string, userPassword: string): Promise<boolean> {
         return await bcrypt.compare(password, userPassword);
+    }
+
+    async logout(req:any): Promise<void> {
+        try{
+            const token = req.headers.authorization.split(' ')[1];
+            const payload = this.jwtSrv.verify(token);
+            if(!payload) throw new UnauthorizedException('Token invalido');
+            const user = await this.userRepository.findOneById(payload.sub);
+            if(!user) throw new UnauthorizedException('Token invalido');
+            const tokenUser = await this.tokenRepository.findByUser(user);
+            if(!tokenUser) throw new UnauthorizedException('Token invalido');
+            await this.tokenRepository.delete(tokenUser);
+        }catch(err){
+            throw new HttpException(err.message,err.status || 500);
+        }
     }
 }

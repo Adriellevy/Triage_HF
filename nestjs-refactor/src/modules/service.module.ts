@@ -4,8 +4,10 @@ import { AuthService } from 'src/services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { environment } from 'src/environment';
 import { JwtRefreshGuard } from 'src/security/auth.guard';
+import { BoxService } from 'src/services/box.service';
 const services = [
-    AuthService
+    AuthService,
+    BoxService
 ]
 const helpers = []
 @Module({

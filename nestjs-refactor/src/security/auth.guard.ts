@@ -47,7 +47,7 @@ export class JwtRefreshGuard implements CanActivate {
 
     if (!userToken) throw new UnauthorizedException('Inicia sesión nuevamente');
     this.checkRefreshToken(userToken.refresh_token); // ¿El refresh token venció? Si es así, se lanza una excepción
-    const paylodNewToken:TokenPayload = {username:user.username,sub:user.id,iat:Date.now()}
+    const paylodNewToken:TokenPayload = {username:user.username,sub:user.id,iat:Date.now(),roles:[user.role]};
     const newToken = this.jwtService.sign(paylodNewToken);
 
     response.setHeader('new-access-token', `${newToken}`);

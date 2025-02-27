@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AdmisionEntity } from "./admision.entity";
+import { BoxStatus } from "src/domain/box.domain";
 
 @Entity('box')
 export class BoxEntity{
@@ -9,15 +10,16 @@ export class BoxEntity{
     @Column()
     code:string;
 
-    @Column()
+    @Column({default:BoxStatus.DISPONIBLE})
     status:string;
 
     @Column()
     type:string;
 
-    @Column({type:'timestamp'})
+    @Column({type:'timestamp',nullable:true})
     time:Date;
 
-    @OneToMany(()=>AdmisionEntity,a=>a.box)
-    admisions:AdmisionEntity[];
+    @OneToOne(()=>AdmisionEntity,a=>a.box)
+    admision:AdmisionEntity;
+
 }

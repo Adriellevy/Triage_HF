@@ -15,6 +15,8 @@ import { SymptomEntity } from 'src/entities/symptom.entity';
 import { TokenEntity } from 'src/entities/token.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { environment } from 'src/environment';
+import { AdmisionRepository } from 'src/repositories/admision.repository';
+import { BoxRepository } from 'src/repositories/box.repository';
 import { SymptomRepository } from 'src/repositories/symptom.repository';
 import { TokenRepository } from 'src/repositories/token.repository';
 import { UserRepository } from 'src/repositories/user.repository';
@@ -37,7 +39,9 @@ const entities = [
 const repositories = [
     SymptomRepository,
     UserRepository,
-    TokenRepository
+    TokenRepository,
+    BoxRepository,
+    AdmisionRepository
 ]
 @Module({
     imports:[
