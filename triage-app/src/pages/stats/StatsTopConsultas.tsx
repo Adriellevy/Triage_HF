@@ -1,6 +1,5 @@
-import StatIframe from '@/components/StatIframe'
 import { embedDashboard } from '@superset-ui/embedded-sdk'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 async function supersetLogin() {
   // Mover a un archivo de configuracion
