@@ -6,13 +6,13 @@ export class TokenEntity{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({length:512,type:'varchar'})
     refresh_token:string;
 
     @Column({type:'timestamp'})
     issued_at: Date;
 
-    @Column({nullable:true})
+    @Column({nullable:true,length:512,type:'varchar'})
     expired_access_token?: string;
     
     @Column()

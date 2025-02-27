@@ -20,6 +20,7 @@ export class LoginOutputDto {
 
 export class TokenPayload{
     username: string;
+    roles: string[];
     sub: string;
     iat: number;
 }

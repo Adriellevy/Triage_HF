@@ -6,6 +6,8 @@ import { environment } from './environment';
 import { DataModule } from './modules/data.module';
 import { ServiceModule } from './modules/service.module';
 import { AuthController } from './controllers/auth.controller';
+import { BoxController } from './controllers/box.controller';
+
 
 const modules = [
   DataModule,
@@ -14,7 +16,8 @@ const modules = [
 
 const controllers = [
   AppController,
-  AuthController
+  AuthController,
+  BoxController
 ]
 
 @Module({

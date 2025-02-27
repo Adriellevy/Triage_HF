@@ -23,14 +23,14 @@ export class AuthService {
             if(!await this.validatePassword(body.password, user.password)) 
                 throw new UnauthorizedException('Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña.')
             
-            const payload:TokenPayload = {username: user.username, sub: user.id, iat: Date.now()};
+            const payload:TokenPayload = {username: user.username, sub: user.id, iat: Date.now(),roles:[user.role]}; // NICE TO HAVE: Add list of roles in UserEntity
             const token = this.jwtSrv.sign(payload)
     
-            const payloadRefreshToken:TokenPayload = {username: user.username, sub: user.id, iat: Date.now()};
+            const payloadRefreshToken:TokenPayload = {username: user.username, sub: user.id, iat: Date.now(),roles:[user.role]};
             const refreshToken = this.jwtSrv.sign(payloadRefreshToken, {expiresIn: environment.jwt.refreshTokenExpiration});
             
             const tokenEntity = await this.tokenRepository.findByUser(user);
-            if(tokenEntity) {
+                if(tokenEntity) {
                 tokenEntity.refresh_token = refreshToken;
                 await this.tokenRepository.update(tokenEntity);
             }else{

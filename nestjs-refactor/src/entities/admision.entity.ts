@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PatientEntity } from "./patient.entity";
 import { BoxEntity } from "./box.entity";
 import { UserEntity } from "./user.entity";
@@ -41,7 +41,7 @@ export class AdmisionEntity{ //TODO: Agregar triage
     @JoinColumn({name:'id_patient'})
     patient:PatientEntity;
 
-    @ManyToOne(()=>BoxEntity,b=>b.admisions)
+    @OneToOne(()=>BoxEntity,b=>b.admision)
     @JoinColumn({name:'id_box'})
     box:BoxEntity;
 
