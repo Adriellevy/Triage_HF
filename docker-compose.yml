@@ -101,12 +101,15 @@ services:
     entrypoint: >
       /bin/sh -c "
       superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin &&
+      superset fab create-user --username guest --firstname Guest --lastname User --email guest@example.com --password guest --role Gamma
       superset db upgrade &&
       superset init &&
       superset set-database-uri --database_name TriageDB --uri 'mysql://root:1234@mysqldb:3306/Triagedb' &&
       superset import-dashboards -p /app/dashboards/dashboard_export.zip --username admin &&
       superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger"
-      
+
+    # superset fab create-user --username guest --firstname Guest --lastname User --email guest@example.com --password guest --role Gamma &&
+    # superset fab create-user --username guest --firstname Guest --lastname User --email guest@example.com --password guest --role Public &&  
     # superset set-database-uri --database_name TriageDB --uri 'mysql://usertriage:administraciontriage2024@triage.clou6e6kqfyy.us-east-1.rds.amazonaws.com:3306/Triage_db' &&
     # leer este issue en github para cargar dashboards de forma automatica https://github.com/apache/superset/issues/28692#issuecomment-2337761581
 
