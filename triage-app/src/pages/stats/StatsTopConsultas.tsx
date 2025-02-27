@@ -1,110 +1,114 @@
 import StatIframe from '@/components/StatIframe'
+import { embedDashboard } from '@superset-ui/embedded-sdk'
+import { useEffect } from 'react'
 
 async function supersetLogin() {
-  // Mover a un archivo de configuracion 
-  const LOGIN_URL = 'http://localhost:8088/api/v1/security/login';
-  
+  // Mover a un archivo de configuracion
+  const LOGIN_URL = 'http://localhost:8088/api/v1/security/login'
+
   const payload = {
-    username: 'admin',     // Your Superset admin username
-    password: 'admin',     // Your Superset admin password
+    username: 'admin', // Your Superset admin username
+    password: 'admin', // Your Superset admin password
     provider: 'db',
     refresh: true
-  };
+  }
 
   try {
     const response = await fetch(LOGIN_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
-    });
+    })
 
     if (!response.ok) {
-      throw new Error('Login failed');
+      throw new Error('Login failed')
     }
 
-    const data = await response.json();
+    const data = await response.json()
     return {
       accessToken: data.access_token,
       refreshToken: data.refresh_token
-    };
+    }
   } catch (error) {
-    console.error('Login error:', error);
-    throw error;
+    console.error('Login error:', error)
+    throw error
   }
 }
 
 async function getCsrfToken(accessToken: string) {
-  const CSRF_URL = 'http://localhost:8088/api/v1/security/csrf_token/';
+  const CSRF_URL = 'http://localhost:8088/api/v1/security/csrf_token/'
 
   try {
     const response = await fetch(CSRF_URL, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`
       }
-    });
+    })
 
     if (!response.ok) {
-      throw new Error('Failed to fetch CSRF token');
+      throw new Error('Failed to fetch CSRF token')
     }
 
-    const data = await response.json();
-    return data.result;
+    const data = await response.json()
+    return data.result
   } catch (error) {
-    console.error('CSRF token error:', error);
-    throw error;
+    console.error('CSRF token error:', error)
+    throw error
   }
 }
 
 async function createGuestToken() {
   try {
     // Login and get access token
-    const { accessToken } = await supersetLogin();
+    const { accessToken } = await supersetLogin()
 
     // Get CSRF token
-    const csrfToken = await getCsrfToken(accessToken);
+    const csrfToken = await getCsrfToken(accessToken)
 
     // Prepare guest token request
-    const GUEST_TOKEN_URL = 'http://localhost:8088/api/v1/security/guest_token/';
+    const GUEST_TOKEN_URL = 'http://localhost:8088/api/v1/security/guest_token/'
     const payload = {
       user: {
-        username: "guest",
-        first_name: "Guest",
-        last_name: "User"
+        username: 'guest',
+        first_name: 'Guest',
+        last_name: 'User'
       },
-      resources: [{
-        type: "dashboard",
-        id: "5f0b3038-0d57-4e7d-8a17-378089cde6ed"  // Your dashboard ID
-      }],
+      resources: [
+        {
+          type: 'dashboard',
+          id: '5f0b3038-0d57-4e7d-8a17-378089cde6ed' // Your dashboard ID
+        }
+      ],
       rls: [],
-      roles: ["Gamma", "Public"]
-    };
+      roles: ['Gamma', 'Public']
+    }
 
     // Make guest token request
     const response = await fetch(GUEST_TOKEN_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken,
-        'Referer': GUEST_TOKEN_URL
+        Referer: GUEST_TOKEN_URL
       },
       body: JSON.stringify(payload)
-    });
+    })
 
     if (!response.ok) {
-      const errorBody = await response.json();
-      console.error('Guest token error:', errorBody);
-      throw new Error('Failed to create guest token');
+      const errorBody = await response.json()
+      console.error('Guest token error:', errorBody)
+      throw new Error('Failed to create guest token')
     }
 
-    const data = await response.json();
-    return data.token;
+    const data = await response.json()
+    return data.token
   } catch (error) {
-    console.error('Create guest token error:', error);
-    throw error;
+    console.error('Create guest token error:', error)
+    throw error
   }
 }
 
@@ -149,75 +153,74 @@ function Dashboard() {
   //   }
   // }
 
-  const [isTokenReady, setIsTokenReady] = useState(false);
-  const [guestToken, setGuestToken] = useState<string | null>(null);
+  const [isTokenReady, setIsTokenReady] = useState(false)
+  const [guestToken, setGuestToken] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchAndEmbedDashboard = async () => {
       try {
         // Fetch the guest token first
-        const token = await createGuestToken();
-        setGuestToken(token);
+        const token = await createGuestToken()
+        setGuestToken(token)
 
         // Define fetchGuestToken to be used by embedDashboard
         const fetchGuestTokenFunc = async (): Promise<string> => {
           if (!token) {
-            throw new Error('Guest token not available');
+            throw new Error('Guest token not available')
           }
-          return token;
-        };
+          return token
+        }
 
         // Embed the dashboard only after token is fetched
         embedDashboard({
-          id: "5f0b3038-0d57-4e7d-8a17-378089cde6ed",
-          supersetDomain: "http://localhost:8088",
-          mountPoint: document.getElementById("my-superset-container"),
+          id: '5f0b3038-0d57-4e7d-8a17-378089cde6ed',
+          supersetDomain: 'http://localhost:8088',
+          mountPoint: document.getElementById('my-superset-container'),
           fetchGuestToken: fetchGuestTokenFunc,
           dashboardUiConfig: {
             hideTitle: true,
             filters: {
-              expanded: true,
+              expanded: true
             }
           },
           iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
-        });
+        })
 
-        setIsTokenReady(true);
+        setIsTokenReady(true)
       } catch (error) {
-        console.error('Error fetching or embedding dashboard:', error);
-        setIsTokenReady(false);
+        console.error('Error fetching or embedding dashboard:', error)
+        setIsTokenReady(false)
       }
-    };
+    }
 
-    fetchAndEmbedDashboard();
-  }, []);
+    fetchAndEmbedDashboard()
+  }, [])
 
   /* This is just a hack to make your dashboard full screen */
   useEffect(() => {
-    const container = document.getElementById("my-superset-container");
+    const container = document.getElementById('my-superset-container')
     if (container && container.children[0]) {
-      container.children[0].width = "1000px";
-      container.children[0].height = "1000px";
+      container.children[0].width = '1000px'
+      container.children[0].height = '1000px'
     }
-  }, [isTokenReady]);
+  }, [isTokenReady])
 
   // Conditional rendering to show loading state
   if (!isTokenReady) {
     return (
       <div>
         <h1>Loading Dashboard...</h1>
-        <div id="my-superset-container"></div>
+        <div id='my-superset-container'></div>
       </div>
-    );
+    )
   }
 
   return (
     <div>
       <h1>My Superset Dashboard</h1>
-      <div id="my-superset-container"></div>
-      
+      <div id='my-superset-container'></div>
     </div>
-  );
+  )
 }
 //<!--<iframe src="http://localhost:8088/superset/dashboard/p/Zo9k2QE2RXn/" frameborder="0" height="1000px" width="100%"></iframe>
 export default Dashboard
