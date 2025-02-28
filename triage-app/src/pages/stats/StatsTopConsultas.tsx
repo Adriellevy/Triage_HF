@@ -69,8 +69,8 @@ async function createGuestToken() {
     // Get CSRF token
     const csrfToken = await getCsrfToken(accessToken)
 
-    const dashboardIds = await getAllDashboardsIds(accessToken, csrfToken)
-    console.log('DashboardIds', dashboardIds)
+    // const dashboardIds = await getAllDashboardsIds(accessToken, csrfToken)
+    // console.log('DashboardIds', dashboardIds)
 
     // Prepare guest token request
     const GUEST_TOKEN_URL = 'http://localhost:8088/api/v1/security/guest_token/'
@@ -208,22 +208,6 @@ function Dashboard() {
       container.children[0].height = '1000px'
     }
   }, [isTokenReady])
-
-  // seEffect(() => {
-  //   const fetchDashboardId = async () => {
-  //     try {
-  //       // Login and get access token
-  //       const { accessToken } = await supersetLogin()
-
-  //       // Fetch all dashboard IDs
-  //       const dashboardIds = await getAllDashboardsIds(accessToken)
-  //       console.log('DashboardIds', dashboardIds)
-  //     } catch (error) {
-  //       console.error('Error fetching dashboard IDs:', error)
-  //     }
-  //   }
-  //   fetchDashboardId()
-  // }, [])u
 
   // Conditional rendering to show loading state
   if (!isTokenReady) {
