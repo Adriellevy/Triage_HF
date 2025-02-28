@@ -11,7 +11,7 @@ export const getDashboardId = async (dashboardSlug) => {
 // export const getAllDashboardsIds = async (yourAccessToken) => {
 //   console.log('Fetching dashboards with token:', yourAccessToken) // Log del token de acceso
 
-//   const response = await fetch(`http://localhost:8088/api/v1/dashboard/`, {
+//   const response = await fetch(`http://127.0.0.1:8088/api/v1/dashboard/`, {
 //     method: 'GET',
 //     headers: {
 //       Authorization: `Bearer ${yourAccessToken}`, // Reemplaza con tu token
@@ -31,7 +31,7 @@ export const getAllDashboardsIds = async (yourAccessToken, crfsToken) => {
   }
 
   const response = await fetch(
-    `http://localhost:8088/api/v1/dashboard/?q=${encodeURIComponent(JSON.stringify(query))}`,
+    `http://127.0.0.1:8088/api/v1/dashboard/?q=${encodeURIComponent(JSON.stringify(query))}`,
     {
       method: 'GET',
       headers: {

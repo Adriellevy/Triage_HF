@@ -4,7 +4,7 @@ import { getAllDashboardsIds, getDashboardId } from '../../services/supersetServ
 
 async function supersetLogin() {
   // Mover a un archivo de configuracion
-  const LOGIN_URL = 'http://localhost:8088/api/v1/security/login'
+  const LOGIN_URL = 'http://127.0.0.1:8088/api/v1/security/login'
 
   const payload = {
     username: 'admin', // Your Superset admin username
@@ -39,7 +39,7 @@ async function supersetLogin() {
 }
 
 async function getCsrfToken(accessToken: string) {
-  const CSRF_URL = 'http://localhost:8088/api/v1/security/csrf_token/'
+  const CSRF_URL = 'http://127.0.0.1:8088/api/v1/security/csrf_token/'
 
   try {
     const response = await fetch(CSRF_URL, {
@@ -63,17 +63,31 @@ async function getCsrfToken(accessToken: string) {
 
 async function createGuestToken() {
   try {
-    // Login and get access token
-    const { accessToken } = await supersetLogin()
+    // Login y obtención del access token
+    const loginData = await supersetLogin();
+    if (!loginData || !loginData.accessToken) {
+      console.error('Error: No se obtuvo accessToken de supersetLogin');
+      throw new Error('Missing accessToken');
+    }
+    const { accessToken } = loginData;
+    console.log('Access Token obtenido:', accessToken);
 
-    // Get CSRF token
-    const csrfToken = await getCsrfToken(accessToken)
+    // Obtener CSRF token
+    const csrfToken = await getCsrfToken(accessToken);
+    if (!csrfToken) {
+      console.error('Error: No se obtuvo csrfToken de getCsrfToken');
+      throw new Error('Missing csrfToken');
+    }
+    console.log('CSRF Token obtenido:', csrfToken);
 
-    // const dashboardIds = await getAllDashboardsIds(accessToken, csrfToken)
-    // console.log('DashboardIds', dashboardIds)
+    // Validación extra del dashboard id
+    const dashboardId = '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc';
+    if (!dashboardId) {
+      console.error('Error: Dashboard ID no está definido');
+      throw new Error('Missing dashboard ID');
+    }
 
-    // Prepare guest token request
-    const GUEST_TOKEN_URL = 'http://localhost:8088/api/v1/security/guest_token/'
+    // Preparar el payload para la solicitud del guest token
     const payload = {
       user: {
         username: 'guest',
@@ -83,14 +97,19 @@ async function createGuestToken() {
       resources: [
         {
           type: 'dashboard',
-          id: '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc' // Your dashboard ID
+          id: dashboardId
         }
       ],
       rls: [],
       roles: ['Gamma', 'Public']
-    }
+    };
 
-    // Make guest token request
+    console.log('Payload para guest token:', payload);
+
+    // Definir la URL para la solicitud del guest token
+    const GUEST_TOKEN_URL = 'http://127.0.0.1:8088/api/v1/security/guest_token/';
+
+    // Realizar la solicitud
     const response = await fetch(GUEST_TOKEN_URL, {
       method: 'POST',
       headers: {
@@ -100,63 +119,25 @@ async function createGuestToken() {
         Referer: GUEST_TOKEN_URL
       },
       body: JSON.stringify(payload)
-    })
+    });
 
+    // Validar la respuesta
     if (!response.ok) {
-      const errorBody = await response.json()
-      console.error('Guest token error:', errorBody)
-      throw new Error('Failed to create guest token')
+      const errorBody = await response.json();
+      console.error('Guest token error:', errorBody);
+      throw new Error('Failed to create guest token');
     }
 
-    const data = await response.json()
-    return data.token
+    const data = await response.json();
+    console.log('Guest token obtenido:', data.token);
+    return data.token;
   } catch (error) {
-    console.error('Create guest token error:', error)
-    throw error
+    console.error('Create guest token error:', error);
+    throw error;
   }
 }
 
 function Dashboard() {
-  // const fetchGuestToken = async (): Promise<string> => {
-  //   try {
-  //     const body = {
-  //       resources: [
-  //         {
-  //           id: "f23c569a-d1fd-4f52-9a4d-18a271f4da2f",
-  //           type: "dashboard"
-  //         }
-  //       ],
-  //       rls: [],
-  //       user: {
-  //         first_name: "Guest",
-  //         last_name: "User",
-  //         username: "guest",
-  //         roles: ["Public", "Gamma"]
-  //       }
-  //     }
-
-  //     const response = await fetch('http://localhost:8088/api/v1/security/guest_token/', {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzM4NDMwODAxLCJqdGkiOiI2YzgzOTE2MC04ZmEyLTQwMTAtYjY4Ni1hZDdlYWUwMTU5ZWIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoxLCJuYmYiOjE3Mzg0MzA4MDEsImNzcmYiOiIwMmNjNzg4MC1kZjgyLTQ5ZGEtYWU5YS0yZTQwNTU1YjZlYzUiLCJleHAiOjE3Mzg0MzE3MDF9.okk7F0u042mltpHUrvrVBmNYtTJOy-g1HXD8QFrEM1Y`
-  //       },
-  //       body: JSON.stringify(body)
-  //     });
-  //     const data = await response.json();
-  //     if (!data.token) {
-  //       console.error('Guest token response:', data);
-  //       throw new Error('No token in response');
-  //     }
-  //     return data.guestToken;
-  //   } catch (error) {
-  //     console.error('Error fetching Settings:', error);
-  //     throw error;
-  //   }
-  // }
-
   const [isTokenReady, setIsTokenReady] = useState(false)
   const [guestToken, setGuestToken] = useState<string | null>(null)
 
@@ -178,7 +159,7 @@ function Dashboard() {
         // Embed the dashboard only after token is fetched
         embedDashboard({
           id: '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc',
-          supersetDomain: 'http://localhost:8088',
+          supersetDomain: 'http://127.0.0.1:8088',
           mountPoint: document.getElementById('my-superset-container'),
           fetchGuestToken: fetchGuestTokenFunc,
           dashboardUiConfig: {
@@ -200,15 +181,21 @@ function Dashboard() {
     fetchAndEmbedDashboard()
   }, [])
 
-  /* This is just a hack to make your dashboard full screen */
+  
   useEffect(() => {
-    const container = document.getElementById('my-superset-container')
-    if (container && container.children[0]) {
-      container.children[0].width = '1000px'
-      container.children[0].height = '1000px'
+    if (!isTokenReady) return; // Evita que el efecto se ejecute si el token aún no está listo
+  
+    const container = document.getElementById('my-superset-container');
+  
+    if (container) {
+      const iframe = container.children[0]; // Asegura que el iframe ya está presente
+      if (iframe) {
+        iframe.style.width = '1000px';
+        iframe.style.height = '1000px';
+      }
     }
-  }, [isTokenReady])
-
+  }, [isTokenReady]); // Se ejecuta solo cuando isTokenReady cambia a true
+  
   // Conditional rendering to show loading state
   if (!isTokenReady) {
     return (
@@ -216,15 +203,15 @@ function Dashboard() {
         <h1>Loading Dashboard...</h1>
         <div id='my-superset-container'></div>
       </div>
-    )
+    );
   }
-
+  
   return (
     <div>
       <h1>My Superset Dashboard</h1>
       <div id='my-superset-container'></div>
     </div>
-  )
+  );
 }
 //<!--<iframe src="http://localhost:8088/superset/dashboard/p/Zo9k2QE2RXn/" frameborder="0" height="1000px" width="100%"></iframe>
 export default Dashboard
