@@ -1,5 +1,6 @@
 import { embedDashboard } from '@superset-ui/embedded-sdk'
 import { useEffect, useState } from 'react'
+import { getAllDashboardsIds, getDashboardId } from '../../services/supersetService'
 
 async function supersetLogin() {
   // Mover a un archivo de configuracion
@@ -26,6 +27,7 @@ async function supersetLogin() {
     }
 
     const data = await response.json()
+
     return {
       accessToken: data.access_token,
       refreshToken: data.refresh_token
@@ -67,6 +69,9 @@ async function createGuestToken() {
     // Get CSRF token
     const csrfToken = await getCsrfToken(accessToken)
 
+    const dashboardIds = await getAllDashboardsIds(accessToken, csrfToken)
+    console.log('DashboardIds', dashboardIds)
+
     // Prepare guest token request
     const GUEST_TOKEN_URL = 'http://localhost:8088/api/v1/security/guest_token/'
     const payload = {
@@ -78,7 +83,7 @@ async function createGuestToken() {
       resources: [
         {
           type: 'dashboard',
-          id: '5f0b3038-0d57-4e7d-8a17-378089cde6ed' // Your dashboard ID
+          id: '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc' // Your dashboard ID
         }
       ],
       rls: [],
@@ -172,7 +177,7 @@ function Dashboard() {
 
         // Embed the dashboard only after token is fetched
         embedDashboard({
-          id: '5f0b3038-0d57-4e7d-8a17-378089cde6ed',
+          id: '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc',
           supersetDomain: 'http://localhost:8088',
           mountPoint: document.getElementById('my-superset-container'),
           fetchGuestToken: fetchGuestTokenFunc,
@@ -203,6 +208,22 @@ function Dashboard() {
       container.children[0].height = '1000px'
     }
   }, [isTokenReady])
+
+  // seEffect(() => {
+  //   const fetchDashboardId = async () => {
+  //     try {
+  //       // Login and get access token
+  //       const { accessToken } = await supersetLogin()
+
+  //       // Fetch all dashboard IDs
+  //       const dashboardIds = await getAllDashboardsIds(accessToken)
+  //       console.log('DashboardIds', dashboardIds)
+  //     } catch (error) {
+  //       console.error('Error fetching dashboard IDs:', error)
+  //     }
+  //   }
+  //   fetchDashboardId()
+  // }, [])u
 
   // Conditional rendering to show loading state
   if (!isTokenReady) {
