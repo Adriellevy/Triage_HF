@@ -39,17 +39,17 @@ export class BoxFilters{
 }
 
 export class BoxInputDTO{
-    @ApiProperty()
+    @ApiProperty({example:'C-01'})
     @IsNotEmpty()
     @IsString()
     code:string;
 
-    @ApiProperty()
+    @ApiProperty({example:BoxType.CONSULTORIO})
     @IsNotEmpty()
     @IsString()
     type:BoxType;
 
-    @ApiProperty()
+    @ApiProperty({example:BoxStatus.DISPONIBLE})
     @IsOptional()
     @IsString()
     status:BoxStatus;

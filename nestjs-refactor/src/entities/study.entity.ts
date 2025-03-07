@@ -9,6 +9,10 @@ export class StudyEntity{
     @Column({type:'varchar',length:256})
     name:string
     
+    @Column({type:'timestamp',nullable:true})
+    deleted:Date;
+
+    
     @OneToMany(()=>AdmisionStudyEntity,as=>as.study)
     admisionStudies:AdmisionStudyEntity[]
     // NICE TO HAVE: Enum con los tipos de procedimientos

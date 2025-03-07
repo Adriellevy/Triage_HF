@@ -9,6 +9,9 @@ export class SymptomEntity{
     @Column({type:'varchar',length:256})
     name:string
 
+    @Column({type:'timestamp',nullable:true})
+    deleted:Date;
+    
     @OneToMany(()=>AdmisionSymptomEntity,as=>as.symptom)
     admisionSymptoms:AdmisionSymptomEntity[]
 }

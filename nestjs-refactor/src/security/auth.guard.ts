@@ -65,4 +65,6 @@ export class JwtRefreshGuard implements CanActivate {
     const refreshToken = this.jwtService.decode(token) as { exp: number };
     if(!refreshToken || refreshToken.exp <= Date.now()) throw new UnauthorizedException('Inicia sesión nuevamente');
   }
+
+
 }

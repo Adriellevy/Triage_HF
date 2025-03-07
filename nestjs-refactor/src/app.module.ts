@@ -7,6 +7,14 @@ import { DataModule } from './modules/data.module';
 import { ServiceModule } from './modules/service.module';
 import { AuthController } from './controllers/auth.controller';
 import { BoxController } from './controllers/box.controller';
+import { SymptomController } from './controllers/symptom.controller';
+import { StudyController } from './controllers/study.controller';
+import { DoctorProcedureController } from './controllers/doctor-procedure.controller';
+import { UserController } from './controllers/user.controller';
+import { TriageController } from './controllers/triage.controller';
+
+
+
 
 
 const modules = [
@@ -17,7 +25,12 @@ const modules = [
 const controllers = [
   AppController,
   AuthController,
-  BoxController
+  BoxController,
+  SymptomController,
+  StudyController,
+  DoctorProcedureController,
+  UserController,
+  TriageController
 ]
 
 @Module({

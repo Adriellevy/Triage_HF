@@ -60,4 +60,12 @@ export class AuthService {
             throw new HttpException(err.message,err.status || 500);
         }
     }
+
+    public getSubOfToken(token:string):{sub:string}{
+        return this.jwtSrv.decode(token) as { sub: string };
+    }
+
+    async hashPassword(password:string):Promise<string>{
+        return await bcrypt.hash(password,10);
+    }
 }
