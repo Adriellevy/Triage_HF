@@ -1,6 +1,5 @@
-import { embedDashboard } from '@superset-ui/embedded-sdk'
-import { useEffect, useState } from 'react'
-import { getAllDashboardsIds, getDashboardId } from '../../services/supersetService'
+import { useState, useEffect } from 'react'
+import { embedDashboard } from "@superset-ui/embedded-sdk";
 
 async function supersetLogin() {
   // Mover a un archivo de configuracion
@@ -94,12 +93,10 @@ async function createGuestToken() {
         first_name: 'Guest',
         last_name: 'User'
       },
-      resources: [
-        {
-          type: 'dashboard',
-          id: dashboardId
-        }
-      ],
+      resources: [{
+        type: "dashboard",
+        id: "3a30fc6c-48a4-4fea-ab5d-da010d45483f"  // Your dashboard ID
+      }],
       rls: [],
       roles: ['Gamma', 'Public']
     };
@@ -158,14 +155,14 @@ function Dashboard() {
 
         // Embed the dashboard only after token is fetched
         embedDashboard({
-          id: '4aa22d8e-96e4-4513-baf5-bc9b6af1c4cc',
-          supersetDomain: 'http://127.0.0.1:8088',
-          mountPoint: document.getElementById('my-superset-container'),
+          id: "3a30fc6c-48a4-4fea-ab5d-da010d45483f",
+          supersetDomain: "http://localhost:8088",
+          mountPoint: document.getElementById("my-superset-container"),
           fetchGuestToken: fetchGuestTokenFunc,
           dashboardUiConfig: {
             hideTitle: true,
             filters: {
-              expanded: true
+              expanded: false,
             }
           },
           iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
