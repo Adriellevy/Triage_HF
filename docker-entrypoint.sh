@@ -21,7 +21,7 @@ superset set-database-uri --database_name TriageDB --uri 'mysql://root:1234@mysq
 echo "Iniciando importación de dashboards..."
 
 # Intentamos importar los dashboards
-superset import-dashboards -p /app/dashboards/dashboard_export.zip --username admin
+superset import-dashboards -p /app/dashboards/dashboard_export_contraseña.zip --username admin
 if [ $? -ne 0 ]; then
   echo "Error al importar los dashboards"
   exit 1
