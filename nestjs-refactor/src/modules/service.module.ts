@@ -10,6 +10,8 @@ import { StudyService } from 'src/services/study.service';
 import { DoctorProcedureService } from 'src/services/doctor-procedure.service';
 import { UserService } from 'src/services/user.service';
 import { TriageService } from 'src/services/triage.service';
+import { PatientService } from 'src/services/patient.service';
+import { ValidatorHelper } from 'src/helpers/validator.helper';
 const services = [
     AuthService,
     BoxService,
@@ -17,9 +19,12 @@ const services = [
     StudyService,
     DoctorProcedureService,
     UserService,
-    TriageService
+    TriageService,
+    PatientService
 ]
-const helpers = []
+const helpers = [
+    ValidatorHelper
+]
 @Module({
     imports:[DataModule, JwtModule.register({
         secret: environment.jwt.secret,

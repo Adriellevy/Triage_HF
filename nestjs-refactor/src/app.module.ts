@@ -12,6 +12,7 @@ import { StudyController } from './controllers/study.controller';
 import { DoctorProcedureController } from './controllers/doctor-procedure.controller';
 import { UserController } from './controllers/user.controller';
 import { TriageController } from './controllers/triage.controller';
+import { PatientController } from './controllers/patient.controller';
 
 
 
@@ -30,7 +31,8 @@ const controllers = [
   StudyController,
   DoctorProcedureController,
   UserController,
-  TriageController
+  TriageController,
+  PatientController
 ]
 
 @Module({
