@@ -16,6 +16,7 @@ import { TokenEntity } from 'src/entities/token.entity';
 import { TriageEntity } from 'src/entities/triage.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { environment } from 'src/environment';
+import { AdmisionHistoryRepository } from 'src/repositories/admision-history.repository';
 import { AdmisionRepository } from 'src/repositories/admision.repository';
 import { BoxRepository } from 'src/repositories/box.repository';
 import { DoctorProcedureRepository } from 'src/repositories/doctor-procedure.repository';
@@ -51,7 +52,8 @@ const repositories = [
     DoctorProcedureRepository,
     StudyRepository,
     TriageRepository,
-    PatientRepository
+    PatientRepository,
+    AdmisionHistoryRepository
 ]
 @Module({
     imports:[

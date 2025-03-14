@@ -1,3 +1,5 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { AdmisionDoctorProcedureEntity } from "src/entities/admision-doctor-procedure.entity";
 import { AdmisionStudyEntity } from "src/entities/admision-study.entity";
 import { AdmisionSymptomEntity } from "src/entities/admision-symptom.entity";
@@ -5,14 +7,14 @@ import { AdmisionEntity } from "src/entities/admision.entity";
 
 export class AdmisionOutputDTO{
     id:number;
-    id_patient:number;
-    id_doctor:number;
-    id_nurse:number;
+    id_patient:string;
+    id_doctor:string;
+    id_nurse:string;
     id_box:number;
     entry_time:Date;
     departure_time:Date;
-    nurse_comment:string;
-    warning:string;
+    nurse_comment:string | null;
+    warning:string | null;
     admisionStudies:AdmisionStudyOutputDTO[];
     admisionSymptoms:AdmisionSymptomOutputDTO[];
     admisionDoctorProcedures:AdmisionDoctorProcedureOutputDTO[];
@@ -27,9 +29,9 @@ export class AdmisionOutputDTO{
         this.departure_time = admision.departure_time;
         this.nurse_comment = admision.nurse_comment;
         this.warning = admision.warning;
-        this.admisionStudies = admision.admisionStudies.map(a=> new AdmisionStudyOutputDTO(a));
-        this.admisionSymptoms = admision.admisionSymptoms.map(a=> new AdmisionSymptomOutputDTO(a));
-        this.admisionDoctorProcedures = admision.admisionDoctorProcedures.map(a=> new AdmisionDoctorProcedureOutputDTO(a));
+        this.admisionStudies = admision.admisionStudies ? admision.admisionStudies.map(a=> new AdmisionStudyOutputDTO(a)): [];
+        this.admisionSymptoms = admision.admisionSymptoms ? admision.admisionSymptoms.map(a=> new AdmisionSymptomOutputDTO(a)) : [];
+        this.admisionDoctorProcedures = admision.admisionDoctorProcedures ? admision.admisionDoctorProcedures.map(a=> new AdmisionDoctorProcedureOutputDTO(a)) : [];
     }
 }
 
@@ -81,4 +83,80 @@ export class AdmisionDoctorProcedureOutputDTO{
         this.id_doctor = admision.id_doctor;
         this.status = admision.status;
     }
+}
+
+
+export class AdmisionInputDTO{
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    id_patient:string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    id_doctor:string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    id_nurse:string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsNumber()
+    id_box:number;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsDate()
+    entry_time:Date; //TODO: Testear si se puede enviar la fecha en formato string con timestamp
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    nurse_comment:string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    warning:string;
+    
+}
+
+export class AdmisionUpdateDTO{
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    id_patient:string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    id_doctor:string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    id_nurse:string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsNumber()
+    id_box:number;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsDate()
+    departure_time:Date; //TODO: Testear si se puede enviar la fecha en formato string con timestamp
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    nurse_comment:string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    warning:string;
 }

@@ -12,7 +12,7 @@ export class AdmisionHistoryEntity {
     id_admision:number;
 
     @Column()
-    id_user:number; //Usuario que hizo el cambio
+    id_user:string; //Usuario que hizo el cambio
 
     @Column()
     column_updated:string;

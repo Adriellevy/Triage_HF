@@ -12,6 +12,7 @@ import { UserService } from 'src/services/user.service';
 import { TriageService } from 'src/services/triage.service';
 import { PatientService } from 'src/services/patient.service';
 import { ValidatorHelper } from 'src/helpers/validator.helper';
+import { AdmisionService } from 'src/services/admision.service';
 const services = [
     AuthService,
     BoxService,
@@ -20,7 +21,8 @@ const services = [
     DoctorProcedureService,
     UserService,
     TriageService,
-    PatientService
+    PatientService,
+    AdmisionService
 ]
 const helpers = [
     ValidatorHelper
