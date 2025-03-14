@@ -21,6 +21,8 @@ import { AdmisionRepository } from 'src/repositories/admision.repository';
 import { BoxRepository } from 'src/repositories/box.repository';
 import { DoctorProcedureRepository } from 'src/repositories/doctor-procedure.repository';
 import { PatientRepository } from 'src/repositories/patient.repository';
+import { ShiftChangeRepository } from 'src/repositories/shift-change.repository';
+import { ShiftRepository } from 'src/repositories/shift.repository';
 import { StudyRepository } from 'src/repositories/study.repository';
 import { SymptomRepository } from 'src/repositories/symptom.repository';
 import { TokenRepository } from 'src/repositories/token.repository';
@@ -53,7 +55,9 @@ const repositories = [
     StudyRepository,
     TriageRepository,
     PatientRepository,
-    AdmisionHistoryRepository
+    AdmisionHistoryRepository,
+    ShiftChangeRepository,
+    ShiftRepository
 ]
 @Module({
     imports:[

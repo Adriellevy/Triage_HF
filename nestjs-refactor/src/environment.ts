@@ -13,7 +13,8 @@ export const environment = {
         expiration:process.env.JWT_EXPIRATION || 300000, // 5 min expresados en milisegundos
         secret:process.env.SECRET_JWT_KEY || 'secretKey',
         refreshTokenExpiration:process.env.JWT_REFRESH_TOKEN_EXPIRATION || 14400000 // 4 horas expresados en milisegundos
-    }
+    },
+    shift_duration:process.env.SHIFT_DURATION ? parseInt(process.env.SHIFT_DURATION) : 8, // 8 horas
 
 }
 

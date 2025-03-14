@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AdmisionInputDTO } from "src/domain/admision.domain";
 import { AdmisionEntity } from "src/entities/admision.entity";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 
 @Injectable()
 export class AdmisionRepository{
@@ -19,6 +19,10 @@ export class AdmisionRepository{
 
     async findAll():Promise<AdmisionEntity[]>{
         return await this.admisionRepository.find();
+    }
+
+    async findByOptions(options:FindOptionsWhere<AdmisionEntity>):Promise<AdmisionEntity[]>{
+        return await this.admisionRepository.find({where:options}) || [];
     }
 
     async createAdmision(data:AdmisionInputDTO){
