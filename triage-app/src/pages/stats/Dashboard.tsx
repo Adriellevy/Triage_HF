@@ -78,7 +78,7 @@ async function createGuestToken() {
       resources: [
         {
           type: 'dashboard',
-          id: '88981de7-49ea-4fad-84c8-bb640b2b4882' // Your dashboard ID
+          id: '3a30fc6c-48a4-4fea-ab5d-da010d45483f' // Your dashboard ID
         }
       ],
       rls: [],
@@ -172,7 +172,7 @@ function Dashboard() {
 
         // Embed the dashboard only after token is fetched
         embedDashboard({
-          id: '88981de7-49ea-4fad-84c8-bb640b2b4882',
+          id: '3a30fc6c-48a4-4fea-ab5d-da010d45483f',
           supersetDomain: 'http://localhost:8088',
           mountPoint: document.getElementById('my-superset-container'),
           fetchGuestToken: fetchGuestTokenFunc,
