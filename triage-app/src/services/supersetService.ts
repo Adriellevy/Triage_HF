@@ -1,4 +1,4 @@
-export async function getAllDashboards(yourAuthToken) {
+export async function getUUIdDashboard(yourAuthToken) {
   const url = 'http://localhost:8088/api/v1/dashboard/1/embedded'
 
   const response = await fetch(url, {
@@ -17,7 +17,8 @@ export async function getAllDashboards(yourAuthToken) {
       'Sec-CH-UA-Platform': '"Windows"',
       'Sec-Fetch-Dest': 'empty',
       'Sec-Fetch-Mode': 'same-origin',
-      Cookie: 'session=.' + yourAuthToken
+      Cookie: 'session=.' + yourAuthToken,
+      'x-csrftoken': '' // Add CSRF token header
     },
     credentials: 'include', // Para enviar cookies y autenticación
     body: JSON.stringify({ allowed_domains: ['http://localhost:5173'] })
