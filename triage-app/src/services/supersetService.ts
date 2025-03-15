@@ -1,48 +1,29 @@
-import { config } from '../config/env'
-export const getDashboardId = async (dashboardSlug) => {
-  const response = await fetch(`http://${config.SUPERSET_DOMAIN}/api/v1/dashboard/`)
-  const data = await response.json()
+export async function getAllDashboards(yourAuthToken) {
+  const url = 'http://localhost:8088/api/v1/dashboard/1/embedded'
 
-  const dashboard = data.result.find((d) => d.slug === dashboardSlug)
-
-  return dashboard ? dashboard.id : null
-}
-
-// export const getAllDashboardsIds = async (yourAccessToken) => {
-//   console.log('Fetching dashboards with token:', yourAccessToken) // Log del token de acceso
-
-//   const response = await fetch(`http://127.0.0.1:8088/api/v1/dashboard/`, {
-//     method: 'GET',
-//     headers: {
-//       Authorization: `Bearer ${yourAccessToken}`, // Reemplaza con tu token
-//       'Content-Type': 'application/json'
-//     }
-//   })
-
-//   const data = await response.json()
-//   console.log('Response from API:', data) // Log de la respuesta de la API
-
-//   return data
-// }
-
-export const getAllDashboardsIds = async (yourAccessToken, crfsToken) => {
-  const query = {
-    select_columns: ['id']
-  }
-
-  const response = await fetch(
-    `http://127.0.0.1:8088/api/v1/dashboard/?q=${encodeURIComponent(JSON.stringify(query))}`,
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${yourAccessToken}`, // Reemplaza con tu token
-        'Content-Type': 'application/json',
-        Cookie: `session=.${crfsToken}` // Reemplaza con tu session id
-      }
-    }
-  )
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
+      'Accept-Language': 'es-419,es;q=0.9',
+      Connection: 'keep-alive',
+      Origin: 'http://localhost:8088',
+      Referer:
+        'http://localhost:8088/superset/dashboard/1/?native_filters_key=NENK4RebqLJ2yjiXGljp2ttEJYYxQa8R8NJdjyiyJ0STgEo6ewY6zXByoai-ZXUn',
+      'Sec-CH-UA': '"Not A(Brand";v="8", "Chromium";v="132", "Opera GX";v="117"',
+      'Sec-CH-UA-Mobile': '?0',
+      'Sec-CH-UA-Platform': '"Windows"',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'same-origin',
+      Cookie: 'session=.' + yourAuthToken
+    },
+    credentials: 'include', // Para enviar cookies y autenticación
+    body: JSON.stringify({ allowed_domains: ['http://localhost:5173'] })
+  })
 
   const data = await response.json()
   console.log('Response from API:', data) // Log de la respuesta de la API
-  return data.result.map((dashboard) => dashboard.id)
+  return data.result.uuid
 }
