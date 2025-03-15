@@ -12,6 +12,11 @@ import { StudyController } from './controllers/study.controller';
 import { DoctorProcedureController } from './controllers/doctor-procedure.controller';
 import { UserController } from './controllers/user.controller';
 import { TriageController } from './controllers/triage.controller';
+import { PatientController } from './controllers/patient.controller';
+import { AdmisionController } from './controllers/admision.controller';
+import { ShiftController } from './controllers/shift.controller';
+import { ShiftChangeController } from './controllers/shift-change.controller';
+
 
 
 
@@ -24,14 +29,19 @@ const modules = [
 
 const controllers = [
   AppController,
+  AdmisionController,
   AuthController,
   BoxController,
-  SymptomController,
-  StudyController,
   DoctorProcedureController,
-  UserController,
-  TriageController
-]
+  PatientController,
+  ShiftChangeController,
+  ShiftController,
+  StudyController,
+  SymptomController,
+  TriageController,
+  UserController
+];
+
 
 @Module({
   imports: [

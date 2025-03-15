@@ -1,8 +1,9 @@
 import { DocumentType } from "src/domain/document.domain";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { AdmisionEntity } from "./admision.entity";
 
 @Entity('patient')
+@Unique(['document_number','document_type'])
 export class PatientEntity{
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -15,6 +16,9 @@ export class PatientEntity{
 
     @Column()
     fullname: string;
+
+    @Column({type:'date',nullable:true})
+    birthdate: Date;
 
     @OneToMany(()=>AdmisionEntity,a=>a.patient)
     admisions: AdmisionEntity[];

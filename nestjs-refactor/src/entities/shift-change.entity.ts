@@ -13,7 +13,7 @@ export class ShiftChangeEntity {
     id_shift:number;
 
     @Column()
-    id_user:number; //Usuario que ejecuto el shift change
+    id_user:string; //Usuario que ejecuto el shift change
 
     @Column()
     id_admision:number;
@@ -32,6 +32,9 @@ export class ShiftChangeEntity {
 
     @Column({nullable:true})
     patient_procedures:string;
+
+    @Column({type:'timestamp'})
+    created_at:Date;
 
     @ManyToOne(()=>ShiftEntity, shift=>shift.shiftChanges)
     @JoinColumn({name:'id_shift'})

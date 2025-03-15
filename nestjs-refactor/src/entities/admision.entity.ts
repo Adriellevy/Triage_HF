@@ -13,14 +13,14 @@ export class AdmisionEntity{ //TODO: Agregar triage
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column()
-    id_patient:number;
+    @Column({type:'uuid'})
+    id_patient:string;
 
-    @Column()
-    id_doctor:number;
+    @Column({type:'uuid'})
+    id_doctor:string;
 
-    @Column()
-    id_nurse:number;
+    @Column({type:'uuid'})
+    id_nurse:string;
 
     @Column()
     id_box:number;
@@ -31,11 +31,11 @@ export class AdmisionEntity{ //TODO: Agregar triage
     @Column({nullable:true,type:'timestamp'})
     departure_time:Date;
 
-    @Column({nullable:true})
-    nurse_comment:string;
+    @Column({nullable:true,type:'text'})
+    nurse_comment:string | null;
 
-    @Column({nullable:true})
-    warning:string;
+    @Column({nullable:true,type:'text'})
+    warning:string | null;
 
     @ManyToOne(()=>PatientEntity,p=>p.admisions)
     @JoinColumn({name:'id_patient'})

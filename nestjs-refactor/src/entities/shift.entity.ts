@@ -8,10 +8,10 @@ export class ShiftEntity {
     id: number;
 
     @Column()
-    id_user:number;
+    id_user:string;
 
     @Column({type:'date'})
-    day: Date;
+    day: string;
 
     @Column()
     start_hour:number;

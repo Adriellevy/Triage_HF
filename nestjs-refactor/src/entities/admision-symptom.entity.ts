@@ -14,7 +14,7 @@ export class AdmisionSymptomEntity {
     id_admision:number;
 
     @Column()
-    id_study:number;
+    id_symptom:number;
 
     @Column()
     id_user:number;
@@ -26,7 +26,7 @@ export class AdmisionSymptomEntity {
     created_at:Date;
 
     @ManyToOne(()=>AdmisionEntity,admision=>admision.admisionSymptoms)
-    @JoinColumn({name:'id_admision'})
+    @JoinColumn({name:'id_symptom'})
     admision:AdmisionEntity;
 
     @ManyToOne(()=>SymptomEntity,study => study.admisionSymptoms)
