@@ -34,7 +34,7 @@ export class ShiftChangeService {
             const result = await this.shiftChangeRepository.findByOptions(whereOptions);
             return result ? result.map(r=>new ShiftChangeOutput(r)) : [];
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
@@ -46,7 +46,7 @@ export class ShiftChangeService {
             //Se le resta y suma 1 para tener un margen de error de 1 hora y no quedar afuera por minutos
             let shift = await this.shiftRepository.findOneByOptions({day:now.toISOString().split('T')[0],start_hour:MoreThan(now.getHours() - 1),end_hour:LessThan(now.getHours() + 1)});
             if(!shift){
-                shift = await this.shiftRepository.create(now,shiftStart,shiftEnd);
+                shift = await this.shiftRepository.create(now,shiftStart,shiftEnd,req.user.sub);
             }
 
             const allAdmisions = await this.admisionRepository.findByOptions({id:In(data.map(d=>d.id_admision))});
@@ -89,9 +89,9 @@ export class ShiftChangeService {
                 await this.shiftChangeRepository.create(shiftChange);
             }
 
-
+            return 'Shift changes created';
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 }

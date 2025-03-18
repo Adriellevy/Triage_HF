@@ -20,9 +20,9 @@ export class SymptomController {
     @ApiResponse({status:200, description:'Obtiene todos los síntomas',type:[SymptomOutputDTO]})
     @ApiResponse({status:401, description:'Unauthorized'})
     @ApiResponse({status:500, description:'Internal Server Error'})
-    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:Boolean})
-    async getAll(@Query('include_deleted') deleted?:boolean):Promise<SymptomOutputDTO[]>{
-        return await this.symptomService.getAll(deleted);
+    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:String})
+    async getAll(@Query('include_deleted') deleted?:string):Promise<SymptomOutputDTO[]>{
+        return await this.symptomService.getAll(deleted ? deleted === 'true' : false);
     }
 
     @Get(':id')

@@ -28,7 +28,7 @@ export class BoxController {
 
     @Get(':id')
     @ApiOperation({summary:'Obtener un box por id'})
-    @ApiResponse({status:200,description:'Retorna un box',type:BoxOutputDTO})
+    @ApiResponse({status:200,description:'Retorna un box',type:BoxOutputDTO,example:BoxOutputDTO})
     @ApiResponse({status:401,description:'Unauthorized'})
     @ApiResponse({status:500,description:'Internal Server Error'})
     @ApiParam({name:'id',required:true,description:'Id del box',type:Number})

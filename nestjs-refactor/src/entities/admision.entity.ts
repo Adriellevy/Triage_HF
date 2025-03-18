@@ -37,6 +37,9 @@ export class AdmisionEntity{ //TODO: Agregar triage
     @Column({nullable:true,type:'text'})
     warning:string | null;
 
+    @Column({nullable:false,type:'text'})
+    level_triage:string;
+
     @ManyToOne(()=>PatientEntity,p=>p.admisions)
     @JoinColumn({name:'id_patient'})
     patient:PatientEntity;

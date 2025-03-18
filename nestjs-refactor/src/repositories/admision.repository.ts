@@ -32,10 +32,10 @@ export class AdmisionRepository{
         admision.id_doctor = data.id_doctor;
         admision.id_nurse = data.id_nurse;
         admision.id_box = data.id_box;
-        admision.entry_time = data.entry_time;
+        admision.entry_time = data.entry_time ? data.entry_time : new Date();
         admision.nurse_comment = data.nurse_comment ? data.nurse_comment : null;
         admision.warning = data.warning ? data.warning : null;
-
+        admision.level_triage = data.level_triage;
         return await this.admisionRepository.save(admision);
     }
 

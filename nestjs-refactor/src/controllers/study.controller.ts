@@ -20,9 +20,9 @@ export class StudyController {
     @ApiResponse({status:200, description:'Obtiene todos los estudios',type:[StudyOutputDTO]})
     @ApiResponse({status:401, description:'Unauthorized'})
     @ApiResponse({status:500, description:'Internal Server Error'})
-    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:Boolean})
-    async getAllStudies(@Query('include_deleted') deleted?:boolean):Promise<StudyOutputDTO[]>{
-        return await this.studyService.getAllStudies(deleted)
+    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:String})
+    async getAllStudies(@Query('include_deleted') deleted?:string):Promise<StudyOutputDTO[]>{
+        return await this.studyService.getAllStudies(deleted ? deleted === 'true' : false)
     }
 
     @Get(':id')

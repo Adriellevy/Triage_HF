@@ -21,9 +21,11 @@ export class DoctorProcedureController {
     @ApiResponse({status:200,description:'Procedimientos de doctores encontrados',type:[DoctorProcedureOutputDTO]})
     @ApiResponse({status:401,description:'No autorizado'})
     @ApiResponse({status:500,description:'Error del servidor'})
-    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:Boolean})
-    async getAll(@Query('include_deleted') include_deleted?:boolean):Promise<DoctorProcedureOutputDTO[]>{
-        return await this.doctorProcedureService.getAll(include_deleted);
+    @ApiQuery({name:'include_deleted',required:false,description:'Incluir eliminados',type:String})
+    async getAll(@Query('include_deleted') include_deleted?:string):Promise<DoctorProcedureOutputDTO[]>{
+        const includeDeletedBool = include_deleted === 'true';
+
+        return await this.doctorProcedureService.getAll(includeDeletedBool);
     }
 
     @Get(':id')

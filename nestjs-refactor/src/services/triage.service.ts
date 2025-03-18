@@ -1,5 +1,5 @@
 import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { TriageInputDTO, TriageOutputDTO, TriageToSortInputDTO } from 'src/domain/triage.domain';
+import { TriageInputDTO, TriageOutputDTO } from 'src/domain/triage.domain';
 import { TriageRepository } from 'src/repositories/triage.repository';
 
 @Injectable()
@@ -67,9 +67,9 @@ export class TriageService {
         }
     }
 
-    async sortTriage(body: TriageToSortInputDTO):Promise<string>{
+    async sortTriage(body: TriageInputDTO[]):Promise<TriageOutputDTO[]>{
         try{
-            const triages = body.triages;
+            const triages = body
             const existingTriages = await this.triageRepository.findOrderByID('ASC');
             if(existingTriages.length !== triages.length)
                 throw new BadRequestException('El número de triages recibidos no coincide con los existentes en la base de datos.');
@@ -93,7 +93,7 @@ export class TriageService {
                 });
             }
 
-            return 'Triages ordenados y actualizados correctamente.';
+            return (await this.triageRepository.findAll()).map(t => new TriageOutputDTO(t));
         }catch(e){
             throw new HttpException(e.message,e.status | 500);
         }

@@ -31,6 +31,12 @@ export class PatientService {
 
     async createPatient(body:PatientInputDTO):Promise<PatientOutputDTO>{
         try{
+            const patient = await this.patientRepository.findByOptions({
+                document_type:body.document_type,
+                document_number:body.document_number
+            })
+            if(patient)
+                throw new BadRequestException(`Ya existe paciente con TIPO_DOCUMENTO: ${body.document_type} y NUMERO_DOCUMENTO: ${body.document_number}`)
             const ent = await this.patientRepository.createPatient(body)
             return new PatientOutputDTO(ent);
         }catch(e){
@@ -53,11 +59,12 @@ export class PatientService {
             if(!body.document_type && body.document_number){
                 throw new BadRequestException(`El tipo de documento es requerido`);
             }
-
-            if(body.document_type != patientToUpdate.document_type || body.document_number != patientToUpdate.document_number){
-                const patientWithNewDocument = await this.patientRepository.findByOptions({document_type:body.document_type,document_number:body.document_number});
-                if(patientWithNewDocument)
-                    throw new BadRequestException(`Ya existe un paciente con el documento ${body.document_type} ${body.document_number}`);
+            if(body.document_type && body.document_number){
+                if(body.document_type != patientToUpdate.document_type || body.document_number != patientToUpdate.document_number){
+                    const patientWithNewDocument = await this.patientRepository.findByOptions({document_type:body.document_type,document_number:body.document_number});
+                    if(patientWithNewDocument)
+                        throw new BadRequestException(`Ya existe un paciente con el documento ${body.document_type} ${body.document_number}`);
+                }
             }
 
             if(body.document_type)
@@ -73,7 +80,7 @@ export class PatientService {
             return new PatientOutputDTO(patientToUpdate);
             
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 }
