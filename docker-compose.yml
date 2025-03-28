@@ -152,9 +152,13 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: "1234"
       DATABASE_NAME: triage-refactor-db
-      SYNCHRONIZE: "false"
+      SYNCHRONIZE: "true" # PARA DESARROLLO SE PUEDE TRUE, PRODUCCION SIEMPRE FALSE (SI LE PEGA LA DB DE PROD)
       PRODUCTION: "false"
       PORT: 3010 
+      JWT_EXPIRATION: 300000 # 5 min expresados en milisegundos
+      SECRET_JWT_KEY: "secretKey"
+      JWT_REFRESH_TOKEN_EXPIRATION: 14400000 # 4 horas expresados en milisegundos
+      SHIFT_DURATION: 8 # 8 horas
     ports:
       - 3010:3010
     networks:

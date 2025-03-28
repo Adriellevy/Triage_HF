@@ -13,6 +13,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+  console.log("Variables de entorno:",environment)
   await app.listen(environment.port);
 }
 bootstrap();
