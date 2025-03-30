@@ -27,7 +27,7 @@ export class UserService {
             return new UserOutputDTO(user);
             
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
@@ -41,7 +41,7 @@ export class UserService {
                 throw new NotFoundException('Usuario no encontrado');
             return new UserOutputDTO(user);
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
@@ -59,7 +59,7 @@ export class UserService {
             const newUser = await this.userRepository.create(body, passwordHashed);
             return new UserOutputDTO(newUser);
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
@@ -93,7 +93,7 @@ export class UserService {
             await this.userRepository.update(userToUpdate);
             return new UserOutputDTO(userToUpdate);
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
@@ -105,7 +105,7 @@ export class UserService {
             await this.userRepository.remove(user);
             return new UserOutputDTO(user);
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 }

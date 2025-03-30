@@ -50,6 +50,7 @@ export class PatientRepository{
         ent.document_type = body.document_type;
         ent.document_number = body.document_number;
         ent.fullname = body.fullname;
+        ent.birthdate = body.birthdate
         return this.patientRepository.save(ent);
     }
 

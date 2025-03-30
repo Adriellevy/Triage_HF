@@ -14,7 +14,7 @@ export class DoctorProcedureRepository {
 
     async findAll(include_deleted?:boolean):Promise<DoctorProcedureEntity[]>{
         const where: FindOptionsWhere<DoctorProcedureEntity> = {}
-        if(!include_deleted){
+        if(!include_deleted ){
             where.deleted = IsNull();
         }
 

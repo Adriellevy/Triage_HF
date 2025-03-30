@@ -9,7 +9,9 @@ export enum StudyStatus {
 }
 
 export class StudyOutputDTO {
+    @ApiProperty({type:Number, description:'Id del estudio', example:1})
     id:number;
+    @ApiProperty({type:String, description:'Nombre del estudio', example:'Estudio de prueba'})
     name: string;
     constructor(s:StudyEntity){
         this.id = s.id;

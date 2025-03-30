@@ -1,5 +1,5 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ShiftOutputDTO } from 'src/domain/shift.domain';
 import { JwtRefreshGuard } from 'src/security/auth.guard';
 import { ShiftService } from 'src/services/shift.service';
@@ -25,16 +25,18 @@ export class ShiftController {
     @ApiOperation({summary:'Obtener un turno por su id'})
     @ApiResponse({status:200,type:ShiftOutputDTO})
     @ApiResponse({status:404,description:'No se encontro el turno'})
-    async getShiftById(id:number):Promise<ShiftOutputDTO>{
+    @ApiParam({name:'id',required:true,description:'Id del turno',type:Number})
+    async getShiftById(@Param('id') id:number):Promise<ShiftOutputDTO>{
         return this.shiftService.getShiftById(id);
     }
 
     @Get()
     @ApiOperation({summary:'Obtener todos los turnos'})
     @ApiResponse({status:200,type:[ShiftOutputDTO]})
-    @ApiQuery({name:'date',required:false,description:'Filtrar por dia',type:Date})
-    async getAllShifts(@Query() date?:Date):Promise<ShiftOutputDTO[]>{
-        return this.shiftService.getAllShifts(date);
+    @ApiQuery({name:'date',required:false,description:'Filtrar por dia',type:String,example:'AAAA-MM-DD'})
+    async getAllShifts(@Query('date') date?:string):Promise<ShiftOutputDTO[]>{
+        const dateParsed = date ? new Date(date) : undefined;
+        return this.shiftService.getAllShifts(dateParsed);
     }
 
 }

@@ -5,10 +5,17 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class PatientOutputDTO{
+    @ApiProperty({type:String,description:'UUID del paciente',example:'205b0a72-017d-4db2-92ec-1a9de8b99f1b'})
     id:string;
+    @ApiProperty({type:String,enum:DocumentType,description:'Tipo de documento del paciente',example:DocumentType.DNI})
     document_type:string;
+    @ApiProperty({type:String,description:'Numero del documento del paciente',example:'40015200'})
     document_number:string;
+    @ApiProperty({type:Date,description:'Fecha de nacimiento del paciente',example:'28-08-2002'})
+    birthdate:Date;
+    @ApiProperty({type:String,description:'Nombre completo del paciente',example:'José Guidi'})
     fullname:string;
+    @ApiProperty({type:[AdmisionOutputDTO],description:'Admisiones del paciente'})
     admisions:AdmisionOutputDTO[];
 
     constructor(patient:PatientEntity){
@@ -17,6 +24,7 @@ export class PatientOutputDTO{
         this.document_number = patient.document_number;
         this.fullname = patient.fullname;
         this.admisions = patient.admisions ? patient.admisions.map(a=> new AdmisionOutputDTO(a)) : [];
+        this.birthdate = patient.birthdate
     }
 }
 

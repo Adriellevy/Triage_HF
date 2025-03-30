@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/domain/role.domain';
-import { TriageInputDTO, TriageOutputDTO, TriageToSortInputDTO } from 'src/domain/triage.domain';
+import { TriageInputDTO, TriageOutputDTO } from 'src/domain/triage.domain';
 import { JwtRefreshGuard } from 'src/security/auth.guard';
 import { RoleGuard, Roles } from 'src/security/role.guard';
 import { TriageService } from 'src/services/triage.service';
@@ -68,12 +68,12 @@ export class TriageController {
     @Post('sort')
     @Roles(Role.HOSPITAL_ADMIN)
     @ApiOperation({summary:'Reordenamiento de los niveles de triage'})
-    @ApiResponse({status:200,description:'Triages ordenados y actualizados correctamente.',type:String})
+    @ApiResponse({status:200,description:'Nuevo orden de triage.',type:[TriageOutputDTO]})
     @ApiResponse({status:400,description:'El número de triages recibidos no coincide con los existentes en la base de datos.'})
     @ApiResponse({status:401,description:'No autorizado'})
     @ApiResponse({status:403,description:'No tiene permisos para realizar esta acción'})
-    @ApiBody({type:TriageToSortInputDTO})
-    async sortTriage(@Body() body:TriageToSortInputDTO):Promise<string>{
+    @ApiBody({type:[TriageInputDTO]})
+    async sortTriage(@Body() body:TriageInputDTO[]):Promise<TriageOutputDTO[]>{
         return await this.triageService.sortTriage(body);
     }
 }

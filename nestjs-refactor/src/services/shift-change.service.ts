@@ -34,22 +34,25 @@ export class ShiftChangeService {
             const result = await this.shiftChangeRepository.findByOptions(whereOptions);
             return result ? result.map(r=>new ShiftChangeOutput(r)) : [];
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 
     async create(data:ShiftChangeInputDTO[],req:any){
         try{
+            const userID = req.user.id ? req.user.id : req.user.sub;
+            
             const now = new Date();
             const shiftStart = now.getHours();
             const shiftEnd = (shiftStart + environment.shift_duration) % 24; 
             //Se le resta y suma 1 para tener un margen de error de 1 hora y no quedar afuera por minutos
             let shift = await this.shiftRepository.findOneByOptions({day:now.toISOString().split('T')[0],start_hour:MoreThan(now.getHours() - 1),end_hour:LessThan(now.getHours() + 1)});
             if(!shift){
-                shift = await this.shiftRepository.create(now,shiftStart,shiftEnd);
+                shift = await this.shiftRepository.create(now,shiftStart,shiftEnd,userID);
             }
 
             const allAdmisions = await this.admisionRepository.findByOptions({id:In(data.map(d=>d.id_admision))});
+            const shiftChangesToResponse:ShiftChangeEntity[] = [];
             for(const sc of data){
                 const currentAdmision = allAdmisions.find(a=>a.id === sc.id_admision);
                 if(!currentAdmision) throw new BadRequestException(`Admision ${sc.id_admision} not found`);
@@ -57,7 +60,7 @@ export class ShiftChangeService {
 
                 const shiftChange = new ShiftChangeEntity();
                 shiftChange.id_shift = shift.id;
-                shiftChange.id_user = req.user.id;
+                shiftChange.id_user = userID;
                 shiftChange.id_admision = currentAdmision.id;
                 shiftChange.patient_observations = sc.observations;
                 shiftChange.patient_records = sc.records;
@@ -68,7 +71,7 @@ export class ShiftChangeService {
                         tiene un mal formato en el uuid del doctor: ${sc.id_new_doctor}`);
                         const doctor = await this.userRepository.findOneById(sc.id_new_doctor);
                         if(!doctor) throw new NotFoundException(`El doctor con id: ${sc.id_new_doctor} no existe`);
-                    const doctorHistory = await this.admisionHistoryRepository.create(currentAdmision,req.user.id,'id_doctor',currentAdmision.id_doctor,sc.id_new_doctor);
+                    const doctorHistory = await this.admisionHistoryRepository.create(currentAdmision,userID,'id_doctor',currentAdmision.id_doctor,sc.id_new_doctor);
                     shiftChange.id_doctor_change = doctorHistory.id;
                     currentAdmision.id_doctor = sc.id_new_doctor;
                     currentAdmision.doctor = doctor;
@@ -80,18 +83,18 @@ export class ShiftChangeService {
                     const nurse = await this.userRepository.findOneById(sc.id_new_doctor);
                     if(!nurse) throw new NotFoundException(`El enfermero con id: ${sc.id_new_doctor} no existe`);
                     
-                    const nurseHistory = await this.admisionHistoryRepository.create(currentAdmision,req.user.id,'id_nurse',currentAdmision.id_nurse,sc.id_new_nurse);
+                    const nurseHistory = await this.admisionHistoryRepository.create(currentAdmision,userID,'id_nurse',currentAdmision.id_nurse,sc.id_new_nurse);
                     shiftChange.id_nurse_change = nurseHistory.id;
                     currentAdmision.id_nurse = sc.id_new_nurse;
                     currentAdmision.nurse = nurse;
                 }
 
-                await this.shiftChangeRepository.create(shiftChange);
+                shiftChangesToResponse.push(await this.shiftChangeRepository.create(shiftChange));
             }
 
-
+            return shiftChangesToResponse.map(s=> new ShiftChangeOutput(s));
         }catch(err){
-            throw new HttpException(err.message,err.status | 500);
+            throw new HttpException(err.message,err.status || 500);
         }
     }
 }

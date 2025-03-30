@@ -5,6 +5,7 @@ import { AdmisionHistoryRepository } from 'src/repositories/admision-history.rep
 import { AdmisionRepository } from 'src/repositories/admision.repository';
 import { BoxRepository } from 'src/repositories/box.repository';
 import { PatientRepository } from 'src/repositories/patient.repository';
+import { TriageRepository } from 'src/repositories/triage.repository';
 import { UserRepository } from 'src/repositories/user.repository';
 
 @Injectable()
@@ -16,7 +17,8 @@ export class AdmisionService {
         private readonly userRepository: UserRepository,
         private readonly boxRepository:BoxRepository,
         private readonly validatorHelper:ValidatorHelper,
-        private readonly admisionHistoryRepository: AdmisionHistoryRepository
+        private readonly admisionHistoryRepository: AdmisionHistoryRepository,
+        private readonly triageRepository: TriageRepository
     ){}
 
     async getAdmisions() {
@@ -29,7 +31,7 @@ export class AdmisionService {
             if(!adm) throw new NotFoundException(`Admision con id ${id} no encontrada`);
             return new AdmisionOutputDTO(adm);
         }catch(err){
-            throw new HttpException(err.message, err.status | 500);
+            throw new HttpException(err.message, err.status || 500);
         }
     }
 
@@ -50,10 +52,12 @@ export class AdmisionService {
             const box = await this.boxRepository.findById(body.id_box);
             if(!box) throw new NotFoundException(`Box con id ${body.id_box} no encontrado`);
 
+            const triage = await this.triageRepository.findByLevel(body.level_triage);
+            if(!triage) throw new NotFoundException(`Triage con nivel ${body.level_triage} no encontrado`);
             const ent = await this.admisionRepository.createAdmision(body);
             return new AdmisionOutputDTO(ent);
         }catch(err){
-            throw new HttpException(err.message, err.status | 500);
+            throw new HttpException(err.message, err.status || 500);
         }
     }
 
@@ -63,6 +67,7 @@ export class AdmisionService {
             const admToUpdate = await this.admisionRepository.findById(id);
             if(!admToUpdate) throw new NotFoundException(`Admision con id ${id} no encontrada`);
             const admToDto = new AdmisionOutputDTO(admToUpdate);
+            const userId = req.user.id ? req.user.id : req.user.sub;
 
             if(body.id_patient && body.id_patient != admToUpdate.id_patient){
                 if(!this.validatorHelper.validateUUID(body.id_patient)) throw new BadRequestException(`id_patient: ${body.id_patient} no es un UUID valido`);
@@ -70,7 +75,7 @@ export class AdmisionService {
                 if(!patient) throw new NotFoundException(`Paciente con id ${body.id_patient} no encontrado`);
 
                 admToUpdate.id_patient = body.id_patient;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'id_patient',admToDto.id_patient,patient.id)
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'id_patient',admToDto.id_patient,patient.id)
             }
 
             if(body.id_doctor && body.id_doctor != admToUpdate.id_doctor){
@@ -79,7 +84,7 @@ export class AdmisionService {
                 if(!doctor) throw new NotFoundException(`Doctor con id ${body.id_doctor} no encontrado`);
 
                 admToUpdate.id_doctor = body.id_doctor;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'id_doctor',admToDto.id_doctor,doctor.id)
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'id_doctor',admToDto.id_doctor,doctor.id)
             }
 
             if(body.id_nurse && body.id_nurse != admToUpdate.id_nurse){
@@ -88,7 +93,7 @@ export class AdmisionService {
                 if(!nurse) throw new NotFoundException(`Enfermero con id ${body.id_nurse} no encontrado`);
 
                 admToUpdate.id_nurse = body.id_nurse;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'id_nurse',admToDto.id_nurse,nurse.id)
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'id_nurse',admToDto.id_nurse,nurse.id)
             }
 
             if(body.id_box && body.id_box != admToUpdate.id_box){
@@ -96,28 +101,37 @@ export class AdmisionService {
                 if(!box) throw new NotFoundException(`Box con id ${body.id_box} no encontrado`);
 
                 admToUpdate.id_box = body.id_box;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'id_box',admToDto.id_box.toString(),box.id.toString())
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'id_box',admToDto.id_box.toString(),box.id.toString())
             }
 
             if(body.nurse_comment && body.nurse_comment != admToUpdate.nurse_comment){
                 admToUpdate.nurse_comment = body.nurse_comment;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'nurse_comment',admToDto.nurse_comment ?? '',body.nurse_comment)
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'nurse_comment',admToDto.nurse_comment ?? '',body.nurse_comment)
             }
 
             if(body.warning && body.warning != admToUpdate.warning){
                 admToUpdate.warning = body.warning;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'warning',admToDto.warning ?? '',body.warning)
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'warning',admToDto.warning ?? '',body.warning)
             }
 
             if(body.departure_time && body.departure_time != admToUpdate.departure_time){
                 admToUpdate.departure_time = body.departure_time;
-                await this.admisionHistoryRepository.create(admToUpdate,req.user.id,'departure_time',admToDto.departure_time.toString() ?? '',body.departure_time.toString())
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'departure_time',admToDto.departure_time.toString() ?? '',body.departure_time.toString())
             }
             
+
+            if(body.level_triage && body.level_triage != admToUpdate.level_triage){
+                const triage = await this.triageRepository.findByLevel(body.level_triage);
+                if(!triage) throw new NotFoundException(`Triage con nivel ${body.level_triage} no encontrado`);
+
+                admToUpdate.level_triage = body.level_triage;
+                await this.admisionHistoryRepository.create(admToUpdate,userId,'level_triage',admToDto.level_triage,triage.level)
+            }
+
             await this.admisionRepository.updateAdmision(admToUpdate);
             return admToDto;
         }catch(err){
-            throw new HttpException(err.message, err.status | 500);
+            throw new HttpException(err.message, err.status || 500);
         }   
     }
 }

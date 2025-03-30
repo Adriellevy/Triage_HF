@@ -16,11 +16,17 @@ export enum BoxStatus{
 }
 
 export class BoxOutputDTO{
+    @ApiProperty({type:Number,description:'ID del box',example:1})
     id:number;
+    @ApiProperty({type:String,description:'Codigo del box',example:'C-01'})
     code:string;
+    @ApiProperty({type:String,enum:BoxType,description:'Tipo del box',example:BoxType.CONSULTORIO})
     type:string;
+    @ApiProperty({type:String,description:'Estado del box',example:BoxStatus.DISPONIBLE,enum:BoxStatus})
     status:string;
+    @ApiProperty({type:Date,description:'Fecha de cuando se creo el box',example:Date.now(),nullable:true})
     time?:Date;
+    @ApiProperty({type:Number,description:'ID de la admision que se encuentra en el box',example:1,nullable:true})
     patient_id?:number;
 
     constructor(box:BoxEntity){
@@ -44,17 +50,17 @@ export class BoxInputDTO{
     @IsString()
     code:string;
 
-    @ApiProperty({example:BoxType.CONSULTORIO})
+    @ApiProperty({example:BoxType.CONSULTORIO,enum:BoxType})
     @IsNotEmpty()
     @IsString()
     type:BoxType;
 
-    @ApiProperty({example:BoxStatus.DISPONIBLE})
+    @ApiProperty({example:BoxStatus.DISPONIBLE,enum:BoxStatus})
     @IsOptional()
     @IsString()
     status:BoxStatus;
     
-    @ApiProperty()
+    @ApiProperty({description:'Tiempo de cuando se creo'})
     @IsOptional()
     @IsDate()
     time:Date;

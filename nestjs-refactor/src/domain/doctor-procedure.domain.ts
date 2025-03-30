@@ -11,7 +11,9 @@ export enum DoctorProcedureStatus{
 }
 
 export class DoctorProcedureOutputDTO{
+    @ApiProperty({type:Number,example:1,description:'ID del procedimiento medico'})
     id:number;
+    @ApiProperty({type:Number,example:'Nombre',description:'Nombre del procedimiento medico'})
     name:string;
 
     constructor( dp:DoctorProcedureEntity){

@@ -7,7 +7,7 @@ import { RoleGuard } from 'src/security/role.guard';
 import { PatientService } from 'src/services/patient.service';
 
 @Controller('patient')
-@UseGuards(RoleGuard)
+@UseGuards(JwtRefreshGuard,RoleGuard)
 @ApiTags('Patient')
 @ApiBearerAuth()
 export class PatientController {

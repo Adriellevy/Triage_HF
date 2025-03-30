@@ -29,13 +29,13 @@ const modules = [
 
 const controllers = [
   AppController,
-  AdmisionController,
   AuthController,
+  AdmisionController,
   BoxController,
   DoctorProcedureController,
   PatientController,
-  ShiftChangeController,
   ShiftController,
+  ShiftChangeController,
   StudyController,
   SymptomController,
   TriageController,
