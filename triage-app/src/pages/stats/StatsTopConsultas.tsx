@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { embedDashboard } from '@superset-ui/embedded-sdk'
 import { createGuestToken, supersetLogin } from './utils/supersetInitialConfig'
-import { getUUIdDashboard } from '@/services/supersetService'
+import { getUUIdDashboard, loginServiceObtencionDatos } from '@/services/supersetService'
 import { access } from 'fs'
 
 function Dashboard() {
@@ -11,40 +11,43 @@ function Dashboard() {
   useEffect(() => {
     const fetchAndEmbedDashboard = async () => {
       try {
-        const SuperSetUserToken = await supersetLogin() // Accede a la propiedad accessToken
-        console.log('token', SuperSetUserToken)
-        if (!SuperSetUserToken) {
-          console.log('No se obtuvo el token de usuario')
-          throw new Error('No se obtuvo el token de usuario')
-        }
-        const uuid_dashbaord = await getUUIdDashboard(SuperSetUserToken)
-        console.log('uuid dashbaord', uuid_dashbaord)
-        // Fetch the guest token first
-        const token = await createGuestToken(uuid_dashbaord, SuperSetUserToken)
-        setGuestToken(token)
-
-        // Define fetchGuestToken to be used by embedDashboard
-        const fetchGuestTokenFunc = async (): Promise<string> => {
-          if (!token) {
-            throw new Error('Guest token not available')
+        const resolucion = await loginServiceObtencionDatos('admin', 'admin') // Accede a la propiedad accessToken
+        console.log('resolucion', resolucion)
+        if (!resolucion) {
+          const SuperSetUserToken = await supersetLogin() // Accede a la propiedad accessToken
+          console.log('token', SuperSetUserToken)
+          if (!SuperSetUserToken) {
+            console.log('No se obtuvo el token de usuario')
+            throw new Error('No se obtuvo el token de usuario')
           }
-          return token
-        }
-        // Embed the dashboard only after token is fetched
-        embedDashboard({
-          id: uuid_dashbaord,
-          supersetDomain: 'http://localhost:8088',
-          mountPoint: document.getElementById('my-superset-container'),
-          fetchGuestToken: fetchGuestTokenFunc,
-          dashboardUiConfig: {
-            hideTitle: true,
-            filters: {
-              expanded: false
-            }
-          },
-          iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
-        })
+          const uuid_dashbaord = await getUUIdDashboard(SuperSetUserToken)
+          console.log('uuid dashbaord', uuid_dashbaord)
+          // Fetch the guest token first
+          const token = await createGuestToken(uuid_dashbaord, SuperSetUserToken)
+          setGuestToken(token)
 
+          // Define fetchGuestToken to be used by embedDashboard
+          const fetchGuestTokenFunc = async (): Promise<string> => {
+            if (!token) {
+              throw new Error('Guest token not available')
+            }
+            return token
+          }
+          // Embed the dashboard only after token is fetched
+          embedDashboard({
+            id: uuid_dashbaord,
+            supersetDomain: 'http://localhost:8088',
+            mountPoint: document.getElementById('my-superset-container'),
+            fetchGuestToken: fetchGuestTokenFunc,
+            dashboardUiConfig: {
+              hideTitle: true,
+              filters: {
+                expanded: false
+              }
+            },
+            iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
+          })
+        }
         setIsTokenReady(true)
       } catch (error) {
         console.error('Error fetching or embedding dashboard:', error)
