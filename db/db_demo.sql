@@ -202,3 +202,32 @@ VALUES
 ('Fiebre'),
 ('Infeccion');
 
+
+-- Creación de vista 
+CREATE VIEW patient_dashboard AS
+SELECT 
+    BIN_TO_UUID(p.patient_id) AS patient_id,
+    p.patient_name,
+    p.patient_age,
+    p.patient_entry_time,
+    p.patient_triage_time,
+    p.patient_triage_level,
+    p.patient_isolated,
+    BIN_TO_UUID(p.box_id) AS box_id,
+    b.box_code,
+    p.patient_status,
+    p.patient_symptom,
+    p.patient_healthcare_system,
+    p.doctor_procedure,
+    p.doctor_studies_solicitated,
+    p.nurse_coment,
+    doctor.user_name AS doctor_name,
+    nurse.user_name AS nurse_name
+FROM 
+    Patient p
+LEFT JOIN Triagedb.User doctor 
+    ON p.doctor_id = doctor.user_id AND doctor.user_type = 'DOCTOR'
+LEFT JOIN Triagedb.User nurse 
+    ON p.nurse_id = nurse.user_id AND nurse.user_type = 'NURSE'
+LEFT JOIN Box b 
+    ON p.box_id = b.box_id;
