@@ -40,7 +40,7 @@ export const loginServiceObtencionDatos = async (
   password: string
 ): Promise<LoginResponse> => {
   try {
-    const response = await fetch('http://localhost:8088/login/', {
+    const response = await fetch('http://localhost:8088/api/v1/login/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -51,7 +51,7 @@ export const loginServiceObtencionDatos = async (
         'Cache-Control': 'max-age=0',
         Connection: 'keep-alive',
         Origin: 'http://localhost:8088',
-        Referer: 'http://localhost:8088/login/',
+        Referer: 'http://localhost:8088/api/v1/login/',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'same-origin',
