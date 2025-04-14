@@ -30,6 +30,6 @@ io.on("connection", (socket) => {
 });
 
 const PORT = 3001;
-server.listen(PORT, () => {
-  console.log(`Servidor señalizando en http://localhost:${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor señalizando en http://0.0.0.0:${PORT}`);
 });

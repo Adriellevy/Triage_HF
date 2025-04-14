@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
 
-const socket = io("http://localhost:3001");
-
+const socket = io("http://192.168.0.83:3001");
 export default function P2PChat() {
   const [yourId, setYourId] = useState("");
   const [users, setUsers] = useState<string[]>([]);
@@ -46,6 +45,11 @@ export default function P2PChat() {
           setMessages((prev) => [...prev, `👤 ${from}: ${data.toString()}`]);
         });
 
+        newPeer.on("connect", () => {
+          console.log("🎉 Conexión P2P establecida (receptor)");
+          //socket.emit("ready-to-disconnect"); // <--- Notifica al servidor
+        });
+
         newPeer.signal(data);
         setPeer(newPeer);
       } else {
@@ -79,7 +83,10 @@ export default function P2PChat() {
         data: signalData,
       });
     });
-
+    newPeer.on("connect", () => {
+      console.log("🎉 Conexión P2P establecida");
+      // Aquí podrías notificar al servidor que puede "liberar" recursos o incluso apagarse
+    });
     newPeer.on("data", (data) => {
       setMessages((prev) => [...prev, `👤 ${targetId}: ${data.toString()}`]);
     });
