@@ -1,38 +1,42 @@
 #!/bin/bash
-set -e
 
-# Crear un usuario administrador para Superset
-echo "Creando el administrador de Superset..."
-superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@example.com --password admin
-
-# Actualizar la base de datos de Superset
-echo "Actualizando la base de datos de Superset..."
+# Inicialización Superset
 superset db upgrade
-
-# Inicializar Superset
-echo "Inicializando Superset..."
 superset init
 
-# Establecer la URI de la base de datos
-echo "Estableciendo la URI de la base de datos..."
-superset set-database-uri --database_name TriageDB --uri 'mysql://root:1234@mysqldb:3306/Triagedb'
+# Crear usuario si no existe
+superset fab create-admin \
+  --username admin \
+  --firstname Superset \
+  --lastname Admin \
+  --email admin@superset.com \
+  --password admin
 
-# Importar los dashboards desde el archivo zip
-echo "Iniciando importación de dashboards..."
+superset fab create-admin \
+  --username guest \
+  --firstname Guest \
+  --lastname User \
+  --email guest@superset.com \
+  --password guest
 
-# Intentamos importar los dashboards
-superset import-dashboards -p /app/dashboards/dashboard_export_contraseña.zip --username admin
-if [ $? -ne 0 ]; then
-  echo "Error al importar los dashboards"
-  exit 1
-fi
+# Importar dashboards
+superset import-dashboards -p /app/dashboards/
 
-echo "Dashboards importados correctamente"
+# Extraer UUIDs de dashboards y escribir en archivo JSON compartido
+python3 <<EOF
+from superset import db
+from superset.models.dashboard import Dashboard
+import json
 
-# Crear un usuario de invitado
-echo "Creando el usuario invitado..."
-superset fab create-user --username guest --firstname Guest --lastname User --email guest@example.com --password guest --role Gamma
+with db.session.no_autoflush:
+    dashboards = db.session.query(Dashboard).all()
+    dash_info = [{"id": d.id, "uuid": str(d.uuid), "slug": d.slug or d.dashboard_title} for d in dashboards]
 
-# Iniciar el servidor de Superset
+    with open("/app/shared_dash_ids/dashboard_ids.json", "w") as f:
+        json.dump(dash_info, f)
+EOF
+
+# Arrancar Superset normalmente
 echo "Iniciando Superset..."
 superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger
+

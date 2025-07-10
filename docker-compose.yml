@@ -99,6 +99,7 @@ services:
       - ./dashboards:/app/dashboards
       - ./superset/config.py:/app/superset/config.py 
       - ./docker-entrypoint.sh:/app/docker-entrypoint.sh
+      - shared_dash_ids:/app/shared_dash_ids # se conecta a un volumen compartido para automatizacion 
     user: root
     entrypoint: >
       /bin/sh -c "
@@ -137,6 +138,7 @@ services:
       - 3309:3306
     volumes:
       - mysql_data:/var/lib/mysql
+      - shared_dash_ids:/app/shared_dash_ids # se conecta a un volumen compartido para automatizacion 
     networks:
       - app-network
 
@@ -169,6 +171,7 @@ services:
 
 volumes:
   mysql_data:
+  shared_dash_ids:
 
 networks:
   app-network:

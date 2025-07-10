@@ -1,93 +1,131 @@
-import { useState, useEffect } from 'react'
-import { embedDashboard } from '@superset-ui/embedded-sdk'
-import { createGuestToken, supersetLogin } from './utils/supersetInitialConfig'
-import { getUUIdDashboard, loginServiceObtencionDatos } from '@/services/supersetService'
-import { access } from 'fs'
+import { useState, useEffect, useCallback, useRef } from 'react';
+import SupersetAuthService from '../../services/supersetAuthService';
+import SupersetEmbedService from '../../services/supersetEmbedService';
+import { getSupersetConfig, DASHBOARD_IDS } from '../../config/env';
 
-function Dashboard() {
-  const [isTokenReady, setIsTokenReady] = useState(false)
-  const [guestToken, setGuestToken] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchAndEmbedDashboard = async () => {
-      try {
-        const resolucion = await loginServiceObtencionDatos('admin', 'admin') // Accede a la propiedad accessToken
-        console.log('resolucion', resolucion)
-        if (!resolucion) {
-          const SuperSetUserToken = await supersetLogin() // Accede a la propiedad accessToken
-          console.log('token', SuperSetUserToken)
-          if (!SuperSetUserToken) {
-            console.log('No se obtuvo el token de usuario')
-            throw new Error('No se obtuvo el token de usuario')
-          }
-          const uuid_dashbaord = await getUUIdDashboard(SuperSetUserToken)
-          console.log('uuid dashbaord', uuid_dashbaord)
-          // Fetch the guest token first
-          const token = await createGuestToken(uuid_dashbaord, SuperSetUserToken)
-          setGuestToken(token)
-
-          // Define fetchGuestToken to be used by embedDashboard
-          const fetchGuestTokenFunc = async (): Promise<string> => {
-            if (!token) {
-              throw new Error('Guest token not available')
-            }
-            return token
-          }
-          // Embed the dashboard only after token is fetched
-          embedDashboard({
-            id: uuid_dashbaord,
-            supersetDomain: 'http://localhost:8088',
-            mountPoint: document.getElementById('my-superset-container'),
-            fetchGuestToken: fetchGuestTokenFunc,
-            dashboardUiConfig: {
-              hideTitle: true,
-              filters: {
-                expanded: false
-              }
-            },
-            iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
-          })
-        }
-        setIsTokenReady(true)
-      } catch (error) {
-        console.error('Error fetching or embedding dashboard:', error)
-        setIsTokenReady(false)
-      }
-    }
-
-    fetchAndEmbedDashboard()
-  }, [])
-
-  useEffect(() => {
-    if (!isTokenReady) return // Evita que el efecto se ejecute si el token aún no está listo
-
-    const container = document.getElementById('my-superset-container')
-
-    if (container) {
-      const iframe = container.children[0] // Asegura que el iframe ya está presente
-      if (iframe) {
-        iframe.style.width = '1000px'
-        iframe.style.height = '1000px'
-      }
-    }
-  }, [isTokenReady]) // Se ejecuta solo cuando isTokenReady cambia a true
-
-  // Conditional rendering to show loading state
-  if (!isTokenReady) {
-    return (
-      <div>
-        <h1>Loading Dashboard...</h1>
-        <div id='my-superset-container'></div>
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <h1>My Superset Dashboard</h1>
-      <div id='my-superset-container'></div>
-    </div>
-  )
+interface DashboardProps {
+  dashboardId?: string;
+  width?: string;
+  height?: string;
+  hideTitle?: boolean;
+  hideFilters?: boolean;
 }
-//<!--<iframe src="http://localhost:8088/superset/dashboard/p/Zo9k2QE2RXn/" frameborder="0" height="1000px" width="100%"></iframe>
-export default Dashboard
+
+
+function Dashboard({ 
+  dashboardId = DASHBOARD_IDS.MAIN_DASHBOARD,
+  width = '1000px',
+  height = '1000px',
+  hideTitle = true,
+  hideFilters = false
+}: DashboardProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [embedResult, setEmbedResult] = useState<any>(null);
+  const [guestToken, setGuestToken] = useState<string | null>(null);
+  const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null);
+
+  // Generar ID único solo una vez
+  const containerId = useRef(`superset-dashboard-${Math.random().toString(36).substr(2, 9)}`).current;
+
+  // Callback ref que se ejecuta cuando el elemento está disponible
+  const containerRef = useCallback((element: HTMLDivElement | null) => {
+    if (element) {
+      element.id = containerId;
+      setContainerElement(element);
+    }
+  }, [containerId]);
+
+  // Obtener guest token solo una vez por dashboardId
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    setError(null);
+    setGuestToken(null);
+    setEmbedResult(null);
+    const config = getSupersetConfig();
+    const authService = new SupersetAuthService(config);
+    authService.createGuestToken(dashboardId)
+      .then(token => {
+        if (isMounted) setGuestToken(token);
+      })
+      .catch(err => {
+        if (isMounted) setError(err.message || 'Error getting guest token');
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, [dashboardId]);
+
+  // Embebe el dashboard solo cuando guestToken y containerElement están listos
+  useEffect(() => {
+    if (!guestToken || !containerElement) return;
+    setIsLoading(true);
+    setError(null);
+    const config = getSupersetConfig();
+    const authService = new SupersetAuthService(config);
+    const embedService = new SupersetEmbedService(authService);
+    embedService.embedDashboard({
+      dashboardId: dashboardId,
+      supersetDomain: config.baseUrl,
+      mountPointId: containerId,
+      dashboardUiConfig: {
+        hideTitle: hideTitle,
+        filters: {
+          expanded: !hideFilters
+        }
+      }
+    })
+      .then(result => {
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to embed dashboard');
+        }
+        setEmbedResult(result);
+        setTimeout(() => {
+          embedService.applyIframeStyles(containerId, {
+            width: width,
+            height: height
+          });
+        }, 1000);
+      })
+      .catch(err => {
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [guestToken, containerElement, dashboardId, width, height, hideTitle, hideFilters, containerId]);
+
+  const handleRetry = () => {
+    setError(null);
+    setEmbedResult(null);
+    setGuestToken(null);
+    setIsLoading(true);
+    // Forzar re-inicialización
+    if (containerElement) {
+      containerElement.innerHTML = '';
+    }
+    // Volver a obtener el token
+    const config = getSupersetConfig();
+    const authService = new SupersetAuthService(config);
+    authService.createGuestToken(dashboardId)
+      .then(token => setGuestToken(token))
+      .catch(err => setError(err.message || 'Error getting guest token'))
+      .finally(() => setIsLoading(false));
+  };
+
+  return <div
+  ref={containerRef}
+  style={{
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    overflow: 'hidden',
+    minHeight: '400px',
+    backgroundColor: '#f8f9fa'
+  }}
+></div>;
+}
+
+export default Dashboard;

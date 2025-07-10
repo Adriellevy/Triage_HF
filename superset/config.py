@@ -805,15 +805,15 @@ STORE_CACHE_KEYS_IN_METADATA_DB = False
 # CORS Options
 ENABLE_CORS = True
 CORS_OPTIONS = {
-    "supports_credentials": True,
-    "allow_headers": ["*"],
-    "resources": ["*"],
-    "origins": [
-        "http://localhost:5173",  # Your React app URL
-        "http://localhost:8088",  # Superset URL
+    'supports_credentials': True,
+    'allow_headers': ['*'],
+    'resources': ['*'],
+        'origins': [
+        'http://localhost:5173',  # Your React app URL
+        'http://localhost:8088'   # Superset URL
     ],
-    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    "expose_headers": ["*"],
+    'methods': ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'expose_headers': ['*'],
 }
 
 # Sanitizes the HTML content used in markdowns to allow its rendering in a safe manner.
